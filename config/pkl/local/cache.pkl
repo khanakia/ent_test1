@@ -1,0 +1,3 @@
+amends "../CacheConfig.pkl"
+
+dbpath = "/Volumes/D/www/go1/ubgo/saas_boilerplate/data"

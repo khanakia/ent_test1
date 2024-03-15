@@ -1,0 +1,38 @@
+@go.Package { name = "configmgr/gen/appconfig" }
+
+module AppConfig
+
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.3#/go.pkl"
+
+/// The hostname that this server responds to.
+hostname: String
+
+/// The port to listen on.
+port: String
+
+/// The environment to deploy to.
+environment: Environment
+
+/// The database connection for this application
+database: Database
+
+class Database {
+  /// The username for this database.
+  username: String
+
+  /// The password for this database.
+  password: String
+
+  /// The remote host for this database.
+  host: String
+
+  /// The remote port for this database.
+  port: UInt16
+
+  /// The name of the database.
+  dbName: String
+  
+  sslmode: String
+}
+
+typealias Environment = "dev"|"qa"|"prod"

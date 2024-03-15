@@ -1,0 +1,13 @@
+{
+  "gopls": {
+    "buildFlags": ["-tags=wireinject"]
+  },
+  "search.exclude": {
+    "**/assets/lib": true,
+    "**/dist": true,
+    "**/vendor": true,
+    "gen": true,
+    "apigql/graph/generated": true,
+    "apigql/graph/model": true
+  } 
+}

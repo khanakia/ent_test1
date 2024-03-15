@@ -1,0 +1,22 @@
+# https://taskfile.dev
+
+version: '3'
+
+dotenv: ['.env']
+
+tasks:
+  default:
+    cmds:
+      - task --list-all
+    silent: true
+
+  update:
+    desc: upgrade all the go modules
+    cmds:
+      - go get -u ./...
+ 
+  gql:
+    desc: generate gqlgen code from schema files
+    dir: apigql
+    cmds:
+      - go run github.com/99designs/gqlgen generate

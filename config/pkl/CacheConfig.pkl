@@ -1,0 +1,8 @@
+@go.Package { name = "configmgr/gen/cacheconfig" }
+
+module CacheConfig
+
+import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.3#/go.pkl"
+
+/// The hostname that this server responds to.
+dbpath: String

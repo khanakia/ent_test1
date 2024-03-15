@@ -1,0 +1,16 @@
+amends "../AppConfig.pkl"
+
+hostname = "localhost"
+
+port = "7001"
+
+environment = "dev"
+
+database {
+  host = "localhost"
+  port = 5432
+  username = "postgres"
+  password = "root"
+  dbName = "test"
+  sslmode= "disable"
+}
