@@ -1010,6 +1010,9 @@ type UserMutation struct {
 	status             *bool
 	password           *string
 	secret             *string
+	role_id            *int
+	addrole_id         *int
+	api_key            *string
 	welcome_email_sent *bool
 	clearedFields      map[string]struct{}
 	done               bool
@@ -1549,6 +1552,125 @@ func (m *UserMutation) ResetSecret() {
 	delete(m.clearedFields, user.FieldSecret)
 }
 
+// SetRoleID sets the "role_id" field.
+func (m *UserMutation) SetRoleID(i int) {
+	m.role_id = &i
+	m.addrole_id = nil
+}
+
+// RoleID returns the value of the "role_id" field in the mutation.
+func (m *UserMutation) RoleID() (r int, exists bool) {
+	v := m.role_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRoleID returns the old "role_id" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldRoleID(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRoleID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRoleID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRoleID: %w", err)
+	}
+	return oldValue.RoleID, nil
+}
+
+// AddRoleID adds i to the "role_id" field.
+func (m *UserMutation) AddRoleID(i int) {
+	if m.addrole_id != nil {
+		*m.addrole_id += i
+	} else {
+		m.addrole_id = &i
+	}
+}
+
+// AddedRoleID returns the value that was added to the "role_id" field in this mutation.
+func (m *UserMutation) AddedRoleID() (r int, exists bool) {
+	v := m.addrole_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearRoleID clears the value of the "role_id" field.
+func (m *UserMutation) ClearRoleID() {
+	m.role_id = nil
+	m.addrole_id = nil
+	m.clearedFields[user.FieldRoleID] = struct{}{}
+}
+
+// RoleIDCleared returns if the "role_id" field was cleared in this mutation.
+func (m *UserMutation) RoleIDCleared() bool {
+	_, ok := m.clearedFields[user.FieldRoleID]
+	return ok
+}
+
+// ResetRoleID resets all changes to the "role_id" field.
+func (m *UserMutation) ResetRoleID() {
+	m.role_id = nil
+	m.addrole_id = nil
+	delete(m.clearedFields, user.FieldRoleID)
+}
+
+// SetAPIKey sets the "api_key" field.
+func (m *UserMutation) SetAPIKey(s string) {
+	m.api_key = &s
+}
+
+// APIKey returns the value of the "api_key" field in the mutation.
+func (m *UserMutation) APIKey() (r string, exists bool) {
+	v := m.api_key
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAPIKey returns the old "api_key" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldAPIKey(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAPIKey is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAPIKey requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAPIKey: %w", err)
+	}
+	return oldValue.APIKey, nil
+}
+
+// ClearAPIKey clears the value of the "api_key" field.
+func (m *UserMutation) ClearAPIKey() {
+	m.api_key = nil
+	m.clearedFields[user.FieldAPIKey] = struct{}{}
+}
+
+// APIKeyCleared returns if the "api_key" field was cleared in this mutation.
+func (m *UserMutation) APIKeyCleared() bool {
+	_, ok := m.clearedFields[user.FieldAPIKey]
+	return ok
+}
+
+// ResetAPIKey resets all changes to the "api_key" field.
+func (m *UserMutation) ResetAPIKey() {
+	m.api_key = nil
+	delete(m.clearedFields, user.FieldAPIKey)
+}
+
 // SetWelcomeEmailSent sets the "welcome_email_sent" field.
 func (m *UserMutation) SetWelcomeEmailSent(b bool) {
 	m.welcome_email_sent = &b
@@ -1632,7 +1754,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 10)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
 	}
@@ -1659,6 +1781,12 @@ func (m *UserMutation) Fields() []string {
 	}
 	if m.secret != nil {
 		fields = append(fields, user.FieldSecret)
+	}
+	if m.role_id != nil {
+		fields = append(fields, user.FieldRoleID)
+	}
+	if m.api_key != nil {
+		fields = append(fields, user.FieldAPIKey)
 	}
 	if m.welcome_email_sent != nil {
 		fields = append(fields, user.FieldWelcomeEmailSent)
@@ -1689,6 +1817,10 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.Password()
 	case user.FieldSecret:
 		return m.Secret()
+	case user.FieldRoleID:
+		return m.RoleID()
+	case user.FieldAPIKey:
+		return m.APIKey()
 	case user.FieldWelcomeEmailSent:
 		return m.WelcomeEmailSent()
 	}
@@ -1718,6 +1850,10 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldPassword(ctx)
 	case user.FieldSecret:
 		return m.OldSecret(ctx)
+	case user.FieldRoleID:
+		return m.OldRoleID(ctx)
+	case user.FieldAPIKey:
+		return m.OldAPIKey(ctx)
 	case user.FieldWelcomeEmailSent:
 		return m.OldWelcomeEmailSent(ctx)
 	}
@@ -1792,6 +1928,20 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetSecret(v)
 		return nil
+	case user.FieldRoleID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRoleID(v)
+		return nil
+	case user.FieldAPIKey:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAPIKey(v)
+		return nil
 	case user.FieldWelcomeEmailSent:
 		v, ok := value.(bool)
 		if !ok {
@@ -1806,13 +1956,21 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
 func (m *UserMutation) AddedFields() []string {
-	return nil
+	var fields []string
+	if m.addrole_id != nil {
+		fields = append(fields, user.FieldRoleID)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
 func (m *UserMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case user.FieldRoleID:
+		return m.AddedRoleID()
+	}
 	return nil, false
 }
 
@@ -1821,6 +1979,13 @@ func (m *UserMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *UserMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case user.FieldRoleID:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddRoleID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User numeric field %s", name)
 }
@@ -1852,6 +2017,12 @@ func (m *UserMutation) ClearedFields() []string {
 	}
 	if m.FieldCleared(user.FieldSecret) {
 		fields = append(fields, user.FieldSecret)
+	}
+	if m.FieldCleared(user.FieldRoleID) {
+		fields = append(fields, user.FieldRoleID)
+	}
+	if m.FieldCleared(user.FieldAPIKey) {
+		fields = append(fields, user.FieldAPIKey)
 	}
 	if m.FieldCleared(user.FieldWelcomeEmailSent) {
 		fields = append(fields, user.FieldWelcomeEmailSent)
@@ -1894,6 +2065,12 @@ func (m *UserMutation) ClearField(name string) error {
 	case user.FieldSecret:
 		m.ClearSecret()
 		return nil
+	case user.FieldRoleID:
+		m.ClearRoleID()
+		return nil
+	case user.FieldAPIKey:
+		m.ClearAPIKey()
+		return nil
 	case user.FieldWelcomeEmailSent:
 		m.ClearWelcomeEmailSent()
 		return nil
@@ -1931,6 +2108,12 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldSecret:
 		m.ResetSecret()
+		return nil
+	case user.FieldRoleID:
+		m.ResetRoleID()
+		return nil
+	case user.FieldAPIKey:
+		m.ResetAPIKey()
 		return nil
 	case user.FieldWelcomeEmailSent:
 		m.ResetWelcomeEmailSent()

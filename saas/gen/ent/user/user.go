@@ -31,6 +31,10 @@ const (
 	FieldPassword = "password"
 	// FieldSecret holds the string denoting the secret field in the database.
 	FieldSecret = "secret"
+	// FieldRoleID holds the string denoting the role_id field in the database.
+	FieldRoleID = "role_id"
+	// FieldAPIKey holds the string denoting the api_key field in the database.
+	FieldAPIKey = "api_key"
 	// FieldWelcomeEmailSent holds the string denoting the welcome_email_sent field in the database.
 	FieldWelcomeEmailSent = "welcome_email_sent"
 	// Table holds the table name of the user in the database.
@@ -49,6 +53,8 @@ var Columns = []string{
 	FieldStatus,
 	FieldPassword,
 	FieldSecret,
+	FieldRoleID,
+	FieldAPIKey,
 	FieldWelcomeEmailSent,
 }
 
@@ -126,6 +132,16 @@ func ByPassword(opts ...sql.OrderTermOption) OrderOption {
 // BySecret orders the results by the secret field.
 func BySecret(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldSecret, opts...).ToFunc()
+}
+
+// ByRoleID orders the results by the role_id field.
+func ByRoleID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRoleID, opts...).ToFunc()
+}
+
+// ByAPIKey orders the results by the api_key field.
+func ByAPIKey(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAPIKey, opts...).ToFunc()
 }
 
 // ByWelcomeEmailSent orders the results by the welcome_email_sent field.

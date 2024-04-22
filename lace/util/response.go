@@ -14,10 +14,10 @@ type Response struct {
 
 // ResponseError ...
 type ResponseError struct {
-	Message    string        `json:"message,omitempty"`
-	StatusCode int           `json:"statusCode,omitempty"`
-	Code       string        `json:"code,omitempty"`
-	Errors     []interface{} `json:"errors,omitempty"`
+	Message    string      `json:"message,omitempty"`
+	StatusCode int         `json:"statusCode,omitempty"`
+	Code       string      `json:"code,omitempty"`
+	Errors     interface{} `json:"errors,omitempty"`
 }
 
 // Send ResponseError to HTTP in JSON format

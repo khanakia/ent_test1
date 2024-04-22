@@ -10,7 +10,7 @@ type Environment string
 
 const (
 	Dev  Environment = "dev"
-	Qa   Environment = "qa"
+	Stag Environment = "stag"
 	Prod Environment = "prod"
 )
 
@@ -26,8 +26,8 @@ func (rcv *Environment) UnmarshalBinary(data []byte) error {
 	switch str := string(data); str {
 	case "dev":
 		*rcv = Dev
-	case "qa":
-		*rcv = Qa
+	case "stag":
+		*rcv = Stag
 	case "prod":
 		*rcv = Prod
 	default:

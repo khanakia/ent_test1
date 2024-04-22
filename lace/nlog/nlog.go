@@ -15,11 +15,12 @@ func (logger Logger) Version() string {
 	return "0.03"
 }
 
-func New() Logger {
-	// if len(path) == 0 {
-	// 	path = "./logs/app.log"
-	// }
-	path := "./logs/app.log"
+func New(path string) Logger {
+	if len(path) == 0 {
+		path = "./logs/app.log"
+	}
+	// fmt.Println(path)
+	// path := "./logs/app.log"
 	w := zapcore.AddSync(&lumberjack.Logger{
 		Filename:   path,
 		MaxSize:    10, // megabytes

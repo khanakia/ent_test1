@@ -109,6 +109,16 @@ func Secret(v string) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldSecret, v))
 }
 
+// RoleID applies equality check predicate on the "role_id" field. It's identical to RoleIDEQ.
+func RoleID(v int) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldRoleID, v))
+}
+
+// APIKey applies equality check predicate on the "api_key" field. It's identical to APIKeyEQ.
+func APIKey(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldAPIKey, v))
+}
+
 // WelcomeEmailSent applies equality check predicate on the "welcome_email_sent" field. It's identical to WelcomeEmailSentEQ.
 func WelcomeEmailSent(v bool) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldWelcomeEmailSent, v))
@@ -672,6 +682,131 @@ func SecretEqualFold(v string) predicate.User {
 // SecretContainsFold applies the ContainsFold predicate on the "secret" field.
 func SecretContainsFold(v string) predicate.User {
 	return predicate.User(sql.FieldContainsFold(FieldSecret, v))
+}
+
+// RoleIDEQ applies the EQ predicate on the "role_id" field.
+func RoleIDEQ(v int) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldRoleID, v))
+}
+
+// RoleIDNEQ applies the NEQ predicate on the "role_id" field.
+func RoleIDNEQ(v int) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldRoleID, v))
+}
+
+// RoleIDIn applies the In predicate on the "role_id" field.
+func RoleIDIn(vs ...int) predicate.User {
+	return predicate.User(sql.FieldIn(FieldRoleID, vs...))
+}
+
+// RoleIDNotIn applies the NotIn predicate on the "role_id" field.
+func RoleIDNotIn(vs ...int) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldRoleID, vs...))
+}
+
+// RoleIDGT applies the GT predicate on the "role_id" field.
+func RoleIDGT(v int) predicate.User {
+	return predicate.User(sql.FieldGT(FieldRoleID, v))
+}
+
+// RoleIDGTE applies the GTE predicate on the "role_id" field.
+func RoleIDGTE(v int) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldRoleID, v))
+}
+
+// RoleIDLT applies the LT predicate on the "role_id" field.
+func RoleIDLT(v int) predicate.User {
+	return predicate.User(sql.FieldLT(FieldRoleID, v))
+}
+
+// RoleIDLTE applies the LTE predicate on the "role_id" field.
+func RoleIDLTE(v int) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldRoleID, v))
+}
+
+// RoleIDIsNil applies the IsNil predicate on the "role_id" field.
+func RoleIDIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldRoleID))
+}
+
+// RoleIDNotNil applies the NotNil predicate on the "role_id" field.
+func RoleIDNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldRoleID))
+}
+
+// APIKeyEQ applies the EQ predicate on the "api_key" field.
+func APIKeyEQ(v string) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldAPIKey, v))
+}
+
+// APIKeyNEQ applies the NEQ predicate on the "api_key" field.
+func APIKeyNEQ(v string) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldAPIKey, v))
+}
+
+// APIKeyIn applies the In predicate on the "api_key" field.
+func APIKeyIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldIn(FieldAPIKey, vs...))
+}
+
+// APIKeyNotIn applies the NotIn predicate on the "api_key" field.
+func APIKeyNotIn(vs ...string) predicate.User {
+	return predicate.User(sql.FieldNotIn(FieldAPIKey, vs...))
+}
+
+// APIKeyGT applies the GT predicate on the "api_key" field.
+func APIKeyGT(v string) predicate.User {
+	return predicate.User(sql.FieldGT(FieldAPIKey, v))
+}
+
+// APIKeyGTE applies the GTE predicate on the "api_key" field.
+func APIKeyGTE(v string) predicate.User {
+	return predicate.User(sql.FieldGTE(FieldAPIKey, v))
+}
+
+// APIKeyLT applies the LT predicate on the "api_key" field.
+func APIKeyLT(v string) predicate.User {
+	return predicate.User(sql.FieldLT(FieldAPIKey, v))
+}
+
+// APIKeyLTE applies the LTE predicate on the "api_key" field.
+func APIKeyLTE(v string) predicate.User {
+	return predicate.User(sql.FieldLTE(FieldAPIKey, v))
+}
+
+// APIKeyContains applies the Contains predicate on the "api_key" field.
+func APIKeyContains(v string) predicate.User {
+	return predicate.User(sql.FieldContains(FieldAPIKey, v))
+}
+
+// APIKeyHasPrefix applies the HasPrefix predicate on the "api_key" field.
+func APIKeyHasPrefix(v string) predicate.User {
+	return predicate.User(sql.FieldHasPrefix(FieldAPIKey, v))
+}
+
+// APIKeyHasSuffix applies the HasSuffix predicate on the "api_key" field.
+func APIKeyHasSuffix(v string) predicate.User {
+	return predicate.User(sql.FieldHasSuffix(FieldAPIKey, v))
+}
+
+// APIKeyIsNil applies the IsNil predicate on the "api_key" field.
+func APIKeyIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldAPIKey))
+}
+
+// APIKeyNotNil applies the NotNil predicate on the "api_key" field.
+func APIKeyNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldAPIKey))
+}
+
+// APIKeyEqualFold applies the EqualFold predicate on the "api_key" field.
+func APIKeyEqualFold(v string) predicate.User {
+	return predicate.User(sql.FieldEqualFold(FieldAPIKey, v))
+}
+
+// APIKeyContainsFold applies the ContainsFold predicate on the "api_key" field.
+func APIKeyContainsFold(v string) predicate.User {
+	return predicate.User(sql.FieldContainsFold(FieldAPIKey, v))
 }
 
 // WelcomeEmailSentEQ applies the EQ predicate on the "welcome_email_sent" field.

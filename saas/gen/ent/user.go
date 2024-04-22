@@ -35,6 +35,10 @@ type User struct {
 	Password string `json:"-"`
 	// Secret holds the value of the "secret" field.
 	Secret string `json:"-"`
+	// RoleID holds the value of the "role_id" field.
+	RoleID int `json:"role_id,omitempty"`
+	// APIKey holds the value of the "api_key" field.
+	APIKey string `json:"api_key,omitempty"`
 	// WelcomeEmailSent holds the value of the "welcome_email_sent" field.
 	WelcomeEmailSent bool `json:"welcome_email_sent,omitempty"`
 	selectValues     sql.SelectValues
@@ -47,7 +51,9 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldStatus, user.FieldWelcomeEmailSent:
 			values[i] = new(sql.NullBool)
-		case user.FieldID, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldCompany, user.FieldPassword, user.FieldSecret:
+		case user.FieldRoleID:
+			values[i] = new(sql.NullInt64)
+		case user.FieldID, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldCompany, user.FieldPassword, user.FieldSecret, user.FieldAPIKey:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -126,6 +132,18 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.Secret = value.String
 			}
+		case user.FieldRoleID:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field role_id", values[i])
+			} else if value.Valid {
+				u.RoleID = int(value.Int64)
+			}
+		case user.FieldAPIKey:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field api_key", values[i])
+			} else if value.Valid {
+				u.APIKey = value.String
+			}
 		case user.FieldWelcomeEmailSent:
 			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field welcome_email_sent", values[i])
@@ -192,6 +210,12 @@ func (u *User) String() string {
 	builder.WriteString("password=<sensitive>")
 	builder.WriteString(", ")
 	builder.WriteString("secret=<sensitive>")
+	builder.WriteString(", ")
+	builder.WriteString("role_id=")
+	builder.WriteString(fmt.Sprintf("%v", u.RoleID))
+	builder.WriteString(", ")
+	builder.WriteString("api_key=")
+	builder.WriteString(u.APIKey)
 	builder.WriteString(", ")
 	builder.WriteString("welcome_email_sent=")
 	builder.WriteString(fmt.Sprintf("%v", u.WelcomeEmailSent))

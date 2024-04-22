@@ -13,6 +13,8 @@ import (
 	"lace/cli"
 )
 
+var plugins Plugin
+
 func New() Plugin {
 	cli := cli.New()
 
@@ -20,19 +22,27 @@ func New() Plugin {
 
 	db := InitDB(appcfg)
 
-	return Plugin{
-		Cli:   cli,
-		Nlog:  nlog.New(),
-		DB:    db,
-		EntDB: entdb.New(db),
+	plugins = Plugin{
+		Cli:       cli,
+		Nlog:      nlog.New(appcfg.LogFile),
+		DB:        db,
+		EntDB:     entdb.New(db),
+		AppConfig: appcfg,
 	}
+
+	return plugins
+}
+
+func GetPlugins() Plugin {
+	return plugins
 }
 
 type Plugin struct {
-	Cli   cli.Cli
-	Nlog  nlog.Logger
-	DB    db.DB
-	EntDB entdb.EntDB
+	Cli       cli.Cli
+	Nlog      nlog.Logger
+	DB        db.DB
+	EntDB     entdb.EntDB
+	AppConfig *appconfig.AppConfig
 }
 
 func InitDB(cfg *appconfig.AppConfig) *sql.DB {

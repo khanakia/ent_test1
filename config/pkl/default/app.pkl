@@ -1,10 +1,21 @@
 amends "../AppConfig.pkl"
 
+appName = "saasfly"
+
+appKey = "saasfly"
+
 hostname = "localhost"
 
 port = "7001"
 
 environment = "dev"
+
+logFile = "/Volumes/D/www/projects/solverhood/analyzifygo_2024/logs/app.log"
+
+nats {
+  appKey = "anago"
+  url = "nats://localhost:4222"
+}
 
 database {
   host = "localhost"
@@ -13,4 +24,8 @@ database {
   password = "root"
   dbName = "test"
   sslmode= "disable"
+}
+
+graphql {
+  key = "1234"
 }

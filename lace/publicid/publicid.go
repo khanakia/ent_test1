@@ -11,7 +11,7 @@ import (
 // Fixed nanoid parameters used in the Rails application.
 const (
 	alphabet = "0123456789abcdefghijklmnopqrstuvwxyz"
-	length   = 21
+	length   = 24
 )
 
 // New generates a unique public ID.

@@ -1,0 +1,16 @@
+# https://taskfile.dev
+
+version: '3'
+
+# dotenv: ['.env']
+
+includes:
+  saas:
+    taskfile: ./saas/Taskfile.yml
+    dir: ./saas
+  gql:
+    taskfile: ./gql/Taskfile.yml
+    dir: ./gql
+  configmgr:
+    taskfile: ./configmgr/Taskfile.yml
+    dir: ./configmgr

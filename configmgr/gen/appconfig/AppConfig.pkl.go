@@ -9,6 +9,10 @@ import (
 )
 
 type AppConfig struct {
+	AppName string `pkl:"appName"`
+
+	AppKey string `pkl:"appKey"`
+
 	// The hostname that this server responds to.
 	Hostname string `pkl:"hostname"`
 
@@ -18,8 +22,14 @@ type AppConfig struct {
 	// The environment to deploy to.
 	Environment environment.Environment `pkl:"environment"`
 
+	LogFile string `pkl:"logFile"`
+
 	// The database connection for this application
 	Database *Database `pkl:"database"`
+
+	Nats *Nats `pkl:"nats"`
+
+	Graphql *Graphql `pkl:"graphql"`
 }
 
 // LoadFromPath loads the pkl module at the given path and evaluates it into a AppConfig

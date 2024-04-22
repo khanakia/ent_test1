@@ -141,6 +141,34 @@ func (uc *UserCreate) SetNillableSecret(s *string) *UserCreate {
 	return uc
 }
 
+// SetRoleID sets the "role_id" field.
+func (uc *UserCreate) SetRoleID(i int) *UserCreate {
+	uc.mutation.SetRoleID(i)
+	return uc
+}
+
+// SetNillableRoleID sets the "role_id" field if the given value is not nil.
+func (uc *UserCreate) SetNillableRoleID(i *int) *UserCreate {
+	if i != nil {
+		uc.SetRoleID(*i)
+	}
+	return uc
+}
+
+// SetAPIKey sets the "api_key" field.
+func (uc *UserCreate) SetAPIKey(s string) *UserCreate {
+	uc.mutation.SetAPIKey(s)
+	return uc
+}
+
+// SetNillableAPIKey sets the "api_key" field if the given value is not nil.
+func (uc *UserCreate) SetNillableAPIKey(s *string) *UserCreate {
+	if s != nil {
+		uc.SetAPIKey(*s)
+	}
+	return uc
+}
+
 // SetWelcomeEmailSent sets the "welcome_email_sent" field.
 func (uc *UserCreate) SetWelcomeEmailSent(b bool) *UserCreate {
 	uc.mutation.SetWelcomeEmailSent(b)
@@ -298,6 +326,14 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Secret(); ok {
 		_spec.SetField(user.FieldSecret, field.TypeString, value)
 		_node.Secret = value
+	}
+	if value, ok := uc.mutation.RoleID(); ok {
+		_spec.SetField(user.FieldRoleID, field.TypeInt, value)
+		_node.RoleID = value
+	}
+	if value, ok := uc.mutation.APIKey(); ok {
+		_spec.SetField(user.FieldAPIKey, field.TypeString, value)
+		_node.APIKey = value
 	}
 	if value, ok := uc.mutation.WelcomeEmailSent(); ok {
 		_spec.SetField(user.FieldWelcomeEmailSent, field.TypeBool, value)
@@ -508,6 +544,48 @@ func (u *UserUpsert) UpdateSecret() *UserUpsert {
 // ClearSecret clears the value of the "secret" field.
 func (u *UserUpsert) ClearSecret() *UserUpsert {
 	u.SetNull(user.FieldSecret)
+	return u
+}
+
+// SetRoleID sets the "role_id" field.
+func (u *UserUpsert) SetRoleID(v int) *UserUpsert {
+	u.Set(user.FieldRoleID, v)
+	return u
+}
+
+// UpdateRoleID sets the "role_id" field to the value that was provided on create.
+func (u *UserUpsert) UpdateRoleID() *UserUpsert {
+	u.SetExcluded(user.FieldRoleID)
+	return u
+}
+
+// AddRoleID adds v to the "role_id" field.
+func (u *UserUpsert) AddRoleID(v int) *UserUpsert {
+	u.Add(user.FieldRoleID, v)
+	return u
+}
+
+// ClearRoleID clears the value of the "role_id" field.
+func (u *UserUpsert) ClearRoleID() *UserUpsert {
+	u.SetNull(user.FieldRoleID)
+	return u
+}
+
+// SetAPIKey sets the "api_key" field.
+func (u *UserUpsert) SetAPIKey(v string) *UserUpsert {
+	u.Set(user.FieldAPIKey, v)
+	return u
+}
+
+// UpdateAPIKey sets the "api_key" field to the value that was provided on create.
+func (u *UserUpsert) UpdateAPIKey() *UserUpsert {
+	u.SetExcluded(user.FieldAPIKey)
+	return u
+}
+
+// ClearAPIKey clears the value of the "api_key" field.
+func (u *UserUpsert) ClearAPIKey() *UserUpsert {
+	u.SetNull(user.FieldAPIKey)
 	return u
 }
 
@@ -756,6 +834,55 @@ func (u *UserUpsertOne) UpdateSecret() *UserUpsertOne {
 func (u *UserUpsertOne) ClearSecret() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearSecret()
+	})
+}
+
+// SetRoleID sets the "role_id" field.
+func (u *UserUpsertOne) SetRoleID(v int) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetRoleID(v)
+	})
+}
+
+// AddRoleID adds v to the "role_id" field.
+func (u *UserUpsertOne) AddRoleID(v int) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.AddRoleID(v)
+	})
+}
+
+// UpdateRoleID sets the "role_id" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateRoleID() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateRoleID()
+	})
+}
+
+// ClearRoleID clears the value of the "role_id" field.
+func (u *UserUpsertOne) ClearRoleID() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearRoleID()
+	})
+}
+
+// SetAPIKey sets the "api_key" field.
+func (u *UserUpsertOne) SetAPIKey(v string) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetAPIKey(v)
+	})
+}
+
+// UpdateAPIKey sets the "api_key" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateAPIKey() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateAPIKey()
+	})
+}
+
+// ClearAPIKey clears the value of the "api_key" field.
+func (u *UserUpsertOne) ClearAPIKey() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearAPIKey()
 	})
 }
 
@@ -1174,6 +1301,55 @@ func (u *UserUpsertBulk) UpdateSecret() *UserUpsertBulk {
 func (u *UserUpsertBulk) ClearSecret() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearSecret()
+	})
+}
+
+// SetRoleID sets the "role_id" field.
+func (u *UserUpsertBulk) SetRoleID(v int) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetRoleID(v)
+	})
+}
+
+// AddRoleID adds v to the "role_id" field.
+func (u *UserUpsertBulk) AddRoleID(v int) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.AddRoleID(v)
+	})
+}
+
+// UpdateRoleID sets the "role_id" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateRoleID() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateRoleID()
+	})
+}
+
+// ClearRoleID clears the value of the "role_id" field.
+func (u *UserUpsertBulk) ClearRoleID() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearRoleID()
+	})
+}
+
+// SetAPIKey sets the "api_key" field.
+func (u *UserUpsertBulk) SetAPIKey(v string) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetAPIKey(v)
+	})
+}
+
+// UpdateAPIKey sets the "api_key" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateAPIKey() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateAPIKey()
+	})
+}
+
+// ClearAPIKey clears the value of the "api_key" field.
+func (u *UserUpsertBulk) ClearAPIKey() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearAPIKey()
 	})
 }
 

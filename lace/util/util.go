@@ -2,7 +2,13 @@
 package util
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"math"
 	"net/http"
+	"os"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -41,4 +47,66 @@ func CORSMiddleware() gin.HandlerFunc {
 
 		c.Next()
 	}
+}
+func IsCli() bool {
+	return os.Getenv("appmode") == "cli"
+}
+
+func SetCliAppMode() {
+	err := os.Setenv("appmode", "cli")
+	fmt.Println(err)
+}
+
+func InterfaceToStruct(in, out interface{}) error {
+	buf := new(bytes.Buffer)
+
+	err := json.NewEncoder(buf).Encode(in)
+	if err != nil {
+		return err
+	}
+
+	err = json.NewDecoder(buf).Decode(out)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func InterfaceUnmarshal(in, out interface{}) error {
+	dbByte, err := json.Marshal(in)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(dbByte, out)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func GetTotalPages(totalCount, limit int) int {
+	return int(math.Ceil(float64(totalCount) / float64(limit)))
+}
+
+type Name struct {
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+}
+
+func ParseName(fullName string) Name {
+	nameParts := strings.Split(strings.TrimSpace(fullName), " ")
+
+	var name Name
+	if len(nameParts) > 0 {
+		name.FirstName = nameParts[0]
+	}
+
+	if len(nameParts) > 1 {
+		name.LastName = nameParts[1]
+	}
+
+	return name
 }

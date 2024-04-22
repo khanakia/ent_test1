@@ -9,8 +9,9 @@ import (
 func All() {
 
 }
+
 func GetAppConfig() *appconfig.AppConfig {
-	cfg, err := appconfig.LoadFromPath(context.Background(), "../config/pkl/local/app.pkl")
+	cfg, err := appconfig.LoadFromPath(context.Background(), "../config/pkl/default/app.pkl")
 	if err != nil {
 		panic(err)
 	}
@@ -19,7 +20,7 @@ func GetAppConfig() *appconfig.AppConfig {
 }
 
 func GetCacheConfig() *cacheconfig.CacheConfig {
-	cfg, err := cacheconfig.LoadFromPath(context.Background(), "../config/pkl/local/cache.pkl")
+	cfg, err := cacheconfig.LoadFromPath(context.Background(), "../config/pkl/default/cache.pkl")
 	if err != nil {
 		panic(err)
 	}

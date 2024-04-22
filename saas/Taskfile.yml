@@ -2,7 +2,7 @@
 
 version: '3'
 
-dotenv: ['.env']
+# dotenv: ['.env']
 
 tasks:
   default:
@@ -26,12 +26,6 @@ tasks:
     cmds:
       - wire
 
-  gql:
-    desc: generate gqlgen code from schema files
-    dir: apigql
-    cmds:
-      - go run github.com/99designs/gqlgen generate
-
   entg:
     desc: regenerate ent code after we make any edits to `schema/*.go`
     cmds:
@@ -49,7 +43,8 @@ tasks:
       - go run -mod=mod entgo.io/ent/cmd/ent new --target "schema" {{.CLI_ARGS}}
   
   build:
-    desc: create build in ./tmp/main
+    desc: create build files saas, api, cli 
     cmds:
-      - go build -o ./tmp/main
-      - go build -o ./tmp/cli ./cmd/cli
+      - go build -o ../tmp/saas
+      - go build -o ../tmp/api ./cmd/api
+      - go build -o ../tmp/cli ./cmd/cli

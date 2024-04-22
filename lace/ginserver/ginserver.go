@@ -44,7 +44,7 @@ func (server Server) pingHandler(c *gin.Context) {
 func New(opts ...Option) Server {
 	cfg := config{
 		AppName: "app",
-		Port:    "7001",
+		Port:    "2131",
 		IsProd:  true,
 	}
 

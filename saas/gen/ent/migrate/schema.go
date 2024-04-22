@@ -45,6 +45,8 @@ var (
 		{Name: "status", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "password", Type: field.TypeString, Nullable: true},
 		{Name: "secret", Type: field.TypeString, Nullable: true},
+		{Name: "role_id", Type: field.TypeInt, Nullable: true},
+		{Name: "api_key", Type: field.TypeString, Nullable: true},
 		{Name: "welcome_email_sent", Type: field.TypeBool, Nullable: true},
 	}
 	// UsersTable holds the schema information for the "users" table.

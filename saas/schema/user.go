@@ -53,6 +53,8 @@ func (User) Fields() []ent.Field {
 			Sensitive().
 			Optional(),
 		field.String("secret").Sensitive().Optional(),
+		field.Int("role_id").Optional(),
+		field.String("api_key").Optional(),
 		field.Bool("welcome_email_sent").Annotations(
 		// entgql.Skip(),
 		).Optional(),

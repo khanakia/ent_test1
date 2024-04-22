@@ -195,6 +195,53 @@ func (uu *UserUpdate) ClearSecret() *UserUpdate {
 	return uu
 }
 
+// SetRoleID sets the "role_id" field.
+func (uu *UserUpdate) SetRoleID(i int) *UserUpdate {
+	uu.mutation.ResetRoleID()
+	uu.mutation.SetRoleID(i)
+	return uu
+}
+
+// SetNillableRoleID sets the "role_id" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableRoleID(i *int) *UserUpdate {
+	if i != nil {
+		uu.SetRoleID(*i)
+	}
+	return uu
+}
+
+// AddRoleID adds i to the "role_id" field.
+func (uu *UserUpdate) AddRoleID(i int) *UserUpdate {
+	uu.mutation.AddRoleID(i)
+	return uu
+}
+
+// ClearRoleID clears the value of the "role_id" field.
+func (uu *UserUpdate) ClearRoleID() *UserUpdate {
+	uu.mutation.ClearRoleID()
+	return uu
+}
+
+// SetAPIKey sets the "api_key" field.
+func (uu *UserUpdate) SetAPIKey(s string) *UserUpdate {
+	uu.mutation.SetAPIKey(s)
+	return uu
+}
+
+// SetNillableAPIKey sets the "api_key" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableAPIKey(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetAPIKey(*s)
+	}
+	return uu
+}
+
+// ClearAPIKey clears the value of the "api_key" field.
+func (uu *UserUpdate) ClearAPIKey() *UserUpdate {
+	uu.mutation.ClearAPIKey()
+	return uu
+}
+
 // SetWelcomeEmailSent sets the "welcome_email_sent" field.
 func (uu *UserUpdate) SetWelcomeEmailSent(b bool) *UserUpdate {
 	uu.mutation.SetWelcomeEmailSent(b)
@@ -321,6 +368,21 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.SecretCleared() {
 		_spec.ClearField(user.FieldSecret, field.TypeString)
+	}
+	if value, ok := uu.mutation.RoleID(); ok {
+		_spec.SetField(user.FieldRoleID, field.TypeInt, value)
+	}
+	if value, ok := uu.mutation.AddedRoleID(); ok {
+		_spec.AddField(user.FieldRoleID, field.TypeInt, value)
+	}
+	if uu.mutation.RoleIDCleared() {
+		_spec.ClearField(user.FieldRoleID, field.TypeInt)
+	}
+	if value, ok := uu.mutation.APIKey(); ok {
+		_spec.SetField(user.FieldAPIKey, field.TypeString, value)
+	}
+	if uu.mutation.APIKeyCleared() {
+		_spec.ClearField(user.FieldAPIKey, field.TypeString)
 	}
 	if value, ok := uu.mutation.WelcomeEmailSent(); ok {
 		_spec.SetField(user.FieldWelcomeEmailSent, field.TypeBool, value)
@@ -516,6 +578,53 @@ func (uuo *UserUpdateOne) ClearSecret() *UserUpdateOne {
 	return uuo
 }
 
+// SetRoleID sets the "role_id" field.
+func (uuo *UserUpdateOne) SetRoleID(i int) *UserUpdateOne {
+	uuo.mutation.ResetRoleID()
+	uuo.mutation.SetRoleID(i)
+	return uuo
+}
+
+// SetNillableRoleID sets the "role_id" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableRoleID(i *int) *UserUpdateOne {
+	if i != nil {
+		uuo.SetRoleID(*i)
+	}
+	return uuo
+}
+
+// AddRoleID adds i to the "role_id" field.
+func (uuo *UserUpdateOne) AddRoleID(i int) *UserUpdateOne {
+	uuo.mutation.AddRoleID(i)
+	return uuo
+}
+
+// ClearRoleID clears the value of the "role_id" field.
+func (uuo *UserUpdateOne) ClearRoleID() *UserUpdateOne {
+	uuo.mutation.ClearRoleID()
+	return uuo
+}
+
+// SetAPIKey sets the "api_key" field.
+func (uuo *UserUpdateOne) SetAPIKey(s string) *UserUpdateOne {
+	uuo.mutation.SetAPIKey(s)
+	return uuo
+}
+
+// SetNillableAPIKey sets the "api_key" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableAPIKey(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetAPIKey(*s)
+	}
+	return uuo
+}
+
+// ClearAPIKey clears the value of the "api_key" field.
+func (uuo *UserUpdateOne) ClearAPIKey() *UserUpdateOne {
+	uuo.mutation.ClearAPIKey()
+	return uuo
+}
+
 // SetWelcomeEmailSent sets the "welcome_email_sent" field.
 func (uuo *UserUpdateOne) SetWelcomeEmailSent(b bool) *UserUpdateOne {
 	uuo.mutation.SetWelcomeEmailSent(b)
@@ -672,6 +781,21 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.SecretCleared() {
 		_spec.ClearField(user.FieldSecret, field.TypeString)
+	}
+	if value, ok := uuo.mutation.RoleID(); ok {
+		_spec.SetField(user.FieldRoleID, field.TypeInt, value)
+	}
+	if value, ok := uuo.mutation.AddedRoleID(); ok {
+		_spec.AddField(user.FieldRoleID, field.TypeInt, value)
+	}
+	if uuo.mutation.RoleIDCleared() {
+		_spec.ClearField(user.FieldRoleID, field.TypeInt)
+	}
+	if value, ok := uuo.mutation.APIKey(); ok {
+		_spec.SetField(user.FieldAPIKey, field.TypeString, value)
+	}
+	if uuo.mutation.APIKeyCleared() {
+		_spec.ClearField(user.FieldAPIKey, field.TypeString)
 	}
 	if value, ok := uuo.mutation.WelcomeEmailSent(); ok {
 		_spec.SetField(user.FieldWelcomeEmailSent, field.TypeBool, value)

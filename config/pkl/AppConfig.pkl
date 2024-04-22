@@ -4,6 +4,12 @@ module AppConfig
 
 import "package://pkg.pkl-lang.org/pkl-go/pkl.golang@0.5.3#/go.pkl"
 
+// just a app name without space, caps key
+appName: String
+
+// just a unique id for each msvc
+appKey: String
+
 /// The hostname that this server responds to.
 hostname: String
 
@@ -13,8 +19,19 @@ port: String
 /// The environment to deploy to.
 environment: Environment
 
+logFile: String
+
 /// The database connection for this application
 database: Database
+
+nats: Nats
+
+graphql: Graphql
+
+class Nats {
+  appKey: String
+  url: String
+}
 
 class Database {
   /// The username for this database.
@@ -35,4 +52,9 @@ class Database {
   sslmode: String
 }
 
-typealias Environment = "dev"|"qa"|"prod"
+class Graphql {
+  // internal key to access the playground
+  key: String
+}
+
+typealias Environment = "dev"|"stag"|"prod"
