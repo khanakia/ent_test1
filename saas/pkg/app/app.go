@@ -5,8 +5,10 @@ import (
 	"configmgr/gen/appconfig"
 	"database/sql"
 	"fmt"
+	"saas/pkg/cacherdbms"
 	"saas/pkg/entdb"
 
+	"lace/cache"
 	"lace/db"
 	"lace/nlog"
 
@@ -22,12 +24,15 @@ func New() Plugin {
 
 	db := InitDB(appcfg)
 
+	entClient := entdb.New(db)
+
 	plugins = Plugin{
 		Cli:       cli,
 		Nlog:      nlog.New(appcfg.LogFile),
 		DB:        db,
-		EntDB:     entdb.New(db),
+		EntDB:     entClient,
 		AppConfig: appcfg,
+		Cache:     cacherdbms.New(entClient.Client()),
 	}
 
 	return plugins
@@ -42,6 +47,7 @@ type Plugin struct {
 	Nlog      nlog.Logger
 	DB        db.DB
 	EntDB     entdb.EntDB
+	Cache     cache.Store
 	AppConfig *appconfig.AppConfig
 }
 

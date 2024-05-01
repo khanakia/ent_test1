@@ -8,6 +8,24 @@ import (
 )
 
 var (
+	// AdminsColumns holds the columns for the "admins" table.
+	AdminsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "email", Type: field.TypeString, Unique: true},
+		{Name: "first_name", Type: field.TypeString, Nullable: true},
+		{Name: "last_name", Type: field.TypeString, Nullable: true},
+		{Name: "status", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "password", Type: field.TypeString, Nullable: true},
+		{Name: "secret", Type: field.TypeString, Nullable: true},
+	}
+	// AdminsTable holds the schema information for the "admins" table.
+	AdminsTable = &schema.Table{
+		Name:       "admins",
+		Columns:    AdminsColumns,
+		PrimaryKey: []*schema.Column{AdminsColumns[0]},
+	}
 	// KachesColumns holds the columns for the "kaches" table.
 	KachesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString, Unique: true, Size: 36},
@@ -22,6 +40,50 @@ var (
 		Columns:    KachesColumns,
 		PrimaryKey: []*schema.Column{KachesColumns[0]},
 	}
+	// KeyvaluesColumns holds the columns for the "keyvalues" table.
+	KeyvaluesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true, Size: 36},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "value", Type: field.TypeString, Nullable: true, Size: 2147483647},
+	}
+	// KeyvaluesTable holds the schema information for the "keyvalues" table.
+	KeyvaluesTable = &schema.Table{
+		Name:       "keyvalues",
+		Columns:    KeyvaluesColumns,
+		PrimaryKey: []*schema.Column{KeyvaluesColumns[0]},
+	}
+	// MailConnectionsColumns holds the columns for the "mail_connections" table.
+	MailConnectionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString, Nullable: true},
+		{Name: "host", Type: field.TypeString, Nullable: true},
+		{Name: "port", Type: field.TypeString, Nullable: true},
+		{Name: "username", Type: field.TypeString, Nullable: true},
+		{Name: "password", Type: field.TypeString, Nullable: true},
+		{Name: "status", Type: field.TypeBool, Nullable: true, Default: false},
+	}
+	// MailConnectionsTable holds the schema information for the "mail_connections" table.
+	MailConnectionsTable = &schema.Table{
+		Name:       "mail_connections",
+		Columns:    MailConnectionsColumns,
+		PrimaryKey: []*schema.Column{MailConnectionsColumns[0]},
+	}
+	// PlansColumns holds the columns for the "plans" table.
+	PlansColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "name", Type: field.TypeString, Nullable: true},
+		{Name: "excerpt", Type: field.TypeString, Nullable: true},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "status", Type: field.TypeBool, Nullable: true, Default: false},
+	}
+	// PlansTable holds the schema information for the "plans" table.
+	PlansTable = &schema.Table{
+		Name:       "plans",
+		Columns:    PlansColumns,
+		PrimaryKey: []*schema.Column{PlansColumns[0]},
+	}
 	// ProjectsColumns holds the columns for the "projects" table.
 	ProjectsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt32, Increment: true},
@@ -33,19 +95,60 @@ var (
 		Columns:    ProjectsColumns,
 		PrimaryKey: []*schema.Column{ProjectsColumns[0]},
 	}
+	// SessionsColumns holds the columns for the "sessions" table.
+	SessionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "ip", Type: field.TypeString, Nullable: true},
+		{Name: "user_agent", Type: field.TypeString, Nullable: true},
+		{Name: "payload", Type: field.TypeString, Nullable: true},
+		{Name: "expires_at", Type: field.TypeTime, Nullable: true},
+		{Name: "user_id", Type: field.TypeString, Nullable: true},
+	}
+	// SessionsTable holds the schema information for the "sessions" table.
+	SessionsTable = &schema.Table{
+		Name:       "sessions",
+		Columns:    SessionsColumns,
+		PrimaryKey: []*schema.Column{SessionsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "sessions_users_sessions",
+				Columns:    []*schema.Column{SessionsColumns[7]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// TempsColumns holds the columns for the "temps" table.
+	TempsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "ip", Type: field.TypeString, Nullable: true},
+		{Name: "type", Type: field.TypeString, Nullable: true},
+		{Name: "body", Type: field.TypeJSON, Nullable: true},
+		{Name: "meta", Type: field.TypeJSON, Nullable: true},
+	}
+	// TempsTable holds the schema information for the "temps" table.
+	TempsTable = &schema.Table{
+		Name:       "temps",
+		Columns:    TempsColumns,
+		PrimaryKey: []*schema.Column{TempsColumns[0]},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeString},
+		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "email", Type: field.TypeString, Unique: true},
+		{Name: "phone", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "first_name", Type: field.TypeString, Nullable: true},
 		{Name: "last_name", Type: field.TypeString, Nullable: true},
 		{Name: "company", Type: field.TypeString, Nullable: true},
 		{Name: "status", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "password", Type: field.TypeString, Nullable: true},
 		{Name: "secret", Type: field.TypeString, Nullable: true},
-		{Name: "role_id", Type: field.TypeInt, Nullable: true},
 		{Name: "api_key", Type: field.TypeString, Nullable: true},
 		{Name: "welcome_email_sent", Type: field.TypeBool, Nullable: true},
 	}
@@ -55,13 +158,107 @@ var (
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
 	}
+	// WorkspacesColumns holds the columns for the "workspaces" table.
+	WorkspacesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "name", Type: field.TypeString, Nullable: true},
+		{Name: "is_personal", Type: field.TypeBool, Nullable: true},
+		{Name: "user_id", Type: field.TypeString, Nullable: true},
+	}
+	// WorkspacesTable holds the schema information for the "workspaces" table.
+	WorkspacesTable = &schema.Table{
+		Name:       "workspaces",
+		Columns:    WorkspacesColumns,
+		PrimaryKey: []*schema.Column{WorkspacesColumns[0]},
+	}
+	// WorkspaceInvitesColumns holds the columns for the "workspace_invites" table.
+	WorkspaceInvitesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "email", Type: field.TypeString, Nullable: true},
+		{Name: "role", Type: field.TypeString, Nullable: true},
+		{Name: "workspace_id", Type: field.TypeString, Nullable: true},
+	}
+	// WorkspaceInvitesTable holds the schema information for the "workspace_invites" table.
+	WorkspaceInvitesTable = &schema.Table{
+		Name:       "workspace_invites",
+		Columns:    WorkspaceInvitesColumns,
+		PrimaryKey: []*schema.Column{WorkspaceInvitesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "workspace_invites_workspaces_workspace_invites",
+				Columns:    []*schema.Column{WorkspaceInvitesColumns[5]},
+				RefColumns: []*schema.Column{WorkspacesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "workspaceinvite_workspace_id_email",
+				Unique:  false,
+				Columns: []*schema.Column{WorkspaceInvitesColumns[5], WorkspaceInvitesColumns[3]},
+			},
+		},
+	}
+	// WorkspaceUsersColumns holds the columns for the "workspace_users" table.
+	WorkspaceUsersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "role", Type: field.TypeString, Nullable: true},
+		{Name: "user_id", Type: field.TypeString},
+		{Name: "workspace_id", Type: field.TypeString},
+	}
+	// WorkspaceUsersTable holds the schema information for the "workspace_users" table.
+	WorkspaceUsersTable = &schema.Table{
+		Name:       "workspace_users",
+		Columns:    WorkspaceUsersColumns,
+		PrimaryKey: []*schema.Column{WorkspaceUsersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "workspace_users_users_user",
+				Columns:    []*schema.Column{WorkspaceUsersColumns[4]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "workspace_users_workspaces_workspace",
+				Columns:    []*schema.Column{WorkspaceUsersColumns[5]},
+				RefColumns: []*schema.Column{WorkspacesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "workspaceuser_workspace_id_user_id",
+				Unique:  true,
+				Columns: []*schema.Column{WorkspaceUsersColumns[5], WorkspaceUsersColumns[4]},
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		AdminsTable,
 		KachesTable,
+		KeyvaluesTable,
+		MailConnectionsTable,
+		PlansTable,
 		ProjectsTable,
+		SessionsTable,
+		TempsTable,
 		UsersTable,
+		WorkspacesTable,
+		WorkspaceInvitesTable,
+		WorkspaceUsersTable,
 	}
 )
 
 func init() {
+	SessionsTable.ForeignKeys[0].RefTable = UsersTable
+	WorkspaceInvitesTable.ForeignKeys[0].RefTable = WorkspacesTable
+	WorkspaceUsersTable.ForeignKeys[0].RefTable = UsersTable
+	WorkspaceUsersTable.ForeignKeys[1].RefTable = WorkspacesTable
 }

@@ -1,7 +1,12 @@
 package util
 
 import (
+	"context"
+
+	"github.com/99designs/gqlgen/graphql"
+	"github.com/cohesivestack/valgo"
 	"github.com/gin-gonic/gin"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 )
 
 // Response ...
@@ -29,4 +34,30 @@ func (r ResponseError) Send(c *gin.Context, code int) {
 	c.JSON(code, gin.H{
 		"error": r,
 	})
+}
+
+// convert the validation errors into the error list so we can return multiple errors on frontend
+func ErrorToGqlError(err error, ctx context.Context) error {
+	errList := gqlerror.List{}
+
+	switch err := err.(type) {
+	case *valgo.Error:
+		for _, e := range err.Errors() {
+			for _, msg := range e.Messages() {
+				errList = append(errList, &gqlerror.Error{
+					Path:    graphql.GetPath(ctx),
+					Message: msg,
+					Extensions: map[string]interface{}{
+						"field": e.Name(),
+					},
+				})
+			}
+		}
+	default:
+		errList = append(errList, &gqlerror.Error{
+			Message: err.Error(),
+		})
+	}
+
+	return errList
 }

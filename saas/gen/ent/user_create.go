@@ -6,7 +6,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"saas/gen/ent/session"
 	"saas/gen/ent/user"
+	"saas/gen/ent/workspace"
+	"saas/gen/ent/workspaceuser"
 	"time"
 
 	"entgo.io/ent/dialect"
@@ -54,6 +57,20 @@ func (uc *UserCreate) SetNillableUpdatedAt(t *time.Time) *UserCreate {
 // SetEmail sets the "email" field.
 func (uc *UserCreate) SetEmail(s string) *UserCreate {
 	uc.mutation.SetEmail(s)
+	return uc
+}
+
+// SetPhone sets the "phone" field.
+func (uc *UserCreate) SetPhone(s string) *UserCreate {
+	uc.mutation.SetPhone(s)
+	return uc
+}
+
+// SetNillablePhone sets the "phone" field if the given value is not nil.
+func (uc *UserCreate) SetNillablePhone(s *string) *UserCreate {
+	if s != nil {
+		uc.SetPhone(*s)
+	}
 	return uc
 }
 
@@ -141,20 +158,6 @@ func (uc *UserCreate) SetNillableSecret(s *string) *UserCreate {
 	return uc
 }
 
-// SetRoleID sets the "role_id" field.
-func (uc *UserCreate) SetRoleID(i int) *UserCreate {
-	uc.mutation.SetRoleID(i)
-	return uc
-}
-
-// SetNillableRoleID sets the "role_id" field if the given value is not nil.
-func (uc *UserCreate) SetNillableRoleID(i *int) *UserCreate {
-	if i != nil {
-		uc.SetRoleID(*i)
-	}
-	return uc
-}
-
 // SetAPIKey sets the "api_key" field.
 func (uc *UserCreate) SetAPIKey(s string) *UserCreate {
 	uc.mutation.SetAPIKey(s)
@@ -195,6 +198,51 @@ func (uc *UserCreate) SetNillableID(s *string) *UserCreate {
 		uc.SetID(*s)
 	}
 	return uc
+}
+
+// AddSessionIDs adds the "sessions" edge to the Session entity by IDs.
+func (uc *UserCreate) AddSessionIDs(ids ...string) *UserCreate {
+	uc.mutation.AddSessionIDs(ids...)
+	return uc
+}
+
+// AddSessions adds the "sessions" edges to the Session entity.
+func (uc *UserCreate) AddSessions(s ...*Session) *UserCreate {
+	ids := make([]string, len(s))
+	for i := range s {
+		ids[i] = s[i].ID
+	}
+	return uc.AddSessionIDs(ids...)
+}
+
+// AddWorkspaceIDs adds the "workspaces" edge to the Workspace entity by IDs.
+func (uc *UserCreate) AddWorkspaceIDs(ids ...string) *UserCreate {
+	uc.mutation.AddWorkspaceIDs(ids...)
+	return uc
+}
+
+// AddWorkspaces adds the "workspaces" edges to the Workspace entity.
+func (uc *UserCreate) AddWorkspaces(w ...*Workspace) *UserCreate {
+	ids := make([]string, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return uc.AddWorkspaceIDs(ids...)
+}
+
+// AddWorkspaceUserIDs adds the "workspace_users" edge to the WorkspaceUser entity by IDs.
+func (uc *UserCreate) AddWorkspaceUserIDs(ids ...string) *UserCreate {
+	uc.mutation.AddWorkspaceUserIDs(ids...)
+	return uc
+}
+
+// AddWorkspaceUsers adds the "workspace_users" edges to the WorkspaceUser entity.
+func (uc *UserCreate) AddWorkspaceUsers(w ...*WorkspaceUser) *UserCreate {
+	ids := make([]string, len(w))
+	for i := range w {
+		ids[i] = w[i].ID
+	}
+	return uc.AddWorkspaceUserIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -303,6 +351,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
 		_node.Email = value
 	}
+	if value, ok := uc.mutation.Phone(); ok {
+		_spec.SetField(user.FieldPhone, field.TypeString, value)
+		_node.Phone = value
+	}
 	if value, ok := uc.mutation.FirstName(); ok {
 		_spec.SetField(user.FieldFirstName, field.TypeString, value)
 		_node.FirstName = value
@@ -327,10 +379,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldSecret, field.TypeString, value)
 		_node.Secret = value
 	}
-	if value, ok := uc.mutation.RoleID(); ok {
-		_spec.SetField(user.FieldRoleID, field.TypeInt, value)
-		_node.RoleID = value
-	}
 	if value, ok := uc.mutation.APIKey(); ok {
 		_spec.SetField(user.FieldAPIKey, field.TypeString, value)
 		_node.APIKey = value
@@ -338,6 +386,61 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.WelcomeEmailSent(); ok {
 		_spec.SetField(user.FieldWelcomeEmailSent, field.TypeBool, value)
 		_node.WelcomeEmailSent = value
+	}
+	if nodes := uc.mutation.SessionsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.SessionsTable,
+			Columns: []string{user.SessionsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(session.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.WorkspacesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   user.WorkspacesTable,
+			Columns: user.WorkspacesPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(workspace.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &WorkspaceUserCreate{config: uc.config, mutation: newWorkspaceUserMutation(uc.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.WorkspaceUsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.WorkspaceUsersTable,
+			Columns: []string{user.WorkspaceUsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(workspaceuser.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }
@@ -436,6 +539,24 @@ func (u *UserUpsert) SetEmail(v string) *UserUpsert {
 // UpdateEmail sets the "email" field to the value that was provided on create.
 func (u *UserUpsert) UpdateEmail() *UserUpsert {
 	u.SetExcluded(user.FieldEmail)
+	return u
+}
+
+// SetPhone sets the "phone" field.
+func (u *UserUpsert) SetPhone(v string) *UserUpsert {
+	u.Set(user.FieldPhone, v)
+	return u
+}
+
+// UpdatePhone sets the "phone" field to the value that was provided on create.
+func (u *UserUpsert) UpdatePhone() *UserUpsert {
+	u.SetExcluded(user.FieldPhone)
+	return u
+}
+
+// ClearPhone clears the value of the "phone" field.
+func (u *UserUpsert) ClearPhone() *UserUpsert {
+	u.SetNull(user.FieldPhone)
 	return u
 }
 
@@ -544,30 +665,6 @@ func (u *UserUpsert) UpdateSecret() *UserUpsert {
 // ClearSecret clears the value of the "secret" field.
 func (u *UserUpsert) ClearSecret() *UserUpsert {
 	u.SetNull(user.FieldSecret)
-	return u
-}
-
-// SetRoleID sets the "role_id" field.
-func (u *UserUpsert) SetRoleID(v int) *UserUpsert {
-	u.Set(user.FieldRoleID, v)
-	return u
-}
-
-// UpdateRoleID sets the "role_id" field to the value that was provided on create.
-func (u *UserUpsert) UpdateRoleID() *UserUpsert {
-	u.SetExcluded(user.FieldRoleID)
-	return u
-}
-
-// AddRoleID adds v to the "role_id" field.
-func (u *UserUpsert) AddRoleID(v int) *UserUpsert {
-	u.Add(user.FieldRoleID, v)
-	return u
-}
-
-// ClearRoleID clears the value of the "role_id" field.
-func (u *UserUpsert) ClearRoleID() *UserUpsert {
-	u.SetNull(user.FieldRoleID)
 	return u
 }
 
@@ -711,6 +808,27 @@ func (u *UserUpsertOne) UpdateEmail() *UserUpsertOne {
 	})
 }
 
+// SetPhone sets the "phone" field.
+func (u *UserUpsertOne) SetPhone(v string) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetPhone(v)
+	})
+}
+
+// UpdatePhone sets the "phone" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdatePhone() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdatePhone()
+	})
+}
+
+// ClearPhone clears the value of the "phone" field.
+func (u *UserUpsertOne) ClearPhone() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearPhone()
+	})
+}
+
 // SetFirstName sets the "first_name" field.
 func (u *UserUpsertOne) SetFirstName(v string) *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
@@ -834,34 +952,6 @@ func (u *UserUpsertOne) UpdateSecret() *UserUpsertOne {
 func (u *UserUpsertOne) ClearSecret() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearSecret()
-	})
-}
-
-// SetRoleID sets the "role_id" field.
-func (u *UserUpsertOne) SetRoleID(v int) *UserUpsertOne {
-	return u.Update(func(s *UserUpsert) {
-		s.SetRoleID(v)
-	})
-}
-
-// AddRoleID adds v to the "role_id" field.
-func (u *UserUpsertOne) AddRoleID(v int) *UserUpsertOne {
-	return u.Update(func(s *UserUpsert) {
-		s.AddRoleID(v)
-	})
-}
-
-// UpdateRoleID sets the "role_id" field to the value that was provided on create.
-func (u *UserUpsertOne) UpdateRoleID() *UserUpsertOne {
-	return u.Update(func(s *UserUpsert) {
-		s.UpdateRoleID()
-	})
-}
-
-// ClearRoleID clears the value of the "role_id" field.
-func (u *UserUpsertOne) ClearRoleID() *UserUpsertOne {
-	return u.Update(func(s *UserUpsert) {
-		s.ClearRoleID()
 	})
 }
 
@@ -1178,6 +1268,27 @@ func (u *UserUpsertBulk) UpdateEmail() *UserUpsertBulk {
 	})
 }
 
+// SetPhone sets the "phone" field.
+func (u *UserUpsertBulk) SetPhone(v string) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetPhone(v)
+	})
+}
+
+// UpdatePhone sets the "phone" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdatePhone() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdatePhone()
+	})
+}
+
+// ClearPhone clears the value of the "phone" field.
+func (u *UserUpsertBulk) ClearPhone() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearPhone()
+	})
+}
+
 // SetFirstName sets the "first_name" field.
 func (u *UserUpsertBulk) SetFirstName(v string) *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
@@ -1301,34 +1412,6 @@ func (u *UserUpsertBulk) UpdateSecret() *UserUpsertBulk {
 func (u *UserUpsertBulk) ClearSecret() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearSecret()
-	})
-}
-
-// SetRoleID sets the "role_id" field.
-func (u *UserUpsertBulk) SetRoleID(v int) *UserUpsertBulk {
-	return u.Update(func(s *UserUpsert) {
-		s.SetRoleID(v)
-	})
-}
-
-// AddRoleID adds v to the "role_id" field.
-func (u *UserUpsertBulk) AddRoleID(v int) *UserUpsertBulk {
-	return u.Update(func(s *UserUpsert) {
-		s.AddRoleID(v)
-	})
-}
-
-// UpdateRoleID sets the "role_id" field to the value that was provided on create.
-func (u *UserUpsertBulk) UpdateRoleID() *UserUpsertBulk {
-	return u.Update(func(s *UserUpsert) {
-		s.UpdateRoleID()
-	})
-}
-
-// ClearRoleID clears the value of the "role_id" field.
-func (u *UserUpsertBulk) ClearRoleID() *UserUpsertBulk {
-	return u.Update(func(s *UserUpsert) {
-		s.ClearRoleID()
 	})
 }
 

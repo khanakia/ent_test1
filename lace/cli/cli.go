@@ -20,10 +20,9 @@ func (cli Cli) Execute() {
 
 func New() Cli {
 	rootCmd := &cobra.Command{
-		Use: "mango",
+		Use: "saasfly",
 		Long: `
-Framework is a Fast and Flexible Go Boilerplate built with love @ JEOGA Inc.
-Complete documentation is available at http://mango.jeoga.com/`,
+Framework is a Fast and Flexible Go Boilerplate built with love @ Khanakia Inc.`,
 	}
 
 	cli := Cli{

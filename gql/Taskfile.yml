@@ -17,6 +17,5 @@ tasks:
  
   gql:
     desc: generate gqlgen code from schema files
-    dir: apigql
     cmds:
       - go run github.com/99designs/gqlgen generate

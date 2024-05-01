@@ -14,12 +14,30 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
+	// Admin is the client for interacting with the Admin builders.
+	Admin *AdminClient
 	// Kache is the client for interacting with the Kache builders.
 	Kache *KacheClient
+	// Keyvalue is the client for interacting with the Keyvalue builders.
+	Keyvalue *KeyvalueClient
+	// MailConnection is the client for interacting with the MailConnection builders.
+	MailConnection *MailConnectionClient
+	// Plan is the client for interacting with the Plan builders.
+	Plan *PlanClient
 	// Project is the client for interacting with the Project builders.
 	Project *ProjectClient
+	// Session is the client for interacting with the Session builders.
+	Session *SessionClient
+	// Temp is the client for interacting with the Temp builders.
+	Temp *TempClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
+	// Workspace is the client for interacting with the Workspace builders.
+	Workspace *WorkspaceClient
+	// WorkspaceInvite is the client for interacting with the WorkspaceInvite builders.
+	WorkspaceInvite *WorkspaceInviteClient
+	// WorkspaceUser is the client for interacting with the WorkspaceUser builders.
+	WorkspaceUser *WorkspaceUserClient
 
 	// lazily loaded.
 	client     *Client
@@ -151,9 +169,18 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
+	tx.Admin = NewAdminClient(tx.config)
 	tx.Kache = NewKacheClient(tx.config)
+	tx.Keyvalue = NewKeyvalueClient(tx.config)
+	tx.MailConnection = NewMailConnectionClient(tx.config)
+	tx.Plan = NewPlanClient(tx.config)
 	tx.Project = NewProjectClient(tx.config)
+	tx.Session = NewSessionClient(tx.config)
+	tx.Temp = NewTempClient(tx.config)
 	tx.User = NewUserClient(tx.config)
+	tx.Workspace = NewWorkspaceClient(tx.config)
+	tx.WorkspaceInvite = NewWorkspaceInviteClient(tx.config)
+	tx.WorkspaceUser = NewWorkspaceUserClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.
@@ -163,7 +190,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: Kache.QueryXXX(), the query will be executed
+// applies a query, for example: Admin.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

@@ -67,6 +67,15 @@ resolver:
 # if they match it will use them, otherwise it will generate them.
 autobind:
 #  - "gql/graph/model"
+  - github.com/99designs/gqlgen/graphql/introspection
+  - saas/gen/ent 
+  - saas/gen/ent/user
+  - saas/gen/ent/session
+  - saas/gen/ent/workspace
+  - saas/gen/ent/workspaceinvite
+  - saas/gen/ent/workspaceuser
+  - saas/pkg/handler/handlertypes
+  # - saas/pkg/auth/authfn.RegisterInput
 
 # This section declares type mapping between the GraphQL and go type systems
 #
@@ -95,3 +104,9 @@ models:
 
   Date:
     model: lace/gqlmodel.Date 
+  
+  RegisterInput:
+    model: saas/pkg/auth/authfn.RegisterInput
+  
+  LoginInput:
+    model: saas/pkg/auth/authfn.LoginParams

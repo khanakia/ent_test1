@@ -3,8 +3,17 @@
 package ent
 
 import (
+	"saas/gen/ent/admin"
 	"saas/gen/ent/kache"
+	"saas/gen/ent/keyvalue"
+	"saas/gen/ent/mailconnection"
+	"saas/gen/ent/plan"
+	"saas/gen/ent/session"
+	"saas/gen/ent/temp"
 	"saas/gen/ent/user"
+	"saas/gen/ent/workspace"
+	"saas/gen/ent/workspaceinvite"
+	"saas/gen/ent/workspaceuser"
 	"saas/schema"
 	"time"
 )
@@ -13,6 +22,29 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	adminMixin := schema.Admin{}.Mixin()
+	adminMixinFields0 := adminMixin[0].Fields()
+	_ = adminMixinFields0
+	adminFields := schema.Admin{}.Fields()
+	_ = adminFields
+	// adminDescCreatedAt is the schema descriptor for created_at field.
+	adminDescCreatedAt := adminMixinFields0[1].Descriptor()
+	// admin.DefaultCreatedAt holds the default value on creation for the created_at field.
+	admin.DefaultCreatedAt = adminDescCreatedAt.Default.(func() time.Time)
+	// adminDescUpdatedAt is the schema descriptor for updated_at field.
+	adminDescUpdatedAt := adminMixinFields0[2].Descriptor()
+	// admin.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	admin.DefaultUpdatedAt = adminDescUpdatedAt.Default.(func() time.Time)
+	// admin.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	admin.UpdateDefaultUpdatedAt = adminDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// adminDescStatus is the schema descriptor for status field.
+	adminDescStatus := adminFields[3].Descriptor()
+	// admin.DefaultStatus holds the default value on creation for the status field.
+	admin.DefaultStatus = adminDescStatus.Default.(bool)
+	// adminDescID is the schema descriptor for id field.
+	adminDescID := adminMixinFields0[0].Descriptor()
+	// admin.DefaultID holds the default value on creation for the id field.
+	admin.DefaultID = adminDescID.Default.(func() string)
 	kacheFields := schema.Kache{}.Fields()
 	_ = kacheFields
 	// kacheDescCreatedAt is the schema descriptor for created_at field.
@@ -39,24 +71,172 @@ func init() {
 			return nil
 		}
 	}()
+	keyvalueFields := schema.Keyvalue{}.Fields()
+	_ = keyvalueFields
+	// keyvalueDescCreatedAt is the schema descriptor for created_at field.
+	keyvalueDescCreatedAt := keyvalueFields[1].Descriptor()
+	// keyvalue.DefaultCreatedAt holds the default value on creation for the created_at field.
+	keyvalue.DefaultCreatedAt = keyvalueDescCreatedAt.Default.(func() time.Time)
+	// keyvalueDescID is the schema descriptor for id field.
+	keyvalueDescID := keyvalueFields[0].Descriptor()
+	// keyvalue.IDValidator is a validator for the "id" field. It is called by the builders before save.
+	keyvalue.IDValidator = func() func(string) error {
+		validators := keyvalueDescID.Validators
+		fns := [...]func(string) error{
+			validators[0].(func(string) error),
+			validators[1].(func(string) error),
+		}
+		return func(id string) error {
+			for _, fn := range fns {
+				if err := fn(id); err != nil {
+					return err
+				}
+			}
+			return nil
+		}
+	}()
+	mailconnectionFields := schema.MailConnection{}.Fields()
+	_ = mailconnectionFields
+	// mailconnectionDescStatus is the schema descriptor for status field.
+	mailconnectionDescStatus := mailconnectionFields[5].Descriptor()
+	// mailconnection.DefaultStatus holds the default value on creation for the status field.
+	mailconnection.DefaultStatus = mailconnectionDescStatus.Default.(bool)
+	planMixin := schema.Plan{}.Mixin()
+	planMixinFields0 := planMixin[0].Fields()
+	_ = planMixinFields0
+	planFields := schema.Plan{}.Fields()
+	_ = planFields
+	// planDescCreatedAt is the schema descriptor for created_at field.
+	planDescCreatedAt := planMixinFields0[1].Descriptor()
+	// plan.DefaultCreatedAt holds the default value on creation for the created_at field.
+	plan.DefaultCreatedAt = planDescCreatedAt.Default.(func() time.Time)
+	// planDescUpdatedAt is the schema descriptor for updated_at field.
+	planDescUpdatedAt := planMixinFields0[2].Descriptor()
+	// plan.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	plan.DefaultUpdatedAt = planDescUpdatedAt.Default.(func() time.Time)
+	// plan.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	plan.UpdateDefaultUpdatedAt = planDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// planDescStatus is the schema descriptor for status field.
+	planDescStatus := planFields[3].Descriptor()
+	// plan.DefaultStatus holds the default value on creation for the status field.
+	plan.DefaultStatus = planDescStatus.Default.(bool)
+	// planDescID is the schema descriptor for id field.
+	planDescID := planMixinFields0[0].Descriptor()
+	// plan.DefaultID holds the default value on creation for the id field.
+	plan.DefaultID = planDescID.Default.(func() string)
+	sessionFields := schema.Session{}.Fields()
+	_ = sessionFields
+	// sessionDescCreatedAt is the schema descriptor for created_at field.
+	sessionDescCreatedAt := sessionFields[1].Descriptor()
+	// session.DefaultCreatedAt holds the default value on creation for the created_at field.
+	session.DefaultCreatedAt = sessionDescCreatedAt.Default.(func() time.Time)
+	// sessionDescUpdatedAt is the schema descriptor for updated_at field.
+	sessionDescUpdatedAt := sessionFields[2].Descriptor()
+	// session.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	session.DefaultUpdatedAt = sessionDescUpdatedAt.Default.(func() time.Time)
+	// session.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	session.UpdateDefaultUpdatedAt = sessionDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// sessionDescID is the schema descriptor for id field.
+	sessionDescID := sessionFields[0].Descriptor()
+	// session.DefaultID holds the default value on creation for the id field.
+	session.DefaultID = sessionDescID.Default.(func() string)
+	tempMixin := schema.Temp{}.Mixin()
+	tempMixinFields0 := tempMixin[0].Fields()
+	_ = tempMixinFields0
+	tempFields := schema.Temp{}.Fields()
+	_ = tempFields
+	// tempDescCreatedAt is the schema descriptor for created_at field.
+	tempDescCreatedAt := tempMixinFields0[1].Descriptor()
+	// temp.DefaultCreatedAt holds the default value on creation for the created_at field.
+	temp.DefaultCreatedAt = tempDescCreatedAt.Default.(func() time.Time)
+	// tempDescUpdatedAt is the schema descriptor for updated_at field.
+	tempDescUpdatedAt := tempMixinFields0[2].Descriptor()
+	// temp.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	temp.DefaultUpdatedAt = tempDescUpdatedAt.Default.(func() time.Time)
+	// temp.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	temp.UpdateDefaultUpdatedAt = tempDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// tempDescID is the schema descriptor for id field.
+	tempDescID := tempMixinFields0[0].Descriptor()
+	// temp.DefaultID holds the default value on creation for the id field.
+	temp.DefaultID = tempDescID.Default.(func() string)
+	userMixin := schema.User{}.Mixin()
+	userMixinFields0 := userMixin[0].Fields()
+	_ = userMixinFields0
 	userFields := schema.User{}.Fields()
 	_ = userFields
 	// userDescCreatedAt is the schema descriptor for created_at field.
-	userDescCreatedAt := userFields[1].Descriptor()
+	userDescCreatedAt := userMixinFields0[1].Descriptor()
 	// user.DefaultCreatedAt holds the default value on creation for the created_at field.
 	user.DefaultCreatedAt = userDescCreatedAt.Default.(func() time.Time)
 	// userDescUpdatedAt is the schema descriptor for updated_at field.
-	userDescUpdatedAt := userFields[2].Descriptor()
+	userDescUpdatedAt := userMixinFields0[2].Descriptor()
 	// user.DefaultUpdatedAt holds the default value on creation for the updated_at field.
 	user.DefaultUpdatedAt = userDescUpdatedAt.Default.(func() time.Time)
 	// user.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	user.UpdateDefaultUpdatedAt = userDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// userDescStatus is the schema descriptor for status field.
-	userDescStatus := userFields[7].Descriptor()
+	userDescStatus := userFields[5].Descriptor()
 	// user.DefaultStatus holds the default value on creation for the status field.
 	user.DefaultStatus = userDescStatus.Default.(bool)
 	// userDescID is the schema descriptor for id field.
-	userDescID := userFields[0].Descriptor()
+	userDescID := userMixinFields0[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.
 	user.DefaultID = userDescID.Default.(func() string)
+	workspaceMixin := schema.Workspace{}.Mixin()
+	workspaceMixinFields0 := workspaceMixin[0].Fields()
+	_ = workspaceMixinFields0
+	workspaceFields := schema.Workspace{}.Fields()
+	_ = workspaceFields
+	// workspaceDescCreatedAt is the schema descriptor for created_at field.
+	workspaceDescCreatedAt := workspaceMixinFields0[1].Descriptor()
+	// workspace.DefaultCreatedAt holds the default value on creation for the created_at field.
+	workspace.DefaultCreatedAt = workspaceDescCreatedAt.Default.(func() time.Time)
+	// workspaceDescUpdatedAt is the schema descriptor for updated_at field.
+	workspaceDescUpdatedAt := workspaceMixinFields0[2].Descriptor()
+	// workspace.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	workspace.DefaultUpdatedAt = workspaceDescUpdatedAt.Default.(func() time.Time)
+	// workspace.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	workspace.UpdateDefaultUpdatedAt = workspaceDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// workspaceDescID is the schema descriptor for id field.
+	workspaceDescID := workspaceMixinFields0[0].Descriptor()
+	// workspace.DefaultID holds the default value on creation for the id field.
+	workspace.DefaultID = workspaceDescID.Default.(func() string)
+	workspaceinviteMixin := schema.WorkspaceInvite{}.Mixin()
+	workspaceinviteMixinFields0 := workspaceinviteMixin[0].Fields()
+	_ = workspaceinviteMixinFields0
+	workspaceinviteFields := schema.WorkspaceInvite{}.Fields()
+	_ = workspaceinviteFields
+	// workspaceinviteDescCreatedAt is the schema descriptor for created_at field.
+	workspaceinviteDescCreatedAt := workspaceinviteMixinFields0[1].Descriptor()
+	// workspaceinvite.DefaultCreatedAt holds the default value on creation for the created_at field.
+	workspaceinvite.DefaultCreatedAt = workspaceinviteDescCreatedAt.Default.(func() time.Time)
+	// workspaceinviteDescUpdatedAt is the schema descriptor for updated_at field.
+	workspaceinviteDescUpdatedAt := workspaceinviteMixinFields0[2].Descriptor()
+	// workspaceinvite.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	workspaceinvite.DefaultUpdatedAt = workspaceinviteDescUpdatedAt.Default.(func() time.Time)
+	// workspaceinvite.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	workspaceinvite.UpdateDefaultUpdatedAt = workspaceinviteDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// workspaceinviteDescID is the schema descriptor for id field.
+	workspaceinviteDescID := workspaceinviteMixinFields0[0].Descriptor()
+	// workspaceinvite.DefaultID holds the default value on creation for the id field.
+	workspaceinvite.DefaultID = workspaceinviteDescID.Default.(func() string)
+	workspaceuserMixin := schema.WorkspaceUser{}.Mixin()
+	workspaceuserMixinFields0 := workspaceuserMixin[0].Fields()
+	_ = workspaceuserMixinFields0
+	workspaceuserFields := schema.WorkspaceUser{}.Fields()
+	_ = workspaceuserFields
+	// workspaceuserDescCreatedAt is the schema descriptor for created_at field.
+	workspaceuserDescCreatedAt := workspaceuserMixinFields0[1].Descriptor()
+	// workspaceuser.DefaultCreatedAt holds the default value on creation for the created_at field.
+	workspaceuser.DefaultCreatedAt = workspaceuserDescCreatedAt.Default.(func() time.Time)
+	// workspaceuserDescUpdatedAt is the schema descriptor for updated_at field.
+	workspaceuserDescUpdatedAt := workspaceuserMixinFields0[2].Descriptor()
+	// workspaceuser.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	workspaceuser.DefaultUpdatedAt = workspaceuserDescUpdatedAt.Default.(func() time.Time)
+	// workspaceuser.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	workspaceuser.UpdateDefaultUpdatedAt = workspaceuserDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// workspaceuserDescID is the schema descriptor for id field.
+	workspaceuserDescID := workspaceuserMixinFields0[0].Descriptor()
+	// workspaceuser.DefaultID holds the default value on creation for the id field.
+	workspaceuser.DefaultID = workspaceuserDescID.Default.(func() string)
 }

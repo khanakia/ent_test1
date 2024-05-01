@@ -73,6 +73,12 @@ func InterfaceToStruct(in, out interface{}) error {
 	return nil
 }
 
+// Convert map[string]interface{} to bytes for JSON.rawmessage used in dblogs table data
+func MustMarshalData(value interface{}) []byte {
+	s, _ := json.Marshal(value)
+	return s
+}
+
 func InterfaceUnmarshal(in, out interface{}) error {
 	dbByte, err := json.Marshal(in)
 	if err != nil {

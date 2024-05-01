@@ -6,7 +6,7 @@ appKey = "saasfly"
 
 hostname = "localhost"
 
-port = "7001"
+port = "2303"
 
 environment = "dev"
 
@@ -22,7 +22,7 @@ database {
   port = 5432
   username = "postgres"
   password = "root"
-  dbName = "test"
+  dbName = "saasflydb"
   sslmode= "disable"
 }
 

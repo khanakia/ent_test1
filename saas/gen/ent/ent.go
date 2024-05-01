@@ -7,9 +7,18 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+	"saas/gen/ent/admin"
 	"saas/gen/ent/kache"
+	"saas/gen/ent/keyvalue"
+	"saas/gen/ent/mailconnection"
+	"saas/gen/ent/plan"
 	"saas/gen/ent/project"
+	"saas/gen/ent/session"
+	"saas/gen/ent/temp"
 	"saas/gen/ent/user"
+	"saas/gen/ent/workspace"
+	"saas/gen/ent/workspaceinvite"
+	"saas/gen/ent/workspaceuser"
 	"sync"
 
 	"entgo.io/ent"
@@ -75,9 +84,18 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			kache.Table:   kache.ValidColumn,
-			project.Table: project.ValidColumn,
-			user.Table:    user.ValidColumn,
+			admin.Table:           admin.ValidColumn,
+			kache.Table:           kache.ValidColumn,
+			keyvalue.Table:        keyvalue.ValidColumn,
+			mailconnection.Table:  mailconnection.ValidColumn,
+			plan.Table:            plan.ValidColumn,
+			project.Table:         project.ValidColumn,
+			session.Table:         session.ValidColumn,
+			temp.Table:            temp.ValidColumn,
+			user.Table:            user.ValidColumn,
+			workspace.Table:       workspace.ValidColumn,
+			workspaceinvite.Table: workspaceinvite.ValidColumn,
+			workspaceuser.Table:   workspaceuser.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

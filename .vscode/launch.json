@@ -11,8 +11,10 @@
       "mode": "auto",
       "program": "${fileDirname}",
       "env": {},
-      "cwd": "${workspaceFolder}",
-      "args": ["server"]
+      "cwd": "${workspaceFolder}/saas",
+      "args": [""],
+      "logOutput": "dap",
+      "showLog": true
     },
     {
       "name": "Launch Localhost",

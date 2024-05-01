@@ -2,8 +2,27 @@
 
 package model
 
-type Mutation struct {
+type ChangePasswordInput struct {
+	OldPassword     string `json:"oldPassword"`
+	Password        string `json:"password"`
+	PasswordConfirm string `json:"passwordConfirm"`
 }
 
-type Query struct {
+type RegisterVerifyInput struct {
+	Token string `json:"token"`
+	Email string `json:"email"`
+}
+
+type ResetPasswordInput struct {
+	Email           string `json:"email"`
+	Token           string `json:"token"`
+	Password        string `json:"password"`
+	PasswordConfirm string `json:"passwordConfirm"`
+}
+
+type UpdateProfileInput struct {
+	FirstName *string `json:"firstName,omitempty"`
+	LastName  *string `json:"lastName,omitempty"`
+	Company   *string `json:"company,omitempty"`
+	Phone     *string `json:"phone,omitempty"`
 }

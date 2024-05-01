@@ -3,13 +3,17 @@ package main
 import (
 	"configmgr"
 	"configmgr/gen/appconfig/environment"
-	"gqlsa"
+	"gql"
+	"gql/graph/resolverfn"
 	"lace/ginserver"
+	"lace/natso"
 	"lace/util"
+	"saas/cmd/api/natshandlers"
+	"saas/pkg/app"
+	"saas/pkg/apphandlers"
 )
 
 func main() {
-
 	appcfg := configmgr.GetAppConfig()
 
 	serverServer := ginserver.New(
@@ -19,7 +23,27 @@ func main() {
 		ginserver.WithIsProd(appcfg.Environment == environment.Prod),
 	)
 
-	gqlsa.Boot(serverServer.Router)
+	plugins := app.New()
+
+	// add this line to init or add the graphql to the api
+	gql.Boot(serverServer.Router, &resolverfn.Resolver{
+		Plugin:    app.GetPlugins(),
+		AppConfig: appcfg,
+	})
+
+	natsnats := natso.New(natso.WithAppKey(appcfg.Nats.AppKey), natso.WithURL(appcfg.Nats.Url), natso.WithEnabled(true))
+	natshandlers.New(natshandlers.Config{
+		Natso: natsnats,
+		// EntClient: appApp.EntDB.Client(),
+		// Nlog:      appApp.Nlog,
+	})
+
+	apphandlers.New(apphandlers.Config{
+		Server:    serverServer,
+		EntClient: plugins.EntDB.Client(),
+		Nlog:      plugins.Nlog,
+		AppConfig: plugins.AppConfig,
+	})
 
 	serverServer.Start()
 }

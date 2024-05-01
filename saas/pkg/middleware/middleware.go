@@ -13,9 +13,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+const (
+	User      = "user"
+	UserError = "usererror"
+)
+
 // Get user from the gin gonic context actions
 func GetUserFromGinCtx(c *gin.Context) (*ent.User, error) {
-	userc, _ := c.Get("user")
+	// return the actual error not just generic error e.g. `access_denied` as setUserHandler is silent
+	// for all the gql request so we will have to send the error in context
+	userError, _ := c.Get(UserError)
+
+	if userError != nil {
+		return nil, fmt.Errorf(userError.(string))
+	}
+
+	userc, _ := c.Get(User)
 
 	if userc == nil {
 		return nil, errors.New("user-not-found/invalid-token on auth context")
@@ -32,18 +45,18 @@ func GetUserFromGinCtx(c *gin.Context) (*ent.User, error) {
 // this is for graphql only and will retrive the gin ctx first and the user from the gin ctx
 // so we can get the current user info in the resolvers
 // Ref: https://github.com/99designs/gqlgen/blob/master/docs/content/recipes/gin.md
-func GetUserFromGqlCtx(ctx context.Context) *ent.User {
+func GetUserFromGqlCtx(ctx context.Context) (*ent.User, error) {
 	gc, err := gqlgenfn.GinContextFromContext(ctx)
 	if err != nil {
-		return nil
+		return nil, err
 	}
 
 	user, err := GetUserFromGinCtx(gc)
 
 	if err != nil || user == nil {
-		return nil
+		return nil, err
 	}
-	return user
+	return user, nil
 }
 
 // get the token from query or header and set the user to context
@@ -62,13 +75,17 @@ func setUserHandler(c *gin.Context, client *ent.Client) error {
 		return fmt.Errorf("no token provided")
 	}
 
-	user, _, err := auth.ValidateJWT(token, client)
+	user, err := auth.ValidateSession(token, client)
 
 	if err != nil {
+		// capture the error so we can pass the same to gql handler cuser, err := middleware.GetUserFromGqlCtx(ctx)
+		// and show the actual error not just generic error i.e. `access_denied`
+		c.Set(UserError, err.Error())
+
 		return err
 	}
 
-	c.Set("user", user)
+	c.Set(User, user)
 
 	return nil
 }

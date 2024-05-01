@@ -6,11 +6,38 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
+// Admin is the predicate function for admin builders.
+type Admin func(*sql.Selector)
+
 // Kache is the predicate function for kache builders.
 type Kache func(*sql.Selector)
+
+// Keyvalue is the predicate function for keyvalue builders.
+type Keyvalue func(*sql.Selector)
+
+// MailConnection is the predicate function for mailconnection builders.
+type MailConnection func(*sql.Selector)
+
+// Plan is the predicate function for plan builders.
+type Plan func(*sql.Selector)
 
 // Project is the predicate function for project builders.
 type Project func(*sql.Selector)
 
+// Session is the predicate function for session builders.
+type Session func(*sql.Selector)
+
+// Temp is the predicate function for temp builders.
+type Temp func(*sql.Selector)
+
 // User is the predicate function for user builders.
 type User func(*sql.Selector)
+
+// Workspace is the predicate function for workspace builders.
+type Workspace func(*sql.Selector)
+
+// WorkspaceInvite is the predicate function for workspaceinvite builders.
+type WorkspaceInvite func(*sql.Selector)
+
+// WorkspaceUser is the predicate function for workspaceuser builders.
+type WorkspaceUser func(*sql.Selector)

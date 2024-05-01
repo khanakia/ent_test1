@@ -9,9 +9,9 @@ import (
 	"fmt"
 	"lace/publicid"
 	"saas/gen/ent"
+	"saas/gen/ent/session"
 	"saas/gen/ent/user"
 	"saas/pkg/auth/auth_type"
-	"saas/pkg/constants"
 	"strings"
 	"time"
 
@@ -77,7 +77,6 @@ func CreateToken(user ent.User, client *ent.Client) (string, error) {
 }
 
 func ValidateJWT(token string, client *ent.Client) (*ent.User, *auth_type.Claims, error) {
-
 	token = strings.TrimSpace(token)
 
 	claims := &auth_type.Claims{}
@@ -125,6 +124,33 @@ func ValidateJWT(token string, client *ent.Client) (*ent.User, *auth_type.Claims
 	return userRec, claims, nil
 }
 
+func ValidateSession(sessionId string, client *ent.Client) (*ent.User, error) {
+	session, err := client.Session.Query().Where(session.ID(sessionId)).First(context.Background())
+
+	if err != nil {
+		return nil, fmt.Errorf("session not found")
+	}
+
+	userRec, err := client.User.
+		Query().
+		Where(user.ID(session.UserID)).
+		Only(context.Background())
+
+	if err != nil && ent.IsNotFound(err) {
+		return nil, errors.New("user not found")
+	}
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !userRec.Status {
+		return nil, errors.New("user is disabled")
+	}
+
+	return userRec, nil
+}
+
 func GetUserFromContext(c *gin.Context) (*ent.User, error) {
 	userc, _ := c.Get("user")
 
@@ -142,11 +168,6 @@ type UserShopifySetting struct {
 }
 
 func UserFillDefaults(mutation *ent.UserMutation) {
-
-	if _, ok := mutation.RoleID(); !ok {
-		mutation.SetRoleID(constants.RoleMemberID)
-	}
-
 	if _, ok := mutation.Status(); !ok {
 		mutation.SetStatus(true)
 	}

@@ -23,6 +23,8 @@ type User struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// Email holds the value of the "email" field.
 	Email string `json:"email,omitempty"`
+	// Phone holds the value of the "phone" field.
+	Phone string `json:"phone,omitempty"`
 	// FirstName holds the value of the "first_name" field.
 	FirstName string `json:"first_name,omitempty"`
 	// LastName holds the value of the "last_name" field.
@@ -35,13 +37,54 @@ type User struct {
 	Password string `json:"-"`
 	// Secret holds the value of the "secret" field.
 	Secret string `json:"-"`
-	// RoleID holds the value of the "role_id" field.
-	RoleID int `json:"role_id,omitempty"`
 	// APIKey holds the value of the "api_key" field.
 	APIKey string `json:"api_key,omitempty"`
 	// WelcomeEmailSent holds the value of the "welcome_email_sent" field.
 	WelcomeEmailSent bool `json:"welcome_email_sent,omitempty"`
-	selectValues     sql.SelectValues
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the UserQuery when eager-loading is set.
+	Edges        UserEdges `json:"edges"`
+	selectValues sql.SelectValues
+}
+
+// UserEdges holds the relations/edges for other nodes in the graph.
+type UserEdges struct {
+	// Sessions holds the value of the sessions edge.
+	Sessions []*Session `json:"sessions,omitempty"`
+	// Workspaces holds the value of the workspaces edge.
+	Workspaces []*Workspace `json:"workspaces,omitempty"`
+	// WorkspaceUsers holds the value of the workspace_users edge.
+	WorkspaceUsers []*WorkspaceUser `json:"workspace_users,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [3]bool
+}
+
+// SessionsOrErr returns the Sessions value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) SessionsOrErr() ([]*Session, error) {
+	if e.loadedTypes[0] {
+		return e.Sessions, nil
+	}
+	return nil, &NotLoadedError{edge: "sessions"}
+}
+
+// WorkspacesOrErr returns the Workspaces value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) WorkspacesOrErr() ([]*Workspace, error) {
+	if e.loadedTypes[1] {
+		return e.Workspaces, nil
+	}
+	return nil, &NotLoadedError{edge: "workspaces"}
+}
+
+// WorkspaceUsersOrErr returns the WorkspaceUsers value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) WorkspaceUsersOrErr() ([]*WorkspaceUser, error) {
+	if e.loadedTypes[2] {
+		return e.WorkspaceUsers, nil
+	}
+	return nil, &NotLoadedError{edge: "workspace_users"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -51,9 +94,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldStatus, user.FieldWelcomeEmailSent:
 			values[i] = new(sql.NullBool)
-		case user.FieldRoleID:
-			values[i] = new(sql.NullInt64)
-		case user.FieldID, user.FieldEmail, user.FieldFirstName, user.FieldLastName, user.FieldCompany, user.FieldPassword, user.FieldSecret, user.FieldAPIKey:
+		case user.FieldID, user.FieldEmail, user.FieldPhone, user.FieldFirstName, user.FieldLastName, user.FieldCompany, user.FieldPassword, user.FieldSecret, user.FieldAPIKey:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -96,6 +137,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.Email = value.String
 			}
+		case user.FieldPhone:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field phone", values[i])
+			} else if value.Valid {
+				u.Phone = value.String
+			}
 		case user.FieldFirstName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field first_name", values[i])
@@ -132,12 +179,6 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.Secret = value.String
 			}
-		case user.FieldRoleID:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field role_id", values[i])
-			} else if value.Valid {
-				u.RoleID = int(value.Int64)
-			}
 		case user.FieldAPIKey:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field api_key", values[i])
@@ -161,6 +202,21 @@ func (u *User) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (u *User) Value(name string) (ent.Value, error) {
 	return u.selectValues.Get(name)
+}
+
+// QuerySessions queries the "sessions" edge of the User entity.
+func (u *User) QuerySessions() *SessionQuery {
+	return NewUserClient(u.config).QuerySessions(u)
+}
+
+// QueryWorkspaces queries the "workspaces" edge of the User entity.
+func (u *User) QueryWorkspaces() *WorkspaceQuery {
+	return NewUserClient(u.config).QueryWorkspaces(u)
+}
+
+// QueryWorkspaceUsers queries the "workspace_users" edge of the User entity.
+func (u *User) QueryWorkspaceUsers() *WorkspaceUserQuery {
+	return NewUserClient(u.config).QueryWorkspaceUsers(u)
 }
 
 // Update returns a builder for updating this User.
@@ -195,6 +251,9 @@ func (u *User) String() string {
 	builder.WriteString("email=")
 	builder.WriteString(u.Email)
 	builder.WriteString(", ")
+	builder.WriteString("phone=")
+	builder.WriteString(u.Phone)
+	builder.WriteString(", ")
 	builder.WriteString("first_name=")
 	builder.WriteString(u.FirstName)
 	builder.WriteString(", ")
@@ -210,9 +269,6 @@ func (u *User) String() string {
 	builder.WriteString("password=<sensitive>")
 	builder.WriteString(", ")
 	builder.WriteString("secret=<sensitive>")
-	builder.WriteString(", ")
-	builder.WriteString("role_id=")
-	builder.WriteString(fmt.Sprintf("%v", u.RoleID))
 	builder.WriteString(", ")
 	builder.WriteString("api_key=")
 	builder.WriteString(u.APIKey)
