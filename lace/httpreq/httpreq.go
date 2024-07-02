@@ -6,17 +6,19 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 
 	"github.com/pkg/errors"
 )
 
 type RequestParam struct {
-	EndPoint string                 `json:"endPoint"`
-	ArgsMap  map[string]interface{} `json:"args"`
-	Method   string                 `json:"method"`
-	Token    string                 `json:"token"`
-	Headers  map[string]string      `json:"headers"`
-	Args     interface{}            // when we don't need key-value
+	EndPoint    string                 `json:"endPoint"`
+	ArgsMap     map[string]interface{} `json:"args"`
+	QueryParams map[string]string      `json:"queryParams"`
+	Method      string                 `json:"method"`
+	Token       string                 `json:"token"`
+	Headers     map[string]string      `json:"headers"`
+	Args        interface{}            // when we don't need key-value
 }
 
 func Do(hreq RequestParam, resp interface{}) (*http.Response, error) {
@@ -44,6 +46,19 @@ func Do(hreq RequestParam, resp interface{}) (*http.Response, error) {
 			return nil, errors.Wrap(err, "encode body")
 		}
 	}
+
+	params := url.Values{}
+	// params.Add("query", "keyword")
+	for qparamKey, qparamVal := range hreq.QueryParams {
+		params.Add(qparamKey, qparamVal)
+	}
+
+	paramEncoded := params.Encode()
+	if len(paramEncoded) > 0 {
+		hreq.EndPoint += "?" + paramEncoded
+	}
+
+	fmt.Println(hreq.EndPoint)
 
 	client := &http.Client{}
 	req, err := http.NewRequest(method, hreq.EndPoint, &requestBody)

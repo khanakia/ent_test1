@@ -1,5 +1,7 @@
 scalar Time
 scalar Uint64
+scalar Map
+
 
 type Query {
   ping: String!

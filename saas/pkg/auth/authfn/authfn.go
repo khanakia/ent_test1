@@ -146,7 +146,7 @@ func LoginValidate(params LoginParams) error {
 	return nil
 }
 
-func Login(params LoginParams, client *ent.Client) (*ent.User, *ent.Session, error) {
+func Login(params LoginParams, matchPass bool, client *ent.Client) (*ent.User, *ent.Session, error) {
 	err := LoginValidate(params)
 	if err != nil {
 		return nil, nil, err
@@ -161,9 +161,12 @@ func Login(params LoginParams, client *ent.Client) (*ent.User, *ent.Session, err
 		return nil, nil, errors.New("user is disabled")
 	}
 
-	matched := PasswordMatch(user.Password, params.Password)
-	if !matched {
-		return nil, nil, fmt.Errorf("password didn't match")
+	// if false we won't do the password matching and directly create the session
+	if matchPass {
+		matched := PasswordMatch(user.Password, params.Password)
+		if !matched {
+			return nil, nil, fmt.Errorf("password didn't match")
+		}
 	}
 
 	session, err := CreateSession(CreateSessionParams{

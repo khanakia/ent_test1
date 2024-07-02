@@ -30,7 +30,7 @@ var (
 	KachesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString, Unique: true, Size: 36},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "key", Type: field.TypeString, Nullable: true},
+		{Name: "key", Type: field.TypeString, Unique: true},
 		{Name: "value", Type: field.TypeString, Nullable: true},
 		{Name: "expires", Type: field.TypeInt, Nullable: true},
 	}
@@ -67,6 +67,27 @@ var (
 		Name:       "mail_connections",
 		Columns:    MailConnectionsColumns,
 		PrimaryKey: []*schema.Column{MailConnectionsColumns[0]},
+	}
+	// OauthConnectionsColumns holds the columns for the "oauth_connections" table.
+	OauthConnectionsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "name", Type: field.TypeString, Nullable: true},
+		{Name: "provider", Type: field.TypeString, Nullable: true},
+		{Name: "client_id", Type: field.TypeString, Nullable: true},
+		{Name: "client_secret", Type: field.TypeString, Nullable: true},
+		{Name: "scopes", Type: field.TypeString, Nullable: true},
+		{Name: "redirect_url", Type: field.TypeString, Nullable: true},
+		{Name: "dashboard_link", Type: field.TypeString, Nullable: true},
+		{Name: "note", Type: field.TypeString, Nullable: true},
+		{Name: "status", Type: field.TypeBool, Nullable: true},
+	}
+	// OauthConnectionsTable holds the schema information for the "oauth_connections" table.
+	OauthConnectionsTable = &schema.Table{
+		Name:       "oauth_connections",
+		Columns:    OauthConnectionsColumns,
+		PrimaryKey: []*schema.Column{OauthConnectionsColumns[0]},
 	}
 	// PlansColumns holds the columns for the "plans" table.
 	PlansColumns = []*schema.Column{
@@ -245,6 +266,7 @@ var (
 		KachesTable,
 		KeyvaluesTable,
 		MailConnectionsTable,
+		OauthConnectionsTable,
 		PlansTable,
 		ProjectsTable,
 		SessionsTable,

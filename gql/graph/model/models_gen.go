@@ -8,9 +8,17 @@ type ChangePasswordInput struct {
 	PasswordConfirm string `json:"passwordConfirm"`
 }
 
-type RegisterVerifyInput struct {
-	Token string `json:"token"`
-	Email string `json:"email"`
+type OauthCallbackResponse struct {
+	OatConnectionID string                 `json:"oatConnectionId"`
+	Provider        string                 `json:"provider"`
+	CacheID         string                 `json:"cacheId"`
+	Metadata        map[string]interface{} `json:"metadata,omitempty"`
+}
+
+type OauthRequestInput struct {
+	OatConnectionID string                 `json:"oatConnectionId"`
+	RedirectURL     *string                `json:"redirectUrl,omitempty"`
+	Metadata        map[string]interface{} `json:"metadata,omitempty"`
 }
 
 type ResetPasswordInput struct {

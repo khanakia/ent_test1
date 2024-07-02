@@ -6,6 +6,7 @@ require (
 	github.com/99designs/gqlgen v0.17.45
 	github.com/gin-gonic/gin v1.9.1
 	github.com/spf13/cast v1.6.0
+	github.com/ubgo/goutil v0.1.3
 	github.com/vektah/gqlparser/v2 v2.5.11
 )
 

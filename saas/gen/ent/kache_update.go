@@ -63,12 +63,6 @@ func (ku *KacheUpdate) SetNillableKey(s *string) *KacheUpdate {
 	return ku
 }
 
-// ClearKey clears the value of the "key" field.
-func (ku *KacheUpdate) ClearKey() *KacheUpdate {
-	ku.mutation.ClearKey()
-	return ku
-}
-
 // SetValue sets the "value" field.
 func (ku *KacheUpdate) SetValue(s string) *KacheUpdate {
 	ku.mutation.SetValue(s)
@@ -172,9 +166,6 @@ func (ku *KacheUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := ku.mutation.Key(); ok {
 		_spec.SetField(kache.FieldKey, field.TypeString, value)
 	}
-	if ku.mutation.KeyCleared() {
-		_spec.ClearField(kache.FieldKey, field.TypeString)
-	}
 	if value, ok := ku.mutation.Value(); ok {
 		_spec.SetField(kache.FieldValue, field.TypeString, value)
 	}
@@ -243,12 +234,6 @@ func (kuo *KacheUpdateOne) SetNillableKey(s *string) *KacheUpdateOne {
 	if s != nil {
 		kuo.SetKey(*s)
 	}
-	return kuo
-}
-
-// ClearKey clears the value of the "key" field.
-func (kuo *KacheUpdateOne) ClearKey() *KacheUpdateOne {
-	kuo.mutation.ClearKey()
 	return kuo
 }
 
@@ -384,9 +369,6 @@ func (kuo *KacheUpdateOne) sqlSave(ctx context.Context) (_node *Kache, err error
 	}
 	if value, ok := kuo.mutation.Key(); ok {
 		_spec.SetField(kache.FieldKey, field.TypeString, value)
-	}
-	if kuo.mutation.KeyCleared() {
-		_spec.ClearField(kache.FieldKey, field.TypeString)
 	}
 	if value, ok := kuo.mutation.Value(); ok {
 		_spec.SetField(kache.FieldValue, field.TypeString, value)

@@ -1,0 +1,17 @@
+input OauthRequestInput {
+  oatConnectionId: String!
+  redirectUrl: String
+  metadata: Map
+}
+
+type OauthCallbackResponse {
+  oatConnectionId: String!
+  provider: String!
+  cacheId: String!
+  metadata: Map
+}
+
+extend type Mutation {
+  oauthRequest(input: OauthRequestInput): String!
+  oauthCallback(callbackUrl: String!): OauthCallbackResponse!
+}

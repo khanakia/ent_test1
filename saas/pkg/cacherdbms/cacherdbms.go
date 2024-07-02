@@ -54,7 +54,7 @@ func (a *Rdbms) Get(key string) interface{} {
 		return nil
 	}
 
-	var v string
+	var v interface{}
 	err = json.Unmarshal([]byte(entity.Value), &v)
 	if err != nil {
 		return entity.Value

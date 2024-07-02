@@ -56,6 +56,18 @@ func (f MailConnectionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Val
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MailConnectionMutation", m)
 }
 
+// The OauthConnectionFunc type is an adapter to allow the use of ordinary
+// function as OauthConnection mutator.
+type OauthConnectionFunc func(context.Context, *ent.OauthConnectionMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f OauthConnectionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.OauthConnectionMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.OauthConnectionMutation", m)
+}
+
 // The PlanFunc type is an adapter to allow the use of ordinary
 // function as Plan mutator.
 type PlanFunc func(context.Context, *ent.PlanMutation) (ent.Value, error)

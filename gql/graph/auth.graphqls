@@ -52,6 +52,8 @@ input ResetPasswordInput {
 }
 
 extend type Mutation {
+  authLoginViaOauth(cacheId: String!): LoginResponse!
+
   authRegister(input: RegisterInput!): Boolean!
   authRegisterVerify(input: RegisterVerifyInput!): LoginResponse!
   authLogin(input: LoginInput!): LoginResponse!

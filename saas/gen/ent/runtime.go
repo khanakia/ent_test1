@@ -7,6 +7,7 @@ import (
 	"saas/gen/ent/kache"
 	"saas/gen/ent/keyvalue"
 	"saas/gen/ent/mailconnection"
+	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/plan"
 	"saas/gen/ent/session"
 	"saas/gen/ent/temp"
@@ -101,6 +102,25 @@ func init() {
 	mailconnectionDescStatus := mailconnectionFields[5].Descriptor()
 	// mailconnection.DefaultStatus holds the default value on creation for the status field.
 	mailconnection.DefaultStatus = mailconnectionDescStatus.Default.(bool)
+	oauthconnectionMixin := schema.OauthConnection{}.Mixin()
+	oauthconnectionMixinFields0 := oauthconnectionMixin[0].Fields()
+	_ = oauthconnectionMixinFields0
+	oauthconnectionFields := schema.OauthConnection{}.Fields()
+	_ = oauthconnectionFields
+	// oauthconnectionDescCreatedAt is the schema descriptor for created_at field.
+	oauthconnectionDescCreatedAt := oauthconnectionMixinFields0[1].Descriptor()
+	// oauthconnection.DefaultCreatedAt holds the default value on creation for the created_at field.
+	oauthconnection.DefaultCreatedAt = oauthconnectionDescCreatedAt.Default.(func() time.Time)
+	// oauthconnectionDescUpdatedAt is the schema descriptor for updated_at field.
+	oauthconnectionDescUpdatedAt := oauthconnectionMixinFields0[2].Descriptor()
+	// oauthconnection.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	oauthconnection.DefaultUpdatedAt = oauthconnectionDescUpdatedAt.Default.(func() time.Time)
+	// oauthconnection.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	oauthconnection.UpdateDefaultUpdatedAt = oauthconnectionDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// oauthconnectionDescID is the schema descriptor for id field.
+	oauthconnectionDescID := oauthconnectionMixinFields0[0].Descriptor()
+	// oauthconnection.DefaultID holds the default value on creation for the id field.
+	oauthconnection.DefaultID = oauthconnectionDescID.Default.(func() string)
 	planMixin := schema.Plan{}.Mixin()
 	planMixinFields0 := planMixin[0].Fields()
 	_ = planMixinFields0

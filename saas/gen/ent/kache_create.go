@@ -43,14 +43,6 @@ func (kc *KacheCreate) SetKey(s string) *KacheCreate {
 	return kc
 }
 
-// SetNillableKey sets the "key" field if the given value is not nil.
-func (kc *KacheCreate) SetNillableKey(s *string) *KacheCreate {
-	if s != nil {
-		kc.SetKey(*s)
-	}
-	return kc
-}
-
 // SetValue sets the "value" field.
 func (kc *KacheCreate) SetValue(s string) *KacheCreate {
 	kc.mutation.SetValue(s)
@@ -140,6 +132,9 @@ func (kc *KacheCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (kc *KacheCreate) check() error {
+	if _, ok := kc.mutation.Key(); !ok {
+		return &ValidationError{Name: "key", err: errors.New(`ent: missing required field "Kache.key"`)}
+	}
 	if v, ok := kc.mutation.ID(); ok {
 		if err := kache.IDValidator(v); err != nil {
 			return &ValidationError{Name: "id", err: fmt.Errorf(`ent: validator failed for field "Kache.id": %w`, err)}
@@ -279,12 +274,6 @@ func (u *KacheUpsert) UpdateKey() *KacheUpsert {
 	return u
 }
 
-// ClearKey clears the value of the "key" field.
-func (u *KacheUpsert) ClearKey() *KacheUpsert {
-	u.SetNull(kache.FieldKey)
-	return u
-}
-
 // SetValue sets the "value" field.
 func (u *KacheUpsert) SetValue(v string) *KacheUpsert {
 	u.Set(kache.FieldValue, v)
@@ -407,13 +396,6 @@ func (u *KacheUpsertOne) SetKey(v string) *KacheUpsertOne {
 func (u *KacheUpsertOne) UpdateKey() *KacheUpsertOne {
 	return u.Update(func(s *KacheUpsert) {
 		s.UpdateKey()
-	})
-}
-
-// ClearKey clears the value of the "key" field.
-func (u *KacheUpsertOne) ClearKey() *KacheUpsertOne {
-	return u.Update(func(s *KacheUpsert) {
-		s.ClearKey()
 	})
 }
 
@@ -713,13 +695,6 @@ func (u *KacheUpsertBulk) SetKey(v string) *KacheUpsertBulk {
 func (u *KacheUpsertBulk) UpdateKey() *KacheUpsertBulk {
 	return u.Update(func(s *KacheUpsert) {
 		s.UpdateKey()
-	})
-}
-
-// ClearKey clears the value of the "key" field.
-func (u *KacheUpsertBulk) ClearKey() *KacheUpsertBulk {
-	return u.Update(func(s *KacheUpsert) {
-		s.ClearKey()
 	})
 }
 

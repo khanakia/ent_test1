@@ -18,6 +18,11 @@ import (
 	"github.com/spf13/cast"
 )
 
+// AuthLoginViaOauth is the resolver for the authLoginViaOauth field.
+func (r *mutationResolver) AuthLoginViaOauth(ctx context.Context, cacheID string) (*handlertypes.LoginResponse, error) {
+	panic(fmt.Errorf("not implemented: AuthLoginViaOauth - authLoginViaOauth"))
+}
+
 // AuthRegister is the resolver for the authRegister field.
 func (r *mutationResolver) AuthRegister(ctx context.Context, input authfn.RegisterInput) (bool, error) {
 	err := handlerfn.RegisterHandler(authfn.RegisterInput{
@@ -37,7 +42,7 @@ func (r *mutationResolver) AuthRegister(ctx context.Context, input authfn.Regist
 }
 
 // AuthRegisterVerify is the resolver for the authRegisterVerify field.
-func (r *mutationResolver) AuthRegisterVerify(ctx context.Context, input model.RegisterVerifyInput) (*handlertypes.LoginResponse, error) {
+func (r *mutationResolver) AuthRegisterVerify(ctx context.Context, input handlertypes.RegisterVerifyInput) (*handlertypes.LoginResponse, error) {
 	result, err := handlerfn.RegisterVerify(handlertypes.RegisterVerifyInput{
 		Email: input.Email,
 		Token: input.Token,
@@ -52,7 +57,7 @@ func (r *mutationResolver) AuthRegisterVerify(ctx context.Context, input model.R
 
 // AuthLogin is the resolver for the authLogin field.
 func (r *mutationResolver) AuthLogin(ctx context.Context, input authfn.LoginParams) (*handlertypes.LoginResponse, error) {
-	user, session, err := authfn.Login(input, r.Plugin.EntDB.Client())
+	user, session, err := authfn.Login(input, true, r.Plugin.EntDB.Client())
 
 	if err != nil {
 		return nil, util.ErrorToGqlError(err, ctx)

@@ -18,6 +18,9 @@ type Keyvalue func(*sql.Selector)
 // MailConnection is the predicate function for mailconnection builders.
 type MailConnection func(*sql.Selector)
 
+// OauthConnection is the predicate function for oauthconnection builders.
+type OauthConnection func(*sql.Selector)
+
 // Plan is the predicate function for plan builders.
 type Plan func(*sql.Selector)
 

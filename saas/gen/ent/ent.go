@@ -11,6 +11,7 @@ import (
 	"saas/gen/ent/kache"
 	"saas/gen/ent/keyvalue"
 	"saas/gen/ent/mailconnection"
+	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/plan"
 	"saas/gen/ent/project"
 	"saas/gen/ent/session"
@@ -88,6 +89,7 @@ func checkColumn(table, column string) error {
 			kache.Table:           kache.ValidColumn,
 			keyvalue.Table:        keyvalue.ValidColumn,
 			mailconnection.Table:  mailconnection.ValidColumn,
+			oauthconnection.Table: oauthconnection.ValidColumn,
 			plan.Table:            plan.ValidColumn,
 			project.Table:         project.ValidColumn,
 			session.Table:         session.ValidColumn,

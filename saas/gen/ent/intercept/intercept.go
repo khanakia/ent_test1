@@ -10,6 +10,7 @@ import (
 	"saas/gen/ent/kache"
 	"saas/gen/ent/keyvalue"
 	"saas/gen/ent/mailconnection"
+	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/plan"
 	"saas/gen/ent/predicate"
 	"saas/gen/ent/project"
@@ -185,6 +186,33 @@ func (f TraverseMailConnection) Traverse(ctx context.Context, q ent.Query) error
 		return f(ctx, q)
 	}
 	return fmt.Errorf("unexpected query type %T. expect *ent.MailConnectionQuery", q)
+}
+
+// The OauthConnectionFunc type is an adapter to allow the use of ordinary function as a Querier.
+type OauthConnectionFunc func(context.Context, *ent.OauthConnectionQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f OauthConnectionFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.OauthConnectionQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.OauthConnectionQuery", q)
+}
+
+// The TraverseOauthConnection type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseOauthConnection func(context.Context, *ent.OauthConnectionQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseOauthConnection) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseOauthConnection) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.OauthConnectionQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.OauthConnectionQuery", q)
 }
 
 // The PlanFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -414,6 +442,8 @@ func NewQuery(q ent.Query) (Query, error) {
 		return &query[*ent.KeyvalueQuery, predicate.Keyvalue, keyvalue.OrderOption]{typ: ent.TypeKeyvalue, tq: q}, nil
 	case *ent.MailConnectionQuery:
 		return &query[*ent.MailConnectionQuery, predicate.MailConnection, mailconnection.OrderOption]{typ: ent.TypeMailConnection, tq: q}, nil
+	case *ent.OauthConnectionQuery:
+		return &query[*ent.OauthConnectionQuery, predicate.OauthConnection, oauthconnection.OrderOption]{typ: ent.TypeOauthConnection, tq: q}, nil
 	case *ent.PlanQuery:
 		return &query[*ent.PlanQuery, predicate.Plan, plan.OrderOption]{typ: ent.TypePlan, tq: q}, nil
 	case *ent.ProjectQuery:

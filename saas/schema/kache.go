@@ -31,7 +31,7 @@ func (Kache) Fields() []ent.Field {
 			Annotations(
 			// entgql.Skip(entgql.SkipType),
 			),
-		field.String("key").Optional(),
+		field.String("key").Unique(),
 		field.String("value").Optional(),
 		field.Int("expires").Optional(),
 	}

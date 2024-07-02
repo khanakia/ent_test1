@@ -15,6 +15,7 @@ import (
 	"saas/gen/ent/kache"
 	"saas/gen/ent/keyvalue"
 	"saas/gen/ent/mailconnection"
+	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/plan"
 	"saas/gen/ent/project"
 	"saas/gen/ent/session"
@@ -45,6 +46,8 @@ type Client struct {
 	Keyvalue *KeyvalueClient
 	// MailConnection is the client for interacting with the MailConnection builders.
 	MailConnection *MailConnectionClient
+	// OauthConnection is the client for interacting with the OauthConnection builders.
+	OauthConnection *OauthConnectionClient
 	// Plan is the client for interacting with the Plan builders.
 	Plan *PlanClient
 	// Project is the client for interacting with the Project builders.
@@ -76,6 +79,7 @@ func (c *Client) init() {
 	c.Kache = NewKacheClient(c.config)
 	c.Keyvalue = NewKeyvalueClient(c.config)
 	c.MailConnection = NewMailConnectionClient(c.config)
+	c.OauthConnection = NewOauthConnectionClient(c.config)
 	c.Plan = NewPlanClient(c.config)
 	c.Project = NewProjectClient(c.config)
 	c.Session = NewSessionClient(c.config)
@@ -180,6 +184,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		Kache:           NewKacheClient(cfg),
 		Keyvalue:        NewKeyvalueClient(cfg),
 		MailConnection:  NewMailConnectionClient(cfg),
+		OauthConnection: NewOauthConnectionClient(cfg),
 		Plan:            NewPlanClient(cfg),
 		Project:         NewProjectClient(cfg),
 		Session:         NewSessionClient(cfg),
@@ -211,6 +216,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		Kache:           NewKacheClient(cfg),
 		Keyvalue:        NewKeyvalueClient(cfg),
 		MailConnection:  NewMailConnectionClient(cfg),
+		OauthConnection: NewOauthConnectionClient(cfg),
 		Plan:            NewPlanClient(cfg),
 		Project:         NewProjectClient(cfg),
 		Session:         NewSessionClient(cfg),
@@ -248,8 +254,9 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Admin, c.Kache, c.Keyvalue, c.MailConnection, c.Plan, c.Project, c.Session,
-		c.Temp, c.User, c.Workspace, c.WorkspaceInvite, c.WorkspaceUser,
+		c.Admin, c.Kache, c.Keyvalue, c.MailConnection, c.OauthConnection, c.Plan,
+		c.Project, c.Session, c.Temp, c.User, c.Workspace, c.WorkspaceInvite,
+		c.WorkspaceUser,
 	} {
 		n.Use(hooks...)
 	}
@@ -259,8 +266,9 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Admin, c.Kache, c.Keyvalue, c.MailConnection, c.Plan, c.Project, c.Session,
-		c.Temp, c.User, c.Workspace, c.WorkspaceInvite, c.WorkspaceUser,
+		c.Admin, c.Kache, c.Keyvalue, c.MailConnection, c.OauthConnection, c.Plan,
+		c.Project, c.Session, c.Temp, c.User, c.Workspace, c.WorkspaceInvite,
+		c.WorkspaceUser,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -277,6 +285,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.Keyvalue.mutate(ctx, m)
 	case *MailConnectionMutation:
 		return c.MailConnection.mutate(ctx, m)
+	case *OauthConnectionMutation:
+		return c.OauthConnection.mutate(ctx, m)
 	case *PlanMutation:
 		return c.Plan.mutate(ctx, m)
 	case *ProjectMutation:
@@ -827,6 +837,139 @@ func (c *MailConnectionClient) mutate(ctx context.Context, m *MailConnectionMuta
 		return (&MailConnectionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown MailConnection mutation op: %q", m.Op())
+	}
+}
+
+// OauthConnectionClient is a client for the OauthConnection schema.
+type OauthConnectionClient struct {
+	config
+}
+
+// NewOauthConnectionClient returns a client for the OauthConnection from the given config.
+func NewOauthConnectionClient(c config) *OauthConnectionClient {
+	return &OauthConnectionClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `oauthconnection.Hooks(f(g(h())))`.
+func (c *OauthConnectionClient) Use(hooks ...Hook) {
+	c.hooks.OauthConnection = append(c.hooks.OauthConnection, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `oauthconnection.Intercept(f(g(h())))`.
+func (c *OauthConnectionClient) Intercept(interceptors ...Interceptor) {
+	c.inters.OauthConnection = append(c.inters.OauthConnection, interceptors...)
+}
+
+// Create returns a builder for creating a OauthConnection entity.
+func (c *OauthConnectionClient) Create() *OauthConnectionCreate {
+	mutation := newOauthConnectionMutation(c.config, OpCreate)
+	return &OauthConnectionCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of OauthConnection entities.
+func (c *OauthConnectionClient) CreateBulk(builders ...*OauthConnectionCreate) *OauthConnectionCreateBulk {
+	return &OauthConnectionCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *OauthConnectionClient) MapCreateBulk(slice any, setFunc func(*OauthConnectionCreate, int)) *OauthConnectionCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &OauthConnectionCreateBulk{err: fmt.Errorf("calling to OauthConnectionClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*OauthConnectionCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &OauthConnectionCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for OauthConnection.
+func (c *OauthConnectionClient) Update() *OauthConnectionUpdate {
+	mutation := newOauthConnectionMutation(c.config, OpUpdate)
+	return &OauthConnectionUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *OauthConnectionClient) UpdateOne(oc *OauthConnection) *OauthConnectionUpdateOne {
+	mutation := newOauthConnectionMutation(c.config, OpUpdateOne, withOauthConnection(oc))
+	return &OauthConnectionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *OauthConnectionClient) UpdateOneID(id string) *OauthConnectionUpdateOne {
+	mutation := newOauthConnectionMutation(c.config, OpUpdateOne, withOauthConnectionID(id))
+	return &OauthConnectionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for OauthConnection.
+func (c *OauthConnectionClient) Delete() *OauthConnectionDelete {
+	mutation := newOauthConnectionMutation(c.config, OpDelete)
+	return &OauthConnectionDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *OauthConnectionClient) DeleteOne(oc *OauthConnection) *OauthConnectionDeleteOne {
+	return c.DeleteOneID(oc.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *OauthConnectionClient) DeleteOneID(id string) *OauthConnectionDeleteOne {
+	builder := c.Delete().Where(oauthconnection.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &OauthConnectionDeleteOne{builder}
+}
+
+// Query returns a query builder for OauthConnection.
+func (c *OauthConnectionClient) Query() *OauthConnectionQuery {
+	return &OauthConnectionQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeOauthConnection},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a OauthConnection entity by its id.
+func (c *OauthConnectionClient) Get(ctx context.Context, id string) (*OauthConnection, error) {
+	return c.Query().Where(oauthconnection.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *OauthConnectionClient) GetX(ctx context.Context, id string) *OauthConnection {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *OauthConnectionClient) Hooks() []Hook {
+	return c.hooks.OauthConnection
+}
+
+// Interceptors returns the client interceptors.
+func (c *OauthConnectionClient) Interceptors() []Interceptor {
+	return c.inters.OauthConnection
+}
+
+func (c *OauthConnectionClient) mutate(ctx context.Context, m *OauthConnectionMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&OauthConnectionCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&OauthConnectionUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&OauthConnectionUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&OauthConnectionDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown OauthConnection mutation op: %q", m.Op())
 	}
 }
 
@@ -2057,12 +2200,12 @@ func (c *WorkspaceUserClient) mutate(ctx context.Context, m *WorkspaceUserMutati
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Admin, Kache, Keyvalue, MailConnection, Plan, Project, Session, Temp, User,
-		Workspace, WorkspaceInvite, WorkspaceUser []ent.Hook
+		Admin, Kache, Keyvalue, MailConnection, OauthConnection, Plan, Project, Session,
+		Temp, User, Workspace, WorkspaceInvite, WorkspaceUser []ent.Hook
 	}
 	inters struct {
-		Admin, Kache, Keyvalue, MailConnection, Plan, Project, Session, Temp, User,
-		Workspace, WorkspaceInvite, WorkspaceUser []ent.Interceptor
+		Admin, Kache, Keyvalue, MailConnection, OauthConnection, Plan, Project, Session,
+		Temp, User, Workspace, WorkspaceInvite, WorkspaceUser []ent.Interceptor
 	}
 )
 

@@ -189,16 +189,6 @@ func KeyHasSuffix(v string) predicate.Kache {
 	return predicate.Kache(sql.FieldHasSuffix(FieldKey, v))
 }
 
-// KeyIsNil applies the IsNil predicate on the "key" field.
-func KeyIsNil() predicate.Kache {
-	return predicate.Kache(sql.FieldIsNull(FieldKey))
-}
-
-// KeyNotNil applies the NotNil predicate on the "key" field.
-func KeyNotNil() predicate.Kache {
-	return predicate.Kache(sql.FieldNotNull(FieldKey))
-}
-
 // KeyEqualFold applies the EqualFold predicate on the "key" field.
 func KeyEqualFold(v string) predicate.Kache {
 	return predicate.Kache(sql.FieldEqualFold(FieldKey, v))

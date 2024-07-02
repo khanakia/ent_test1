@@ -58,10 +58,13 @@ type ComplexityRoot struct {
 	Mutation struct {
 		AuthForgotPassword    func(childComplexity int, userName string) int
 		AuthLogin             func(childComplexity int, input authfn.LoginParams) int
+		AuthLoginViaOauth     func(childComplexity int, cacheID string) int
 		AuthRegister          func(childComplexity int, input authfn.RegisterInput) int
-		AuthRegisterVerify    func(childComplexity int, input model.RegisterVerifyInput) int
+		AuthRegisterVerify    func(childComplexity int, input handlertypes.RegisterVerifyInput) int
 		AuthResetPassword     func(childComplexity int, input model.ResetPasswordInput) int
 		ChangePassword        func(childComplexity int, input model.ChangePasswordInput) int
+		OauthCallback         func(childComplexity int, callbackURL string) int
+		OauthRequest          func(childComplexity int, input *model.OauthRequestInput) int
 		Ping                  func(childComplexity int) int
 		UpdateProfile         func(childComplexity int, input model.UpdateProfileInput) int
 		WorkspaceAddUser      func(childComplexity int, input handlertypes.WorkspaceAddUserInput) int
@@ -71,6 +74,13 @@ type ComplexityRoot struct {
 		WorkspaceRemoveUser   func(childComplexity int, id string) int
 		WorkspaceUpdate       func(childComplexity int, input handlertypes.WorkspaceUpdateInput) int
 		WorkspaceUpdateUser   func(childComplexity int, input handlertypes.WorkspaceUpdateUserInput) int
+	}
+
+	OauthCallbackResponse struct {
+		CacheID         func(childComplexity int) int
+		Metadata        func(childComplexity int) int
+		OatConnectionID func(childComplexity int) int
+		Provider        func(childComplexity int) int
 	}
 
 	Query struct {
@@ -127,13 +137,16 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	Ping(ctx context.Context) (string, error)
+	AuthLoginViaOauth(ctx context.Context, cacheID string) (*handlertypes.LoginResponse, error)
 	AuthRegister(ctx context.Context, input authfn.RegisterInput) (bool, error)
-	AuthRegisterVerify(ctx context.Context, input model.RegisterVerifyInput) (*handlertypes.LoginResponse, error)
+	AuthRegisterVerify(ctx context.Context, input handlertypes.RegisterVerifyInput) (*handlertypes.LoginResponse, error)
 	AuthLogin(ctx context.Context, input authfn.LoginParams) (*handlertypes.LoginResponse, error)
 	AuthForgotPassword(ctx context.Context, userName string) (bool, error)
 	AuthResetPassword(ctx context.Context, input model.ResetPasswordInput) (bool, error)
 	ChangePassword(ctx context.Context, input model.ChangePasswordInput) (bool, error)
 	UpdateProfile(ctx context.Context, input model.UpdateProfileInput) (bool, error)
+	OauthRequest(ctx context.Context, input *model.OauthRequestInput) (string, error)
+	OauthCallback(ctx context.Context, callbackURL string) (*model.OauthCallbackResponse, error)
 	WorkspaceInvite(ctx context.Context, input handlertypes.WorkspaceInviteInput) (*ent.WorkspaceInvite, error)
 	WorkspaceInviteCancel(ctx context.Context, id string) (bool, error)
 	WorkspaceAddUser(ctx context.Context, input handlertypes.WorkspaceAddUserInput) (*ent.WorkspaceUser, error)
@@ -208,6 +221,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AuthLogin(childComplexity, args["input"].(authfn.LoginParams)), true
 
+	case "Mutation.authLoginViaOauth":
+		if e.complexity.Mutation.AuthLoginViaOauth == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_authLoginViaOauth_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AuthLoginViaOauth(childComplexity, args["cacheId"].(string)), true
+
 	case "Mutation.authRegister":
 		if e.complexity.Mutation.AuthRegister == nil {
 			break
@@ -230,7 +255,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AuthRegisterVerify(childComplexity, args["input"].(model.RegisterVerifyInput)), true
+		return e.complexity.Mutation.AuthRegisterVerify(childComplexity, args["input"].(handlertypes.RegisterVerifyInput)), true
 
 	case "Mutation.authResetPassword":
 		if e.complexity.Mutation.AuthResetPassword == nil {
@@ -255,6 +280,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.ChangePassword(childComplexity, args["input"].(model.ChangePasswordInput)), true
+
+	case "Mutation.oauthCallback":
+		if e.complexity.Mutation.OauthCallback == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_oauthCallback_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.OauthCallback(childComplexity, args["callbackUrl"].(string)), true
+
+	case "Mutation.oauthRequest":
+		if e.complexity.Mutation.OauthRequest == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_oauthRequest_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.OauthRequest(childComplexity, args["input"].(*model.OauthRequestInput)), true
 
 	case "Mutation.ping":
 		if e.complexity.Mutation.Ping == nil {
@@ -358,6 +407,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.WorkspaceUpdateUser(childComplexity, args["input"].(handlertypes.WorkspaceUpdateUserInput)), true
+
+	case "OauthCallbackResponse.cacheId":
+		if e.complexity.OauthCallbackResponse.CacheID == nil {
+			break
+		}
+
+		return e.complexity.OauthCallbackResponse.CacheID(childComplexity), true
+
+	case "OauthCallbackResponse.metadata":
+		if e.complexity.OauthCallbackResponse.Metadata == nil {
+			break
+		}
+
+		return e.complexity.OauthCallbackResponse.Metadata(childComplexity), true
+
+	case "OauthCallbackResponse.oatConnectionId":
+		if e.complexity.OauthCallbackResponse.OatConnectionID == nil {
+			break
+		}
+
+		return e.complexity.OauthCallbackResponse.OatConnectionID(childComplexity), true
+
+	case "OauthCallbackResponse.provider":
+		if e.complexity.OauthCallbackResponse.Provider == nil {
+			break
+		}
+
+		return e.complexity.OauthCallbackResponse.Provider(childComplexity), true
 
 	case "Query.me":
 		if e.complexity.Query.Me == nil {
@@ -594,6 +671,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputChangePasswordInput,
 		ec.unmarshalInputLoginInput,
+		ec.unmarshalInputOauthRequestInput,
 		ec.unmarshalInputRegisterInput,
 		ec.unmarshalInputRegisterVerifyInput,
 		ec.unmarshalInputResetPasswordInput,
@@ -753,6 +831,8 @@ input ResetPasswordInput {
 }
 
 extend type Mutation {
+  authLoginViaOauth(cacheId: String!): LoginResponse!
+
   authRegister(input: RegisterInput!): Boolean!
   authRegisterVerify(input: RegisterVerifyInput!): LoginResponse!
   authLogin(input: LoginInput!): LoginResponse!
@@ -765,8 +845,27 @@ extend type Mutation {
 extend type Query {
   me: User
 }`, BuiltIn: false},
+	{Name: "../oauth.graphqls", Input: `input OauthRequestInput {
+  oatConnectionId: String!
+  redirectUrl: String
+  metadata: Map
+}
+
+type OauthCallbackResponse {
+  oatConnectionId: String!
+  provider: String!
+  cacheId: String!
+  metadata: Map
+}
+
+extend type Mutation {
+  oauthRequest(input: OauthRequestInput): String!
+  oauthCallback(callbackUrl: String!): OauthCallbackResponse!
+}`, BuiltIn: false},
 	{Name: "../schema.graphqls", Input: `scalar Time
 scalar Uint64
+scalar Map
+
 
 type Query {
   ping: String!
@@ -889,6 +988,21 @@ func (ec *executionContext) field_Mutation_authForgotPassword_args(ctx context.C
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_authLoginViaOauth_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["cacheId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cacheId"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["cacheId"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_authLogin_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -907,10 +1021,10 @@ func (ec *executionContext) field_Mutation_authLogin_args(ctx context.Context, r
 func (ec *executionContext) field_Mutation_authRegisterVerify_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.RegisterVerifyInput
+	var arg0 handlertypes.RegisterVerifyInput
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNRegisterVerifyInput2gqlᚋgraphᚋmodelᚐRegisterVerifyInput(ctx, tmp)
+		arg0, err = ec.unmarshalNRegisterVerifyInput2saasᚋpkgᚋhandlerᚋhandlertypesᚐRegisterVerifyInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -956,6 +1070,36 @@ func (ec *executionContext) field_Mutation_changePassword_args(ctx context.Conte
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNChangePasswordInput2gqlᚋgraphᚋmodelᚐChangePasswordInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_oauthCallback_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["callbackUrl"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("callbackUrl"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["callbackUrl"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_oauthRequest_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *model.OauthRequestInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalOOauthRequestInput2ᚖgqlᚋgraphᚋmodelᚐOauthRequestInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1328,6 +1472,67 @@ func (ec *executionContext) fieldContext_Mutation_ping(ctx context.Context, fiel
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_authLoginViaOauth(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_authLoginViaOauth(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AuthLoginViaOauth(rctx, fc.Args["cacheId"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*handlertypes.LoginResponse)
+	fc.Result = res
+	return ec.marshalNLoginResponse2ᚖsaasᚋpkgᚋhandlerᚋhandlertypesᚐLoginResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_authLoginViaOauth(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "token":
+				return ec.fieldContext_LoginResponse_token(ctx, field)
+			case "me":
+				return ec.fieldContext_LoginResponse_me(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LoginResponse", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_authLoginViaOauth_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_authRegister(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_authRegister(ctx, field)
 	if err != nil {
@@ -1397,7 +1602,7 @@ func (ec *executionContext) _Mutation_authRegisterVerify(ctx context.Context, fi
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().AuthRegisterVerify(rctx, fc.Args["input"].(model.RegisterVerifyInput))
+		return ec.resolvers.Mutation().AuthRegisterVerify(rctx, fc.Args["input"].(handlertypes.RegisterVerifyInput))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1719,6 +1924,126 @@ func (ec *executionContext) fieldContext_Mutation_updateProfile(ctx context.Cont
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updateProfile_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_oauthRequest(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_oauthRequest(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().OauthRequest(rctx, fc.Args["input"].(*model.OauthRequestInput))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_oauthRequest(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_oauthRequest_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_oauthCallback(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_oauthCallback(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().OauthCallback(rctx, fc.Args["callbackUrl"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.OauthCallbackResponse)
+	fc.Result = res
+	return ec.marshalNOauthCallbackResponse2ᚖgqlᚋgraphᚋmodelᚐOauthCallbackResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_oauthCallback(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "oatConnectionId":
+				return ec.fieldContext_OauthCallbackResponse_oatConnectionId(ctx, field)
+			case "provider":
+				return ec.fieldContext_OauthCallbackResponse_provider(ctx, field)
+			case "cacheId":
+				return ec.fieldContext_OauthCallbackResponse_cacheId(ctx, field)
+			case "metadata":
+				return ec.fieldContext_OauthCallbackResponse_metadata(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OauthCallbackResponse", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_oauthCallback_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -2156,6 +2481,179 @@ func (ec *executionContext) fieldContext_Mutation_workspaceLeave(ctx context.Con
 	if fc.Args, err = ec.field_Mutation_workspaceLeave_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OauthCallbackResponse_oatConnectionId(ctx context.Context, field graphql.CollectedField, obj *model.OauthCallbackResponse) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OauthCallbackResponse_oatConnectionId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OatConnectionID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OauthCallbackResponse_oatConnectionId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OauthCallbackResponse",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OauthCallbackResponse_provider(ctx context.Context, field graphql.CollectedField, obj *model.OauthCallbackResponse) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OauthCallbackResponse_provider(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Provider, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OauthCallbackResponse_provider(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OauthCallbackResponse",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OauthCallbackResponse_cacheId(ctx context.Context, field graphql.CollectedField, obj *model.OauthCallbackResponse) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OauthCallbackResponse_cacheId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CacheID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OauthCallbackResponse_cacheId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OauthCallbackResponse",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OauthCallbackResponse_metadata(ctx context.Context, field graphql.CollectedField, obj *model.OauthCallbackResponse) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OauthCallbackResponse_metadata(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Metadata, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(map[string]interface{})
+	fc.Result = res
+	return ec.marshalOMap2map(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OauthCallbackResponse_metadata(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OauthCallbackResponse",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Map does not have child fields")
+		},
 	}
 	return fc, nil
 }
@@ -5576,6 +6074,47 @@ func (ec *executionContext) unmarshalInputLoginInput(ctx context.Context, obj in
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputOauthRequestInput(ctx context.Context, obj interface{}) (model.OauthRequestInput, error) {
+	var it model.OauthRequestInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"oatConnectionId", "redirectUrl", "metadata"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "oatConnectionId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("oatConnectionId"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OatConnectionID = data
+		case "redirectUrl":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("redirectUrl"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RedirectURL = data
+		case "metadata":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("metadata"))
+			data, err := ec.unmarshalOMap2map(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Metadata = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputRegisterInput(ctx context.Context, obj interface{}) (authfn.RegisterInput, error) {
 	var it authfn.RegisterInput
 	asMap := map[string]interface{}{}
@@ -5638,8 +6177,8 @@ func (ec *executionContext) unmarshalInputRegisterInput(ctx context.Context, obj
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputRegisterVerifyInput(ctx context.Context, obj interface{}) (model.RegisterVerifyInput, error) {
-	var it model.RegisterVerifyInput
+func (ec *executionContext) unmarshalInputRegisterVerifyInput(ctx context.Context, obj interface{}) (handlertypes.RegisterVerifyInput, error) {
+	var it handlertypes.RegisterVerifyInput
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -5996,6 +6535,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "authLoginViaOauth":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_authLoginViaOauth(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "authRegister":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_authRegister(ctx, field)
@@ -6041,6 +6587,20 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "updateProfile":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateProfile(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "oauthRequest":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_oauthRequest(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "oauthCallback":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_oauthCallback(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
@@ -6094,6 +6654,57 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var oauthCallbackResponseImplementors = []string{"OauthCallbackResponse"}
+
+func (ec *executionContext) _OauthCallbackResponse(ctx context.Context, sel ast.SelectionSet, obj *model.OauthCallbackResponse) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, oauthCallbackResponseImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("OauthCallbackResponse")
+		case "oatConnectionId":
+			out.Values[i] = ec._OauthCallbackResponse_oatConnectionId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "provider":
+			out.Values[i] = ec._OauthCallbackResponse_provider(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "cacheId":
+			out.Values[i] = ec._OauthCallbackResponse_cacheId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "metadata":
+			out.Values[i] = ec._OauthCallbackResponse_metadata(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6985,12 +7596,26 @@ func (ec *executionContext) marshalNLoginResponse2ᚖsaasᚋpkgᚋhandlerᚋhand
 	return ec._LoginResponse(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNOauthCallbackResponse2gqlᚋgraphᚋmodelᚐOauthCallbackResponse(ctx context.Context, sel ast.SelectionSet, v model.OauthCallbackResponse) graphql.Marshaler {
+	return ec._OauthCallbackResponse(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNOauthCallbackResponse2ᚖgqlᚋgraphᚋmodelᚐOauthCallbackResponse(ctx context.Context, sel ast.SelectionSet, v *model.OauthCallbackResponse) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._OauthCallbackResponse(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalNRegisterInput2saasᚋpkgᚋauthᚋauthfnᚐRegisterInput(ctx context.Context, v interface{}) (authfn.RegisterInput, error) {
 	res, err := ec.unmarshalInputRegisterInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNRegisterVerifyInput2gqlᚋgraphᚋmodelᚐRegisterVerifyInput(ctx context.Context, v interface{}) (model.RegisterVerifyInput, error) {
+func (ec *executionContext) unmarshalNRegisterVerifyInput2saasᚋpkgᚋhandlerᚋhandlertypesᚐRegisterVerifyInput(ctx context.Context, v interface{}) (handlertypes.RegisterVerifyInput, error) {
 	res, err := ec.unmarshalInputRegisterVerifyInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
@@ -7524,6 +8149,30 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	}
 	res := graphql.MarshalBoolean(*v)
 	return res
+}
+
+func (ec *executionContext) unmarshalOMap2map(ctx context.Context, v interface{}) (map[string]interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalMap(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOMap2map(ctx context.Context, sel ast.SelectionSet, v map[string]interface{}) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := graphql.MarshalMap(v)
+	return res
+}
+
+func (ec *executionContext) unmarshalOOauthRequestInput2ᚖgqlᚋgraphᚋmodelᚐOauthRequestInput(ctx context.Context, v interface{}) (*model.OauthRequestInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputOauthRequestInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {
