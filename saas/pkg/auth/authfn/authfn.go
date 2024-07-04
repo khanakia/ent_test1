@@ -9,6 +9,7 @@ import (
 	"saas/gen/ent"
 	"saas/gen/ent/user"
 	"saas/pkg/appfn"
+	"saas/pkg/emailfn"
 	"strings"
 	"time"
 
@@ -236,6 +237,8 @@ func ForgotPassword(email string, client *ent.Client, cache cache.Store) error {
 	if err != nil {
 		return err
 	}
+
+	emailfn.SendForgotPassword(email, secret, client)
 
 	return nil
 }

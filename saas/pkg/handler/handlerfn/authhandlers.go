@@ -8,6 +8,7 @@ import (
 	"saas/gen/ent"
 	"saas/gen/ent/temp"
 	"saas/pkg/auth/authfn"
+	"saas/pkg/emailfn"
 	"saas/pkg/handler/handlertypes"
 )
 
@@ -26,7 +27,7 @@ func RegisterHandler(userInput authfn.RegisterInput, client *ent.Client, ctx con
 		return fmt.Errorf("email already registered")
 	}
 
-	_, err = client.Temp.Create().
+	tempRec, err := client.Temp.Create().
 		SetType("register").
 		SetBody(util.MustMarshalData(userInput)).
 		Save(ctx)
@@ -36,6 +37,7 @@ func RegisterHandler(userInput authfn.RegisterInput, client *ent.Client, ctx con
 	}
 
 	// YTD - send email
+	emailfn.RegisterVerify(userInput.Email, tempRec.ID, client)
 
 	return err
 }

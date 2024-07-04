@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"saas/gen/ent"
 	"saas/gen/ent/workspaceuser"
+	"saas/pkg/app"
 	"saas/pkg/constants"
 )
 
@@ -37,7 +38,8 @@ func WithTx[T any](ctx context.Context, client *ent.Client, fn func(tx *ent.Tx) 
 
 func CanAccessWorkspace(workspaceID, userID string, client *ent.Client, ctx context.Context) bool {
 	_, err := client.WorkspaceUser.Query().Where(workspaceuser.WorkspaceID(workspaceID), workspaceuser.UserID(userID)).First(ctx)
-	return err != nil
+	fmt.Println("sfs", err)
+	return err == nil
 }
 
 // we will use this functio to create default workspace for the new user registered
@@ -54,4 +56,17 @@ func CreateDefaultWorkspaceForUser(userID string, client *ent.Client, ctx contex
 		Save(ctx)
 
 	return err
+}
+
+func GetAppSettings(client *ent.Client) (*ent.AppSetting, error) {
+	return client.AppSetting.Query().First(context.Background())
+}
+
+func MustGetAppSettings() *ent.AppSetting {
+	client := app.GetPlugins().EntDB.Client()
+	record, err := client.AppSetting.Query().First(context.Background())
+	if err != nil {
+		panic(err)
+	}
+	return record
 }

@@ -26,6 +26,35 @@ var (
 		Columns:    AdminsColumns,
 		PrimaryKey: []*schema.Column{AdminsColumns[0]},
 	}
+	// AppSettingsColumns holds the columns for the "app_settings" table.
+	AppSettingsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "app_name", Type: field.TypeString, Nullable: true},
+		{Name: "copyright", Type: field.TypeString, Nullable: true},
+		{Name: "email", Type: field.TypeString, Nullable: true},
+		{Name: "address", Type: field.TypeString, Nullable: true},
+		{Name: "social_tw", Type: field.TypeString, Nullable: true},
+		{Name: "social_fb", Type: field.TypeString, Nullable: true},
+		{Name: "social_in", Type: field.TypeString, Nullable: true},
+		{Name: "logo_url", Type: field.TypeString, Nullable: true},
+		{Name: "site_url", Type: field.TypeString, Nullable: true},
+		{Name: "default_mail_conn_id", Type: field.TypeString, Nullable: true},
+		{Name: "mail_layout_templ_id", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "wsapce_invite_templ_id", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "wsapce_success_templ_id", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "auth_fp_templ_id", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "auth_welcome_email_templ_id", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "auth_verification_templ_id", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "auth_email_verify", Type: field.TypeString, Nullable: true, Size: 2147483647},
+	}
+	// AppSettingsTable holds the schema information for the "app_settings" table.
+	AppSettingsTable = &schema.Table{
+		Name:       "app_settings",
+		Columns:    AppSettingsColumns,
+		PrimaryKey: []*schema.Column{AppSettingsColumns[0]},
+	}
 	// KachesColumns holds the columns for the "kaches" table.
 	KachesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString, Unique: true, Size: 36},
@@ -52,21 +81,26 @@ var (
 		Columns:    KeyvaluesColumns,
 		PrimaryKey: []*schema.Column{KeyvaluesColumns[0]},
 	}
-	// MailConnectionsColumns holds the columns for the "mail_connections" table.
-	MailConnectionsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt, Increment: true},
+	// MailConnsColumns holds the columns for the "mail_conns" table.
+	MailConnsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "name", Type: field.TypeString, Nullable: true},
 		{Name: "host", Type: field.TypeString, Nullable: true},
-		{Name: "port", Type: field.TypeString, Nullable: true},
+		{Name: "port", Type: field.TypeInt, Nullable: true},
 		{Name: "username", Type: field.TypeString, Nullable: true},
 		{Name: "password", Type: field.TypeString, Nullable: true},
-		{Name: "status", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "encryption", Type: field.TypeInt, Nullable: true},
+		{Name: "from_name", Type: field.TypeString, Nullable: true},
+		{Name: "from_email", Type: field.TypeString, Nullable: true},
+		{Name: "status", Type: field.TypeBool, Nullable: true, Default: true},
 	}
-	// MailConnectionsTable holds the schema information for the "mail_connections" table.
-	MailConnectionsTable = &schema.Table{
-		Name:       "mail_connections",
-		Columns:    MailConnectionsColumns,
-		PrimaryKey: []*schema.Column{MailConnectionsColumns[0]},
+	// MailConnsTable holds the schema information for the "mail_conns" table.
+	MailConnsTable = &schema.Table{
+		Name:       "mail_conns",
+		Columns:    MailConnsColumns,
+		PrimaryKey: []*schema.Column{MailConnsColumns[0]},
 	}
 	// OauthConnectionsColumns holds the columns for the "oauth_connections" table.
 	OauthConnectionsColumns = []*schema.Column{
@@ -156,6 +190,22 @@ var (
 		Name:       "temps",
 		Columns:    TempsColumns,
 		PrimaryKey: []*schema.Column{TempsColumns[0]},
+	}
+	// TemplsColumns holds the columns for the "templs" table.
+	TemplsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "name", Type: field.TypeString, Nullable: true},
+		{Name: "body", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "compiled", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "status", Type: field.TypeBool, Nullable: true, Default: true},
+	}
+	// TemplsTable holds the schema information for the "templs" table.
+	TemplsTable = &schema.Table{
+		Name:       "templs",
+		Columns:    TemplsColumns,
+		PrimaryKey: []*schema.Column{TemplsColumns[0]},
 	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
@@ -263,14 +313,16 @@ var (
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AdminsTable,
+		AppSettingsTable,
 		KachesTable,
 		KeyvaluesTable,
-		MailConnectionsTable,
+		MailConnsTable,
 		OauthConnectionsTable,
 		PlansTable,
 		ProjectsTable,
 		SessionsTable,
 		TempsTable,
+		TemplsTable,
 		UsersTable,
 		WorkspacesTable,
 		WorkspaceInvitesTable,

@@ -16,12 +16,14 @@ type Tx struct {
 	config
 	// Admin is the client for interacting with the Admin builders.
 	Admin *AdminClient
+	// AppSetting is the client for interacting with the AppSetting builders.
+	AppSetting *AppSettingClient
 	// Kache is the client for interacting with the Kache builders.
 	Kache *KacheClient
 	// Keyvalue is the client for interacting with the Keyvalue builders.
 	Keyvalue *KeyvalueClient
-	// MailConnection is the client for interacting with the MailConnection builders.
-	MailConnection *MailConnectionClient
+	// MailConn is the client for interacting with the MailConn builders.
+	MailConn *MailConnClient
 	// OauthConnection is the client for interacting with the OauthConnection builders.
 	OauthConnection *OauthConnectionClient
 	// Plan is the client for interacting with the Plan builders.
@@ -32,6 +34,8 @@ type Tx struct {
 	Session *SessionClient
 	// Temp is the client for interacting with the Temp builders.
 	Temp *TempClient
+	// Templ is the client for interacting with the Templ builders.
+	Templ *TemplClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// Workspace is the client for interacting with the Workspace builders.
@@ -172,14 +176,16 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Admin = NewAdminClient(tx.config)
+	tx.AppSetting = NewAppSettingClient(tx.config)
 	tx.Kache = NewKacheClient(tx.config)
 	tx.Keyvalue = NewKeyvalueClient(tx.config)
-	tx.MailConnection = NewMailConnectionClient(tx.config)
+	tx.MailConn = NewMailConnClient(tx.config)
 	tx.OauthConnection = NewOauthConnectionClient(tx.config)
 	tx.Plan = NewPlanClient(tx.config)
 	tx.Project = NewProjectClient(tx.config)
 	tx.Session = NewSessionClient(tx.config)
 	tx.Temp = NewTempClient(tx.config)
+	tx.Templ = NewTemplClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.Workspace = NewWorkspaceClient(tx.config)
 	tx.WorkspaceInvite = NewWorkspaceInviteClient(tx.config)

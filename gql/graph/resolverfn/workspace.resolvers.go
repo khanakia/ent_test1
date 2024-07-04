@@ -113,5 +113,5 @@ func (r *queryResolver) WorkspaceUsers(ctx context.Context, workspaceID string) 
 	if cuser == nil {
 		return nil, err
 	}
-	return handlerfn.WorkspaceUsersHandler(cuser, r.Plugin.EntDB.Client(), ctx)
+	return handlerfn.WorkspaceUsersHandler(workspaceID, r.Plugin.EntDB.Client(), ctx)
 }

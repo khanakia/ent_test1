@@ -6,7 +6,7 @@ import (
 	"context"
 	"fmt"
 	"math"
-	"saas/gen/ent/mailconnection"
+	"saas/gen/ent/mailconn"
 	"saas/gen/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
@@ -14,65 +14,65 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// MailConnectionQuery is the builder for querying MailConnection entities.
-type MailConnectionQuery struct {
+// MailConnQuery is the builder for querying MailConn entities.
+type MailConnQuery struct {
 	config
 	ctx        *QueryContext
-	order      []mailconnection.OrderOption
+	order      []mailconn.OrderOption
 	inters     []Interceptor
-	predicates []predicate.MailConnection
+	predicates []predicate.MailConn
 	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
 }
 
-// Where adds a new predicate for the MailConnectionQuery builder.
-func (mcq *MailConnectionQuery) Where(ps ...predicate.MailConnection) *MailConnectionQuery {
+// Where adds a new predicate for the MailConnQuery builder.
+func (mcq *MailConnQuery) Where(ps ...predicate.MailConn) *MailConnQuery {
 	mcq.predicates = append(mcq.predicates, ps...)
 	return mcq
 }
 
 // Limit the number of records to be returned by this query.
-func (mcq *MailConnectionQuery) Limit(limit int) *MailConnectionQuery {
+func (mcq *MailConnQuery) Limit(limit int) *MailConnQuery {
 	mcq.ctx.Limit = &limit
 	return mcq
 }
 
 // Offset to start from.
-func (mcq *MailConnectionQuery) Offset(offset int) *MailConnectionQuery {
+func (mcq *MailConnQuery) Offset(offset int) *MailConnQuery {
 	mcq.ctx.Offset = &offset
 	return mcq
 }
 
 // Unique configures the query builder to filter duplicate records on query.
 // By default, unique is set to true, and can be disabled using this method.
-func (mcq *MailConnectionQuery) Unique(unique bool) *MailConnectionQuery {
+func (mcq *MailConnQuery) Unique(unique bool) *MailConnQuery {
 	mcq.ctx.Unique = &unique
 	return mcq
 }
 
 // Order specifies how the records should be ordered.
-func (mcq *MailConnectionQuery) Order(o ...mailconnection.OrderOption) *MailConnectionQuery {
+func (mcq *MailConnQuery) Order(o ...mailconn.OrderOption) *MailConnQuery {
 	mcq.order = append(mcq.order, o...)
 	return mcq
 }
 
-// First returns the first MailConnection entity from the query.
-// Returns a *NotFoundError when no MailConnection was found.
-func (mcq *MailConnectionQuery) First(ctx context.Context) (*MailConnection, error) {
+// First returns the first MailConn entity from the query.
+// Returns a *NotFoundError when no MailConn was found.
+func (mcq *MailConnQuery) First(ctx context.Context) (*MailConn, error) {
 	nodes, err := mcq.Limit(1).All(setContextOp(ctx, mcq.ctx, "First"))
 	if err != nil {
 		return nil, err
 	}
 	if len(nodes) == 0 {
-		return nil, &NotFoundError{mailconnection.Label}
+		return nil, &NotFoundError{mailconn.Label}
 	}
 	return nodes[0], nil
 }
 
 // FirstX is like First, but panics if an error occurs.
-func (mcq *MailConnectionQuery) FirstX(ctx context.Context) *MailConnection {
+func (mcq *MailConnQuery) FirstX(ctx context.Context) *MailConn {
 	node, err := mcq.First(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -80,22 +80,22 @@ func (mcq *MailConnectionQuery) FirstX(ctx context.Context) *MailConnection {
 	return node
 }
 
-// FirstID returns the first MailConnection ID from the query.
-// Returns a *NotFoundError when no MailConnection ID was found.
-func (mcq *MailConnectionQuery) FirstID(ctx context.Context) (id int, err error) {
-	var ids []int
+// FirstID returns the first MailConn ID from the query.
+// Returns a *NotFoundError when no MailConn ID was found.
+func (mcq *MailConnQuery) FirstID(ctx context.Context) (id string, err error) {
+	var ids []string
 	if ids, err = mcq.Limit(1).IDs(setContextOp(ctx, mcq.ctx, "FirstID")); err != nil {
 		return
 	}
 	if len(ids) == 0 {
-		err = &NotFoundError{mailconnection.Label}
+		err = &NotFoundError{mailconn.Label}
 		return
 	}
 	return ids[0], nil
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (mcq *MailConnectionQuery) FirstIDX(ctx context.Context) int {
+func (mcq *MailConnQuery) FirstIDX(ctx context.Context) string {
 	id, err := mcq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -103,10 +103,10 @@ func (mcq *MailConnectionQuery) FirstIDX(ctx context.Context) int {
 	return id
 }
 
-// Only returns a single MailConnection entity found by the query, ensuring it only returns one.
-// Returns a *NotSingularError when more than one MailConnection entity is found.
-// Returns a *NotFoundError when no MailConnection entities are found.
-func (mcq *MailConnectionQuery) Only(ctx context.Context) (*MailConnection, error) {
+// Only returns a single MailConn entity found by the query, ensuring it only returns one.
+// Returns a *NotSingularError when more than one MailConn entity is found.
+// Returns a *NotFoundError when no MailConn entities are found.
+func (mcq *MailConnQuery) Only(ctx context.Context) (*MailConn, error) {
 	nodes, err := mcq.Limit(2).All(setContextOp(ctx, mcq.ctx, "Only"))
 	if err != nil {
 		return nil, err
@@ -115,14 +115,14 @@ func (mcq *MailConnectionQuery) Only(ctx context.Context) (*MailConnection, erro
 	case 1:
 		return nodes[0], nil
 	case 0:
-		return nil, &NotFoundError{mailconnection.Label}
+		return nil, &NotFoundError{mailconn.Label}
 	default:
-		return nil, &NotSingularError{mailconnection.Label}
+		return nil, &NotSingularError{mailconn.Label}
 	}
 }
 
 // OnlyX is like Only, but panics if an error occurs.
-func (mcq *MailConnectionQuery) OnlyX(ctx context.Context) *MailConnection {
+func (mcq *MailConnQuery) OnlyX(ctx context.Context) *MailConn {
 	node, err := mcq.Only(ctx)
 	if err != nil {
 		panic(err)
@@ -130,11 +130,11 @@ func (mcq *MailConnectionQuery) OnlyX(ctx context.Context) *MailConnection {
 	return node
 }
 
-// OnlyID is like Only, but returns the only MailConnection ID in the query.
-// Returns a *NotSingularError when more than one MailConnection ID is found.
+// OnlyID is like Only, but returns the only MailConn ID in the query.
+// Returns a *NotSingularError when more than one MailConn ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (mcq *MailConnectionQuery) OnlyID(ctx context.Context) (id int, err error) {
-	var ids []int
+func (mcq *MailConnQuery) OnlyID(ctx context.Context) (id string, err error) {
+	var ids []string
 	if ids, err = mcq.Limit(2).IDs(setContextOp(ctx, mcq.ctx, "OnlyID")); err != nil {
 		return
 	}
@@ -142,15 +142,15 @@ func (mcq *MailConnectionQuery) OnlyID(ctx context.Context) (id int, err error) 
 	case 1:
 		id = ids[0]
 	case 0:
-		err = &NotFoundError{mailconnection.Label}
+		err = &NotFoundError{mailconn.Label}
 	default:
-		err = &NotSingularError{mailconnection.Label}
+		err = &NotSingularError{mailconn.Label}
 	}
 	return
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (mcq *MailConnectionQuery) OnlyIDX(ctx context.Context) int {
+func (mcq *MailConnQuery) OnlyIDX(ctx context.Context) string {
 	id, err := mcq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -158,18 +158,18 @@ func (mcq *MailConnectionQuery) OnlyIDX(ctx context.Context) int {
 	return id
 }
 
-// All executes the query and returns a list of MailConnections.
-func (mcq *MailConnectionQuery) All(ctx context.Context) ([]*MailConnection, error) {
+// All executes the query and returns a list of MailConns.
+func (mcq *MailConnQuery) All(ctx context.Context) ([]*MailConn, error) {
 	ctx = setContextOp(ctx, mcq.ctx, "All")
 	if err := mcq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	qr := querierAll[[]*MailConnection, *MailConnectionQuery]()
-	return withInterceptors[[]*MailConnection](ctx, mcq, qr, mcq.inters)
+	qr := querierAll[[]*MailConn, *MailConnQuery]()
+	return withInterceptors[[]*MailConn](ctx, mcq, qr, mcq.inters)
 }
 
 // AllX is like All, but panics if an error occurs.
-func (mcq *MailConnectionQuery) AllX(ctx context.Context) []*MailConnection {
+func (mcq *MailConnQuery) AllX(ctx context.Context) []*MailConn {
 	nodes, err := mcq.All(ctx)
 	if err != nil {
 		panic(err)
@@ -177,20 +177,20 @@ func (mcq *MailConnectionQuery) AllX(ctx context.Context) []*MailConnection {
 	return nodes
 }
 
-// IDs executes the query and returns a list of MailConnection IDs.
-func (mcq *MailConnectionQuery) IDs(ctx context.Context) (ids []int, err error) {
+// IDs executes the query and returns a list of MailConn IDs.
+func (mcq *MailConnQuery) IDs(ctx context.Context) (ids []string, err error) {
 	if mcq.ctx.Unique == nil && mcq.path != nil {
 		mcq.Unique(true)
 	}
 	ctx = setContextOp(ctx, mcq.ctx, "IDs")
-	if err = mcq.Select(mailconnection.FieldID).Scan(ctx, &ids); err != nil {
+	if err = mcq.Select(mailconn.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
 	return ids, nil
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (mcq *MailConnectionQuery) IDsX(ctx context.Context) []int {
+func (mcq *MailConnQuery) IDsX(ctx context.Context) []string {
 	ids, err := mcq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -199,16 +199,16 @@ func (mcq *MailConnectionQuery) IDsX(ctx context.Context) []int {
 }
 
 // Count returns the count of the given query.
-func (mcq *MailConnectionQuery) Count(ctx context.Context) (int, error) {
+func (mcq *MailConnQuery) Count(ctx context.Context) (int, error) {
 	ctx = setContextOp(ctx, mcq.ctx, "Count")
 	if err := mcq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
-	return withInterceptors[int](ctx, mcq, querierCount[*MailConnectionQuery](), mcq.inters)
+	return withInterceptors[int](ctx, mcq, querierCount[*MailConnQuery](), mcq.inters)
 }
 
 // CountX is like Count, but panics if an error occurs.
-func (mcq *MailConnectionQuery) CountX(ctx context.Context) int {
+func (mcq *MailConnQuery) CountX(ctx context.Context) int {
 	count, err := mcq.Count(ctx)
 	if err != nil {
 		panic(err)
@@ -217,7 +217,7 @@ func (mcq *MailConnectionQuery) CountX(ctx context.Context) int {
 }
 
 // Exist returns true if the query has elements in the graph.
-func (mcq *MailConnectionQuery) Exist(ctx context.Context) (bool, error) {
+func (mcq *MailConnQuery) Exist(ctx context.Context) (bool, error) {
 	ctx = setContextOp(ctx, mcq.ctx, "Exist")
 	switch _, err := mcq.FirstID(ctx); {
 	case IsNotFound(err):
@@ -230,7 +230,7 @@ func (mcq *MailConnectionQuery) Exist(ctx context.Context) (bool, error) {
 }
 
 // ExistX is like Exist, but panics if an error occurs.
-func (mcq *MailConnectionQuery) ExistX(ctx context.Context) bool {
+func (mcq *MailConnQuery) ExistX(ctx context.Context) bool {
 	exist, err := mcq.Exist(ctx)
 	if err != nil {
 		panic(err)
@@ -238,18 +238,18 @@ func (mcq *MailConnectionQuery) ExistX(ctx context.Context) bool {
 	return exist
 }
 
-// Clone returns a duplicate of the MailConnectionQuery builder, including all associated steps. It can be
+// Clone returns a duplicate of the MailConnQuery builder, including all associated steps. It can be
 // used to prepare common query builders and use them differently after the clone is made.
-func (mcq *MailConnectionQuery) Clone() *MailConnectionQuery {
+func (mcq *MailConnQuery) Clone() *MailConnQuery {
 	if mcq == nil {
 		return nil
 	}
-	return &MailConnectionQuery{
+	return &MailConnQuery{
 		config:     mcq.config,
 		ctx:        mcq.ctx.Clone(),
-		order:      append([]mailconnection.OrderOption{}, mcq.order...),
+		order:      append([]mailconn.OrderOption{}, mcq.order...),
 		inters:     append([]Interceptor{}, mcq.inters...),
-		predicates: append([]predicate.MailConnection{}, mcq.predicates...),
+		predicates: append([]predicate.MailConn{}, mcq.predicates...),
 		// clone intermediate query.
 		sql:  mcq.sql.Clone(),
 		path: mcq.path,
@@ -262,19 +262,19 @@ func (mcq *MailConnectionQuery) Clone() *MailConnectionQuery {
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
-//	client.MailConnection.Query().
-//		GroupBy(mailconnection.FieldName).
+//	client.MailConn.Query().
+//		GroupBy(mailconn.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
-func (mcq *MailConnectionQuery) GroupBy(field string, fields ...string) *MailConnectionGroupBy {
+func (mcq *MailConnQuery) GroupBy(field string, fields ...string) *MailConnGroupBy {
 	mcq.ctx.Fields = append([]string{field}, fields...)
-	grbuild := &MailConnectionGroupBy{build: mcq}
+	grbuild := &MailConnGroupBy{build: mcq}
 	grbuild.flds = &mcq.ctx.Fields
-	grbuild.label = mailconnection.Label
+	grbuild.label = mailconn.Label
 	grbuild.scan = grbuild.Scan
 	return grbuild
 }
@@ -285,26 +285,26 @@ func (mcq *MailConnectionQuery) GroupBy(field string, fields ...string) *MailCon
 // Example:
 //
 //	var v []struct {
-//		Name string `json:"name,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
-//	client.MailConnection.Query().
-//		Select(mailconnection.FieldName).
+//	client.MailConn.Query().
+//		Select(mailconn.FieldCreatedAt).
 //		Scan(ctx, &v)
-func (mcq *MailConnectionQuery) Select(fields ...string) *MailConnectionSelect {
+func (mcq *MailConnQuery) Select(fields ...string) *MailConnSelect {
 	mcq.ctx.Fields = append(mcq.ctx.Fields, fields...)
-	sbuild := &MailConnectionSelect{MailConnectionQuery: mcq}
-	sbuild.label = mailconnection.Label
+	sbuild := &MailConnSelect{MailConnQuery: mcq}
+	sbuild.label = mailconn.Label
 	sbuild.flds, sbuild.scan = &mcq.ctx.Fields, sbuild.Scan
 	return sbuild
 }
 
-// Aggregate returns a MailConnectionSelect configured with the given aggregations.
-func (mcq *MailConnectionQuery) Aggregate(fns ...AggregateFunc) *MailConnectionSelect {
+// Aggregate returns a MailConnSelect configured with the given aggregations.
+func (mcq *MailConnQuery) Aggregate(fns ...AggregateFunc) *MailConnSelect {
 	return mcq.Select().Aggregate(fns...)
 }
 
-func (mcq *MailConnectionQuery) prepareQuery(ctx context.Context) error {
+func (mcq *MailConnQuery) prepareQuery(ctx context.Context) error {
 	for _, inter := range mcq.inters {
 		if inter == nil {
 			return fmt.Errorf("ent: uninitialized interceptor (forgotten import ent/runtime?)")
@@ -316,7 +316,7 @@ func (mcq *MailConnectionQuery) prepareQuery(ctx context.Context) error {
 		}
 	}
 	for _, f := range mcq.ctx.Fields {
-		if !mailconnection.ValidColumn(f) {
+		if !mailconn.ValidColumn(f) {
 			return &ValidationError{Name: f, err: fmt.Errorf("ent: invalid field %q for query", f)}
 		}
 	}
@@ -330,16 +330,16 @@ func (mcq *MailConnectionQuery) prepareQuery(ctx context.Context) error {
 	return nil
 }
 
-func (mcq *MailConnectionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*MailConnection, error) {
+func (mcq *MailConnQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*MailConn, error) {
 	var (
-		nodes = []*MailConnection{}
+		nodes = []*MailConn{}
 		_spec = mcq.querySpec()
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
-		return (*MailConnection).scanValues(nil, columns)
+		return (*MailConn).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
-		node := &MailConnection{config: mcq.config}
+		node := &MailConn{config: mcq.config}
 		nodes = append(nodes, node)
 		return node.assignValues(columns, values)
 	}
@@ -358,7 +358,7 @@ func (mcq *MailConnectionQuery) sqlAll(ctx context.Context, hooks ...queryHook) 
 	return nodes, nil
 }
 
-func (mcq *MailConnectionQuery) sqlCount(ctx context.Context) (int, error) {
+func (mcq *MailConnQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := mcq.querySpec()
 	if len(mcq.modifiers) > 0 {
 		_spec.Modifiers = mcq.modifiers
@@ -370,8 +370,8 @@ func (mcq *MailConnectionQuery) sqlCount(ctx context.Context) (int, error) {
 	return sqlgraph.CountNodes(ctx, mcq.driver, _spec)
 }
 
-func (mcq *MailConnectionQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(mailconnection.Table, mailconnection.Columns, sqlgraph.NewFieldSpec(mailconnection.FieldID, field.TypeInt))
+func (mcq *MailConnQuery) querySpec() *sqlgraph.QuerySpec {
+	_spec := sqlgraph.NewQuerySpec(mailconn.Table, mailconn.Columns, sqlgraph.NewFieldSpec(mailconn.FieldID, field.TypeString))
 	_spec.From = mcq.sql
 	if unique := mcq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique
@@ -380,9 +380,9 @@ func (mcq *MailConnectionQuery) querySpec() *sqlgraph.QuerySpec {
 	}
 	if fields := mcq.ctx.Fields; len(fields) > 0 {
 		_spec.Node.Columns = make([]string, 0, len(fields))
-		_spec.Node.Columns = append(_spec.Node.Columns, mailconnection.FieldID)
+		_spec.Node.Columns = append(_spec.Node.Columns, mailconn.FieldID)
 		for i := range fields {
-			if fields[i] != mailconnection.FieldID {
+			if fields[i] != mailconn.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
 		}
@@ -410,12 +410,12 @@ func (mcq *MailConnectionQuery) querySpec() *sqlgraph.QuerySpec {
 	return _spec
 }
 
-func (mcq *MailConnectionQuery) sqlQuery(ctx context.Context) *sql.Selector {
+func (mcq *MailConnQuery) sqlQuery(ctx context.Context) *sql.Selector {
 	builder := sql.Dialect(mcq.driver.Dialect())
-	t1 := builder.Table(mailconnection.Table)
+	t1 := builder.Table(mailconn.Table)
 	columns := mcq.ctx.Fields
 	if len(columns) == 0 {
-		columns = mailconnection.Columns
+		columns = mailconn.Columns
 	}
 	selector := builder.Select(t1.Columns(columns...)...).From(t1)
 	if mcq.sql != nil {
@@ -446,33 +446,33 @@ func (mcq *MailConnectionQuery) sqlQuery(ctx context.Context) *sql.Selector {
 }
 
 // Modify adds a query modifier for attaching custom logic to queries.
-func (mcq *MailConnectionQuery) Modify(modifiers ...func(s *sql.Selector)) *MailConnectionSelect {
+func (mcq *MailConnQuery) Modify(modifiers ...func(s *sql.Selector)) *MailConnSelect {
 	mcq.modifiers = append(mcq.modifiers, modifiers...)
 	return mcq.Select()
 }
 
-// MailConnectionGroupBy is the group-by builder for MailConnection entities.
-type MailConnectionGroupBy struct {
+// MailConnGroupBy is the group-by builder for MailConn entities.
+type MailConnGroupBy struct {
 	selector
-	build *MailConnectionQuery
+	build *MailConnQuery
 }
 
 // Aggregate adds the given aggregation functions to the group-by query.
-func (mcgb *MailConnectionGroupBy) Aggregate(fns ...AggregateFunc) *MailConnectionGroupBy {
+func (mcgb *MailConnGroupBy) Aggregate(fns ...AggregateFunc) *MailConnGroupBy {
 	mcgb.fns = append(mcgb.fns, fns...)
 	return mcgb
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (mcgb *MailConnectionGroupBy) Scan(ctx context.Context, v any) error {
+func (mcgb *MailConnGroupBy) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, mcgb.build.ctx, "GroupBy")
 	if err := mcgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*MailConnectionQuery, *MailConnectionGroupBy](ctx, mcgb.build, mcgb, mcgb.build.inters, v)
+	return scanWithInterceptors[*MailConnQuery, *MailConnGroupBy](ctx, mcgb.build, mcgb, mcgb.build.inters, v)
 }
 
-func (mcgb *MailConnectionGroupBy) sqlScan(ctx context.Context, root *MailConnectionQuery, v any) error {
+func (mcgb *MailConnGroupBy) sqlScan(ctx context.Context, root *MailConnQuery, v any) error {
 	selector := root.sqlQuery(ctx).Select()
 	aggregation := make([]string, 0, len(mcgb.fns))
 	for _, fn := range mcgb.fns {
@@ -499,28 +499,28 @@ func (mcgb *MailConnectionGroupBy) sqlScan(ctx context.Context, root *MailConnec
 	return sql.ScanSlice(rows, v)
 }
 
-// MailConnectionSelect is the builder for selecting fields of MailConnection entities.
-type MailConnectionSelect struct {
-	*MailConnectionQuery
+// MailConnSelect is the builder for selecting fields of MailConn entities.
+type MailConnSelect struct {
+	*MailConnQuery
 	selector
 }
 
 // Aggregate adds the given aggregation functions to the selector query.
-func (mcs *MailConnectionSelect) Aggregate(fns ...AggregateFunc) *MailConnectionSelect {
+func (mcs *MailConnSelect) Aggregate(fns ...AggregateFunc) *MailConnSelect {
 	mcs.fns = append(mcs.fns, fns...)
 	return mcs
 }
 
 // Scan applies the selector query and scans the result into the given value.
-func (mcs *MailConnectionSelect) Scan(ctx context.Context, v any) error {
+func (mcs *MailConnSelect) Scan(ctx context.Context, v any) error {
 	ctx = setContextOp(ctx, mcs.ctx, "Select")
 	if err := mcs.prepareQuery(ctx); err != nil {
 		return err
 	}
-	return scanWithInterceptors[*MailConnectionQuery, *MailConnectionSelect](ctx, mcs.MailConnectionQuery, mcs, mcs.inters, v)
+	return scanWithInterceptors[*MailConnQuery, *MailConnSelect](ctx, mcs.MailConnQuery, mcs, mcs.inters, v)
 }
 
-func (mcs *MailConnectionSelect) sqlScan(ctx context.Context, root *MailConnectionQuery, v any) error {
+func (mcs *MailConnSelect) sqlScan(ctx context.Context, root *MailConnQuery, v any) error {
 	selector := root.sqlQuery(ctx)
 	aggregation := make([]string, 0, len(mcs.fns))
 	for _, fn := range mcs.fns {
@@ -542,7 +542,7 @@ func (mcs *MailConnectionSelect) sqlScan(ctx context.Context, root *MailConnecti
 }
 
 // Modify adds a query modifier for attaching custom logic to queries.
-func (mcs *MailConnectionSelect) Modify(modifiers ...func(s *sql.Selector)) *MailConnectionSelect {
+func (mcs *MailConnSelect) Modify(modifiers ...func(s *sql.Selector)) *MailConnSelect {
 	mcs.modifiers = append(mcs.modifiers, modifiers...)
 	return mcs
 }

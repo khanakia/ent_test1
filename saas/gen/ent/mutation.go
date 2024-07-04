@@ -8,15 +8,17 @@ import (
 	"fmt"
 	"lace/jsontype"
 	"saas/gen/ent/admin"
+	"saas/gen/ent/appsetting"
 	"saas/gen/ent/kache"
 	"saas/gen/ent/keyvalue"
-	"saas/gen/ent/mailconnection"
+	"saas/gen/ent/mailconn"
 	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/plan"
 	"saas/gen/ent/predicate"
 	"saas/gen/ent/project"
 	"saas/gen/ent/session"
 	"saas/gen/ent/temp"
+	"saas/gen/ent/templ"
 	"saas/gen/ent/user"
 	"saas/gen/ent/workspace"
 	"saas/gen/ent/workspaceinvite"
@@ -38,14 +40,16 @@ const (
 
 	// Node types.
 	TypeAdmin           = "Admin"
+	TypeAppSetting      = "AppSetting"
 	TypeKache           = "Kache"
 	TypeKeyvalue        = "Keyvalue"
-	TypeMailConnection  = "MailConnection"
+	TypeMailConn        = "MailConn"
 	TypeOauthConnection = "OauthConnection"
 	TypePlan            = "Plan"
 	TypeProject         = "Project"
 	TypeSession         = "Session"
 	TypeTemp            = "Temp"
+	TypeTempl           = "Templ"
 	TypeUser            = "User"
 	TypeWorkspace       = "Workspace"
 	TypeWorkspaceInvite = "WorkspaceInvite"
@@ -896,6 +900,1674 @@ func (m *AdminMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *AdminMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Admin edge %s", name)
+}
+
+// AppSettingMutation represents an operation that mutates the AppSetting nodes in the graph.
+type AppSettingMutation struct {
+	config
+	op                          Op
+	typ                         string
+	id                          *string
+	created_at                  *time.Time
+	updated_at                  *time.Time
+	app_name                    *string
+	copyright                   *string
+	email                       *string
+	address                     *string
+	social_tw                   *string
+	social_fb                   *string
+	social_in                   *string
+	logo_url                    *string
+	site_url                    *string
+	default_mail_conn_id        *string
+	mail_layout_templ_id        *string
+	wsapce_invite_templ_id      *string
+	wsapce_success_templ_id     *string
+	auth_fp_templ_id            *string
+	auth_welcome_email_templ_id *string
+	auth_verification_templ_id  *string
+	auth_email_verify           *string
+	clearedFields               map[string]struct{}
+	done                        bool
+	oldValue                    func(context.Context) (*AppSetting, error)
+	predicates                  []predicate.AppSetting
+}
+
+var _ ent.Mutation = (*AppSettingMutation)(nil)
+
+// appsettingOption allows management of the mutation configuration using functional options.
+type appsettingOption func(*AppSettingMutation)
+
+// newAppSettingMutation creates new mutation for the AppSetting entity.
+func newAppSettingMutation(c config, op Op, opts ...appsettingOption) *AppSettingMutation {
+	m := &AppSettingMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeAppSetting,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withAppSettingID sets the ID field of the mutation.
+func withAppSettingID(id string) appsettingOption {
+	return func(m *AppSettingMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *AppSetting
+		)
+		m.oldValue = func(ctx context.Context) (*AppSetting, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().AppSetting.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withAppSetting sets the old AppSetting of the mutation.
+func withAppSetting(node *AppSetting) appsettingOption {
+	return func(m *AppSettingMutation) {
+		m.oldValue = func(context.Context) (*AppSetting, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m AppSettingMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m AppSettingMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of AppSetting entities.
+func (m *AppSettingMutation) SetID(id string) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *AppSettingMutation) ID() (id string, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *AppSettingMutation) IDs(ctx context.Context) ([]string, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []string{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().AppSetting.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *AppSettingMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *AppSettingMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the AppSetting entity.
+// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppSettingMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *AppSettingMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[appsetting.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *AppSettingMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[appsetting.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *AppSettingMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, appsetting.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *AppSettingMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *AppSettingMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the AppSetting entity.
+// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppSettingMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *AppSettingMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[appsetting.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *AppSettingMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[appsetting.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *AppSettingMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, appsetting.FieldUpdatedAt)
+}
+
+// SetAppName sets the "app_name" field.
+func (m *AppSettingMutation) SetAppName(s string) {
+	m.app_name = &s
+}
+
+// AppName returns the value of the "app_name" field in the mutation.
+func (m *AppSettingMutation) AppName() (r string, exists bool) {
+	v := m.app_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppName returns the old "app_name" field's value of the AppSetting entity.
+// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppSettingMutation) OldAppName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppName: %w", err)
+	}
+	return oldValue.AppName, nil
+}
+
+// ClearAppName clears the value of the "app_name" field.
+func (m *AppSettingMutation) ClearAppName() {
+	m.app_name = nil
+	m.clearedFields[appsetting.FieldAppName] = struct{}{}
+}
+
+// AppNameCleared returns if the "app_name" field was cleared in this mutation.
+func (m *AppSettingMutation) AppNameCleared() bool {
+	_, ok := m.clearedFields[appsetting.FieldAppName]
+	return ok
+}
+
+// ResetAppName resets all changes to the "app_name" field.
+func (m *AppSettingMutation) ResetAppName() {
+	m.app_name = nil
+	delete(m.clearedFields, appsetting.FieldAppName)
+}
+
+// SetCopyright sets the "copyright" field.
+func (m *AppSettingMutation) SetCopyright(s string) {
+	m.copyright = &s
+}
+
+// Copyright returns the value of the "copyright" field in the mutation.
+func (m *AppSettingMutation) Copyright() (r string, exists bool) {
+	v := m.copyright
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCopyright returns the old "copyright" field's value of the AppSetting entity.
+// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppSettingMutation) OldCopyright(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCopyright is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCopyright requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCopyright: %w", err)
+	}
+	return oldValue.Copyright, nil
+}
+
+// ClearCopyright clears the value of the "copyright" field.
+func (m *AppSettingMutation) ClearCopyright() {
+	m.copyright = nil
+	m.clearedFields[appsetting.FieldCopyright] = struct{}{}
+}
+
+// CopyrightCleared returns if the "copyright" field was cleared in this mutation.
+func (m *AppSettingMutation) CopyrightCleared() bool {
+	_, ok := m.clearedFields[appsetting.FieldCopyright]
+	return ok
+}
+
+// ResetCopyright resets all changes to the "copyright" field.
+func (m *AppSettingMutation) ResetCopyright() {
+	m.copyright = nil
+	delete(m.clearedFields, appsetting.FieldCopyright)
+}
+
+// SetEmail sets the "email" field.
+func (m *AppSettingMutation) SetEmail(s string) {
+	m.email = &s
+}
+
+// Email returns the value of the "email" field in the mutation.
+func (m *AppSettingMutation) Email() (r string, exists bool) {
+	v := m.email
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEmail returns the old "email" field's value of the AppSetting entity.
+// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppSettingMutation) OldEmail(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEmail is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEmail requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEmail: %w", err)
+	}
+	return oldValue.Email, nil
+}
+
+// ClearEmail clears the value of the "email" field.
+func (m *AppSettingMutation) ClearEmail() {
+	m.email = nil
+	m.clearedFields[appsetting.FieldEmail] = struct{}{}
+}
+
+// EmailCleared returns if the "email" field was cleared in this mutation.
+func (m *AppSettingMutation) EmailCleared() bool {
+	_, ok := m.clearedFields[appsetting.FieldEmail]
+	return ok
+}
+
+// ResetEmail resets all changes to the "email" field.
+func (m *AppSettingMutation) ResetEmail() {
+	m.email = nil
+	delete(m.clearedFields, appsetting.FieldEmail)
+}
+
+// SetAddress sets the "address" field.
+func (m *AppSettingMutation) SetAddress(s string) {
+	m.address = &s
+}
+
+// Address returns the value of the "address" field in the mutation.
+func (m *AppSettingMutation) Address() (r string, exists bool) {
+	v := m.address
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAddress returns the old "address" field's value of the AppSetting entity.
+// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppSettingMutation) OldAddress(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAddress is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAddress requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAddress: %w", err)
+	}
+	return oldValue.Address, nil
+}
+
+// ClearAddress clears the value of the "address" field.
+func (m *AppSettingMutation) ClearAddress() {
+	m.address = nil
+	m.clearedFields[appsetting.FieldAddress] = struct{}{}
+}
+
+// AddressCleared returns if the "address" field was cleared in this mutation.
+func (m *AppSettingMutation) AddressCleared() bool {
+	_, ok := m.clearedFields[appsetting.FieldAddress]
+	return ok
+}
+
+// ResetAddress resets all changes to the "address" field.
+func (m *AppSettingMutation) ResetAddress() {
+	m.address = nil
+	delete(m.clearedFields, appsetting.FieldAddress)
+}
+
+// SetSocialTw sets the "social_tw" field.
+func (m *AppSettingMutation) SetSocialTw(s string) {
+	m.social_tw = &s
+}
+
+// SocialTw returns the value of the "social_tw" field in the mutation.
+func (m *AppSettingMutation) SocialTw() (r string, exists bool) {
+	v := m.social_tw
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSocialTw returns the old "social_tw" field's value of the AppSetting entity.
+// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppSettingMutation) OldSocialTw(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSocialTw is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSocialTw requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSocialTw: %w", err)
+	}
+	return oldValue.SocialTw, nil
+}
+
+// ClearSocialTw clears the value of the "social_tw" field.
+func (m *AppSettingMutation) ClearSocialTw() {
+	m.social_tw = nil
+	m.clearedFields[appsetting.FieldSocialTw] = struct{}{}
+}
+
+// SocialTwCleared returns if the "social_tw" field was cleared in this mutation.
+func (m *AppSettingMutation) SocialTwCleared() bool {
+	_, ok := m.clearedFields[appsetting.FieldSocialTw]
+	return ok
+}
+
+// ResetSocialTw resets all changes to the "social_tw" field.
+func (m *AppSettingMutation) ResetSocialTw() {
+	m.social_tw = nil
+	delete(m.clearedFields, appsetting.FieldSocialTw)
+}
+
+// SetSocialFb sets the "social_fb" field.
+func (m *AppSettingMutation) SetSocialFb(s string) {
+	m.social_fb = &s
+}
+
+// SocialFb returns the value of the "social_fb" field in the mutation.
+func (m *AppSettingMutation) SocialFb() (r string, exists bool) {
+	v := m.social_fb
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSocialFb returns the old "social_fb" field's value of the AppSetting entity.
+// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppSettingMutation) OldSocialFb(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSocialFb is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSocialFb requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSocialFb: %w", err)
+	}
+	return oldValue.SocialFb, nil
+}
+
+// ClearSocialFb clears the value of the "social_fb" field.
+func (m *AppSettingMutation) ClearSocialFb() {
+	m.social_fb = nil
+	m.clearedFields[appsetting.FieldSocialFb] = struct{}{}
+}
+
+// SocialFbCleared returns if the "social_fb" field was cleared in this mutation.
+func (m *AppSettingMutation) SocialFbCleared() bool {
+	_, ok := m.clearedFields[appsetting.FieldSocialFb]
+	return ok
+}
+
+// ResetSocialFb resets all changes to the "social_fb" field.
+func (m *AppSettingMutation) ResetSocialFb() {
+	m.social_fb = nil
+	delete(m.clearedFields, appsetting.FieldSocialFb)
+}
+
+// SetSocialIn sets the "social_in" field.
+func (m *AppSettingMutation) SetSocialIn(s string) {
+	m.social_in = &s
+}
+
+// SocialIn returns the value of the "social_in" field in the mutation.
+func (m *AppSettingMutation) SocialIn() (r string, exists bool) {
+	v := m.social_in
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSocialIn returns the old "social_in" field's value of the AppSetting entity.
+// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppSettingMutation) OldSocialIn(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSocialIn is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSocialIn requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSocialIn: %w", err)
+	}
+	return oldValue.SocialIn, nil
+}
+
+// ClearSocialIn clears the value of the "social_in" field.
+func (m *AppSettingMutation) ClearSocialIn() {
+	m.social_in = nil
+	m.clearedFields[appsetting.FieldSocialIn] = struct{}{}
+}
+
+// SocialInCleared returns if the "social_in" field was cleared in this mutation.
+func (m *AppSettingMutation) SocialInCleared() bool {
+	_, ok := m.clearedFields[appsetting.FieldSocialIn]
+	return ok
+}
+
+// ResetSocialIn resets all changes to the "social_in" field.
+func (m *AppSettingMutation) ResetSocialIn() {
+	m.social_in = nil
+	delete(m.clearedFields, appsetting.FieldSocialIn)
+}
+
+// SetLogoURL sets the "logo_url" field.
+func (m *AppSettingMutation) SetLogoURL(s string) {
+	m.logo_url = &s
+}
+
+// LogoURL returns the value of the "logo_url" field in the mutation.
+func (m *AppSettingMutation) LogoURL() (r string, exists bool) {
+	v := m.logo_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLogoURL returns the old "logo_url" field's value of the AppSetting entity.
+// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppSettingMutation) OldLogoURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLogoURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLogoURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLogoURL: %w", err)
+	}
+	return oldValue.LogoURL, nil
+}
+
+// ClearLogoURL clears the value of the "logo_url" field.
+func (m *AppSettingMutation) ClearLogoURL() {
+	m.logo_url = nil
+	m.clearedFields[appsetting.FieldLogoURL] = struct{}{}
+}
+
+// LogoURLCleared returns if the "logo_url" field was cleared in this mutation.
+func (m *AppSettingMutation) LogoURLCleared() bool {
+	_, ok := m.clearedFields[appsetting.FieldLogoURL]
+	return ok
+}
+
+// ResetLogoURL resets all changes to the "logo_url" field.
+func (m *AppSettingMutation) ResetLogoURL() {
+	m.logo_url = nil
+	delete(m.clearedFields, appsetting.FieldLogoURL)
+}
+
+// SetSiteURL sets the "site_url" field.
+func (m *AppSettingMutation) SetSiteURL(s string) {
+	m.site_url = &s
+}
+
+// SiteURL returns the value of the "site_url" field in the mutation.
+func (m *AppSettingMutation) SiteURL() (r string, exists bool) {
+	v := m.site_url
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldSiteURL returns the old "site_url" field's value of the AppSetting entity.
+// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppSettingMutation) OldSiteURL(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldSiteURL is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldSiteURL requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldSiteURL: %w", err)
+	}
+	return oldValue.SiteURL, nil
+}
+
+// ClearSiteURL clears the value of the "site_url" field.
+func (m *AppSettingMutation) ClearSiteURL() {
+	m.site_url = nil
+	m.clearedFields[appsetting.FieldSiteURL] = struct{}{}
+}
+
+// SiteURLCleared returns if the "site_url" field was cleared in this mutation.
+func (m *AppSettingMutation) SiteURLCleared() bool {
+	_, ok := m.clearedFields[appsetting.FieldSiteURL]
+	return ok
+}
+
+// ResetSiteURL resets all changes to the "site_url" field.
+func (m *AppSettingMutation) ResetSiteURL() {
+	m.site_url = nil
+	delete(m.clearedFields, appsetting.FieldSiteURL)
+}
+
+// SetDefaultMailConnID sets the "default_mail_conn_id" field.
+func (m *AppSettingMutation) SetDefaultMailConnID(s string) {
+	m.default_mail_conn_id = &s
+}
+
+// DefaultMailConnID returns the value of the "default_mail_conn_id" field in the mutation.
+func (m *AppSettingMutation) DefaultMailConnID() (r string, exists bool) {
+	v := m.default_mail_conn_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDefaultMailConnID returns the old "default_mail_conn_id" field's value of the AppSetting entity.
+// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppSettingMutation) OldDefaultMailConnID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDefaultMailConnID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDefaultMailConnID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDefaultMailConnID: %w", err)
+	}
+	return oldValue.DefaultMailConnID, nil
+}
+
+// ClearDefaultMailConnID clears the value of the "default_mail_conn_id" field.
+func (m *AppSettingMutation) ClearDefaultMailConnID() {
+	m.default_mail_conn_id = nil
+	m.clearedFields[appsetting.FieldDefaultMailConnID] = struct{}{}
+}
+
+// DefaultMailConnIDCleared returns if the "default_mail_conn_id" field was cleared in this mutation.
+func (m *AppSettingMutation) DefaultMailConnIDCleared() bool {
+	_, ok := m.clearedFields[appsetting.FieldDefaultMailConnID]
+	return ok
+}
+
+// ResetDefaultMailConnID resets all changes to the "default_mail_conn_id" field.
+func (m *AppSettingMutation) ResetDefaultMailConnID() {
+	m.default_mail_conn_id = nil
+	delete(m.clearedFields, appsetting.FieldDefaultMailConnID)
+}
+
+// SetMailLayoutTemplID sets the "mail_layout_templ_id" field.
+func (m *AppSettingMutation) SetMailLayoutTemplID(s string) {
+	m.mail_layout_templ_id = &s
+}
+
+// MailLayoutTemplID returns the value of the "mail_layout_templ_id" field in the mutation.
+func (m *AppSettingMutation) MailLayoutTemplID() (r string, exists bool) {
+	v := m.mail_layout_templ_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldMailLayoutTemplID returns the old "mail_layout_templ_id" field's value of the AppSetting entity.
+// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppSettingMutation) OldMailLayoutTemplID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldMailLayoutTemplID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldMailLayoutTemplID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldMailLayoutTemplID: %w", err)
+	}
+	return oldValue.MailLayoutTemplID, nil
+}
+
+// ClearMailLayoutTemplID clears the value of the "mail_layout_templ_id" field.
+func (m *AppSettingMutation) ClearMailLayoutTemplID() {
+	m.mail_layout_templ_id = nil
+	m.clearedFields[appsetting.FieldMailLayoutTemplID] = struct{}{}
+}
+
+// MailLayoutTemplIDCleared returns if the "mail_layout_templ_id" field was cleared in this mutation.
+func (m *AppSettingMutation) MailLayoutTemplIDCleared() bool {
+	_, ok := m.clearedFields[appsetting.FieldMailLayoutTemplID]
+	return ok
+}
+
+// ResetMailLayoutTemplID resets all changes to the "mail_layout_templ_id" field.
+func (m *AppSettingMutation) ResetMailLayoutTemplID() {
+	m.mail_layout_templ_id = nil
+	delete(m.clearedFields, appsetting.FieldMailLayoutTemplID)
+}
+
+// SetWsapceInviteTemplID sets the "wsapce_invite_templ_id" field.
+func (m *AppSettingMutation) SetWsapceInviteTemplID(s string) {
+	m.wsapce_invite_templ_id = &s
+}
+
+// WsapceInviteTemplID returns the value of the "wsapce_invite_templ_id" field in the mutation.
+func (m *AppSettingMutation) WsapceInviteTemplID() (r string, exists bool) {
+	v := m.wsapce_invite_templ_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWsapceInviteTemplID returns the old "wsapce_invite_templ_id" field's value of the AppSetting entity.
+// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppSettingMutation) OldWsapceInviteTemplID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWsapceInviteTemplID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWsapceInviteTemplID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWsapceInviteTemplID: %w", err)
+	}
+	return oldValue.WsapceInviteTemplID, nil
+}
+
+// ClearWsapceInviteTemplID clears the value of the "wsapce_invite_templ_id" field.
+func (m *AppSettingMutation) ClearWsapceInviteTemplID() {
+	m.wsapce_invite_templ_id = nil
+	m.clearedFields[appsetting.FieldWsapceInviteTemplID] = struct{}{}
+}
+
+// WsapceInviteTemplIDCleared returns if the "wsapce_invite_templ_id" field was cleared in this mutation.
+func (m *AppSettingMutation) WsapceInviteTemplIDCleared() bool {
+	_, ok := m.clearedFields[appsetting.FieldWsapceInviteTemplID]
+	return ok
+}
+
+// ResetWsapceInviteTemplID resets all changes to the "wsapce_invite_templ_id" field.
+func (m *AppSettingMutation) ResetWsapceInviteTemplID() {
+	m.wsapce_invite_templ_id = nil
+	delete(m.clearedFields, appsetting.FieldWsapceInviteTemplID)
+}
+
+// SetWsapceSuccessTemplID sets the "wsapce_success_templ_id" field.
+func (m *AppSettingMutation) SetWsapceSuccessTemplID(s string) {
+	m.wsapce_success_templ_id = &s
+}
+
+// WsapceSuccessTemplID returns the value of the "wsapce_success_templ_id" field in the mutation.
+func (m *AppSettingMutation) WsapceSuccessTemplID() (r string, exists bool) {
+	v := m.wsapce_success_templ_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWsapceSuccessTemplID returns the old "wsapce_success_templ_id" field's value of the AppSetting entity.
+// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppSettingMutation) OldWsapceSuccessTemplID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWsapceSuccessTemplID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWsapceSuccessTemplID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWsapceSuccessTemplID: %w", err)
+	}
+	return oldValue.WsapceSuccessTemplID, nil
+}
+
+// ClearWsapceSuccessTemplID clears the value of the "wsapce_success_templ_id" field.
+func (m *AppSettingMutation) ClearWsapceSuccessTemplID() {
+	m.wsapce_success_templ_id = nil
+	m.clearedFields[appsetting.FieldWsapceSuccessTemplID] = struct{}{}
+}
+
+// WsapceSuccessTemplIDCleared returns if the "wsapce_success_templ_id" field was cleared in this mutation.
+func (m *AppSettingMutation) WsapceSuccessTemplIDCleared() bool {
+	_, ok := m.clearedFields[appsetting.FieldWsapceSuccessTemplID]
+	return ok
+}
+
+// ResetWsapceSuccessTemplID resets all changes to the "wsapce_success_templ_id" field.
+func (m *AppSettingMutation) ResetWsapceSuccessTemplID() {
+	m.wsapce_success_templ_id = nil
+	delete(m.clearedFields, appsetting.FieldWsapceSuccessTemplID)
+}
+
+// SetAuthFpTemplID sets the "auth_fp_templ_id" field.
+func (m *AppSettingMutation) SetAuthFpTemplID(s string) {
+	m.auth_fp_templ_id = &s
+}
+
+// AuthFpTemplID returns the value of the "auth_fp_templ_id" field in the mutation.
+func (m *AppSettingMutation) AuthFpTemplID() (r string, exists bool) {
+	v := m.auth_fp_templ_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAuthFpTemplID returns the old "auth_fp_templ_id" field's value of the AppSetting entity.
+// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppSettingMutation) OldAuthFpTemplID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAuthFpTemplID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAuthFpTemplID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAuthFpTemplID: %w", err)
+	}
+	return oldValue.AuthFpTemplID, nil
+}
+
+// ClearAuthFpTemplID clears the value of the "auth_fp_templ_id" field.
+func (m *AppSettingMutation) ClearAuthFpTemplID() {
+	m.auth_fp_templ_id = nil
+	m.clearedFields[appsetting.FieldAuthFpTemplID] = struct{}{}
+}
+
+// AuthFpTemplIDCleared returns if the "auth_fp_templ_id" field was cleared in this mutation.
+func (m *AppSettingMutation) AuthFpTemplIDCleared() bool {
+	_, ok := m.clearedFields[appsetting.FieldAuthFpTemplID]
+	return ok
+}
+
+// ResetAuthFpTemplID resets all changes to the "auth_fp_templ_id" field.
+func (m *AppSettingMutation) ResetAuthFpTemplID() {
+	m.auth_fp_templ_id = nil
+	delete(m.clearedFields, appsetting.FieldAuthFpTemplID)
+}
+
+// SetAuthWelcomeEmailTemplID sets the "auth_welcome_email_templ_id" field.
+func (m *AppSettingMutation) SetAuthWelcomeEmailTemplID(s string) {
+	m.auth_welcome_email_templ_id = &s
+}
+
+// AuthWelcomeEmailTemplID returns the value of the "auth_welcome_email_templ_id" field in the mutation.
+func (m *AppSettingMutation) AuthWelcomeEmailTemplID() (r string, exists bool) {
+	v := m.auth_welcome_email_templ_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAuthWelcomeEmailTemplID returns the old "auth_welcome_email_templ_id" field's value of the AppSetting entity.
+// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppSettingMutation) OldAuthWelcomeEmailTemplID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAuthWelcomeEmailTemplID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAuthWelcomeEmailTemplID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAuthWelcomeEmailTemplID: %w", err)
+	}
+	return oldValue.AuthWelcomeEmailTemplID, nil
+}
+
+// ClearAuthWelcomeEmailTemplID clears the value of the "auth_welcome_email_templ_id" field.
+func (m *AppSettingMutation) ClearAuthWelcomeEmailTemplID() {
+	m.auth_welcome_email_templ_id = nil
+	m.clearedFields[appsetting.FieldAuthWelcomeEmailTemplID] = struct{}{}
+}
+
+// AuthWelcomeEmailTemplIDCleared returns if the "auth_welcome_email_templ_id" field was cleared in this mutation.
+func (m *AppSettingMutation) AuthWelcomeEmailTemplIDCleared() bool {
+	_, ok := m.clearedFields[appsetting.FieldAuthWelcomeEmailTemplID]
+	return ok
+}
+
+// ResetAuthWelcomeEmailTemplID resets all changes to the "auth_welcome_email_templ_id" field.
+func (m *AppSettingMutation) ResetAuthWelcomeEmailTemplID() {
+	m.auth_welcome_email_templ_id = nil
+	delete(m.clearedFields, appsetting.FieldAuthWelcomeEmailTemplID)
+}
+
+// SetAuthVerificationTemplID sets the "auth_verification_templ_id" field.
+func (m *AppSettingMutation) SetAuthVerificationTemplID(s string) {
+	m.auth_verification_templ_id = &s
+}
+
+// AuthVerificationTemplID returns the value of the "auth_verification_templ_id" field in the mutation.
+func (m *AppSettingMutation) AuthVerificationTemplID() (r string, exists bool) {
+	v := m.auth_verification_templ_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAuthVerificationTemplID returns the old "auth_verification_templ_id" field's value of the AppSetting entity.
+// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppSettingMutation) OldAuthVerificationTemplID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAuthVerificationTemplID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAuthVerificationTemplID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAuthVerificationTemplID: %w", err)
+	}
+	return oldValue.AuthVerificationTemplID, nil
+}
+
+// ClearAuthVerificationTemplID clears the value of the "auth_verification_templ_id" field.
+func (m *AppSettingMutation) ClearAuthVerificationTemplID() {
+	m.auth_verification_templ_id = nil
+	m.clearedFields[appsetting.FieldAuthVerificationTemplID] = struct{}{}
+}
+
+// AuthVerificationTemplIDCleared returns if the "auth_verification_templ_id" field was cleared in this mutation.
+func (m *AppSettingMutation) AuthVerificationTemplIDCleared() bool {
+	_, ok := m.clearedFields[appsetting.FieldAuthVerificationTemplID]
+	return ok
+}
+
+// ResetAuthVerificationTemplID resets all changes to the "auth_verification_templ_id" field.
+func (m *AppSettingMutation) ResetAuthVerificationTemplID() {
+	m.auth_verification_templ_id = nil
+	delete(m.clearedFields, appsetting.FieldAuthVerificationTemplID)
+}
+
+// SetAuthEmailVerify sets the "auth_email_verify" field.
+func (m *AppSettingMutation) SetAuthEmailVerify(s string) {
+	m.auth_email_verify = &s
+}
+
+// AuthEmailVerify returns the value of the "auth_email_verify" field in the mutation.
+func (m *AppSettingMutation) AuthEmailVerify() (r string, exists bool) {
+	v := m.auth_email_verify
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAuthEmailVerify returns the old "auth_email_verify" field's value of the AppSetting entity.
+// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppSettingMutation) OldAuthEmailVerify(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAuthEmailVerify is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAuthEmailVerify requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAuthEmailVerify: %w", err)
+	}
+	return oldValue.AuthEmailVerify, nil
+}
+
+// ClearAuthEmailVerify clears the value of the "auth_email_verify" field.
+func (m *AppSettingMutation) ClearAuthEmailVerify() {
+	m.auth_email_verify = nil
+	m.clearedFields[appsetting.FieldAuthEmailVerify] = struct{}{}
+}
+
+// AuthEmailVerifyCleared returns if the "auth_email_verify" field was cleared in this mutation.
+func (m *AppSettingMutation) AuthEmailVerifyCleared() bool {
+	_, ok := m.clearedFields[appsetting.FieldAuthEmailVerify]
+	return ok
+}
+
+// ResetAuthEmailVerify resets all changes to the "auth_email_verify" field.
+func (m *AppSettingMutation) ResetAuthEmailVerify() {
+	m.auth_email_verify = nil
+	delete(m.clearedFields, appsetting.FieldAuthEmailVerify)
+}
+
+// Where appends a list predicates to the AppSettingMutation builder.
+func (m *AppSettingMutation) Where(ps ...predicate.AppSetting) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the AppSettingMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *AppSettingMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.AppSetting, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *AppSettingMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *AppSettingMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (AppSetting).
+func (m *AppSettingMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *AppSettingMutation) Fields() []string {
+	fields := make([]string, 0, 19)
+	if m.created_at != nil {
+		fields = append(fields, appsetting.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, appsetting.FieldUpdatedAt)
+	}
+	if m.app_name != nil {
+		fields = append(fields, appsetting.FieldAppName)
+	}
+	if m.copyright != nil {
+		fields = append(fields, appsetting.FieldCopyright)
+	}
+	if m.email != nil {
+		fields = append(fields, appsetting.FieldEmail)
+	}
+	if m.address != nil {
+		fields = append(fields, appsetting.FieldAddress)
+	}
+	if m.social_tw != nil {
+		fields = append(fields, appsetting.FieldSocialTw)
+	}
+	if m.social_fb != nil {
+		fields = append(fields, appsetting.FieldSocialFb)
+	}
+	if m.social_in != nil {
+		fields = append(fields, appsetting.FieldSocialIn)
+	}
+	if m.logo_url != nil {
+		fields = append(fields, appsetting.FieldLogoURL)
+	}
+	if m.site_url != nil {
+		fields = append(fields, appsetting.FieldSiteURL)
+	}
+	if m.default_mail_conn_id != nil {
+		fields = append(fields, appsetting.FieldDefaultMailConnID)
+	}
+	if m.mail_layout_templ_id != nil {
+		fields = append(fields, appsetting.FieldMailLayoutTemplID)
+	}
+	if m.wsapce_invite_templ_id != nil {
+		fields = append(fields, appsetting.FieldWsapceInviteTemplID)
+	}
+	if m.wsapce_success_templ_id != nil {
+		fields = append(fields, appsetting.FieldWsapceSuccessTemplID)
+	}
+	if m.auth_fp_templ_id != nil {
+		fields = append(fields, appsetting.FieldAuthFpTemplID)
+	}
+	if m.auth_welcome_email_templ_id != nil {
+		fields = append(fields, appsetting.FieldAuthWelcomeEmailTemplID)
+	}
+	if m.auth_verification_templ_id != nil {
+		fields = append(fields, appsetting.FieldAuthVerificationTemplID)
+	}
+	if m.auth_email_verify != nil {
+		fields = append(fields, appsetting.FieldAuthEmailVerify)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *AppSettingMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case appsetting.FieldCreatedAt:
+		return m.CreatedAt()
+	case appsetting.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case appsetting.FieldAppName:
+		return m.AppName()
+	case appsetting.FieldCopyright:
+		return m.Copyright()
+	case appsetting.FieldEmail:
+		return m.Email()
+	case appsetting.FieldAddress:
+		return m.Address()
+	case appsetting.FieldSocialTw:
+		return m.SocialTw()
+	case appsetting.FieldSocialFb:
+		return m.SocialFb()
+	case appsetting.FieldSocialIn:
+		return m.SocialIn()
+	case appsetting.FieldLogoURL:
+		return m.LogoURL()
+	case appsetting.FieldSiteURL:
+		return m.SiteURL()
+	case appsetting.FieldDefaultMailConnID:
+		return m.DefaultMailConnID()
+	case appsetting.FieldMailLayoutTemplID:
+		return m.MailLayoutTemplID()
+	case appsetting.FieldWsapceInviteTemplID:
+		return m.WsapceInviteTemplID()
+	case appsetting.FieldWsapceSuccessTemplID:
+		return m.WsapceSuccessTemplID()
+	case appsetting.FieldAuthFpTemplID:
+		return m.AuthFpTemplID()
+	case appsetting.FieldAuthWelcomeEmailTemplID:
+		return m.AuthWelcomeEmailTemplID()
+	case appsetting.FieldAuthVerificationTemplID:
+		return m.AuthVerificationTemplID()
+	case appsetting.FieldAuthEmailVerify:
+		return m.AuthEmailVerify()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *AppSettingMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case appsetting.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case appsetting.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case appsetting.FieldAppName:
+		return m.OldAppName(ctx)
+	case appsetting.FieldCopyright:
+		return m.OldCopyright(ctx)
+	case appsetting.FieldEmail:
+		return m.OldEmail(ctx)
+	case appsetting.FieldAddress:
+		return m.OldAddress(ctx)
+	case appsetting.FieldSocialTw:
+		return m.OldSocialTw(ctx)
+	case appsetting.FieldSocialFb:
+		return m.OldSocialFb(ctx)
+	case appsetting.FieldSocialIn:
+		return m.OldSocialIn(ctx)
+	case appsetting.FieldLogoURL:
+		return m.OldLogoURL(ctx)
+	case appsetting.FieldSiteURL:
+		return m.OldSiteURL(ctx)
+	case appsetting.FieldDefaultMailConnID:
+		return m.OldDefaultMailConnID(ctx)
+	case appsetting.FieldMailLayoutTemplID:
+		return m.OldMailLayoutTemplID(ctx)
+	case appsetting.FieldWsapceInviteTemplID:
+		return m.OldWsapceInviteTemplID(ctx)
+	case appsetting.FieldWsapceSuccessTemplID:
+		return m.OldWsapceSuccessTemplID(ctx)
+	case appsetting.FieldAuthFpTemplID:
+		return m.OldAuthFpTemplID(ctx)
+	case appsetting.FieldAuthWelcomeEmailTemplID:
+		return m.OldAuthWelcomeEmailTemplID(ctx)
+	case appsetting.FieldAuthVerificationTemplID:
+		return m.OldAuthVerificationTemplID(ctx)
+	case appsetting.FieldAuthEmailVerify:
+		return m.OldAuthEmailVerify(ctx)
+	}
+	return nil, fmt.Errorf("unknown AppSetting field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *AppSettingMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case appsetting.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case appsetting.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case appsetting.FieldAppName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppName(v)
+		return nil
+	case appsetting.FieldCopyright:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCopyright(v)
+		return nil
+	case appsetting.FieldEmail:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEmail(v)
+		return nil
+	case appsetting.FieldAddress:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAddress(v)
+		return nil
+	case appsetting.FieldSocialTw:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSocialTw(v)
+		return nil
+	case appsetting.FieldSocialFb:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSocialFb(v)
+		return nil
+	case appsetting.FieldSocialIn:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSocialIn(v)
+		return nil
+	case appsetting.FieldLogoURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLogoURL(v)
+		return nil
+	case appsetting.FieldSiteURL:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetSiteURL(v)
+		return nil
+	case appsetting.FieldDefaultMailConnID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDefaultMailConnID(v)
+		return nil
+	case appsetting.FieldMailLayoutTemplID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetMailLayoutTemplID(v)
+		return nil
+	case appsetting.FieldWsapceInviteTemplID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWsapceInviteTemplID(v)
+		return nil
+	case appsetting.FieldWsapceSuccessTemplID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWsapceSuccessTemplID(v)
+		return nil
+	case appsetting.FieldAuthFpTemplID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAuthFpTemplID(v)
+		return nil
+	case appsetting.FieldAuthWelcomeEmailTemplID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAuthWelcomeEmailTemplID(v)
+		return nil
+	case appsetting.FieldAuthVerificationTemplID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAuthVerificationTemplID(v)
+		return nil
+	case appsetting.FieldAuthEmailVerify:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAuthEmailVerify(v)
+		return nil
+	}
+	return fmt.Errorf("unknown AppSetting field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *AppSettingMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *AppSettingMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *AppSettingMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown AppSetting numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *AppSettingMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(appsetting.FieldCreatedAt) {
+		fields = append(fields, appsetting.FieldCreatedAt)
+	}
+	if m.FieldCleared(appsetting.FieldUpdatedAt) {
+		fields = append(fields, appsetting.FieldUpdatedAt)
+	}
+	if m.FieldCleared(appsetting.FieldAppName) {
+		fields = append(fields, appsetting.FieldAppName)
+	}
+	if m.FieldCleared(appsetting.FieldCopyright) {
+		fields = append(fields, appsetting.FieldCopyright)
+	}
+	if m.FieldCleared(appsetting.FieldEmail) {
+		fields = append(fields, appsetting.FieldEmail)
+	}
+	if m.FieldCleared(appsetting.FieldAddress) {
+		fields = append(fields, appsetting.FieldAddress)
+	}
+	if m.FieldCleared(appsetting.FieldSocialTw) {
+		fields = append(fields, appsetting.FieldSocialTw)
+	}
+	if m.FieldCleared(appsetting.FieldSocialFb) {
+		fields = append(fields, appsetting.FieldSocialFb)
+	}
+	if m.FieldCleared(appsetting.FieldSocialIn) {
+		fields = append(fields, appsetting.FieldSocialIn)
+	}
+	if m.FieldCleared(appsetting.FieldLogoURL) {
+		fields = append(fields, appsetting.FieldLogoURL)
+	}
+	if m.FieldCleared(appsetting.FieldSiteURL) {
+		fields = append(fields, appsetting.FieldSiteURL)
+	}
+	if m.FieldCleared(appsetting.FieldDefaultMailConnID) {
+		fields = append(fields, appsetting.FieldDefaultMailConnID)
+	}
+	if m.FieldCleared(appsetting.FieldMailLayoutTemplID) {
+		fields = append(fields, appsetting.FieldMailLayoutTemplID)
+	}
+	if m.FieldCleared(appsetting.FieldWsapceInviteTemplID) {
+		fields = append(fields, appsetting.FieldWsapceInviteTemplID)
+	}
+	if m.FieldCleared(appsetting.FieldWsapceSuccessTemplID) {
+		fields = append(fields, appsetting.FieldWsapceSuccessTemplID)
+	}
+	if m.FieldCleared(appsetting.FieldAuthFpTemplID) {
+		fields = append(fields, appsetting.FieldAuthFpTemplID)
+	}
+	if m.FieldCleared(appsetting.FieldAuthWelcomeEmailTemplID) {
+		fields = append(fields, appsetting.FieldAuthWelcomeEmailTemplID)
+	}
+	if m.FieldCleared(appsetting.FieldAuthVerificationTemplID) {
+		fields = append(fields, appsetting.FieldAuthVerificationTemplID)
+	}
+	if m.FieldCleared(appsetting.FieldAuthEmailVerify) {
+		fields = append(fields, appsetting.FieldAuthEmailVerify)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *AppSettingMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *AppSettingMutation) ClearField(name string) error {
+	switch name {
+	case appsetting.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case appsetting.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case appsetting.FieldAppName:
+		m.ClearAppName()
+		return nil
+	case appsetting.FieldCopyright:
+		m.ClearCopyright()
+		return nil
+	case appsetting.FieldEmail:
+		m.ClearEmail()
+		return nil
+	case appsetting.FieldAddress:
+		m.ClearAddress()
+		return nil
+	case appsetting.FieldSocialTw:
+		m.ClearSocialTw()
+		return nil
+	case appsetting.FieldSocialFb:
+		m.ClearSocialFb()
+		return nil
+	case appsetting.FieldSocialIn:
+		m.ClearSocialIn()
+		return nil
+	case appsetting.FieldLogoURL:
+		m.ClearLogoURL()
+		return nil
+	case appsetting.FieldSiteURL:
+		m.ClearSiteURL()
+		return nil
+	case appsetting.FieldDefaultMailConnID:
+		m.ClearDefaultMailConnID()
+		return nil
+	case appsetting.FieldMailLayoutTemplID:
+		m.ClearMailLayoutTemplID()
+		return nil
+	case appsetting.FieldWsapceInviteTemplID:
+		m.ClearWsapceInviteTemplID()
+		return nil
+	case appsetting.FieldWsapceSuccessTemplID:
+		m.ClearWsapceSuccessTemplID()
+		return nil
+	case appsetting.FieldAuthFpTemplID:
+		m.ClearAuthFpTemplID()
+		return nil
+	case appsetting.FieldAuthWelcomeEmailTemplID:
+		m.ClearAuthWelcomeEmailTemplID()
+		return nil
+	case appsetting.FieldAuthVerificationTemplID:
+		m.ClearAuthVerificationTemplID()
+		return nil
+	case appsetting.FieldAuthEmailVerify:
+		m.ClearAuthEmailVerify()
+		return nil
+	}
+	return fmt.Errorf("unknown AppSetting nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *AppSettingMutation) ResetField(name string) error {
+	switch name {
+	case appsetting.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case appsetting.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case appsetting.FieldAppName:
+		m.ResetAppName()
+		return nil
+	case appsetting.FieldCopyright:
+		m.ResetCopyright()
+		return nil
+	case appsetting.FieldEmail:
+		m.ResetEmail()
+		return nil
+	case appsetting.FieldAddress:
+		m.ResetAddress()
+		return nil
+	case appsetting.FieldSocialTw:
+		m.ResetSocialTw()
+		return nil
+	case appsetting.FieldSocialFb:
+		m.ResetSocialFb()
+		return nil
+	case appsetting.FieldSocialIn:
+		m.ResetSocialIn()
+		return nil
+	case appsetting.FieldLogoURL:
+		m.ResetLogoURL()
+		return nil
+	case appsetting.FieldSiteURL:
+		m.ResetSiteURL()
+		return nil
+	case appsetting.FieldDefaultMailConnID:
+		m.ResetDefaultMailConnID()
+		return nil
+	case appsetting.FieldMailLayoutTemplID:
+		m.ResetMailLayoutTemplID()
+		return nil
+	case appsetting.FieldWsapceInviteTemplID:
+		m.ResetWsapceInviteTemplID()
+		return nil
+	case appsetting.FieldWsapceSuccessTemplID:
+		m.ResetWsapceSuccessTemplID()
+		return nil
+	case appsetting.FieldAuthFpTemplID:
+		m.ResetAuthFpTemplID()
+		return nil
+	case appsetting.FieldAuthWelcomeEmailTemplID:
+		m.ResetAuthWelcomeEmailTemplID()
+		return nil
+	case appsetting.FieldAuthVerificationTemplID:
+		m.ResetAuthVerificationTemplID()
+		return nil
+	case appsetting.FieldAuthEmailVerify:
+		m.ResetAuthEmailVerify()
+		return nil
+	}
+	return fmt.Errorf("unknown AppSetting field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *AppSettingMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *AppSettingMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *AppSettingMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *AppSettingMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *AppSettingMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *AppSettingMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *AppSettingMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown AppSetting unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *AppSettingMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown AppSetting edge %s", name)
 }
 
 // KacheMutation represents an operation that mutates the Kache nodes in the graph.
@@ -1916,35 +3588,42 @@ func (m *KeyvalueMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Keyvalue edge %s", name)
 }
 
-// MailConnectionMutation represents an operation that mutates the MailConnection nodes in the graph.
-type MailConnectionMutation struct {
+// MailConnMutation represents an operation that mutates the MailConn nodes in the graph.
+type MailConnMutation struct {
 	config
 	op            Op
 	typ           string
-	id            *int
+	id            *string
+	created_at    *time.Time
+	updated_at    *time.Time
 	name          *string
 	host          *string
-	port          *string
+	port          *int
+	addport       *int
 	username      *string
 	password      *string
+	encryption    *int
+	addencryption *int
+	from_name     *string
+	from_email    *string
 	status        *bool
 	clearedFields map[string]struct{}
 	done          bool
-	oldValue      func(context.Context) (*MailConnection, error)
-	predicates    []predicate.MailConnection
+	oldValue      func(context.Context) (*MailConn, error)
+	predicates    []predicate.MailConn
 }
 
-var _ ent.Mutation = (*MailConnectionMutation)(nil)
+var _ ent.Mutation = (*MailConnMutation)(nil)
 
-// mailconnectionOption allows management of the mutation configuration using functional options.
-type mailconnectionOption func(*MailConnectionMutation)
+// mailconnOption allows management of the mutation configuration using functional options.
+type mailconnOption func(*MailConnMutation)
 
-// newMailConnectionMutation creates new mutation for the MailConnection entity.
-func newMailConnectionMutation(c config, op Op, opts ...mailconnectionOption) *MailConnectionMutation {
-	m := &MailConnectionMutation{
+// newMailConnMutation creates new mutation for the MailConn entity.
+func newMailConnMutation(c config, op Op, opts ...mailconnOption) *MailConnMutation {
+	m := &MailConnMutation{
 		config:        c,
 		op:            op,
-		typ:           TypeMailConnection,
+		typ:           TypeMailConn,
 		clearedFields: make(map[string]struct{}),
 	}
 	for _, opt := range opts {
@@ -1953,20 +3632,20 @@ func newMailConnectionMutation(c config, op Op, opts ...mailconnectionOption) *M
 	return m
 }
 
-// withMailConnectionID sets the ID field of the mutation.
-func withMailConnectionID(id int) mailconnectionOption {
-	return func(m *MailConnectionMutation) {
+// withMailConnID sets the ID field of the mutation.
+func withMailConnID(id string) mailconnOption {
+	return func(m *MailConnMutation) {
 		var (
 			err   error
 			once  sync.Once
-			value *MailConnection
+			value *MailConn
 		)
-		m.oldValue = func(ctx context.Context) (*MailConnection, error) {
+		m.oldValue = func(ctx context.Context) (*MailConn, error) {
 			once.Do(func() {
 				if m.done {
 					err = errors.New("querying old values post mutation is not allowed")
 				} else {
-					value, err = m.Client().MailConnection.Get(ctx, id)
+					value, err = m.Client().MailConn.Get(ctx, id)
 				}
 			})
 			return value, err
@@ -1975,10 +3654,10 @@ func withMailConnectionID(id int) mailconnectionOption {
 	}
 }
 
-// withMailConnection sets the old MailConnection of the mutation.
-func withMailConnection(node *MailConnection) mailconnectionOption {
-	return func(m *MailConnectionMutation) {
-		m.oldValue = func(context.Context) (*MailConnection, error) {
+// withMailConn sets the old MailConn of the mutation.
+func withMailConn(node *MailConn) mailconnOption {
+	return func(m *MailConnMutation) {
+		m.oldValue = func(context.Context) (*MailConn, error) {
 			return node, nil
 		}
 		m.id = &node.ID
@@ -1987,7 +3666,7 @@ func withMailConnection(node *MailConnection) mailconnectionOption {
 
 // Client returns a new `ent.Client` from the mutation. If the mutation was
 // executed in a transaction (ent.Tx), a transactional client is returned.
-func (m MailConnectionMutation) Client() *Client {
+func (m MailConnMutation) Client() *Client {
 	client := &Client{config: m.config}
 	client.init()
 	return client
@@ -1995,7 +3674,7 @@ func (m MailConnectionMutation) Client() *Client {
 
 // Tx returns an `ent.Tx` for mutations that were executed in transactions;
 // it returns an error otherwise.
-func (m MailConnectionMutation) Tx() (*Tx, error) {
+func (m MailConnMutation) Tx() (*Tx, error) {
 	if _, ok := m.driver.(*txDriver); !ok {
 		return nil, errors.New("ent: mutation is not running in a transaction")
 	}
@@ -2004,9 +3683,15 @@ func (m MailConnectionMutation) Tx() (*Tx, error) {
 	return tx, nil
 }
 
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of MailConn entities.
+func (m *MailConnMutation) SetID(id string) {
+	m.id = &id
+}
+
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *MailConnectionMutation) ID() (id int, exists bool) {
+func (m *MailConnMutation) ID() (id string, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -2017,28 +3702,126 @@ func (m *MailConnectionMutation) ID() (id int, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *MailConnectionMutation) IDs(ctx context.Context) ([]int, error) {
+func (m *MailConnMutation) IDs(ctx context.Context) ([]string, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int{id}, nil
+			return []string{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().MailConnection.Query().Where(m.predicates...).IDs(ctx)
+		return m.Client().MailConn.Query().Where(m.predicates...).IDs(ctx)
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (m *MailConnMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *MailConnMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the MailConn entity.
+// If the MailConn object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MailConnMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *MailConnMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[mailconn.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *MailConnMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[mailconn.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *MailConnMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, mailconn.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *MailConnMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *MailConnMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the MailConn entity.
+// If the MailConn object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MailConnMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *MailConnMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[mailconn.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *MailConnMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[mailconn.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *MailConnMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, mailconn.FieldUpdatedAt)
+}
+
 // SetName sets the "name" field.
-func (m *MailConnectionMutation) SetName(s string) {
+func (m *MailConnMutation) SetName(s string) {
 	m.name = &s
 }
 
 // Name returns the value of the "name" field in the mutation.
-func (m *MailConnectionMutation) Name() (r string, exists bool) {
+func (m *MailConnMutation) Name() (r string, exists bool) {
 	v := m.name
 	if v == nil {
 		return
@@ -2046,10 +3829,10 @@ func (m *MailConnectionMutation) Name() (r string, exists bool) {
 	return *v, true
 }
 
-// OldName returns the old "name" field's value of the MailConnection entity.
-// If the MailConnection object wasn't provided to the builder, the object is fetched from the database.
+// OldName returns the old "name" field's value of the MailConn entity.
+// If the MailConn object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MailConnectionMutation) OldName(ctx context.Context) (v string, err error) {
+func (m *MailConnMutation) OldName(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldName is only allowed on UpdateOne operations")
 	}
@@ -2064,30 +3847,30 @@ func (m *MailConnectionMutation) OldName(ctx context.Context) (v string, err err
 }
 
 // ClearName clears the value of the "name" field.
-func (m *MailConnectionMutation) ClearName() {
+func (m *MailConnMutation) ClearName() {
 	m.name = nil
-	m.clearedFields[mailconnection.FieldName] = struct{}{}
+	m.clearedFields[mailconn.FieldName] = struct{}{}
 }
 
 // NameCleared returns if the "name" field was cleared in this mutation.
-func (m *MailConnectionMutation) NameCleared() bool {
-	_, ok := m.clearedFields[mailconnection.FieldName]
+func (m *MailConnMutation) NameCleared() bool {
+	_, ok := m.clearedFields[mailconn.FieldName]
 	return ok
 }
 
 // ResetName resets all changes to the "name" field.
-func (m *MailConnectionMutation) ResetName() {
+func (m *MailConnMutation) ResetName() {
 	m.name = nil
-	delete(m.clearedFields, mailconnection.FieldName)
+	delete(m.clearedFields, mailconn.FieldName)
 }
 
 // SetHost sets the "host" field.
-func (m *MailConnectionMutation) SetHost(s string) {
+func (m *MailConnMutation) SetHost(s string) {
 	m.host = &s
 }
 
 // Host returns the value of the "host" field in the mutation.
-func (m *MailConnectionMutation) Host() (r string, exists bool) {
+func (m *MailConnMutation) Host() (r string, exists bool) {
 	v := m.host
 	if v == nil {
 		return
@@ -2095,10 +3878,10 @@ func (m *MailConnectionMutation) Host() (r string, exists bool) {
 	return *v, true
 }
 
-// OldHost returns the old "host" field's value of the MailConnection entity.
-// If the MailConnection object wasn't provided to the builder, the object is fetched from the database.
+// OldHost returns the old "host" field's value of the MailConn entity.
+// If the MailConn object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MailConnectionMutation) OldHost(ctx context.Context) (v string, err error) {
+func (m *MailConnMutation) OldHost(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldHost is only allowed on UpdateOne operations")
 	}
@@ -2113,30 +3896,31 @@ func (m *MailConnectionMutation) OldHost(ctx context.Context) (v string, err err
 }
 
 // ClearHost clears the value of the "host" field.
-func (m *MailConnectionMutation) ClearHost() {
+func (m *MailConnMutation) ClearHost() {
 	m.host = nil
-	m.clearedFields[mailconnection.FieldHost] = struct{}{}
+	m.clearedFields[mailconn.FieldHost] = struct{}{}
 }
 
 // HostCleared returns if the "host" field was cleared in this mutation.
-func (m *MailConnectionMutation) HostCleared() bool {
-	_, ok := m.clearedFields[mailconnection.FieldHost]
+func (m *MailConnMutation) HostCleared() bool {
+	_, ok := m.clearedFields[mailconn.FieldHost]
 	return ok
 }
 
 // ResetHost resets all changes to the "host" field.
-func (m *MailConnectionMutation) ResetHost() {
+func (m *MailConnMutation) ResetHost() {
 	m.host = nil
-	delete(m.clearedFields, mailconnection.FieldHost)
+	delete(m.clearedFields, mailconn.FieldHost)
 }
 
 // SetPort sets the "port" field.
-func (m *MailConnectionMutation) SetPort(s string) {
-	m.port = &s
+func (m *MailConnMutation) SetPort(i int) {
+	m.port = &i
+	m.addport = nil
 }
 
 // Port returns the value of the "port" field in the mutation.
-func (m *MailConnectionMutation) Port() (r string, exists bool) {
+func (m *MailConnMutation) Port() (r int, exists bool) {
 	v := m.port
 	if v == nil {
 		return
@@ -2144,10 +3928,10 @@ func (m *MailConnectionMutation) Port() (r string, exists bool) {
 	return *v, true
 }
 
-// OldPort returns the old "port" field's value of the MailConnection entity.
-// If the MailConnection object wasn't provided to the builder, the object is fetched from the database.
+// OldPort returns the old "port" field's value of the MailConn entity.
+// If the MailConn object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MailConnectionMutation) OldPort(ctx context.Context) (v string, err error) {
+func (m *MailConnMutation) OldPort(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldPort is only allowed on UpdateOne operations")
 	}
@@ -2161,31 +3945,51 @@ func (m *MailConnectionMutation) OldPort(ctx context.Context) (v string, err err
 	return oldValue.Port, nil
 }
 
+// AddPort adds i to the "port" field.
+func (m *MailConnMutation) AddPort(i int) {
+	if m.addport != nil {
+		*m.addport += i
+	} else {
+		m.addport = &i
+	}
+}
+
+// AddedPort returns the value that was added to the "port" field in this mutation.
+func (m *MailConnMutation) AddedPort() (r int, exists bool) {
+	v := m.addport
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
 // ClearPort clears the value of the "port" field.
-func (m *MailConnectionMutation) ClearPort() {
+func (m *MailConnMutation) ClearPort() {
 	m.port = nil
-	m.clearedFields[mailconnection.FieldPort] = struct{}{}
+	m.addport = nil
+	m.clearedFields[mailconn.FieldPort] = struct{}{}
 }
 
 // PortCleared returns if the "port" field was cleared in this mutation.
-func (m *MailConnectionMutation) PortCleared() bool {
-	_, ok := m.clearedFields[mailconnection.FieldPort]
+func (m *MailConnMutation) PortCleared() bool {
+	_, ok := m.clearedFields[mailconn.FieldPort]
 	return ok
 }
 
 // ResetPort resets all changes to the "port" field.
-func (m *MailConnectionMutation) ResetPort() {
+func (m *MailConnMutation) ResetPort() {
 	m.port = nil
-	delete(m.clearedFields, mailconnection.FieldPort)
+	m.addport = nil
+	delete(m.clearedFields, mailconn.FieldPort)
 }
 
 // SetUsername sets the "username" field.
-func (m *MailConnectionMutation) SetUsername(s string) {
+func (m *MailConnMutation) SetUsername(s string) {
 	m.username = &s
 }
 
 // Username returns the value of the "username" field in the mutation.
-func (m *MailConnectionMutation) Username() (r string, exists bool) {
+func (m *MailConnMutation) Username() (r string, exists bool) {
 	v := m.username
 	if v == nil {
 		return
@@ -2193,10 +3997,10 @@ func (m *MailConnectionMutation) Username() (r string, exists bool) {
 	return *v, true
 }
 
-// OldUsername returns the old "username" field's value of the MailConnection entity.
-// If the MailConnection object wasn't provided to the builder, the object is fetched from the database.
+// OldUsername returns the old "username" field's value of the MailConn entity.
+// If the MailConn object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MailConnectionMutation) OldUsername(ctx context.Context) (v string, err error) {
+func (m *MailConnMutation) OldUsername(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUsername is only allowed on UpdateOne operations")
 	}
@@ -2211,30 +4015,30 @@ func (m *MailConnectionMutation) OldUsername(ctx context.Context) (v string, err
 }
 
 // ClearUsername clears the value of the "username" field.
-func (m *MailConnectionMutation) ClearUsername() {
+func (m *MailConnMutation) ClearUsername() {
 	m.username = nil
-	m.clearedFields[mailconnection.FieldUsername] = struct{}{}
+	m.clearedFields[mailconn.FieldUsername] = struct{}{}
 }
 
 // UsernameCleared returns if the "username" field was cleared in this mutation.
-func (m *MailConnectionMutation) UsernameCleared() bool {
-	_, ok := m.clearedFields[mailconnection.FieldUsername]
+func (m *MailConnMutation) UsernameCleared() bool {
+	_, ok := m.clearedFields[mailconn.FieldUsername]
 	return ok
 }
 
 // ResetUsername resets all changes to the "username" field.
-func (m *MailConnectionMutation) ResetUsername() {
+func (m *MailConnMutation) ResetUsername() {
 	m.username = nil
-	delete(m.clearedFields, mailconnection.FieldUsername)
+	delete(m.clearedFields, mailconn.FieldUsername)
 }
 
 // SetPassword sets the "password" field.
-func (m *MailConnectionMutation) SetPassword(s string) {
+func (m *MailConnMutation) SetPassword(s string) {
 	m.password = &s
 }
 
 // Password returns the value of the "password" field in the mutation.
-func (m *MailConnectionMutation) Password() (r string, exists bool) {
+func (m *MailConnMutation) Password() (r string, exists bool) {
 	v := m.password
 	if v == nil {
 		return
@@ -2242,10 +4046,10 @@ func (m *MailConnectionMutation) Password() (r string, exists bool) {
 	return *v, true
 }
 
-// OldPassword returns the old "password" field's value of the MailConnection entity.
-// If the MailConnection object wasn't provided to the builder, the object is fetched from the database.
+// OldPassword returns the old "password" field's value of the MailConn entity.
+// If the MailConn object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MailConnectionMutation) OldPassword(ctx context.Context) (v string, err error) {
+func (m *MailConnMutation) OldPassword(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldPassword is only allowed on UpdateOne operations")
 	}
@@ -2260,30 +4064,198 @@ func (m *MailConnectionMutation) OldPassword(ctx context.Context) (v string, err
 }
 
 // ClearPassword clears the value of the "password" field.
-func (m *MailConnectionMutation) ClearPassword() {
+func (m *MailConnMutation) ClearPassword() {
 	m.password = nil
-	m.clearedFields[mailconnection.FieldPassword] = struct{}{}
+	m.clearedFields[mailconn.FieldPassword] = struct{}{}
 }
 
 // PasswordCleared returns if the "password" field was cleared in this mutation.
-func (m *MailConnectionMutation) PasswordCleared() bool {
-	_, ok := m.clearedFields[mailconnection.FieldPassword]
+func (m *MailConnMutation) PasswordCleared() bool {
+	_, ok := m.clearedFields[mailconn.FieldPassword]
 	return ok
 }
 
 // ResetPassword resets all changes to the "password" field.
-func (m *MailConnectionMutation) ResetPassword() {
+func (m *MailConnMutation) ResetPassword() {
 	m.password = nil
-	delete(m.clearedFields, mailconnection.FieldPassword)
+	delete(m.clearedFields, mailconn.FieldPassword)
+}
+
+// SetEncryption sets the "encryption" field.
+func (m *MailConnMutation) SetEncryption(i int) {
+	m.encryption = &i
+	m.addencryption = nil
+}
+
+// Encryption returns the value of the "encryption" field in the mutation.
+func (m *MailConnMutation) Encryption() (r int, exists bool) {
+	v := m.encryption
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldEncryption returns the old "encryption" field's value of the MailConn entity.
+// If the MailConn object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MailConnMutation) OldEncryption(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldEncryption is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldEncryption requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldEncryption: %w", err)
+	}
+	return oldValue.Encryption, nil
+}
+
+// AddEncryption adds i to the "encryption" field.
+func (m *MailConnMutation) AddEncryption(i int) {
+	if m.addencryption != nil {
+		*m.addencryption += i
+	} else {
+		m.addencryption = &i
+	}
+}
+
+// AddedEncryption returns the value that was added to the "encryption" field in this mutation.
+func (m *MailConnMutation) AddedEncryption() (r int, exists bool) {
+	v := m.addencryption
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearEncryption clears the value of the "encryption" field.
+func (m *MailConnMutation) ClearEncryption() {
+	m.encryption = nil
+	m.addencryption = nil
+	m.clearedFields[mailconn.FieldEncryption] = struct{}{}
+}
+
+// EncryptionCleared returns if the "encryption" field was cleared in this mutation.
+func (m *MailConnMutation) EncryptionCleared() bool {
+	_, ok := m.clearedFields[mailconn.FieldEncryption]
+	return ok
+}
+
+// ResetEncryption resets all changes to the "encryption" field.
+func (m *MailConnMutation) ResetEncryption() {
+	m.encryption = nil
+	m.addencryption = nil
+	delete(m.clearedFields, mailconn.FieldEncryption)
+}
+
+// SetFromName sets the "from_name" field.
+func (m *MailConnMutation) SetFromName(s string) {
+	m.from_name = &s
+}
+
+// FromName returns the value of the "from_name" field in the mutation.
+func (m *MailConnMutation) FromName() (r string, exists bool) {
+	v := m.from_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFromName returns the old "from_name" field's value of the MailConn entity.
+// If the MailConn object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MailConnMutation) OldFromName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFromName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFromName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFromName: %w", err)
+	}
+	return oldValue.FromName, nil
+}
+
+// ClearFromName clears the value of the "from_name" field.
+func (m *MailConnMutation) ClearFromName() {
+	m.from_name = nil
+	m.clearedFields[mailconn.FieldFromName] = struct{}{}
+}
+
+// FromNameCleared returns if the "from_name" field was cleared in this mutation.
+func (m *MailConnMutation) FromNameCleared() bool {
+	_, ok := m.clearedFields[mailconn.FieldFromName]
+	return ok
+}
+
+// ResetFromName resets all changes to the "from_name" field.
+func (m *MailConnMutation) ResetFromName() {
+	m.from_name = nil
+	delete(m.clearedFields, mailconn.FieldFromName)
+}
+
+// SetFromEmail sets the "from_email" field.
+func (m *MailConnMutation) SetFromEmail(s string) {
+	m.from_email = &s
+}
+
+// FromEmail returns the value of the "from_email" field in the mutation.
+func (m *MailConnMutation) FromEmail() (r string, exists bool) {
+	v := m.from_email
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFromEmail returns the old "from_email" field's value of the MailConn entity.
+// If the MailConn object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MailConnMutation) OldFromEmail(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFromEmail is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFromEmail requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFromEmail: %w", err)
+	}
+	return oldValue.FromEmail, nil
+}
+
+// ClearFromEmail clears the value of the "from_email" field.
+func (m *MailConnMutation) ClearFromEmail() {
+	m.from_email = nil
+	m.clearedFields[mailconn.FieldFromEmail] = struct{}{}
+}
+
+// FromEmailCleared returns if the "from_email" field was cleared in this mutation.
+func (m *MailConnMutation) FromEmailCleared() bool {
+	_, ok := m.clearedFields[mailconn.FieldFromEmail]
+	return ok
+}
+
+// ResetFromEmail resets all changes to the "from_email" field.
+func (m *MailConnMutation) ResetFromEmail() {
+	m.from_email = nil
+	delete(m.clearedFields, mailconn.FieldFromEmail)
 }
 
 // SetStatus sets the "status" field.
-func (m *MailConnectionMutation) SetStatus(b bool) {
+func (m *MailConnMutation) SetStatus(b bool) {
 	m.status = &b
 }
 
 // Status returns the value of the "status" field in the mutation.
-func (m *MailConnectionMutation) Status() (r bool, exists bool) {
+func (m *MailConnMutation) Status() (r bool, exists bool) {
 	v := m.status
 	if v == nil {
 		return
@@ -2291,10 +4263,10 @@ func (m *MailConnectionMutation) Status() (r bool, exists bool) {
 	return *v, true
 }
 
-// OldStatus returns the old "status" field's value of the MailConnection entity.
-// If the MailConnection object wasn't provided to the builder, the object is fetched from the database.
+// OldStatus returns the old "status" field's value of the MailConn entity.
+// If the MailConn object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MailConnectionMutation) OldStatus(ctx context.Context) (v bool, err error) {
+func (m *MailConnMutation) OldStatus(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
@@ -2309,32 +4281,32 @@ func (m *MailConnectionMutation) OldStatus(ctx context.Context) (v bool, err err
 }
 
 // ClearStatus clears the value of the "status" field.
-func (m *MailConnectionMutation) ClearStatus() {
+func (m *MailConnMutation) ClearStatus() {
 	m.status = nil
-	m.clearedFields[mailconnection.FieldStatus] = struct{}{}
+	m.clearedFields[mailconn.FieldStatus] = struct{}{}
 }
 
 // StatusCleared returns if the "status" field was cleared in this mutation.
-func (m *MailConnectionMutation) StatusCleared() bool {
-	_, ok := m.clearedFields[mailconnection.FieldStatus]
+func (m *MailConnMutation) StatusCleared() bool {
+	_, ok := m.clearedFields[mailconn.FieldStatus]
 	return ok
 }
 
 // ResetStatus resets all changes to the "status" field.
-func (m *MailConnectionMutation) ResetStatus() {
+func (m *MailConnMutation) ResetStatus() {
 	m.status = nil
-	delete(m.clearedFields, mailconnection.FieldStatus)
+	delete(m.clearedFields, mailconn.FieldStatus)
 }
 
-// Where appends a list predicates to the MailConnectionMutation builder.
-func (m *MailConnectionMutation) Where(ps ...predicate.MailConnection) {
+// Where appends a list predicates to the MailConnMutation builder.
+func (m *MailConnMutation) Where(ps ...predicate.MailConn) {
 	m.predicates = append(m.predicates, ps...)
 }
 
-// WhereP appends storage-level predicates to the MailConnectionMutation builder. Using this method,
+// WhereP appends storage-level predicates to the MailConnMutation builder. Using this method,
 // users can use type-assertion to append predicates that do not depend on any generated package.
-func (m *MailConnectionMutation) WhereP(ps ...func(*sql.Selector)) {
-	p := make([]predicate.MailConnection, len(ps))
+func (m *MailConnMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.MailConn, len(ps))
 	for i := range ps {
 		p[i] = ps[i]
 	}
@@ -2342,42 +4314,57 @@ func (m *MailConnectionMutation) WhereP(ps ...func(*sql.Selector)) {
 }
 
 // Op returns the operation name.
-func (m *MailConnectionMutation) Op() Op {
+func (m *MailConnMutation) Op() Op {
 	return m.op
 }
 
 // SetOp allows setting the mutation operation.
-func (m *MailConnectionMutation) SetOp(op Op) {
+func (m *MailConnMutation) SetOp(op Op) {
 	m.op = op
 }
 
-// Type returns the node type of this mutation (MailConnection).
-func (m *MailConnectionMutation) Type() string {
+// Type returns the node type of this mutation (MailConn).
+func (m *MailConnMutation) Type() string {
 	return m.typ
 }
 
 // Fields returns all fields that were changed during this mutation. Note that in
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
-func (m *MailConnectionMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+func (m *MailConnMutation) Fields() []string {
+	fields := make([]string, 0, 11)
+	if m.created_at != nil {
+		fields = append(fields, mailconn.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, mailconn.FieldUpdatedAt)
+	}
 	if m.name != nil {
-		fields = append(fields, mailconnection.FieldName)
+		fields = append(fields, mailconn.FieldName)
 	}
 	if m.host != nil {
-		fields = append(fields, mailconnection.FieldHost)
+		fields = append(fields, mailconn.FieldHost)
 	}
 	if m.port != nil {
-		fields = append(fields, mailconnection.FieldPort)
+		fields = append(fields, mailconn.FieldPort)
 	}
 	if m.username != nil {
-		fields = append(fields, mailconnection.FieldUsername)
+		fields = append(fields, mailconn.FieldUsername)
 	}
 	if m.password != nil {
-		fields = append(fields, mailconnection.FieldPassword)
+		fields = append(fields, mailconn.FieldPassword)
+	}
+	if m.encryption != nil {
+		fields = append(fields, mailconn.FieldEncryption)
+	}
+	if m.from_name != nil {
+		fields = append(fields, mailconn.FieldFromName)
+	}
+	if m.from_email != nil {
+		fields = append(fields, mailconn.FieldFromEmail)
 	}
 	if m.status != nil {
-		fields = append(fields, mailconnection.FieldStatus)
+		fields = append(fields, mailconn.FieldStatus)
 	}
 	return fields
 }
@@ -2385,19 +4372,29 @@ func (m *MailConnectionMutation) Fields() []string {
 // Field returns the value of a field with the given name. The second boolean
 // return value indicates that this field was not set, or was not defined in the
 // schema.
-func (m *MailConnectionMutation) Field(name string) (ent.Value, bool) {
+func (m *MailConnMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case mailconnection.FieldName:
+	case mailconn.FieldCreatedAt:
+		return m.CreatedAt()
+	case mailconn.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case mailconn.FieldName:
 		return m.Name()
-	case mailconnection.FieldHost:
+	case mailconn.FieldHost:
 		return m.Host()
-	case mailconnection.FieldPort:
+	case mailconn.FieldPort:
 		return m.Port()
-	case mailconnection.FieldUsername:
+	case mailconn.FieldUsername:
 		return m.Username()
-	case mailconnection.FieldPassword:
+	case mailconn.FieldPassword:
 		return m.Password()
-	case mailconnection.FieldStatus:
+	case mailconn.FieldEncryption:
+		return m.Encryption()
+	case mailconn.FieldFromName:
+		return m.FromName()
+	case mailconn.FieldFromEmail:
+		return m.FromEmail()
+	case mailconn.FieldStatus:
 		return m.Status()
 	}
 	return nil, false
@@ -2406,65 +4403,110 @@ func (m *MailConnectionMutation) Field(name string) (ent.Value, bool) {
 // OldField returns the old value of the field from the database. An error is
 // returned if the mutation operation is not UpdateOne, or the query to the
 // database failed.
-func (m *MailConnectionMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+func (m *MailConnMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case mailconnection.FieldName:
+	case mailconn.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case mailconn.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case mailconn.FieldName:
 		return m.OldName(ctx)
-	case mailconnection.FieldHost:
+	case mailconn.FieldHost:
 		return m.OldHost(ctx)
-	case mailconnection.FieldPort:
+	case mailconn.FieldPort:
 		return m.OldPort(ctx)
-	case mailconnection.FieldUsername:
+	case mailconn.FieldUsername:
 		return m.OldUsername(ctx)
-	case mailconnection.FieldPassword:
+	case mailconn.FieldPassword:
 		return m.OldPassword(ctx)
-	case mailconnection.FieldStatus:
+	case mailconn.FieldEncryption:
+		return m.OldEncryption(ctx)
+	case mailconn.FieldFromName:
+		return m.OldFromName(ctx)
+	case mailconn.FieldFromEmail:
+		return m.OldFromEmail(ctx)
+	case mailconn.FieldStatus:
 		return m.OldStatus(ctx)
 	}
-	return nil, fmt.Errorf("unknown MailConnection field %s", name)
+	return nil, fmt.Errorf("unknown MailConn field %s", name)
 }
 
 // SetField sets the value of a field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *MailConnectionMutation) SetField(name string, value ent.Value) error {
+func (m *MailConnMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case mailconnection.FieldName:
+	case mailconn.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case mailconn.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case mailconn.FieldName:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetName(v)
 		return nil
-	case mailconnection.FieldHost:
+	case mailconn.FieldHost:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetHost(v)
 		return nil
-	case mailconnection.FieldPort:
-		v, ok := value.(string)
+	case mailconn.FieldPort:
+		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetPort(v)
 		return nil
-	case mailconnection.FieldUsername:
+	case mailconn.FieldUsername:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUsername(v)
 		return nil
-	case mailconnection.FieldPassword:
+	case mailconn.FieldPassword:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetPassword(v)
 		return nil
-	case mailconnection.FieldStatus:
+	case mailconn.FieldEncryption:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetEncryption(v)
+		return nil
+	case mailconn.FieldFromName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFromName(v)
+		return nil
+	case mailconn.FieldFromEmail:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFromEmail(v)
+		return nil
+	case mailconn.FieldStatus:
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
@@ -2472,161 +4514,233 @@ func (m *MailConnectionMutation) SetField(name string, value ent.Value) error {
 		m.SetStatus(v)
 		return nil
 	}
-	return fmt.Errorf("unknown MailConnection field %s", name)
+	return fmt.Errorf("unknown MailConn field %s", name)
 }
 
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
-func (m *MailConnectionMutation) AddedFields() []string {
-	return nil
+func (m *MailConnMutation) AddedFields() []string {
+	var fields []string
+	if m.addport != nil {
+		fields = append(fields, mailconn.FieldPort)
+	}
+	if m.addencryption != nil {
+		fields = append(fields, mailconn.FieldEncryption)
+	}
+	return fields
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
-func (m *MailConnectionMutation) AddedField(name string) (ent.Value, bool) {
+func (m *MailConnMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case mailconn.FieldPort:
+		return m.AddedPort()
+	case mailconn.FieldEncryption:
+		return m.AddedEncryption()
+	}
 	return nil, false
 }
 
 // AddField adds the value to the field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *MailConnectionMutation) AddField(name string, value ent.Value) error {
+func (m *MailConnMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case mailconn.FieldPort:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddPort(v)
+		return nil
+	case mailconn.FieldEncryption:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddEncryption(v)
+		return nil
 	}
-	return fmt.Errorf("unknown MailConnection numeric field %s", name)
+	return fmt.Errorf("unknown MailConn numeric field %s", name)
 }
 
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
-func (m *MailConnectionMutation) ClearedFields() []string {
+func (m *MailConnMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(mailconnection.FieldName) {
-		fields = append(fields, mailconnection.FieldName)
+	if m.FieldCleared(mailconn.FieldCreatedAt) {
+		fields = append(fields, mailconn.FieldCreatedAt)
 	}
-	if m.FieldCleared(mailconnection.FieldHost) {
-		fields = append(fields, mailconnection.FieldHost)
+	if m.FieldCleared(mailconn.FieldUpdatedAt) {
+		fields = append(fields, mailconn.FieldUpdatedAt)
 	}
-	if m.FieldCleared(mailconnection.FieldPort) {
-		fields = append(fields, mailconnection.FieldPort)
+	if m.FieldCleared(mailconn.FieldName) {
+		fields = append(fields, mailconn.FieldName)
 	}
-	if m.FieldCleared(mailconnection.FieldUsername) {
-		fields = append(fields, mailconnection.FieldUsername)
+	if m.FieldCleared(mailconn.FieldHost) {
+		fields = append(fields, mailconn.FieldHost)
 	}
-	if m.FieldCleared(mailconnection.FieldPassword) {
-		fields = append(fields, mailconnection.FieldPassword)
+	if m.FieldCleared(mailconn.FieldPort) {
+		fields = append(fields, mailconn.FieldPort)
 	}
-	if m.FieldCleared(mailconnection.FieldStatus) {
-		fields = append(fields, mailconnection.FieldStatus)
+	if m.FieldCleared(mailconn.FieldUsername) {
+		fields = append(fields, mailconn.FieldUsername)
+	}
+	if m.FieldCleared(mailconn.FieldPassword) {
+		fields = append(fields, mailconn.FieldPassword)
+	}
+	if m.FieldCleared(mailconn.FieldEncryption) {
+		fields = append(fields, mailconn.FieldEncryption)
+	}
+	if m.FieldCleared(mailconn.FieldFromName) {
+		fields = append(fields, mailconn.FieldFromName)
+	}
+	if m.FieldCleared(mailconn.FieldFromEmail) {
+		fields = append(fields, mailconn.FieldFromEmail)
+	}
+	if m.FieldCleared(mailconn.FieldStatus) {
+		fields = append(fields, mailconn.FieldStatus)
 	}
 	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
 // cleared in this mutation.
-func (m *MailConnectionMutation) FieldCleared(name string) bool {
+func (m *MailConnMutation) FieldCleared(name string) bool {
 	_, ok := m.clearedFields[name]
 	return ok
 }
 
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
-func (m *MailConnectionMutation) ClearField(name string) error {
+func (m *MailConnMutation) ClearField(name string) error {
 	switch name {
-	case mailconnection.FieldName:
+	case mailconn.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case mailconn.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case mailconn.FieldName:
 		m.ClearName()
 		return nil
-	case mailconnection.FieldHost:
+	case mailconn.FieldHost:
 		m.ClearHost()
 		return nil
-	case mailconnection.FieldPort:
+	case mailconn.FieldPort:
 		m.ClearPort()
 		return nil
-	case mailconnection.FieldUsername:
+	case mailconn.FieldUsername:
 		m.ClearUsername()
 		return nil
-	case mailconnection.FieldPassword:
+	case mailconn.FieldPassword:
 		m.ClearPassword()
 		return nil
-	case mailconnection.FieldStatus:
+	case mailconn.FieldEncryption:
+		m.ClearEncryption()
+		return nil
+	case mailconn.FieldFromName:
+		m.ClearFromName()
+		return nil
+	case mailconn.FieldFromEmail:
+		m.ClearFromEmail()
+		return nil
+	case mailconn.FieldStatus:
 		m.ClearStatus()
 		return nil
 	}
-	return fmt.Errorf("unknown MailConnection nullable field %s", name)
+	return fmt.Errorf("unknown MailConn nullable field %s", name)
 }
 
 // ResetField resets all changes in the mutation for the field with the given name.
 // It returns an error if the field is not defined in the schema.
-func (m *MailConnectionMutation) ResetField(name string) error {
+func (m *MailConnMutation) ResetField(name string) error {
 	switch name {
-	case mailconnection.FieldName:
+	case mailconn.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case mailconn.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case mailconn.FieldName:
 		m.ResetName()
 		return nil
-	case mailconnection.FieldHost:
+	case mailconn.FieldHost:
 		m.ResetHost()
 		return nil
-	case mailconnection.FieldPort:
+	case mailconn.FieldPort:
 		m.ResetPort()
 		return nil
-	case mailconnection.FieldUsername:
+	case mailconn.FieldUsername:
 		m.ResetUsername()
 		return nil
-	case mailconnection.FieldPassword:
+	case mailconn.FieldPassword:
 		m.ResetPassword()
 		return nil
-	case mailconnection.FieldStatus:
+	case mailconn.FieldEncryption:
+		m.ResetEncryption()
+		return nil
+	case mailconn.FieldFromName:
+		m.ResetFromName()
+		return nil
+	case mailconn.FieldFromEmail:
+		m.ResetFromEmail()
+		return nil
+	case mailconn.FieldStatus:
 		m.ResetStatus()
 		return nil
 	}
-	return fmt.Errorf("unknown MailConnection field %s", name)
+	return fmt.Errorf("unknown MailConn field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
-func (m *MailConnectionMutation) AddedEdges() []string {
+func (m *MailConnMutation) AddedEdges() []string {
 	edges := make([]string, 0, 0)
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
-func (m *MailConnectionMutation) AddedIDs(name string) []ent.Value {
+func (m *MailConnMutation) AddedIDs(name string) []ent.Value {
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
-func (m *MailConnectionMutation) RemovedEdges() []string {
+func (m *MailConnMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 0)
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
-func (m *MailConnectionMutation) RemovedIDs(name string) []ent.Value {
+func (m *MailConnMutation) RemovedIDs(name string) []ent.Value {
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *MailConnectionMutation) ClearedEdges() []string {
+func (m *MailConnMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 0)
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
-func (m *MailConnectionMutation) EdgeCleared(name string) bool {
+func (m *MailConnMutation) EdgeCleared(name string) bool {
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
-func (m *MailConnectionMutation) ClearEdge(name string) error {
-	return fmt.Errorf("unknown MailConnection unique edge %s", name)
+func (m *MailConnMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown MailConn unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
-func (m *MailConnectionMutation) ResetEdge(name string) error {
-	return fmt.Errorf("unknown MailConnection edge %s", name)
+func (m *MailConnMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown MailConn edge %s", name)
 }
 
 // OauthConnectionMutation represents an operation that mutates the OauthConnection nodes in the graph.
@@ -6383,6 +8497,725 @@ func (m *TempMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *TempMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Temp edge %s", name)
+}
+
+// TemplMutation represents an operation that mutates the Templ nodes in the graph.
+type TemplMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *string
+	created_at    *time.Time
+	updated_at    *time.Time
+	name          *string
+	body          *string
+	compiled      *string
+	status        *bool
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*Templ, error)
+	predicates    []predicate.Templ
+}
+
+var _ ent.Mutation = (*TemplMutation)(nil)
+
+// templOption allows management of the mutation configuration using functional options.
+type templOption func(*TemplMutation)
+
+// newTemplMutation creates new mutation for the Templ entity.
+func newTemplMutation(c config, op Op, opts ...templOption) *TemplMutation {
+	m := &TemplMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeTempl,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withTemplID sets the ID field of the mutation.
+func withTemplID(id string) templOption {
+	return func(m *TemplMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *Templ
+		)
+		m.oldValue = func(ctx context.Context) (*Templ, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().Templ.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withTempl sets the old Templ of the mutation.
+func withTempl(node *Templ) templOption {
+	return func(m *TemplMutation) {
+		m.oldValue = func(context.Context) (*Templ, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m TemplMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m TemplMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of Templ entities.
+func (m *TemplMutation) SetID(id string) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *TemplMutation) ID() (id string, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *TemplMutation) IDs(ctx context.Context) ([]string, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []string{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().Templ.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *TemplMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *TemplMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the Templ entity.
+// If the Templ object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *TemplMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[templ.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *TemplMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[templ.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *TemplMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, templ.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *TemplMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *TemplMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the Templ entity.
+// If the Templ object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *TemplMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[templ.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *TemplMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[templ.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *TemplMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, templ.FieldUpdatedAt)
+}
+
+// SetName sets the "name" field.
+func (m *TemplMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *TemplMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the Templ entity.
+// If the Templ object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ClearName clears the value of the "name" field.
+func (m *TemplMutation) ClearName() {
+	m.name = nil
+	m.clearedFields[templ.FieldName] = struct{}{}
+}
+
+// NameCleared returns if the "name" field was cleared in this mutation.
+func (m *TemplMutation) NameCleared() bool {
+	_, ok := m.clearedFields[templ.FieldName]
+	return ok
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *TemplMutation) ResetName() {
+	m.name = nil
+	delete(m.clearedFields, templ.FieldName)
+}
+
+// SetBody sets the "body" field.
+func (m *TemplMutation) SetBody(s string) {
+	m.body = &s
+}
+
+// Body returns the value of the "body" field in the mutation.
+func (m *TemplMutation) Body() (r string, exists bool) {
+	v := m.body
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBody returns the old "body" field's value of the Templ entity.
+// If the Templ object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplMutation) OldBody(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBody is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBody requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBody: %w", err)
+	}
+	return oldValue.Body, nil
+}
+
+// ClearBody clears the value of the "body" field.
+func (m *TemplMutation) ClearBody() {
+	m.body = nil
+	m.clearedFields[templ.FieldBody] = struct{}{}
+}
+
+// BodyCleared returns if the "body" field was cleared in this mutation.
+func (m *TemplMutation) BodyCleared() bool {
+	_, ok := m.clearedFields[templ.FieldBody]
+	return ok
+}
+
+// ResetBody resets all changes to the "body" field.
+func (m *TemplMutation) ResetBody() {
+	m.body = nil
+	delete(m.clearedFields, templ.FieldBody)
+}
+
+// SetCompiled sets the "compiled" field.
+func (m *TemplMutation) SetCompiled(s string) {
+	m.compiled = &s
+}
+
+// Compiled returns the value of the "compiled" field in the mutation.
+func (m *TemplMutation) Compiled() (r string, exists bool) {
+	v := m.compiled
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCompiled returns the old "compiled" field's value of the Templ entity.
+// If the Templ object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplMutation) OldCompiled(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCompiled is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCompiled requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCompiled: %w", err)
+	}
+	return oldValue.Compiled, nil
+}
+
+// ClearCompiled clears the value of the "compiled" field.
+func (m *TemplMutation) ClearCompiled() {
+	m.compiled = nil
+	m.clearedFields[templ.FieldCompiled] = struct{}{}
+}
+
+// CompiledCleared returns if the "compiled" field was cleared in this mutation.
+func (m *TemplMutation) CompiledCleared() bool {
+	_, ok := m.clearedFields[templ.FieldCompiled]
+	return ok
+}
+
+// ResetCompiled resets all changes to the "compiled" field.
+func (m *TemplMutation) ResetCompiled() {
+	m.compiled = nil
+	delete(m.clearedFields, templ.FieldCompiled)
+}
+
+// SetStatus sets the "status" field.
+func (m *TemplMutation) SetStatus(b bool) {
+	m.status = &b
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *TemplMutation) Status() (r bool, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the Templ entity.
+// If the Templ object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplMutation) OldStatus(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ClearStatus clears the value of the "status" field.
+func (m *TemplMutation) ClearStatus() {
+	m.status = nil
+	m.clearedFields[templ.FieldStatus] = struct{}{}
+}
+
+// StatusCleared returns if the "status" field was cleared in this mutation.
+func (m *TemplMutation) StatusCleared() bool {
+	_, ok := m.clearedFields[templ.FieldStatus]
+	return ok
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *TemplMutation) ResetStatus() {
+	m.status = nil
+	delete(m.clearedFields, templ.FieldStatus)
+}
+
+// Where appends a list predicates to the TemplMutation builder.
+func (m *TemplMutation) Where(ps ...predicate.Templ) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the TemplMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *TemplMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.Templ, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *TemplMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *TemplMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (Templ).
+func (m *TemplMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *TemplMutation) Fields() []string {
+	fields := make([]string, 0, 6)
+	if m.created_at != nil {
+		fields = append(fields, templ.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, templ.FieldUpdatedAt)
+	}
+	if m.name != nil {
+		fields = append(fields, templ.FieldName)
+	}
+	if m.body != nil {
+		fields = append(fields, templ.FieldBody)
+	}
+	if m.compiled != nil {
+		fields = append(fields, templ.FieldCompiled)
+	}
+	if m.status != nil {
+		fields = append(fields, templ.FieldStatus)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *TemplMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case templ.FieldCreatedAt:
+		return m.CreatedAt()
+	case templ.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case templ.FieldName:
+		return m.Name()
+	case templ.FieldBody:
+		return m.Body()
+	case templ.FieldCompiled:
+		return m.Compiled()
+	case templ.FieldStatus:
+		return m.Status()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *TemplMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case templ.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case templ.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case templ.FieldName:
+		return m.OldName(ctx)
+	case templ.FieldBody:
+		return m.OldBody(ctx)
+	case templ.FieldCompiled:
+		return m.OldCompiled(ctx)
+	case templ.FieldStatus:
+		return m.OldStatus(ctx)
+	}
+	return nil, fmt.Errorf("unknown Templ field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TemplMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case templ.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case templ.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case templ.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case templ.FieldBody:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBody(v)
+		return nil
+	case templ.FieldCompiled:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCompiled(v)
+		return nil
+	case templ.FieldStatus:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	}
+	return fmt.Errorf("unknown Templ field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *TemplMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *TemplMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *TemplMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown Templ numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *TemplMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(templ.FieldCreatedAt) {
+		fields = append(fields, templ.FieldCreatedAt)
+	}
+	if m.FieldCleared(templ.FieldUpdatedAt) {
+		fields = append(fields, templ.FieldUpdatedAt)
+	}
+	if m.FieldCleared(templ.FieldName) {
+		fields = append(fields, templ.FieldName)
+	}
+	if m.FieldCleared(templ.FieldBody) {
+		fields = append(fields, templ.FieldBody)
+	}
+	if m.FieldCleared(templ.FieldCompiled) {
+		fields = append(fields, templ.FieldCompiled)
+	}
+	if m.FieldCleared(templ.FieldStatus) {
+		fields = append(fields, templ.FieldStatus)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *TemplMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *TemplMutation) ClearField(name string) error {
+	switch name {
+	case templ.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case templ.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case templ.FieldName:
+		m.ClearName()
+		return nil
+	case templ.FieldBody:
+		m.ClearBody()
+		return nil
+	case templ.FieldCompiled:
+		m.ClearCompiled()
+		return nil
+	case templ.FieldStatus:
+		m.ClearStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown Templ nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *TemplMutation) ResetField(name string) error {
+	switch name {
+	case templ.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case templ.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case templ.FieldName:
+		m.ResetName()
+		return nil
+	case templ.FieldBody:
+		m.ResetBody()
+		return nil
+	case templ.FieldCompiled:
+		m.ResetCompiled()
+		return nil
+	case templ.FieldStatus:
+		m.ResetStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown Templ field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *TemplMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *TemplMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *TemplMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *TemplMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *TemplMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *TemplMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *TemplMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown Templ unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *TemplMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown Templ edge %s", name)
 }
 
 // UserMutation represents an operation that mutates the User nodes in the graph.

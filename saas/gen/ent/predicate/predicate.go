@@ -9,14 +9,17 @@ import (
 // Admin is the predicate function for admin builders.
 type Admin func(*sql.Selector)
 
+// AppSetting is the predicate function for appsetting builders.
+type AppSetting func(*sql.Selector)
+
 // Kache is the predicate function for kache builders.
 type Kache func(*sql.Selector)
 
 // Keyvalue is the predicate function for keyvalue builders.
 type Keyvalue func(*sql.Selector)
 
-// MailConnection is the predicate function for mailconnection builders.
-type MailConnection func(*sql.Selector)
+// MailConn is the predicate function for mailconn builders.
+type MailConn func(*sql.Selector)
 
 // OauthConnection is the predicate function for oauthconnection builders.
 type OauthConnection func(*sql.Selector)
@@ -32,6 +35,9 @@ type Session func(*sql.Selector)
 
 // Temp is the predicate function for temp builders.
 type Temp func(*sql.Selector)
+
+// Templ is the predicate function for templ builders.
+type Templ func(*sql.Selector)
 
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

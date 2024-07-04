@@ -76,7 +76,7 @@ func WorkspaceAddUserHandler(params handlertypes.WorkspaceAddUserInput, cuser *e
 
 	_, err = client.WorkspaceUser.Query().Where(workspaceuser.WorkspaceID(params.WorkspaceID), workspaceuser.UserID(user.ID)).First(ctx)
 
-	if err != nil {
+	if err == nil {
 		return nil, fmt.Errorf("already a part of workspace")
 	}
 
@@ -196,8 +196,8 @@ func WorkspaceGetHandler(id string, cuser *ent.User, client *ent.Client, ctx con
 	return workspace, err
 }
 
-func WorkspaceUsersHandler(cuser *ent.User, client *ent.Client, ctx context.Context) ([]*ent.WorkspaceUser, error) {
-	return client.WorkspaceUser.Query().WithWorkspace().WithUser().Where(workspaceuser.UserID(cuser.ID)).Limit(100).All(ctx)
+func WorkspaceUsersHandler(workspaceID string, client *ent.Client, ctx context.Context) ([]*ent.WorkspaceUser, error) {
+	return client.WorkspaceUser.Query().WithWorkspace().WithUser().Where(workspaceuser.WorkspaceID(workspaceID)).Limit(100).All(ctx)
 }
 
 func WorkspaceInvitesHandler(workspaceID string, cuser *ent.User, client *ent.Client, ctx context.Context) ([]*ent.WorkspaceInvite, error) {

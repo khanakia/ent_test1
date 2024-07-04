@@ -4,13 +4,15 @@ package ent
 
 import (
 	"saas/gen/ent/admin"
+	"saas/gen/ent/appsetting"
 	"saas/gen/ent/kache"
 	"saas/gen/ent/keyvalue"
-	"saas/gen/ent/mailconnection"
+	"saas/gen/ent/mailconn"
 	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/plan"
 	"saas/gen/ent/session"
 	"saas/gen/ent/temp"
+	"saas/gen/ent/templ"
 	"saas/gen/ent/user"
 	"saas/gen/ent/workspace"
 	"saas/gen/ent/workspaceinvite"
@@ -46,6 +48,25 @@ func init() {
 	adminDescID := adminMixinFields0[0].Descriptor()
 	// admin.DefaultID holds the default value on creation for the id field.
 	admin.DefaultID = adminDescID.Default.(func() string)
+	appsettingMixin := schema.AppSetting{}.Mixin()
+	appsettingMixinFields0 := appsettingMixin[0].Fields()
+	_ = appsettingMixinFields0
+	appsettingFields := schema.AppSetting{}.Fields()
+	_ = appsettingFields
+	// appsettingDescCreatedAt is the schema descriptor for created_at field.
+	appsettingDescCreatedAt := appsettingMixinFields0[1].Descriptor()
+	// appsetting.DefaultCreatedAt holds the default value on creation for the created_at field.
+	appsetting.DefaultCreatedAt = appsettingDescCreatedAt.Default.(func() time.Time)
+	// appsettingDescUpdatedAt is the schema descriptor for updated_at field.
+	appsettingDescUpdatedAt := appsettingMixinFields0[2].Descriptor()
+	// appsetting.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	appsetting.DefaultUpdatedAt = appsettingDescUpdatedAt.Default.(func() time.Time)
+	// appsetting.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	appsetting.UpdateDefaultUpdatedAt = appsettingDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// appsettingDescID is the schema descriptor for id field.
+	appsettingDescID := appsettingMixinFields0[0].Descriptor()
+	// appsetting.DefaultID holds the default value on creation for the id field.
+	appsetting.DefaultID = appsettingDescID.Default.(func() string)
 	kacheFields := schema.Kache{}.Fields()
 	_ = kacheFields
 	// kacheDescCreatedAt is the schema descriptor for created_at field.
@@ -96,12 +117,29 @@ func init() {
 			return nil
 		}
 	}()
-	mailconnectionFields := schema.MailConnection{}.Fields()
-	_ = mailconnectionFields
-	// mailconnectionDescStatus is the schema descriptor for status field.
-	mailconnectionDescStatus := mailconnectionFields[5].Descriptor()
-	// mailconnection.DefaultStatus holds the default value on creation for the status field.
-	mailconnection.DefaultStatus = mailconnectionDescStatus.Default.(bool)
+	mailconnMixin := schema.MailConn{}.Mixin()
+	mailconnMixinFields0 := mailconnMixin[0].Fields()
+	_ = mailconnMixinFields0
+	mailconnFields := schema.MailConn{}.Fields()
+	_ = mailconnFields
+	// mailconnDescCreatedAt is the schema descriptor for created_at field.
+	mailconnDescCreatedAt := mailconnMixinFields0[1].Descriptor()
+	// mailconn.DefaultCreatedAt holds the default value on creation for the created_at field.
+	mailconn.DefaultCreatedAt = mailconnDescCreatedAt.Default.(func() time.Time)
+	// mailconnDescUpdatedAt is the schema descriptor for updated_at field.
+	mailconnDescUpdatedAt := mailconnMixinFields0[2].Descriptor()
+	// mailconn.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	mailconn.DefaultUpdatedAt = mailconnDescUpdatedAt.Default.(func() time.Time)
+	// mailconn.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	mailconn.UpdateDefaultUpdatedAt = mailconnDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// mailconnDescStatus is the schema descriptor for status field.
+	mailconnDescStatus := mailconnFields[8].Descriptor()
+	// mailconn.DefaultStatus holds the default value on creation for the status field.
+	mailconn.DefaultStatus = mailconnDescStatus.Default.(bool)
+	// mailconnDescID is the schema descriptor for id field.
+	mailconnDescID := mailconnMixinFields0[0].Descriptor()
+	// mailconn.DefaultID holds the default value on creation for the id field.
+	mailconn.DefaultID = mailconnDescID.Default.(func() string)
 	oauthconnectionMixin := schema.OauthConnection{}.Mixin()
 	oauthconnectionMixinFields0 := oauthconnectionMixin[0].Fields()
 	_ = oauthconnectionMixinFields0
@@ -179,6 +217,29 @@ func init() {
 	tempDescID := tempMixinFields0[0].Descriptor()
 	// temp.DefaultID holds the default value on creation for the id field.
 	temp.DefaultID = tempDescID.Default.(func() string)
+	templMixin := schema.Templ{}.Mixin()
+	templMixinFields0 := templMixin[0].Fields()
+	_ = templMixinFields0
+	templFields := schema.Templ{}.Fields()
+	_ = templFields
+	// templDescCreatedAt is the schema descriptor for created_at field.
+	templDescCreatedAt := templMixinFields0[1].Descriptor()
+	// templ.DefaultCreatedAt holds the default value on creation for the created_at field.
+	templ.DefaultCreatedAt = templDescCreatedAt.Default.(func() time.Time)
+	// templDescUpdatedAt is the schema descriptor for updated_at field.
+	templDescUpdatedAt := templMixinFields0[2].Descriptor()
+	// templ.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	templ.DefaultUpdatedAt = templDescUpdatedAt.Default.(func() time.Time)
+	// templ.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	templ.UpdateDefaultUpdatedAt = templDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// templDescStatus is the schema descriptor for status field.
+	templDescStatus := templFields[3].Descriptor()
+	// templ.DefaultStatus holds the default value on creation for the status field.
+	templ.DefaultStatus = templDescStatus.Default.(bool)
+	// templDescID is the schema descriptor for id field.
+	templDescID := templMixinFields0[0].Descriptor()
+	// templ.DefaultID holds the default value on creation for the id field.
+	templ.DefaultID = templDescID.Default.(func() string)
 	userMixin := schema.User{}.Mixin()
 	userMixinFields0 := userMixin[0].Fields()
 	_ = userMixinFields0

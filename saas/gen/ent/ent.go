@@ -8,14 +8,16 @@ import (
 	"fmt"
 	"reflect"
 	"saas/gen/ent/admin"
+	"saas/gen/ent/appsetting"
 	"saas/gen/ent/kache"
 	"saas/gen/ent/keyvalue"
-	"saas/gen/ent/mailconnection"
+	"saas/gen/ent/mailconn"
 	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/plan"
 	"saas/gen/ent/project"
 	"saas/gen/ent/session"
 	"saas/gen/ent/temp"
+	"saas/gen/ent/templ"
 	"saas/gen/ent/user"
 	"saas/gen/ent/workspace"
 	"saas/gen/ent/workspaceinvite"
@@ -86,14 +88,16 @@ func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			admin.Table:           admin.ValidColumn,
+			appsetting.Table:      appsetting.ValidColumn,
 			kache.Table:           kache.ValidColumn,
 			keyvalue.Table:        keyvalue.ValidColumn,
-			mailconnection.Table:  mailconnection.ValidColumn,
+			mailconn.Table:        mailconn.ValidColumn,
 			oauthconnection.Table: oauthconnection.ValidColumn,
 			plan.Table:            plan.ValidColumn,
 			project.Table:         project.ValidColumn,
 			session.Table:         session.ValidColumn,
 			temp.Table:            temp.ValidColumn,
+			templ.Table:           templ.ValidColumn,
 			user.Table:            user.ValidColumn,
 			workspace.Table:       workspace.ValidColumn,
 			workspaceinvite.Table: workspaceinvite.ValidColumn,

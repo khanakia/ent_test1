@@ -2,12 +2,22 @@ package main
 
 import (
 	"saas/pkg/app"
-	"saas/pkg/oauth/googleauthfn"
+	"saas/pkg/emailfn"
 )
 
 func main() {
 	app := app.New()
 	app.Cli.Execute()
+
+	emailfn.SendForgotPassword("khanakia@gmail.com", "34343", app.EntDB.Client())
+
+	// mailer, err := mailer.NewMailer("fake", app.EntDB.Client())
+	// fmt.Println(err)
+	// // fmt.Println(mailer)
+
+	// err = mailer.SendFromTempl("khanakia@gmail.com", "Testing", "forgotpass", nil)
+	// fmt.Println(err)
+
 	// url := googleauthfn.GetAuthUrl("", "http://localhost:2304/auth/oauth/callback")
 	// fmt.Println(url)
 
@@ -18,7 +28,7 @@ func main() {
 
 	// fmt.Println(authfn.Hash("admin"))
 
-	googleauthfn.GetUserInfoFromToken("ya29.a0AXooCgsu1qcofeZ83FOYQ7pW2VdNoozlrY-67yLqOhkVEfEu1lAOAxa-VUalU4TiNvaIBiiz8ilN9196N7Ozo1nHCvknyDJjIAja1Rvf_6o0IM8jUecNAMTRdupAmfOdWWE12iHPtHmPkDHHIGG0gnrfdzLIp1qEP0TJaCgYKAQoSARISFQHGX2Mipryr-eWwWR-mloUeQmtJ7w0171")
+	// googleauthfn.GetUserInfoFromToken("ya29.a0AXooCgsu1qcofeZ83FOYQ7pW2VdNoozlrY-67yLqOhkVEfEu1lAOAxa-VUalU4TiNvaIBiiz8ilN9196N7Ozo1nHCvknyDJjIAja1Rvf_6o0IM8jUecNAMTRdupAmfOdWWE12iHPtHmPkDHHIGG0gnrfdzLIp1qEP0TJaCgYKAQoSARISFQHGX2Mipryr-eWwWR-mloUeQmtJ7w0171")
 
 	// app.EntDB.Client().OauthConnection.Create().
 	// 	SetClientID("266391746836-3femdil6844oj9q27snvo4ojp7ac1a1q.apps.googleusercontent.com").

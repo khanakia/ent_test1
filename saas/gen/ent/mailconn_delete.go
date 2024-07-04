@@ -4,7 +4,7 @@ package ent
 
 import (
 	"context"
-	"saas/gen/ent/mailconnection"
+	"saas/gen/ent/mailconn"
 	"saas/gen/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
@@ -12,26 +12,26 @@ import (
 	"entgo.io/ent/schema/field"
 )
 
-// MailConnectionDelete is the builder for deleting a MailConnection entity.
-type MailConnectionDelete struct {
+// MailConnDelete is the builder for deleting a MailConn entity.
+type MailConnDelete struct {
 	config
 	hooks    []Hook
-	mutation *MailConnectionMutation
+	mutation *MailConnMutation
 }
 
-// Where appends a list predicates to the MailConnectionDelete builder.
-func (mcd *MailConnectionDelete) Where(ps ...predicate.MailConnection) *MailConnectionDelete {
+// Where appends a list predicates to the MailConnDelete builder.
+func (mcd *MailConnDelete) Where(ps ...predicate.MailConn) *MailConnDelete {
 	mcd.mutation.Where(ps...)
 	return mcd
 }
 
 // Exec executes the deletion query and returns how many vertices were deleted.
-func (mcd *MailConnectionDelete) Exec(ctx context.Context) (int, error) {
+func (mcd *MailConnDelete) Exec(ctx context.Context) (int, error) {
 	return withHooks(ctx, mcd.sqlExec, mcd.mutation, mcd.hooks)
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (mcd *MailConnectionDelete) ExecX(ctx context.Context) int {
+func (mcd *MailConnDelete) ExecX(ctx context.Context) int {
 	n, err := mcd.Exec(ctx)
 	if err != nil {
 		panic(err)
@@ -39,8 +39,8 @@ func (mcd *MailConnectionDelete) ExecX(ctx context.Context) int {
 	return n
 }
 
-func (mcd *MailConnectionDelete) sqlExec(ctx context.Context) (int, error) {
-	_spec := sqlgraph.NewDeleteSpec(mailconnection.Table, sqlgraph.NewFieldSpec(mailconnection.FieldID, field.TypeInt))
+func (mcd *MailConnDelete) sqlExec(ctx context.Context) (int, error) {
+	_spec := sqlgraph.NewDeleteSpec(mailconn.Table, sqlgraph.NewFieldSpec(mailconn.FieldID, field.TypeString))
 	if ps := mcd.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -56,32 +56,32 @@ func (mcd *MailConnectionDelete) sqlExec(ctx context.Context) (int, error) {
 	return affected, err
 }
 
-// MailConnectionDeleteOne is the builder for deleting a single MailConnection entity.
-type MailConnectionDeleteOne struct {
-	mcd *MailConnectionDelete
+// MailConnDeleteOne is the builder for deleting a single MailConn entity.
+type MailConnDeleteOne struct {
+	mcd *MailConnDelete
 }
 
-// Where appends a list predicates to the MailConnectionDelete builder.
-func (mcdo *MailConnectionDeleteOne) Where(ps ...predicate.MailConnection) *MailConnectionDeleteOne {
+// Where appends a list predicates to the MailConnDelete builder.
+func (mcdo *MailConnDeleteOne) Where(ps ...predicate.MailConn) *MailConnDeleteOne {
 	mcdo.mcd.mutation.Where(ps...)
 	return mcdo
 }
 
 // Exec executes the deletion query.
-func (mcdo *MailConnectionDeleteOne) Exec(ctx context.Context) error {
+func (mcdo *MailConnDeleteOne) Exec(ctx context.Context) error {
 	n, err := mcdo.mcd.Exec(ctx)
 	switch {
 	case err != nil:
 		return err
 	case n == 0:
-		return &NotFoundError{mailconnection.Label}
+		return &NotFoundError{mailconn.Label}
 	default:
 		return nil
 	}
 }
 
 // ExecX is like Exec, but panics if an error occurs.
-func (mcdo *MailConnectionDeleteOne) ExecX(ctx context.Context) {
+func (mcdo *MailConnDeleteOne) ExecX(ctx context.Context) {
 	if err := mcdo.Exec(ctx); err != nil {
 		panic(err)
 	}

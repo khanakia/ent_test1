@@ -20,6 +20,18 @@ func (f AdminFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AdminMutation", m)
 }
 
+// The AppSettingFunc type is an adapter to allow the use of ordinary
+// function as AppSetting mutator.
+type AppSettingFunc func(context.Context, *ent.AppSettingMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AppSettingFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AppSettingMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AppSettingMutation", m)
+}
+
 // The KacheFunc type is an adapter to allow the use of ordinary
 // function as Kache mutator.
 type KacheFunc func(context.Context, *ent.KacheMutation) (ent.Value, error)
@@ -44,16 +56,16 @@ func (f KeyvalueFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.KeyvalueMutation", m)
 }
 
-// The MailConnectionFunc type is an adapter to allow the use of ordinary
-// function as MailConnection mutator.
-type MailConnectionFunc func(context.Context, *ent.MailConnectionMutation) (ent.Value, error)
+// The MailConnFunc type is an adapter to allow the use of ordinary
+// function as MailConn mutator.
+type MailConnFunc func(context.Context, *ent.MailConnMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f MailConnectionFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.MailConnectionMutation); ok {
+func (f MailConnFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.MailConnMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MailConnectionMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MailConnMutation", m)
 }
 
 // The OauthConnectionFunc type is an adapter to allow the use of ordinary
@@ -114,6 +126,18 @@ func (f TempFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TempMutation", m)
+}
+
+// The TemplFunc type is an adapter to allow the use of ordinary
+// function as Templ mutator.
+type TemplFunc func(context.Context, *ent.TemplMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TemplFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.TemplMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TemplMutation", m)
 }
 
 // The UserFunc type is an adapter to allow the use of ordinary

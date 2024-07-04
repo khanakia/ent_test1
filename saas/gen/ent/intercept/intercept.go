@@ -7,15 +7,17 @@ import (
 	"fmt"
 	"saas/gen/ent"
 	"saas/gen/ent/admin"
+	"saas/gen/ent/appsetting"
 	"saas/gen/ent/kache"
 	"saas/gen/ent/keyvalue"
-	"saas/gen/ent/mailconnection"
+	"saas/gen/ent/mailconn"
 	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/plan"
 	"saas/gen/ent/predicate"
 	"saas/gen/ent/project"
 	"saas/gen/ent/session"
 	"saas/gen/ent/temp"
+	"saas/gen/ent/templ"
 	"saas/gen/ent/user"
 	"saas/gen/ent/workspace"
 	"saas/gen/ent/workspaceinvite"
@@ -107,6 +109,33 @@ func (f TraverseAdmin) Traverse(ctx context.Context, q ent.Query) error {
 	return fmt.Errorf("unexpected query type %T. expect *ent.AdminQuery", q)
 }
 
+// The AppSettingFunc type is an adapter to allow the use of ordinary function as a Querier.
+type AppSettingFunc func(context.Context, *ent.AppSettingQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f AppSettingFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.AppSettingQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.AppSettingQuery", q)
+}
+
+// The TraverseAppSetting type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseAppSetting func(context.Context, *ent.AppSettingQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseAppSetting) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseAppSetting) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AppSettingQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.AppSettingQuery", q)
+}
+
 // The KacheFunc type is an adapter to allow the use of ordinary function as a Querier.
 type KacheFunc func(context.Context, *ent.KacheQuery) (ent.Value, error)
 
@@ -161,31 +190,31 @@ func (f TraverseKeyvalue) Traverse(ctx context.Context, q ent.Query) error {
 	return fmt.Errorf("unexpected query type %T. expect *ent.KeyvalueQuery", q)
 }
 
-// The MailConnectionFunc type is an adapter to allow the use of ordinary function as a Querier.
-type MailConnectionFunc func(context.Context, *ent.MailConnectionQuery) (ent.Value, error)
+// The MailConnFunc type is an adapter to allow the use of ordinary function as a Querier.
+type MailConnFunc func(context.Context, *ent.MailConnQuery) (ent.Value, error)
 
 // Query calls f(ctx, q).
-func (f MailConnectionFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
-	if q, ok := q.(*ent.MailConnectionQuery); ok {
+func (f MailConnFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.MailConnQuery); ok {
 		return f(ctx, q)
 	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *ent.MailConnectionQuery", q)
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.MailConnQuery", q)
 }
 
-// The TraverseMailConnection type is an adapter to allow the use of ordinary function as Traverser.
-type TraverseMailConnection func(context.Context, *ent.MailConnectionQuery) error
+// The TraverseMailConn type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseMailConn func(context.Context, *ent.MailConnQuery) error
 
 // Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraverseMailConnection) Intercept(next ent.Querier) ent.Querier {
+func (f TraverseMailConn) Intercept(next ent.Querier) ent.Querier {
 	return next
 }
 
 // Traverse calls f(ctx, q).
-func (f TraverseMailConnection) Traverse(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.MailConnectionQuery); ok {
+func (f TraverseMailConn) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.MailConnQuery); ok {
 		return f(ctx, q)
 	}
-	return fmt.Errorf("unexpected query type %T. expect *ent.MailConnectionQuery", q)
+	return fmt.Errorf("unexpected query type %T. expect *ent.MailConnQuery", q)
 }
 
 // The OauthConnectionFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -323,6 +352,33 @@ func (f TraverseTemp) Traverse(ctx context.Context, q ent.Query) error {
 	return fmt.Errorf("unexpected query type %T. expect *ent.TempQuery", q)
 }
 
+// The TemplFunc type is an adapter to allow the use of ordinary function as a Querier.
+type TemplFunc func(context.Context, *ent.TemplQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f TemplFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.TemplQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.TemplQuery", q)
+}
+
+// The TraverseTempl type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseTempl func(context.Context, *ent.TemplQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseTempl) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseTempl) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.TemplQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.TemplQuery", q)
+}
+
 // The UserFunc type is an adapter to allow the use of ordinary function as a Querier.
 type UserFunc func(context.Context, *ent.UserQuery) (ent.Value, error)
 
@@ -436,12 +492,14 @@ func NewQuery(q ent.Query) (Query, error) {
 	switch q := q.(type) {
 	case *ent.AdminQuery:
 		return &query[*ent.AdminQuery, predicate.Admin, admin.OrderOption]{typ: ent.TypeAdmin, tq: q}, nil
+	case *ent.AppSettingQuery:
+		return &query[*ent.AppSettingQuery, predicate.AppSetting, appsetting.OrderOption]{typ: ent.TypeAppSetting, tq: q}, nil
 	case *ent.KacheQuery:
 		return &query[*ent.KacheQuery, predicate.Kache, kache.OrderOption]{typ: ent.TypeKache, tq: q}, nil
 	case *ent.KeyvalueQuery:
 		return &query[*ent.KeyvalueQuery, predicate.Keyvalue, keyvalue.OrderOption]{typ: ent.TypeKeyvalue, tq: q}, nil
-	case *ent.MailConnectionQuery:
-		return &query[*ent.MailConnectionQuery, predicate.MailConnection, mailconnection.OrderOption]{typ: ent.TypeMailConnection, tq: q}, nil
+	case *ent.MailConnQuery:
+		return &query[*ent.MailConnQuery, predicate.MailConn, mailconn.OrderOption]{typ: ent.TypeMailConn, tq: q}, nil
 	case *ent.OauthConnectionQuery:
 		return &query[*ent.OauthConnectionQuery, predicate.OauthConnection, oauthconnection.OrderOption]{typ: ent.TypeOauthConnection, tq: q}, nil
 	case *ent.PlanQuery:
@@ -452,6 +510,8 @@ func NewQuery(q ent.Query) (Query, error) {
 		return &query[*ent.SessionQuery, predicate.Session, session.OrderOption]{typ: ent.TypeSession, tq: q}, nil
 	case *ent.TempQuery:
 		return &query[*ent.TempQuery, predicate.Temp, temp.OrderOption]{typ: ent.TypeTemp, tq: q}, nil
+	case *ent.TemplQuery:
+		return &query[*ent.TemplQuery, predicate.Templ, templ.OrderOption]{typ: ent.TypeTempl, tq: q}, nil
 	case *ent.UserQuery:
 		return &query[*ent.UserQuery, predicate.User, user.OrderOption]{typ: ent.TypeUser, tq: q}, nil
 	case *ent.WorkspaceQuery:
