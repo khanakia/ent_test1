@@ -10,9 +10,15 @@ import (
 	"saas/gen/ent/mailconn"
 	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/plan"
+	"saas/gen/ent/post"
+	"saas/gen/ent/postcategory"
+	"saas/gen/ent/poststatus"
+	"saas/gen/ent/posttag"
+	"saas/gen/ent/posttype"
 	"saas/gen/ent/session"
 	"saas/gen/ent/temp"
 	"saas/gen/ent/templ"
+	"saas/gen/ent/todo"
 	"saas/gen/ent/user"
 	"saas/gen/ent/workspace"
 	"saas/gen/ent/workspaceinvite"
@@ -182,6 +188,105 @@ func init() {
 	planDescID := planMixinFields0[0].Descriptor()
 	// plan.DefaultID holds the default value on creation for the id field.
 	plan.DefaultID = planDescID.Default.(func() string)
+	postMixin := schema.Post{}.Mixin()
+	postMixinFields0 := postMixin[0].Fields()
+	_ = postMixinFields0
+	postFields := schema.Post{}.Fields()
+	_ = postFields
+	// postDescCreatedAt is the schema descriptor for created_at field.
+	postDescCreatedAt := postMixinFields0[1].Descriptor()
+	// post.DefaultCreatedAt holds the default value on creation for the created_at field.
+	post.DefaultCreatedAt = postDescCreatedAt.Default.(func() time.Time)
+	// postDescUpdatedAt is the schema descriptor for updated_at field.
+	postDescUpdatedAt := postMixinFields0[2].Descriptor()
+	// post.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	post.DefaultUpdatedAt = postDescUpdatedAt.Default.(func() time.Time)
+	// post.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	post.UpdateDefaultUpdatedAt = postDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// postDescID is the schema descriptor for id field.
+	postDescID := postMixinFields0[0].Descriptor()
+	// post.DefaultID holds the default value on creation for the id field.
+	post.DefaultID = postDescID.Default.(func() string)
+	postcategoryMixin := schema.PostCategory{}.Mixin()
+	postcategoryMixinFields0 := postcategoryMixin[0].Fields()
+	_ = postcategoryMixinFields0
+	postcategoryFields := schema.PostCategory{}.Fields()
+	_ = postcategoryFields
+	// postcategoryDescCreatedAt is the schema descriptor for created_at field.
+	postcategoryDescCreatedAt := postcategoryMixinFields0[1].Descriptor()
+	// postcategory.DefaultCreatedAt holds the default value on creation for the created_at field.
+	postcategory.DefaultCreatedAt = postcategoryDescCreatedAt.Default.(func() time.Time)
+	// postcategoryDescUpdatedAt is the schema descriptor for updated_at field.
+	postcategoryDescUpdatedAt := postcategoryMixinFields0[2].Descriptor()
+	// postcategory.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	postcategory.DefaultUpdatedAt = postcategoryDescUpdatedAt.Default.(func() time.Time)
+	// postcategory.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	postcategory.UpdateDefaultUpdatedAt = postcategoryDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// postcategoryDescID is the schema descriptor for id field.
+	postcategoryDescID := postcategoryMixinFields0[0].Descriptor()
+	// postcategory.DefaultID holds the default value on creation for the id field.
+	postcategory.DefaultID = postcategoryDescID.Default.(func() string)
+	poststatusMixin := schema.PostStatus{}.Mixin()
+	poststatusMixinFields0 := poststatusMixin[0].Fields()
+	_ = poststatusMixinFields0
+	poststatusFields := schema.PostStatus{}.Fields()
+	_ = poststatusFields
+	// poststatusDescCreatedAt is the schema descriptor for created_at field.
+	poststatusDescCreatedAt := poststatusMixinFields0[1].Descriptor()
+	// poststatus.DefaultCreatedAt holds the default value on creation for the created_at field.
+	poststatus.DefaultCreatedAt = poststatusDescCreatedAt.Default.(func() time.Time)
+	// poststatusDescUpdatedAt is the schema descriptor for updated_at field.
+	poststatusDescUpdatedAt := poststatusMixinFields0[2].Descriptor()
+	// poststatus.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	poststatus.DefaultUpdatedAt = poststatusDescUpdatedAt.Default.(func() time.Time)
+	// poststatus.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	poststatus.UpdateDefaultUpdatedAt = poststatusDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// poststatusDescID is the schema descriptor for id field.
+	poststatusDescID := poststatusMixinFields0[0].Descriptor()
+	// poststatus.DefaultID holds the default value on creation for the id field.
+	poststatus.DefaultID = poststatusDescID.Default.(func() string)
+	posttagMixin := schema.PostTag{}.Mixin()
+	posttagMixinFields0 := posttagMixin[0].Fields()
+	_ = posttagMixinFields0
+	posttagFields := schema.PostTag{}.Fields()
+	_ = posttagFields
+	// posttagDescCreatedAt is the schema descriptor for created_at field.
+	posttagDescCreatedAt := posttagMixinFields0[1].Descriptor()
+	// posttag.DefaultCreatedAt holds the default value on creation for the created_at field.
+	posttag.DefaultCreatedAt = posttagDescCreatedAt.Default.(func() time.Time)
+	// posttagDescUpdatedAt is the schema descriptor for updated_at field.
+	posttagDescUpdatedAt := posttagMixinFields0[2].Descriptor()
+	// posttag.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	posttag.DefaultUpdatedAt = posttagDescUpdatedAt.Default.(func() time.Time)
+	// posttag.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	posttag.UpdateDefaultUpdatedAt = posttagDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// posttagDescID is the schema descriptor for id field.
+	posttagDescID := posttagMixinFields0[0].Descriptor()
+	// posttag.DefaultID holds the default value on creation for the id field.
+	posttag.DefaultID = posttagDescID.Default.(func() string)
+	posttypeMixin := schema.PostType{}.Mixin()
+	posttypeMixinFields0 := posttypeMixin[0].Fields()
+	_ = posttypeMixinFields0
+	posttypeFields := schema.PostType{}.Fields()
+	_ = posttypeFields
+	// posttypeDescCreatedAt is the schema descriptor for created_at field.
+	posttypeDescCreatedAt := posttypeMixinFields0[1].Descriptor()
+	// posttype.DefaultCreatedAt holds the default value on creation for the created_at field.
+	posttype.DefaultCreatedAt = posttypeDescCreatedAt.Default.(func() time.Time)
+	// posttypeDescUpdatedAt is the schema descriptor for updated_at field.
+	posttypeDescUpdatedAt := posttypeMixinFields0[2].Descriptor()
+	// posttype.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	posttype.DefaultUpdatedAt = posttypeDescUpdatedAt.Default.(func() time.Time)
+	// posttype.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	posttype.UpdateDefaultUpdatedAt = posttypeDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// posttypeDescContent is the schema descriptor for content field.
+	posttypeDescContent := posttypeFields[4].Descriptor()
+	// posttype.ContentValidator is a validator for the "content" field. It is called by the builders before save.
+	posttype.ContentValidator = posttypeDescContent.Validators[0].(func(string) error)
+	// posttypeDescID is the schema descriptor for id field.
+	posttypeDescID := posttypeMixinFields0[0].Descriptor()
+	// posttype.DefaultID holds the default value on creation for the id field.
+	posttype.DefaultID = posttypeDescID.Default.(func() string)
 	sessionFields := schema.Session{}.Fields()
 	_ = sessionFields
 	// sessionDescCreatedAt is the schema descriptor for created_at field.
@@ -240,6 +345,33 @@ func init() {
 	templDescID := templMixinFields0[0].Descriptor()
 	// templ.DefaultID holds the default value on creation for the id field.
 	templ.DefaultID = templDescID.Default.(func() string)
+	todoMixin := schema.Todo{}.Mixin()
+	todoMixinFields0 := todoMixin[0].Fields()
+	_ = todoMixinFields0
+	todoFields := schema.Todo{}.Fields()
+	_ = todoFields
+	// todoDescCreatedAt is the schema descriptor for created_at field.
+	todoDescCreatedAt := todoMixinFields0[1].Descriptor()
+	// todo.DefaultCreatedAt holds the default value on creation for the created_at field.
+	todo.DefaultCreatedAt = todoDescCreatedAt.Default.(func() time.Time)
+	// todoDescUpdatedAt is the schema descriptor for updated_at field.
+	todoDescUpdatedAt := todoMixinFields0[2].Descriptor()
+	// todo.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	todo.DefaultUpdatedAt = todoDescUpdatedAt.Default.(func() time.Time)
+	// todo.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	todo.UpdateDefaultUpdatedAt = todoDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// todoDescText is the schema descriptor for text field.
+	todoDescText := todoFields[0].Descriptor()
+	// todo.TextValidator is a validator for the "text" field. It is called by the builders before save.
+	todo.TextValidator = todoDescText.Validators[0].(func(string) error)
+	// todoDescPriority is the schema descriptor for priority field.
+	todoDescPriority := todoFields[2].Descriptor()
+	// todo.DefaultPriority holds the default value on creation for the priority field.
+	todo.DefaultPriority = todoDescPriority.Default.(int)
+	// todoDescID is the schema descriptor for id field.
+	todoDescID := todoMixinFields0[0].Descriptor()
+	// todo.DefaultID holds the default value on creation for the id field.
+	todo.DefaultID = todoDescID.Default.(func() string)
 	userMixin := schema.User{}.Mixin()
 	userMixinFields0 := userMixin[0].Fields()
 	_ = userMixinFields0
@@ -255,8 +387,12 @@ func init() {
 	user.DefaultUpdatedAt = userDescUpdatedAt.Default.(func() time.Time)
 	// user.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	user.UpdateDefaultUpdatedAt = userDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// userDescRoleID is the schema descriptor for role_id field.
+	userDescRoleID := userFields[5].Descriptor()
+	// user.DefaultRoleID holds the default value on creation for the role_id field.
+	user.DefaultRoleID = userDescRoleID.Default.(string)
 	// userDescStatus is the schema descriptor for status field.
-	userDescStatus := userFields[5].Descriptor()
+	userDescStatus := userFields[6].Descriptor()
 	// user.DefaultStatus holds the default value on creation for the status field.
 	user.DefaultStatus = userDescStatus.Default.(bool)
 	// userDescID is the schema descriptor for id field.

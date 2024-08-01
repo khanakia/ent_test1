@@ -25,6 +25,7 @@ type WorkspaceUserQuery struct {
 	predicates    []predicate.WorkspaceUser
 	withUser      *UserQuery
 	withWorkspace *WorkspaceQuery
+	loadTotal     []func(context.Context, []*WorkspaceUser) error
 	modifiers     []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -441,6 +442,11 @@ func (wuq *WorkspaceUserQuery) sqlAll(ctx context.Context, hooks ...queryHook) (
 	if query := wuq.withWorkspace; query != nil {
 		if err := wuq.loadWorkspace(ctx, query, nodes, nil,
 			func(n *WorkspaceUser, e *Workspace) { n.Edges.Workspace = e }); err != nil {
+			return nil, err
+		}
+	}
+	for i := range wuq.loadTotal {
+		if err := wuq.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
 		}
 	}

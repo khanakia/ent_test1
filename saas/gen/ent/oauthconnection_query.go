@@ -21,6 +21,7 @@ type OauthConnectionQuery struct {
 	order      []oauthconnection.OrderOption
 	inters     []Interceptor
 	predicates []predicate.OauthConnection
+	loadTotal  []func(context.Context, []*OauthConnection) error
 	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -354,6 +355,11 @@ func (ocq *OauthConnectionQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 	}
 	if len(nodes) == 0 {
 		return nodes, nil
+	}
+	for i := range ocq.loadTotal {
+		if err := ocq.loadTotal[i](ctx, nodes); err != nil {
+			return nil, err
+		}
 	}
 	return nodes, nil
 }

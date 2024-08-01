@@ -21,6 +21,7 @@ type TempQuery struct {
 	order      []temp.OrderOption
 	inters     []Interceptor
 	predicates []predicate.Temp
+	loadTotal  []func(context.Context, []*Temp) error
 	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -354,6 +355,11 @@ func (tq *TempQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Temp, e
 	}
 	if len(nodes) == 0 {
 		return nodes, nil
+	}
+	for i := range tq.loadTotal {
+		if err := tq.loadTotal[i](ctx, nodes); err != nil {
+			return nil, err
+		}
 	}
 	return nodes, nil
 }

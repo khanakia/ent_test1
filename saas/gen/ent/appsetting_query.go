@@ -21,6 +21,7 @@ type AppSettingQuery struct {
 	order      []appsetting.OrderOption
 	inters     []Interceptor
 	predicates []predicate.AppSetting
+	loadTotal  []func(context.Context, []*AppSetting) error
 	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -354,6 +355,11 @@ func (asq *AppSettingQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*
 	}
 	if len(nodes) == 0 {
 		return nodes, nil
+	}
+	for i := range asq.loadTotal {
+		if err := asq.loadTotal[i](ctx, nodes); err != nil {
+			return nil, err
+		}
 	}
 	return nodes, nil
 }

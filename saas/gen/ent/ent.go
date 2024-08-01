@@ -14,10 +14,15 @@ import (
 	"saas/gen/ent/mailconn"
 	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/plan"
-	"saas/gen/ent/project"
+	"saas/gen/ent/post"
+	"saas/gen/ent/postcategory"
+	"saas/gen/ent/poststatus"
+	"saas/gen/ent/posttag"
+	"saas/gen/ent/posttype"
 	"saas/gen/ent/session"
 	"saas/gen/ent/temp"
 	"saas/gen/ent/templ"
+	"saas/gen/ent/todo"
 	"saas/gen/ent/user"
 	"saas/gen/ent/workspace"
 	"saas/gen/ent/workspaceinvite"
@@ -94,10 +99,15 @@ func checkColumn(table, column string) error {
 			mailconn.Table:        mailconn.ValidColumn,
 			oauthconnection.Table: oauthconnection.ValidColumn,
 			plan.Table:            plan.ValidColumn,
-			project.Table:         project.ValidColumn,
+			post.Table:            post.ValidColumn,
+			postcategory.Table:    postcategory.ValidColumn,
+			poststatus.Table:      poststatus.ValidColumn,
+			posttag.Table:         posttag.ValidColumn,
+			posttype.Table:        posttype.ValidColumn,
 			session.Table:         session.ValidColumn,
 			temp.Table:            temp.ValidColumn,
 			templ.Table:           templ.ValidColumn,
+			todo.Table:            todo.ValidColumn,
 			user.Table:            user.ValidColumn,
 			workspace.Table:       workspace.ValidColumn,
 			workspaceinvite.Table: workspaceinvite.ValidColumn,

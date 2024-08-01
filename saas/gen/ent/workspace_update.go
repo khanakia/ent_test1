@@ -32,26 +32,6 @@ func (wu *WorkspaceUpdate) Where(ps ...predicate.Workspace) *WorkspaceUpdate {
 	return wu
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (wu *WorkspaceUpdate) SetCreatedAt(t time.Time) *WorkspaceUpdate {
-	wu.mutation.SetCreatedAt(t)
-	return wu
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (wu *WorkspaceUpdate) SetNillableCreatedAt(t *time.Time) *WorkspaceUpdate {
-	if t != nil {
-		wu.SetCreatedAt(*t)
-	}
-	return wu
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (wu *WorkspaceUpdate) ClearCreatedAt() *WorkspaceUpdate {
-	wu.mutation.ClearCreatedAt()
-	return wu
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (wu *WorkspaceUpdate) SetUpdatedAt(t time.Time) *WorkspaceUpdate {
 	wu.mutation.SetUpdatedAt(t)
@@ -288,9 +268,6 @@ func (wu *WorkspaceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := wu.mutation.CreatedAt(); ok {
-		_spec.SetField(workspace.FieldCreatedAt, field.TypeTime, value)
-	}
 	if wu.mutation.CreatedAtCleared() {
 		_spec.ClearField(workspace.FieldCreatedAt, field.TypeTime)
 	}
@@ -494,26 +471,6 @@ type WorkspaceUpdateOne struct {
 	hooks     []Hook
 	mutation  *WorkspaceMutation
 	modifiers []func(*sql.UpdateBuilder)
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (wuo *WorkspaceUpdateOne) SetCreatedAt(t time.Time) *WorkspaceUpdateOne {
-	wuo.mutation.SetCreatedAt(t)
-	return wuo
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (wuo *WorkspaceUpdateOne) SetNillableCreatedAt(t *time.Time) *WorkspaceUpdateOne {
-	if t != nil {
-		wuo.SetCreatedAt(*t)
-	}
-	return wuo
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (wuo *WorkspaceUpdateOne) ClearCreatedAt() *WorkspaceUpdateOne {
-	wuo.mutation.ClearCreatedAt()
-	return wuo
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -781,9 +738,6 @@ func (wuo *WorkspaceUpdateOne) sqlSave(ctx context.Context) (_node *Workspace, e
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := wuo.mutation.CreatedAt(); ok {
-		_spec.SetField(workspace.FieldCreatedAt, field.TypeTime, value)
 	}
 	if wuo.mutation.CreatedAtCleared() {
 		_spec.ClearField(workspace.FieldCreatedAt, field.TypeTime)

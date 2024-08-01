@@ -32,26 +32,6 @@ func (uu *UserUpdate) Where(ps ...predicate.User) *UserUpdate {
 	return uu
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (uu *UserUpdate) SetCreatedAt(t time.Time) *UserUpdate {
-	uu.mutation.SetCreatedAt(t)
-	return uu
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableCreatedAt(t *time.Time) *UserUpdate {
-	if t != nil {
-		uu.SetCreatedAt(*t)
-	}
-	return uu
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (uu *UserUpdate) ClearCreatedAt() *UserUpdate {
-	uu.mutation.ClearCreatedAt()
-	return uu
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (uu *UserUpdate) SetUpdatedAt(t time.Time) *UserUpdate {
 	uu.mutation.SetUpdatedAt(t)
@@ -155,6 +135,26 @@ func (uu *UserUpdate) SetNillableCompany(s *string) *UserUpdate {
 // ClearCompany clears the value of the "company" field.
 func (uu *UserUpdate) ClearCompany() *UserUpdate {
 	uu.mutation.ClearCompany()
+	return uu
+}
+
+// SetRoleID sets the "role_id" field.
+func (uu *UserUpdate) SetRoleID(s string) *UserUpdate {
+	uu.mutation.SetRoleID(s)
+	return uu
+}
+
+// SetNillableRoleID sets the "role_id" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableRoleID(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetRoleID(*s)
+	}
+	return uu
+}
+
+// ClearRoleID clears the value of the "role_id" field.
+func (uu *UserUpdate) ClearRoleID() *UserUpdate {
+	uu.mutation.ClearRoleID()
 	return uu
 }
 
@@ -422,9 +422,6 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := uu.mutation.CreatedAt(); ok {
-		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
-	}
 	if uu.mutation.CreatedAtCleared() {
 		_spec.ClearField(user.FieldCreatedAt, field.TypeTime)
 	}
@@ -460,6 +457,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.CompanyCleared() {
 		_spec.ClearField(user.FieldCompany, field.TypeString)
+	}
+	if value, ok := uu.mutation.RoleID(); ok {
+		_spec.SetField(user.FieldRoleID, field.TypeString, value)
+	}
+	if uu.mutation.RoleIDCleared() {
+		_spec.ClearField(user.FieldRoleID, field.TypeString)
 	}
 	if value, ok := uu.mutation.Status(); ok {
 		_spec.SetField(user.FieldStatus, field.TypeBool, value)
@@ -669,26 +672,6 @@ type UserUpdateOne struct {
 	modifiers []func(*sql.UpdateBuilder)
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (uuo *UserUpdateOne) SetCreatedAt(t time.Time) *UserUpdateOne {
-	uuo.mutation.SetCreatedAt(t)
-	return uuo
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableCreatedAt(t *time.Time) *UserUpdateOne {
-	if t != nil {
-		uuo.SetCreatedAt(*t)
-	}
-	return uuo
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (uuo *UserUpdateOne) ClearCreatedAt() *UserUpdateOne {
-	uuo.mutation.ClearCreatedAt()
-	return uuo
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (uuo *UserUpdateOne) SetUpdatedAt(t time.Time) *UserUpdateOne {
 	uuo.mutation.SetUpdatedAt(t)
@@ -792,6 +775,26 @@ func (uuo *UserUpdateOne) SetNillableCompany(s *string) *UserUpdateOne {
 // ClearCompany clears the value of the "company" field.
 func (uuo *UserUpdateOne) ClearCompany() *UserUpdateOne {
 	uuo.mutation.ClearCompany()
+	return uuo
+}
+
+// SetRoleID sets the "role_id" field.
+func (uuo *UserUpdateOne) SetRoleID(s string) *UserUpdateOne {
+	uuo.mutation.SetRoleID(s)
+	return uuo
+}
+
+// SetNillableRoleID sets the "role_id" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableRoleID(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetRoleID(*s)
+	}
+	return uuo
+}
+
+// ClearRoleID clears the value of the "role_id" field.
+func (uuo *UserUpdateOne) ClearRoleID() *UserUpdateOne {
+	uuo.mutation.ClearRoleID()
 	return uuo
 }
 
@@ -1089,9 +1092,6 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			}
 		}
 	}
-	if value, ok := uuo.mutation.CreatedAt(); ok {
-		_spec.SetField(user.FieldCreatedAt, field.TypeTime, value)
-	}
 	if uuo.mutation.CreatedAtCleared() {
 		_spec.ClearField(user.FieldCreatedAt, field.TypeTime)
 	}
@@ -1127,6 +1127,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.CompanyCleared() {
 		_spec.ClearField(user.FieldCompany, field.TypeString)
+	}
+	if value, ok := uuo.mutation.RoleID(); ok {
+		_spec.SetField(user.FieldRoleID, field.TypeString, value)
+	}
+	if uuo.mutation.RoleIDCleared() {
+		_spec.ClearField(user.FieldRoleID, field.TypeString)
 	}
 	if value, ok := uuo.mutation.Status(); ok {
 		_spec.SetField(user.FieldStatus, field.TypeBool, value)

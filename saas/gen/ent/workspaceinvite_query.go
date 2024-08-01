@@ -23,6 +23,7 @@ type WorkspaceInviteQuery struct {
 	inters        []Interceptor
 	predicates    []predicate.WorkspaceInvite
 	withWorkspace *WorkspaceQuery
+	loadTotal     []func(context.Context, []*WorkspaceInvite) error
 	modifiers     []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -398,6 +399,11 @@ func (wiq *WorkspaceInviteQuery) sqlAll(ctx context.Context, hooks ...queryHook)
 	if query := wiq.withWorkspace; query != nil {
 		if err := wiq.loadWorkspace(ctx, query, nodes, nil,
 			func(n *WorkspaceInvite, e *Workspace) { n.Edges.Workspace = e }); err != nil {
+			return nil, err
+		}
+	}
+	for i := range wiq.loadTotal {
+		if err := wiq.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
 		}
 	}

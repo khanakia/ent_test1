@@ -29,26 +29,6 @@ func (mcu *MailConnUpdate) Where(ps ...predicate.MailConn) *MailConnUpdate {
 	return mcu
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (mcu *MailConnUpdate) SetCreatedAt(t time.Time) *MailConnUpdate {
-	mcu.mutation.SetCreatedAt(t)
-	return mcu
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (mcu *MailConnUpdate) SetNillableCreatedAt(t *time.Time) *MailConnUpdate {
-	if t != nil {
-		mcu.SetCreatedAt(*t)
-	}
-	return mcu
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (mcu *MailConnUpdate) ClearCreatedAt() *MailConnUpdate {
-	mcu.mutation.ClearCreatedAt()
-	return mcu
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (mcu *MailConnUpdate) SetUpdatedAt(t time.Time) *MailConnUpdate {
 	mcu.mutation.SetUpdatedAt(t)
@@ -311,9 +291,6 @@ func (mcu *MailConnUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := mcu.mutation.CreatedAt(); ok {
-		_spec.SetField(mailconn.FieldCreatedAt, field.TypeTime, value)
-	}
 	if mcu.mutation.CreatedAtCleared() {
 		_spec.ClearField(mailconn.FieldCreatedAt, field.TypeTime)
 	}
@@ -403,26 +380,6 @@ type MailConnUpdateOne struct {
 	hooks     []Hook
 	mutation  *MailConnMutation
 	modifiers []func(*sql.UpdateBuilder)
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (mcuo *MailConnUpdateOne) SetCreatedAt(t time.Time) *MailConnUpdateOne {
-	mcuo.mutation.SetCreatedAt(t)
-	return mcuo
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (mcuo *MailConnUpdateOne) SetNillableCreatedAt(t *time.Time) *MailConnUpdateOne {
-	if t != nil {
-		mcuo.SetCreatedAt(*t)
-	}
-	return mcuo
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (mcuo *MailConnUpdateOne) ClearCreatedAt() *MailConnUpdateOne {
-	mcuo.mutation.ClearCreatedAt()
-	return mcuo
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -716,9 +673,6 @@ func (mcuo *MailConnUpdateOne) sqlSave(ctx context.Context) (_node *MailConn, er
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := mcuo.mutation.CreatedAt(); ok {
-		_spec.SetField(mailconn.FieldCreatedAt, field.TypeTime, value)
 	}
 	if mcuo.mutation.CreatedAtCleared() {
 		_spec.ClearField(mailconn.FieldCreatedAt, field.TypeTime)

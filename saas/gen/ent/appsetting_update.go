@@ -29,26 +29,6 @@ func (asu *AppSettingUpdate) Where(ps ...predicate.AppSetting) *AppSettingUpdate
 	return asu
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (asu *AppSettingUpdate) SetCreatedAt(t time.Time) *AppSettingUpdate {
-	asu.mutation.SetCreatedAt(t)
-	return asu
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (asu *AppSettingUpdate) SetNillableCreatedAt(t *time.Time) *AppSettingUpdate {
-	if t != nil {
-		asu.SetCreatedAt(*t)
-	}
-	return asu
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (asu *AppSettingUpdate) ClearCreatedAt() *AppSettingUpdate {
-	asu.mutation.ClearCreatedAt()
-	return asu
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (asu *AppSettingUpdate) SetUpdatedAt(t time.Time) *AppSettingUpdate {
 	asu.mutation.SetUpdatedAt(t)
@@ -457,9 +437,6 @@ func (asu *AppSettingUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := asu.mutation.CreatedAt(); ok {
-		_spec.SetField(appsetting.FieldCreatedAt, field.TypeTime, value)
-	}
 	if asu.mutation.CreatedAtCleared() {
 		_spec.ClearField(appsetting.FieldCreatedAt, field.TypeTime)
 	}
@@ -591,26 +568,6 @@ type AppSettingUpdateOne struct {
 	hooks     []Hook
 	mutation  *AppSettingMutation
 	modifiers []func(*sql.UpdateBuilder)
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (asuo *AppSettingUpdateOne) SetCreatedAt(t time.Time) *AppSettingUpdateOne {
-	asuo.mutation.SetCreatedAt(t)
-	return asuo
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (asuo *AppSettingUpdateOne) SetNillableCreatedAt(t *time.Time) *AppSettingUpdateOne {
-	if t != nil {
-		asuo.SetCreatedAt(*t)
-	}
-	return asuo
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (asuo *AppSettingUpdateOne) ClearCreatedAt() *AppSettingUpdateOne {
-	asuo.mutation.ClearCreatedAt()
-	return asuo
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -1050,9 +1007,6 @@ func (asuo *AppSettingUpdateOne) sqlSave(ctx context.Context) (_node *AppSetting
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := asuo.mutation.CreatedAt(); ok {
-		_spec.SetField(appsetting.FieldCreatedAt, field.TypeTime, value)
 	}
 	if asuo.mutation.CreatedAtCleared() {
 		_spec.ClearField(appsetting.FieldCreatedAt, field.TypeTime)

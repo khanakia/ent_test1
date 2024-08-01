@@ -21,6 +21,7 @@ type TemplQuery struct {
 	order      []templ.OrderOption
 	inters     []Interceptor
 	predicates []predicate.Templ
+	loadTotal  []func(context.Context, []*Templ) error
 	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -354,6 +355,11 @@ func (tq *TemplQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Templ,
 	}
 	if len(nodes) == 0 {
 		return nodes, nil
+	}
+	for i := range tq.loadTotal {
+		if err := tq.loadTotal[i](ctx, nodes); err != nil {
+			return nil, err
+		}
 	}
 	return nodes, nil
 }

@@ -21,6 +21,7 @@ type KeyvalueQuery struct {
 	order      []keyvalue.OrderOption
 	inters     []Interceptor
 	predicates []predicate.Keyvalue
+	loadTotal  []func(context.Context, []*Keyvalue) error
 	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -354,6 +355,11 @@ func (kq *KeyvalueQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Key
 	}
 	if len(nodes) == 0 {
 		return nodes, nil
+	}
+	for i := range kq.loadTotal {
+		if err := kq.loadTotal[i](ctx, nodes); err != nil {
+			return nil, err
+		}
 	}
 	return nodes, nil
 }

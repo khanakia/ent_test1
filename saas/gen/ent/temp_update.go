@@ -31,26 +31,6 @@ func (tu *TempUpdate) Where(ps ...predicate.Temp) *TempUpdate {
 	return tu
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (tu *TempUpdate) SetCreatedAt(t time.Time) *TempUpdate {
-	tu.mutation.SetCreatedAt(t)
-	return tu
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (tu *TempUpdate) SetNillableCreatedAt(t *time.Time) *TempUpdate {
-	if t != nil {
-		tu.SetCreatedAt(*t)
-	}
-	return tu
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (tu *TempUpdate) ClearCreatedAt() *TempUpdate {
-	tu.mutation.ClearCreatedAt()
-	return tu
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (tu *TempUpdate) SetUpdatedAt(t time.Time) *TempUpdate {
 	tu.mutation.SetUpdatedAt(t)
@@ -195,9 +175,6 @@ func (tu *TempUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := tu.mutation.CreatedAt(); ok {
-		_spec.SetField(temp.FieldCreatedAt, field.TypeTime, value)
-	}
 	if tu.mutation.CreatedAtCleared() {
 		_spec.ClearField(temp.FieldCreatedAt, field.TypeTime)
 	}
@@ -261,26 +238,6 @@ type TempUpdateOne struct {
 	hooks     []Hook
 	mutation  *TempMutation
 	modifiers []func(*sql.UpdateBuilder)
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (tuo *TempUpdateOne) SetCreatedAt(t time.Time) *TempUpdateOne {
-	tuo.mutation.SetCreatedAt(t)
-	return tuo
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (tuo *TempUpdateOne) SetNillableCreatedAt(t *time.Time) *TempUpdateOne {
-	if t != nil {
-		tuo.SetCreatedAt(*t)
-	}
-	return tuo
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (tuo *TempUpdateOne) ClearCreatedAt() *TempUpdateOne {
-	tuo.mutation.ClearCreatedAt()
-	return tuo
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -456,9 +413,6 @@ func (tuo *TempUpdateOne) sqlSave(ctx context.Context) (_node *Temp, err error) 
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := tuo.mutation.CreatedAt(); ok {
-		_spec.SetField(temp.FieldCreatedAt, field.TypeTime, value)
 	}
 	if tuo.mutation.CreatedAtCleared() {
 		_spec.ClearField(temp.FieldCreatedAt, field.TypeTime)

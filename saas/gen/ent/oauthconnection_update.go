@@ -29,26 +29,6 @@ func (ocu *OauthConnectionUpdate) Where(ps ...predicate.OauthConnection) *OauthC
 	return ocu
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (ocu *OauthConnectionUpdate) SetCreatedAt(t time.Time) *OauthConnectionUpdate {
-	ocu.mutation.SetCreatedAt(t)
-	return ocu
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (ocu *OauthConnectionUpdate) SetNillableCreatedAt(t *time.Time) *OauthConnectionUpdate {
-	if t != nil {
-		ocu.SetCreatedAt(*t)
-	}
-	return ocu
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (ocu *OauthConnectionUpdate) ClearCreatedAt() *OauthConnectionUpdate {
-	ocu.mutation.ClearCreatedAt()
-	return ocu
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (ocu *OauthConnectionUpdate) SetUpdatedAt(t time.Time) *OauthConnectionUpdate {
 	ocu.mutation.SetUpdatedAt(t)
@@ -297,9 +277,6 @@ func (ocu *OauthConnectionUpdate) sqlSave(ctx context.Context) (n int, err error
 			}
 		}
 	}
-	if value, ok := ocu.mutation.CreatedAt(); ok {
-		_spec.SetField(oauthconnection.FieldCreatedAt, field.TypeTime, value)
-	}
 	if ocu.mutation.CreatedAtCleared() {
 		_spec.ClearField(oauthconnection.FieldCreatedAt, field.TypeTime)
 	}
@@ -383,26 +360,6 @@ type OauthConnectionUpdateOne struct {
 	hooks     []Hook
 	mutation  *OauthConnectionMutation
 	modifiers []func(*sql.UpdateBuilder)
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (ocuo *OauthConnectionUpdateOne) SetCreatedAt(t time.Time) *OauthConnectionUpdateOne {
-	ocuo.mutation.SetCreatedAt(t)
-	return ocuo
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (ocuo *OauthConnectionUpdateOne) SetNillableCreatedAt(t *time.Time) *OauthConnectionUpdateOne {
-	if t != nil {
-		ocuo.SetCreatedAt(*t)
-	}
-	return ocuo
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (ocuo *OauthConnectionUpdateOne) ClearCreatedAt() *OauthConnectionUpdateOne {
-	ocuo.mutation.ClearCreatedAt()
-	return ocuo
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -682,9 +639,6 @@ func (ocuo *OauthConnectionUpdateOne) sqlSave(ctx context.Context) (_node *Oauth
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := ocuo.mutation.CreatedAt(); ok {
-		_spec.SetField(oauthconnection.FieldCreatedAt, field.TypeTime, value)
 	}
 	if ocuo.mutation.CreatedAtCleared() {
 		_spec.ClearField(oauthconnection.FieldCreatedAt, field.TypeTime)

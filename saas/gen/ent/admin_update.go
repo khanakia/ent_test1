@@ -29,26 +29,6 @@ func (au *AdminUpdate) Where(ps ...predicate.Admin) *AdminUpdate {
 	return au
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (au *AdminUpdate) SetCreatedAt(t time.Time) *AdminUpdate {
-	au.mutation.SetCreatedAt(t)
-	return au
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (au *AdminUpdate) SetNillableCreatedAt(t *time.Time) *AdminUpdate {
-	if t != nil {
-		au.SetCreatedAt(*t)
-	}
-	return au
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (au *AdminUpdate) ClearCreatedAt() *AdminUpdate {
-	au.mutation.ClearCreatedAt()
-	return au
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (au *AdminUpdate) SetUpdatedAt(t time.Time) *AdminUpdate {
 	au.mutation.SetUpdatedAt(t)
@@ -231,9 +211,6 @@ func (au *AdminUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := au.mutation.CreatedAt(); ok {
-		_spec.SetField(admin.FieldCreatedAt, field.TypeTime, value)
-	}
 	if au.mutation.CreatedAtCleared() {
 		_spec.ClearField(admin.FieldCreatedAt, field.TypeTime)
 	}
@@ -296,26 +273,6 @@ type AdminUpdateOne struct {
 	hooks     []Hook
 	mutation  *AdminMutation
 	modifiers []func(*sql.UpdateBuilder)
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (auo *AdminUpdateOne) SetCreatedAt(t time.Time) *AdminUpdateOne {
-	auo.mutation.SetCreatedAt(t)
-	return auo
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (auo *AdminUpdateOne) SetNillableCreatedAt(t *time.Time) *AdminUpdateOne {
-	if t != nil {
-		auo.SetCreatedAt(*t)
-	}
-	return auo
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (auo *AdminUpdateOne) ClearCreatedAt() *AdminUpdateOne {
-	auo.mutation.ClearCreatedAt()
-	return auo
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -529,9 +486,6 @@ func (auo *AdminUpdateOne) sqlSave(ctx context.Context) (_node *Admin, err error
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := auo.mutation.CreatedAt(); ok {
-		_spec.SetField(admin.FieldCreatedAt, field.TypeTime, value)
 	}
 	if auo.mutation.CreatedAtCleared() {
 		_spec.ClearField(admin.FieldCreatedAt, field.TypeTime)

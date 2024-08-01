@@ -28,6 +28,8 @@ const (
 	FieldLastName = "last_name"
 	// FieldCompany holds the string denoting the company field in the database.
 	FieldCompany = "company"
+	// FieldRoleID holds the string denoting the role_id field in the database.
+	FieldRoleID = "role_id"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
 	// FieldPassword holds the string denoting the password field in the database.
@@ -77,6 +79,7 @@ var Columns = []string{
 	FieldFirstName,
 	FieldLastName,
 	FieldCompany,
+	FieldRoleID,
 	FieldStatus,
 	FieldPassword,
 	FieldSecret,
@@ -107,6 +110,8 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultRoleID holds the default value on creation for the "role_id" field.
+	DefaultRoleID string
 	// DefaultStatus holds the default value on creation for the "status" field.
 	DefaultStatus bool
 	// DefaultID holds the default value on creation for the "id" field.
@@ -154,6 +159,11 @@ func ByLastName(opts ...sql.OrderTermOption) OrderOption {
 // ByCompany orders the results by the company field.
 func ByCompany(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCompany, opts...).ToFunc()
+}
+
+// ByRoleID orders the results by the role_id field.
+func ByRoleID(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRoleID, opts...).ToFunc()
 }
 
 // ByStatus orders the results by the status field.

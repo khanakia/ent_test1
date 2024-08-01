@@ -139,16 +139,136 @@ var (
 		Columns:    PlansColumns,
 		PrimaryKey: []*schema.Column{PlansColumns[0]},
 	}
-	// ProjectsColumns holds the columns for the "projects" table.
-	ProjectsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt32, Increment: true},
+	// PostsColumns holds the columns for the "posts" table.
+	PostsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "name", Type: field.TypeString, Nullable: true},
+		{Name: "slug", Type: field.TypeString, Nullable: true},
+		{Name: "headline", Type: field.TypeString, Nullable: true},
+		{Name: "excerpt", Type: field.TypeString, Nullable: true},
+		{Name: "content", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "meta_title", Type: field.TypeString, Nullable: true},
+		{Name: "meta_descr", Type: field.TypeString, Nullable: true},
+		{Name: "meta_canonical_url", Type: field.TypeString, Nullable: true},
+		{Name: "meta_robots", Type: field.TypeString, Nullable: true},
+		{Name: "primary_category_id", Type: field.TypeString, Nullable: true},
+		{Name: "post_status_id", Type: field.TypeString, Nullable: true},
+		{Name: "post_type_id", Type: field.TypeString, Nullable: true},
 	}
-	// ProjectsTable holds the schema information for the "projects" table.
-	ProjectsTable = &schema.Table{
-		Name:       "projects",
-		Columns:    ProjectsColumns,
-		PrimaryKey: []*schema.Column{ProjectsColumns[0]},
+	// PostsTable holds the schema information for the "posts" table.
+	PostsTable = &schema.Table{
+		Name:       "posts",
+		Columns:    PostsColumns,
+		PrimaryKey: []*schema.Column{PostsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "posts_post_categories_posts",
+				Columns:    []*schema.Column{PostsColumns[12]},
+				RefColumns: []*schema.Column{PostCategoriesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "posts_post_status_posts",
+				Columns:    []*schema.Column{PostsColumns[13]},
+				RefColumns: []*schema.Column{PostStatusColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "posts_post_types_posts",
+				Columns:    []*schema.Column{PostsColumns[14]},
+				RefColumns: []*schema.Column{PostTypesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// PostCategoriesColumns holds the columns for the "post_categories" table.
+	PostCategoriesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "name", Type: field.TypeString, Nullable: true},
+		{Name: "slug", Type: field.TypeString, Nullable: true},
+		{Name: "status", Type: field.TypeString, Nullable: true},
+		{Name: "excerpt", Type: field.TypeString, Nullable: true},
+		{Name: "content", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "meta_title", Type: field.TypeString, Nullable: true},
+		{Name: "meta_descr", Type: field.TypeString, Nullable: true},
+		{Name: "meta_canonical_url", Type: field.TypeString, Nullable: true},
+		{Name: "meta_robots", Type: field.TypeString, Nullable: true},
+	}
+	// PostCategoriesTable holds the schema information for the "post_categories" table.
+	PostCategoriesTable = &schema.Table{
+		Name:       "post_categories",
+		Columns:    PostCategoriesColumns,
+		PrimaryKey: []*schema.Column{PostCategoriesColumns[0]},
+	}
+	// PostStatusColumns holds the columns for the "post_status" table.
+	PostStatusColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "name", Type: field.TypeString, Nullable: true},
+		{Name: "slug", Type: field.TypeString, Nullable: true},
+		{Name: "status", Type: field.TypeBool, Nullable: true},
+		{Name: "post_type_id", Type: field.TypeString, Nullable: true},
+	}
+	// PostStatusTable holds the schema information for the "post_status" table.
+	PostStatusTable = &schema.Table{
+		Name:       "post_status",
+		Columns:    PostStatusColumns,
+		PrimaryKey: []*schema.Column{PostStatusColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "post_status_post_types_post_statuses",
+				Columns:    []*schema.Column{PostStatusColumns[6]},
+				RefColumns: []*schema.Column{PostTypesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// PostTagsColumns holds the columns for the "post_tags" table.
+	PostTagsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "name", Type: field.TypeString, Nullable: true},
+		{Name: "slug", Type: field.TypeString, Nullable: true},
+		{Name: "status", Type: field.TypeString, Nullable: true},
+		{Name: "excerpt", Type: field.TypeString, Nullable: true},
+		{Name: "content", Type: field.TypeString, Nullable: true, Size: 2147483647},
+		{Name: "meta_title", Type: field.TypeString, Nullable: true},
+		{Name: "meta_descr", Type: field.TypeString, Nullable: true},
+		{Name: "meta_canonical_url", Type: field.TypeString, Nullable: true},
+		{Name: "meta_robots", Type: field.TypeString, Nullable: true},
+	}
+	// PostTagsTable holds the schema information for the "post_tags" table.
+	PostTagsTable = &schema.Table{
+		Name:       "post_tags",
+		Columns:    PostTagsColumns,
+		PrimaryKey: []*schema.Column{PostTagsColumns[0]},
+	}
+	// PostTypesColumns holds the columns for the "post_types" table.
+	PostTypesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "name", Type: field.TypeString, Nullable: true},
+		{Name: "slug", Type: field.TypeString, Nullable: true},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"PUBLISHED", "DRAFT"}, Default: "PUBLISHED"},
+		{Name: "excerpt", Type: field.TypeString, Nullable: true},
+		{Name: "content", Type: field.TypeString, Nullable: true, Size: 255},
+		{Name: "meta_title", Type: field.TypeString, Nullable: true},
+		{Name: "meta_descr", Type: field.TypeString, Nullable: true},
+		{Name: "meta_canonical_url", Type: field.TypeString, Nullable: true},
+		{Name: "meta_robots", Type: field.TypeString, Nullable: true},
+	}
+	// PostTypesTable holds the schema information for the "post_types" table.
+	PostTypesTable = &schema.Table{
+		Name:       "post_types",
+		Columns:    PostTypesColumns,
+		PrimaryKey: []*schema.Column{PostTypesColumns[0]},
 	}
 	// SessionsColumns holds the columns for the "sessions" table.
 	SessionsColumns = []*schema.Column{
@@ -207,6 +327,30 @@ var (
 		Columns:    TemplsColumns,
 		PrimaryKey: []*schema.Column{TemplsColumns[0]},
 	}
+	// TodosColumns holds the columns for the "todos" table.
+	TodosColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "text", Type: field.TypeString, Size: 2147483647},
+		{Name: "status", Type: field.TypeEnum, Enums: []string{"IN_PROGRESS", "COMPLETED"}, Default: "IN_PROGRESS"},
+		{Name: "priority", Type: field.TypeInt, Default: 0},
+		{Name: "todo_parent", Type: field.TypeString, Nullable: true},
+	}
+	// TodosTable holds the schema information for the "todos" table.
+	TodosTable = &schema.Table{
+		Name:       "todos",
+		Columns:    TodosColumns,
+		PrimaryKey: []*schema.Column{TodosColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "todos_todos_parent",
+				Columns:    []*schema.Column{TodosColumns[6]},
+				RefColumns: []*schema.Column{TodosColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString, Unique: true},
@@ -217,6 +361,7 @@ var (
 		{Name: "first_name", Type: field.TypeString, Nullable: true},
 		{Name: "last_name", Type: field.TypeString, Nullable: true},
 		{Name: "company", Type: field.TypeString, Nullable: true},
+		{Name: "role_id", Type: field.TypeString, Nullable: true, Default: "sa"},
 		{Name: "status", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "password", Type: field.TypeString, Nullable: true},
 		{Name: "secret", Type: field.TypeString, Nullable: true},
@@ -319,10 +464,15 @@ var (
 		MailConnsTable,
 		OauthConnectionsTable,
 		PlansTable,
-		ProjectsTable,
+		PostsTable,
+		PostCategoriesTable,
+		PostStatusTable,
+		PostTagsTable,
+		PostTypesTable,
 		SessionsTable,
 		TempsTable,
 		TemplsTable,
+		TodosTable,
 		UsersTable,
 		WorkspacesTable,
 		WorkspaceInvitesTable,
@@ -331,7 +481,12 @@ var (
 )
 
 func init() {
+	PostsTable.ForeignKeys[0].RefTable = PostCategoriesTable
+	PostsTable.ForeignKeys[1].RefTable = PostStatusTable
+	PostsTable.ForeignKeys[2].RefTable = PostTypesTable
+	PostStatusTable.ForeignKeys[0].RefTable = PostTypesTable
 	SessionsTable.ForeignKeys[0].RefTable = UsersTable
+	TodosTable.ForeignKeys[0].RefTable = TodosTable
 	WorkspaceInvitesTable.ForeignKeys[0].RefTable = WorkspacesTable
 	WorkspaceUsersTable.ForeignKeys[0].RefTable = UsersTable
 	WorkspaceUsersTable.ForeignKeys[1].RefTable = WorkspacesTable

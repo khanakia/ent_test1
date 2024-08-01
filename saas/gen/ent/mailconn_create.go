@@ -378,24 +378,6 @@ type (
 	}
 )
 
-// SetCreatedAt sets the "created_at" field.
-func (u *MailConnUpsert) SetCreatedAt(v time.Time) *MailConnUpsert {
-	u.Set(mailconn.FieldCreatedAt, v)
-	return u
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *MailConnUpsert) UpdateCreatedAt() *MailConnUpsert {
-	u.SetExcluded(mailconn.FieldCreatedAt)
-	return u
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *MailConnUpsert) ClearCreatedAt() *MailConnUpsert {
-	u.SetNull(mailconn.FieldCreatedAt)
-	return u
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (u *MailConnUpsert) SetUpdatedAt(v time.Time) *MailConnUpsert {
 	u.Set(mailconn.FieldUpdatedAt, v)
@@ -605,6 +587,9 @@ func (u *MailConnUpsertOne) UpdateNewValues() *MailConnUpsertOne {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(mailconn.FieldID)
 		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(mailconn.FieldCreatedAt)
+		}
 	}))
 	return u
 }
@@ -634,27 +619,6 @@ func (u *MailConnUpsertOne) Update(set func(*MailConnUpsert)) *MailConnUpsertOne
 		set(&MailConnUpsert{UpdateSet: update})
 	}))
 	return u
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (u *MailConnUpsertOne) SetCreatedAt(v time.Time) *MailConnUpsertOne {
-	return u.Update(func(s *MailConnUpsert) {
-		s.SetCreatedAt(v)
-	})
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *MailConnUpsertOne) UpdateCreatedAt() *MailConnUpsertOne {
-	return u.Update(func(s *MailConnUpsert) {
-		s.UpdateCreatedAt()
-	})
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *MailConnUpsertOne) ClearCreatedAt() *MailConnUpsertOne {
-	return u.Update(func(s *MailConnUpsert) {
-		s.ClearCreatedAt()
-	})
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -1064,6 +1028,9 @@ func (u *MailConnUpsertBulk) UpdateNewValues() *MailConnUpsertBulk {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(mailconn.FieldID)
 			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(mailconn.FieldCreatedAt)
+			}
 		}
 	}))
 	return u
@@ -1094,27 +1061,6 @@ func (u *MailConnUpsertBulk) Update(set func(*MailConnUpsert)) *MailConnUpsertBu
 		set(&MailConnUpsert{UpdateSet: update})
 	}))
 	return u
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (u *MailConnUpsertBulk) SetCreatedAt(v time.Time) *MailConnUpsertBulk {
-	return u.Update(func(s *MailConnUpsert) {
-		s.SetCreatedAt(v)
-	})
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *MailConnUpsertBulk) UpdateCreatedAt() *MailConnUpsertBulk {
-	return u.Update(func(s *MailConnUpsert) {
-		s.UpdateCreatedAt()
-	})
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *MailConnUpsertBulk) ClearCreatedAt() *MailConnUpsertBulk {
-	return u.Update(func(s *MailConnUpsert) {
-		s.ClearCreatedAt()
-	})
 }
 
 // SetUpdatedAt sets the "updated_at" field.

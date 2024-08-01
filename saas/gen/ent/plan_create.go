@@ -288,24 +288,6 @@ type (
 	}
 )
 
-// SetCreatedAt sets the "created_at" field.
-func (u *PlanUpsert) SetCreatedAt(v time.Time) *PlanUpsert {
-	u.Set(plan.FieldCreatedAt, v)
-	return u
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *PlanUpsert) UpdateCreatedAt() *PlanUpsert {
-	u.SetExcluded(plan.FieldCreatedAt)
-	return u
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *PlanUpsert) ClearCreatedAt() *PlanUpsert {
-	u.SetNull(plan.FieldCreatedAt)
-	return u
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (u *PlanUpsert) SetUpdatedAt(v time.Time) *PlanUpsert {
 	u.Set(plan.FieldUpdatedAt, v)
@@ -413,6 +395,9 @@ func (u *PlanUpsertOne) UpdateNewValues() *PlanUpsertOne {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(plan.FieldID)
 		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(plan.FieldCreatedAt)
+		}
 	}))
 	return u
 }
@@ -442,27 +427,6 @@ func (u *PlanUpsertOne) Update(set func(*PlanUpsert)) *PlanUpsertOne {
 		set(&PlanUpsert{UpdateSet: update})
 	}))
 	return u
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (u *PlanUpsertOne) SetCreatedAt(v time.Time) *PlanUpsertOne {
-	return u.Update(func(s *PlanUpsert) {
-		s.SetCreatedAt(v)
-	})
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *PlanUpsertOne) UpdateCreatedAt() *PlanUpsertOne {
-	return u.Update(func(s *PlanUpsert) {
-		s.UpdateCreatedAt()
-	})
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *PlanUpsertOne) ClearCreatedAt() *PlanUpsertOne {
-	return u.Update(func(s *PlanUpsert) {
-		s.ClearCreatedAt()
-	})
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -753,6 +717,9 @@ func (u *PlanUpsertBulk) UpdateNewValues() *PlanUpsertBulk {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(plan.FieldID)
 			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(plan.FieldCreatedAt)
+			}
 		}
 	}))
 	return u
@@ -783,27 +750,6 @@ func (u *PlanUpsertBulk) Update(set func(*PlanUpsert)) *PlanUpsertBulk {
 		set(&PlanUpsert{UpdateSet: update})
 	}))
 	return u
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (u *PlanUpsertBulk) SetCreatedAt(v time.Time) *PlanUpsertBulk {
-	return u.Update(func(s *PlanUpsert) {
-		s.SetCreatedAt(v)
-	})
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *PlanUpsertBulk) UpdateCreatedAt() *PlanUpsertBulk {
-	return u.Update(func(s *PlanUpsert) {
-		s.UpdateCreatedAt()
-	})
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *PlanUpsertBulk) ClearCreatedAt() *PlanUpsertBulk {
-	return u.Update(func(s *PlanUpsert) {
-		s.ClearCreatedAt()
-	})
 }
 
 // SetUpdatedAt sets the "updated_at" field.

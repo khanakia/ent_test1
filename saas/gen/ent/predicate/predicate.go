@@ -27,8 +27,20 @@ type OauthConnection func(*sql.Selector)
 // Plan is the predicate function for plan builders.
 type Plan func(*sql.Selector)
 
-// Project is the predicate function for project builders.
-type Project func(*sql.Selector)
+// Post is the predicate function for post builders.
+type Post func(*sql.Selector)
+
+// PostCategory is the predicate function for postcategory builders.
+type PostCategory func(*sql.Selector)
+
+// PostStatus is the predicate function for poststatus builders.
+type PostStatus func(*sql.Selector)
+
+// PostTag is the predicate function for posttag builders.
+type PostTag func(*sql.Selector)
+
+// PostType is the predicate function for posttype builders.
+type PostType func(*sql.Selector)
 
 // Session is the predicate function for session builders.
 type Session func(*sql.Selector)
@@ -38,6 +50,9 @@ type Temp func(*sql.Selector)
 
 // Templ is the predicate function for templ builders.
 type Templ func(*sql.Selector)
+
+// Todo is the predicate function for todo builders.
+type Todo func(*sql.Selector)
 
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

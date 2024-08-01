@@ -92,16 +92,64 @@ func (f PlanFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error)
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PlanMutation", m)
 }
 
-// The ProjectFunc type is an adapter to allow the use of ordinary
-// function as Project mutator.
-type ProjectFunc func(context.Context, *ent.ProjectMutation) (ent.Value, error)
+// The PostFunc type is an adapter to allow the use of ordinary
+// function as Post mutator.
+type PostFunc func(context.Context, *ent.PostMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f ProjectFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.ProjectMutation); ok {
+func (f PostFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PostMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ProjectMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PostMutation", m)
+}
+
+// The PostCategoryFunc type is an adapter to allow the use of ordinary
+// function as PostCategory mutator.
+type PostCategoryFunc func(context.Context, *ent.PostCategoryMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PostCategoryFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PostCategoryMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PostCategoryMutation", m)
+}
+
+// The PostStatusFunc type is an adapter to allow the use of ordinary
+// function as PostStatus mutator.
+type PostStatusFunc func(context.Context, *ent.PostStatusMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PostStatusFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PostStatusMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PostStatusMutation", m)
+}
+
+// The PostTagFunc type is an adapter to allow the use of ordinary
+// function as PostTag mutator.
+type PostTagFunc func(context.Context, *ent.PostTagMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PostTagFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PostTagMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PostTagMutation", m)
+}
+
+// The PostTypeFunc type is an adapter to allow the use of ordinary
+// function as PostType mutator.
+type PostTypeFunc func(context.Context, *ent.PostTypeMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f PostTypeFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.PostTypeMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.PostTypeMutation", m)
 }
 
 // The SessionFunc type is an adapter to allow the use of ordinary
@@ -138,6 +186,18 @@ func (f TemplFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error
 		return f(ctx, mv)
 	}
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TemplMutation", m)
+}
+
+// The TodoFunc type is an adapter to allow the use of ordinary
+// function as Todo mutator.
+type TodoFunc func(context.Context, *ent.TodoMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f TodoFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.TodoMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TodoMutation", m)
 }
 
 // The UserFunc type is an adapter to allow the use of ordinary

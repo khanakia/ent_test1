@@ -21,14 +21,18 @@ import (
 // WorkspaceQuery is the builder for querying Workspace entities.
 type WorkspaceQuery struct {
 	config
-	ctx                  *QueryContext
-	order                []workspace.OrderOption
-	inters               []Interceptor
-	predicates           []predicate.Workspace
-	withUsers            *UserQuery
-	withWorkspaceInvites *WorkspaceInviteQuery
-	withWorkspaceUsers   *WorkspaceUserQuery
-	modifiers            []func(*sql.Selector)
+	ctx                       *QueryContext
+	order                     []workspace.OrderOption
+	inters                    []Interceptor
+	predicates                []predicate.Workspace
+	withUsers                 *UserQuery
+	withWorkspaceInvites      *WorkspaceInviteQuery
+	withWorkspaceUsers        *WorkspaceUserQuery
+	loadTotal                 []func(context.Context, []*Workspace) error
+	modifiers                 []func(*sql.Selector)
+	withNamedUsers            map[string]*UserQuery
+	withNamedWorkspaceInvites map[string]*WorkspaceInviteQuery
+	withNamedWorkspaceUsers   map[string]*WorkspaceUserQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -491,6 +495,32 @@ func (wq *WorkspaceQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Wo
 			return nil, err
 		}
 	}
+	for name, query := range wq.withNamedUsers {
+		if err := wq.loadUsers(ctx, query, nodes,
+			func(n *Workspace) { n.appendNamedUsers(name) },
+			func(n *Workspace, e *User) { n.appendNamedUsers(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range wq.withNamedWorkspaceInvites {
+		if err := wq.loadWorkspaceInvites(ctx, query, nodes,
+			func(n *Workspace) { n.appendNamedWorkspaceInvites(name) },
+			func(n *Workspace, e *WorkspaceInvite) { n.appendNamedWorkspaceInvites(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range wq.withNamedWorkspaceUsers {
+		if err := wq.loadWorkspaceUsers(ctx, query, nodes,
+			func(n *Workspace) { n.appendNamedWorkspaceUsers(name) },
+			func(n *Workspace, e *WorkspaceUser) { n.appendNamedWorkspaceUsers(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for i := range wq.loadTotal {
+		if err := wq.loadTotal[i](ctx, nodes); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
 }
 
@@ -707,6 +737,48 @@ func (wq *WorkspaceQuery) sqlQuery(ctx context.Context) *sql.Selector {
 func (wq *WorkspaceQuery) Modify(modifiers ...func(s *sql.Selector)) *WorkspaceSelect {
 	wq.modifiers = append(wq.modifiers, modifiers...)
 	return wq.Select()
+}
+
+// WithNamedUsers tells the query-builder to eager-load the nodes that are connected to the "users"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (wq *WorkspaceQuery) WithNamedUsers(name string, opts ...func(*UserQuery)) *WorkspaceQuery {
+	query := (&UserClient{config: wq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if wq.withNamedUsers == nil {
+		wq.withNamedUsers = make(map[string]*UserQuery)
+	}
+	wq.withNamedUsers[name] = query
+	return wq
+}
+
+// WithNamedWorkspaceInvites tells the query-builder to eager-load the nodes that are connected to the "workspace_invites"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (wq *WorkspaceQuery) WithNamedWorkspaceInvites(name string, opts ...func(*WorkspaceInviteQuery)) *WorkspaceQuery {
+	query := (&WorkspaceInviteClient{config: wq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if wq.withNamedWorkspaceInvites == nil {
+		wq.withNamedWorkspaceInvites = make(map[string]*WorkspaceInviteQuery)
+	}
+	wq.withNamedWorkspaceInvites[name] = query
+	return wq
+}
+
+// WithNamedWorkspaceUsers tells the query-builder to eager-load the nodes that are connected to the "workspace_users"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (wq *WorkspaceQuery) WithNamedWorkspaceUsers(name string, opts ...func(*WorkspaceUserQuery)) *WorkspaceQuery {
+	query := (&WorkspaceUserClient{config: wq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if wq.withNamedWorkspaceUsers == nil {
+		wq.withNamedWorkspaceUsers = make(map[string]*WorkspaceUserQuery)
+	}
+	wq.withNamedWorkspaceUsers[name] = query
+	return wq
 }
 
 // WorkspaceGroupBy is the group-by builder for Workspace entities.

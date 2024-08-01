@@ -30,26 +30,6 @@ func (wiu *WorkspaceInviteUpdate) Where(ps ...predicate.WorkspaceInvite) *Worksp
 	return wiu
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (wiu *WorkspaceInviteUpdate) SetCreatedAt(t time.Time) *WorkspaceInviteUpdate {
-	wiu.mutation.SetCreatedAt(t)
-	return wiu
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (wiu *WorkspaceInviteUpdate) SetNillableCreatedAt(t *time.Time) *WorkspaceInviteUpdate {
-	if t != nil {
-		wiu.SetCreatedAt(*t)
-	}
-	return wiu
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (wiu *WorkspaceInviteUpdate) ClearCreatedAt() *WorkspaceInviteUpdate {
-	wiu.mutation.ClearCreatedAt()
-	return wiu
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (wiu *WorkspaceInviteUpdate) SetUpdatedAt(t time.Time) *WorkspaceInviteUpdate {
 	wiu.mutation.SetUpdatedAt(t)
@@ -189,9 +169,6 @@ func (wiu *WorkspaceInviteUpdate) sqlSave(ctx context.Context) (n int, err error
 			}
 		}
 	}
-	if value, ok := wiu.mutation.CreatedAt(); ok {
-		_spec.SetField(workspaceinvite.FieldCreatedAt, field.TypeTime, value)
-	}
 	if wiu.mutation.CreatedAtCleared() {
 		_spec.ClearField(workspaceinvite.FieldCreatedAt, field.TypeTime)
 	}
@@ -262,26 +239,6 @@ type WorkspaceInviteUpdateOne struct {
 	hooks     []Hook
 	mutation  *WorkspaceInviteMutation
 	modifiers []func(*sql.UpdateBuilder)
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (wiuo *WorkspaceInviteUpdateOne) SetCreatedAt(t time.Time) *WorkspaceInviteUpdateOne {
-	wiuo.mutation.SetCreatedAt(t)
-	return wiuo
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (wiuo *WorkspaceInviteUpdateOne) SetNillableCreatedAt(t *time.Time) *WorkspaceInviteUpdateOne {
-	if t != nil {
-		wiuo.SetCreatedAt(*t)
-	}
-	return wiuo
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (wiuo *WorkspaceInviteUpdateOne) ClearCreatedAt() *WorkspaceInviteUpdateOne {
-	wiuo.mutation.ClearCreatedAt()
-	return wiuo
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -452,9 +409,6 @@ func (wiuo *WorkspaceInviteUpdateOne) sqlSave(ctx context.Context) (_node *Works
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := wiuo.mutation.CreatedAt(); ok {
-		_spec.SetField(workspaceinvite.FieldCreatedAt, field.TypeTime, value)
 	}
 	if wiuo.mutation.CreatedAtCleared() {
 		_spec.ClearField(workspaceinvite.FieldCreatedAt, field.TypeTime)

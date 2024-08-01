@@ -300,24 +300,6 @@ type (
 	}
 )
 
-// SetCreatedAt sets the "created_at" field.
-func (u *WorkspaceUserUpsert) SetCreatedAt(v time.Time) *WorkspaceUserUpsert {
-	u.Set(workspaceuser.FieldCreatedAt, v)
-	return u
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *WorkspaceUserUpsert) UpdateCreatedAt() *WorkspaceUserUpsert {
-	u.SetExcluded(workspaceuser.FieldCreatedAt)
-	return u
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *WorkspaceUserUpsert) ClearCreatedAt() *WorkspaceUserUpsert {
-	u.SetNull(workspaceuser.FieldCreatedAt)
-	return u
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (u *WorkspaceUserUpsert) SetUpdatedAt(v time.Time) *WorkspaceUserUpsert {
 	u.Set(workspaceuser.FieldUpdatedAt, v)
@@ -395,6 +377,9 @@ func (u *WorkspaceUserUpsertOne) UpdateNewValues() *WorkspaceUserUpsertOne {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(workspaceuser.FieldID)
 		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(workspaceuser.FieldCreatedAt)
+		}
 	}))
 	return u
 }
@@ -424,27 +409,6 @@ func (u *WorkspaceUserUpsertOne) Update(set func(*WorkspaceUserUpsert)) *Workspa
 		set(&WorkspaceUserUpsert{UpdateSet: update})
 	}))
 	return u
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (u *WorkspaceUserUpsertOne) SetCreatedAt(v time.Time) *WorkspaceUserUpsertOne {
-	return u.Update(func(s *WorkspaceUserUpsert) {
-		s.SetCreatedAt(v)
-	})
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *WorkspaceUserUpsertOne) UpdateCreatedAt() *WorkspaceUserUpsertOne {
-	return u.Update(func(s *WorkspaceUserUpsert) {
-		s.UpdateCreatedAt()
-	})
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *WorkspaceUserUpsertOne) ClearCreatedAt() *WorkspaceUserUpsertOne {
-	return u.Update(func(s *WorkspaceUserUpsert) {
-		s.ClearCreatedAt()
-	})
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -700,6 +664,9 @@ func (u *WorkspaceUserUpsertBulk) UpdateNewValues() *WorkspaceUserUpsertBulk {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(workspaceuser.FieldID)
 			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(workspaceuser.FieldCreatedAt)
+			}
 		}
 	}))
 	return u
@@ -730,27 +697,6 @@ func (u *WorkspaceUserUpsertBulk) Update(set func(*WorkspaceUserUpsert)) *Worksp
 		set(&WorkspaceUserUpsert{UpdateSet: update})
 	}))
 	return u
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (u *WorkspaceUserUpsertBulk) SetCreatedAt(v time.Time) *WorkspaceUserUpsertBulk {
-	return u.Update(func(s *WorkspaceUserUpsert) {
-		s.SetCreatedAt(v)
-	})
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *WorkspaceUserUpsertBulk) UpdateCreatedAt() *WorkspaceUserUpsertBulk {
-	return u.Update(func(s *WorkspaceUserUpsert) {
-		s.UpdateCreatedAt()
-	})
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *WorkspaceUserUpsertBulk) ClearCreatedAt() *WorkspaceUserUpsertBulk {
-	return u.Update(func(s *WorkspaceUserUpsert) {
-		s.ClearCreatedAt()
-	})
 }
 
 // SetUpdatedAt sets the "updated_at" field.

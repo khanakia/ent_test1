@@ -21,6 +21,7 @@ type PlanQuery struct {
 	order      []plan.OrderOption
 	inters     []Interceptor
 	predicates []predicate.Plan
+	loadTotal  []func(context.Context, []*Plan) error
 	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -354,6 +355,11 @@ func (pq *PlanQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Plan, e
 	}
 	if len(nodes) == 0 {
 		return nodes, nil
+	}
+	for i := range pq.loadTotal {
+		if err := pq.loadTotal[i](ctx, nodes); err != nil {
+			return nil, err
+		}
 	}
 	return nodes, nil
 }

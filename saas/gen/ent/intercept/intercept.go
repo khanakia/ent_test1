@@ -13,11 +13,16 @@ import (
 	"saas/gen/ent/mailconn"
 	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/plan"
+	"saas/gen/ent/post"
+	"saas/gen/ent/postcategory"
+	"saas/gen/ent/poststatus"
+	"saas/gen/ent/posttag"
+	"saas/gen/ent/posttype"
 	"saas/gen/ent/predicate"
-	"saas/gen/ent/project"
 	"saas/gen/ent/session"
 	"saas/gen/ent/temp"
 	"saas/gen/ent/templ"
+	"saas/gen/ent/todo"
 	"saas/gen/ent/user"
 	"saas/gen/ent/workspace"
 	"saas/gen/ent/workspaceinvite"
@@ -271,31 +276,139 @@ func (f TraversePlan) Traverse(ctx context.Context, q ent.Query) error {
 	return fmt.Errorf("unexpected query type %T. expect *ent.PlanQuery", q)
 }
 
-// The ProjectFunc type is an adapter to allow the use of ordinary function as a Querier.
-type ProjectFunc func(context.Context, *ent.ProjectQuery) (ent.Value, error)
+// The PostFunc type is an adapter to allow the use of ordinary function as a Querier.
+type PostFunc func(context.Context, *ent.PostQuery) (ent.Value, error)
 
 // Query calls f(ctx, q).
-func (f ProjectFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
-	if q, ok := q.(*ent.ProjectQuery); ok {
+func (f PostFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.PostQuery); ok {
 		return f(ctx, q)
 	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *ent.ProjectQuery", q)
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.PostQuery", q)
 }
 
-// The TraverseProject type is an adapter to allow the use of ordinary function as Traverser.
-type TraverseProject func(context.Context, *ent.ProjectQuery) error
+// The TraversePost type is an adapter to allow the use of ordinary function as Traverser.
+type TraversePost func(context.Context, *ent.PostQuery) error
 
 // Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraverseProject) Intercept(next ent.Querier) ent.Querier {
+func (f TraversePost) Intercept(next ent.Querier) ent.Querier {
 	return next
 }
 
 // Traverse calls f(ctx, q).
-func (f TraverseProject) Traverse(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.ProjectQuery); ok {
+func (f TraversePost) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.PostQuery); ok {
 		return f(ctx, q)
 	}
-	return fmt.Errorf("unexpected query type %T. expect *ent.ProjectQuery", q)
+	return fmt.Errorf("unexpected query type %T. expect *ent.PostQuery", q)
+}
+
+// The PostCategoryFunc type is an adapter to allow the use of ordinary function as a Querier.
+type PostCategoryFunc func(context.Context, *ent.PostCategoryQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f PostCategoryFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.PostCategoryQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.PostCategoryQuery", q)
+}
+
+// The TraversePostCategory type is an adapter to allow the use of ordinary function as Traverser.
+type TraversePostCategory func(context.Context, *ent.PostCategoryQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraversePostCategory) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraversePostCategory) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.PostCategoryQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.PostCategoryQuery", q)
+}
+
+// The PostStatusFunc type is an adapter to allow the use of ordinary function as a Querier.
+type PostStatusFunc func(context.Context, *ent.PostStatusQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f PostStatusFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.PostStatusQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.PostStatusQuery", q)
+}
+
+// The TraversePostStatus type is an adapter to allow the use of ordinary function as Traverser.
+type TraversePostStatus func(context.Context, *ent.PostStatusQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraversePostStatus) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraversePostStatus) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.PostStatusQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.PostStatusQuery", q)
+}
+
+// The PostTagFunc type is an adapter to allow the use of ordinary function as a Querier.
+type PostTagFunc func(context.Context, *ent.PostTagQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f PostTagFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.PostTagQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.PostTagQuery", q)
+}
+
+// The TraversePostTag type is an adapter to allow the use of ordinary function as Traverser.
+type TraversePostTag func(context.Context, *ent.PostTagQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraversePostTag) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraversePostTag) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.PostTagQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.PostTagQuery", q)
+}
+
+// The PostTypeFunc type is an adapter to allow the use of ordinary function as a Querier.
+type PostTypeFunc func(context.Context, *ent.PostTypeQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f PostTypeFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.PostTypeQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.PostTypeQuery", q)
+}
+
+// The TraversePostType type is an adapter to allow the use of ordinary function as Traverser.
+type TraversePostType func(context.Context, *ent.PostTypeQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraversePostType) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraversePostType) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.PostTypeQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.PostTypeQuery", q)
 }
 
 // The SessionFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -377,6 +490,33 @@ func (f TraverseTempl) Traverse(ctx context.Context, q ent.Query) error {
 		return f(ctx, q)
 	}
 	return fmt.Errorf("unexpected query type %T. expect *ent.TemplQuery", q)
+}
+
+// The TodoFunc type is an adapter to allow the use of ordinary function as a Querier.
+type TodoFunc func(context.Context, *ent.TodoQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f TodoFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.TodoQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.TodoQuery", q)
+}
+
+// The TraverseTodo type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseTodo func(context.Context, *ent.TodoQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseTodo) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseTodo) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.TodoQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.TodoQuery", q)
 }
 
 // The UserFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -504,14 +644,24 @@ func NewQuery(q ent.Query) (Query, error) {
 		return &query[*ent.OauthConnectionQuery, predicate.OauthConnection, oauthconnection.OrderOption]{typ: ent.TypeOauthConnection, tq: q}, nil
 	case *ent.PlanQuery:
 		return &query[*ent.PlanQuery, predicate.Plan, plan.OrderOption]{typ: ent.TypePlan, tq: q}, nil
-	case *ent.ProjectQuery:
-		return &query[*ent.ProjectQuery, predicate.Project, project.OrderOption]{typ: ent.TypeProject, tq: q}, nil
+	case *ent.PostQuery:
+		return &query[*ent.PostQuery, predicate.Post, post.OrderOption]{typ: ent.TypePost, tq: q}, nil
+	case *ent.PostCategoryQuery:
+		return &query[*ent.PostCategoryQuery, predicate.PostCategory, postcategory.OrderOption]{typ: ent.TypePostCategory, tq: q}, nil
+	case *ent.PostStatusQuery:
+		return &query[*ent.PostStatusQuery, predicate.PostStatus, poststatus.OrderOption]{typ: ent.TypePostStatus, tq: q}, nil
+	case *ent.PostTagQuery:
+		return &query[*ent.PostTagQuery, predicate.PostTag, posttag.OrderOption]{typ: ent.TypePostTag, tq: q}, nil
+	case *ent.PostTypeQuery:
+		return &query[*ent.PostTypeQuery, predicate.PostType, posttype.OrderOption]{typ: ent.TypePostType, tq: q}, nil
 	case *ent.SessionQuery:
 		return &query[*ent.SessionQuery, predicate.Session, session.OrderOption]{typ: ent.TypeSession, tq: q}, nil
 	case *ent.TempQuery:
 		return &query[*ent.TempQuery, predicate.Temp, temp.OrderOption]{typ: ent.TypeTemp, tq: q}, nil
 	case *ent.TemplQuery:
 		return &query[*ent.TemplQuery, predicate.Templ, templ.OrderOption]{typ: ent.TypeTempl, tq: q}, nil
+	case *ent.TodoQuery:
+		return &query[*ent.TodoQuery, predicate.Todo, todo.OrderOption]{typ: ent.TypeTodo, tq: q}, nil
 	case *ent.UserQuery:
 		return &query[*ent.UserQuery, predicate.User, user.OrderOption]{typ: ent.TypeUser, tq: q}, nil
 	case *ent.WorkspaceQuery:

@@ -44,6 +44,10 @@ type WorkspaceEdges struct {
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [3]bool
+
+	namedUsers            map[string][]*User
+	namedWorkspaceInvites map[string][]*WorkspaceInvite
+	namedWorkspaceUsers   map[string][]*WorkspaceUser
 }
 
 // UsersOrErr returns the Users value or an error if the edge
@@ -202,6 +206,78 @@ func (w *Workspace) String() string {
 	builder.WriteString(w.UserID)
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedUsers returns the Users named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (w *Workspace) NamedUsers(name string) ([]*User, error) {
+	if w.Edges.namedUsers == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := w.Edges.namedUsers[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (w *Workspace) appendNamedUsers(name string, edges ...*User) {
+	if w.Edges.namedUsers == nil {
+		w.Edges.namedUsers = make(map[string][]*User)
+	}
+	if len(edges) == 0 {
+		w.Edges.namedUsers[name] = []*User{}
+	} else {
+		w.Edges.namedUsers[name] = append(w.Edges.namedUsers[name], edges...)
+	}
+}
+
+// NamedWorkspaceInvites returns the WorkspaceInvites named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (w *Workspace) NamedWorkspaceInvites(name string) ([]*WorkspaceInvite, error) {
+	if w.Edges.namedWorkspaceInvites == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := w.Edges.namedWorkspaceInvites[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (w *Workspace) appendNamedWorkspaceInvites(name string, edges ...*WorkspaceInvite) {
+	if w.Edges.namedWorkspaceInvites == nil {
+		w.Edges.namedWorkspaceInvites = make(map[string][]*WorkspaceInvite)
+	}
+	if len(edges) == 0 {
+		w.Edges.namedWorkspaceInvites[name] = []*WorkspaceInvite{}
+	} else {
+		w.Edges.namedWorkspaceInvites[name] = append(w.Edges.namedWorkspaceInvites[name], edges...)
+	}
+}
+
+// NamedWorkspaceUsers returns the WorkspaceUsers named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (w *Workspace) NamedWorkspaceUsers(name string) ([]*WorkspaceUser, error) {
+	if w.Edges.namedWorkspaceUsers == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := w.Edges.namedWorkspaceUsers[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (w *Workspace) appendNamedWorkspaceUsers(name string, edges ...*WorkspaceUser) {
+	if w.Edges.namedWorkspaceUsers == nil {
+		w.Edges.namedWorkspaceUsers = make(map[string][]*WorkspaceUser)
+	}
+	if len(edges) == 0 {
+		w.Edges.namedWorkspaceUsers[name] = []*WorkspaceUser{}
+	} else {
+		w.Edges.namedWorkspaceUsers[name] = append(w.Edges.namedWorkspaceUsers[name], edges...)
+	}
 }
 
 // Workspaces is a parsable slice of Workspace.

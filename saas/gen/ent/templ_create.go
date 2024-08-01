@@ -288,24 +288,6 @@ type (
 	}
 )
 
-// SetCreatedAt sets the "created_at" field.
-func (u *TemplUpsert) SetCreatedAt(v time.Time) *TemplUpsert {
-	u.Set(templ.FieldCreatedAt, v)
-	return u
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *TemplUpsert) UpdateCreatedAt() *TemplUpsert {
-	u.SetExcluded(templ.FieldCreatedAt)
-	return u
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *TemplUpsert) ClearCreatedAt() *TemplUpsert {
-	u.SetNull(templ.FieldCreatedAt)
-	return u
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (u *TemplUpsert) SetUpdatedAt(v time.Time) *TemplUpsert {
 	u.Set(templ.FieldUpdatedAt, v)
@@ -413,6 +395,9 @@ func (u *TemplUpsertOne) UpdateNewValues() *TemplUpsertOne {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(templ.FieldID)
 		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(templ.FieldCreatedAt)
+		}
 	}))
 	return u
 }
@@ -442,27 +427,6 @@ func (u *TemplUpsertOne) Update(set func(*TemplUpsert)) *TemplUpsertOne {
 		set(&TemplUpsert{UpdateSet: update})
 	}))
 	return u
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (u *TemplUpsertOne) SetCreatedAt(v time.Time) *TemplUpsertOne {
-	return u.Update(func(s *TemplUpsert) {
-		s.SetCreatedAt(v)
-	})
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *TemplUpsertOne) UpdateCreatedAt() *TemplUpsertOne {
-	return u.Update(func(s *TemplUpsert) {
-		s.UpdateCreatedAt()
-	})
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *TemplUpsertOne) ClearCreatedAt() *TemplUpsertOne {
-	return u.Update(func(s *TemplUpsert) {
-		s.ClearCreatedAt()
-	})
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -753,6 +717,9 @@ func (u *TemplUpsertBulk) UpdateNewValues() *TemplUpsertBulk {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(templ.FieldID)
 			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(templ.FieldCreatedAt)
+			}
 		}
 	}))
 	return u
@@ -783,27 +750,6 @@ func (u *TemplUpsertBulk) Update(set func(*TemplUpsert)) *TemplUpsertBulk {
 		set(&TemplUpsert{UpdateSet: update})
 	}))
 	return u
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (u *TemplUpsertBulk) SetCreatedAt(v time.Time) *TemplUpsertBulk {
-	return u.Update(func(s *TemplUpsert) {
-		s.SetCreatedAt(v)
-	})
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *TemplUpsertBulk) UpdateCreatedAt() *TemplUpsertBulk {
-	return u.Update(func(s *TemplUpsert) {
-		s.UpdateCreatedAt()
-	})
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *TemplUpsertBulk) ClearCreatedAt() *TemplUpsertBulk {
-	return u.Update(func(s *TemplUpsert) {
-		s.ClearCreatedAt()
-	})
 }
 
 // SetUpdatedAt sets the "updated_at" field.

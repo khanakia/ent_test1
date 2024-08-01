@@ -21,6 +21,7 @@ type AdminQuery struct {
 	order      []admin.OrderOption
 	inters     []Interceptor
 	predicates []predicate.Admin
+	loadTotal  []func(context.Context, []*Admin) error
 	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -354,6 +355,11 @@ func (aq *AdminQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Admin,
 	}
 	if len(nodes) == 0 {
 		return nodes, nil
+	}
+	for i := range aq.loadTotal {
+		if err := aq.loadTotal[i](ctx, nodes); err != nil {
+			return nil, err
+		}
 	}
 	return nodes, nil
 }

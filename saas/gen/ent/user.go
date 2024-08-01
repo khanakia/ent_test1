@@ -31,6 +31,8 @@ type User struct {
 	LastName string `json:"last_name,omitempty"`
 	// Company holds the value of the "company" field.
 	Company string `json:"company,omitempty"`
+	// RoleID holds the value of the "role_id" field.
+	RoleID string `json:"role_id,omitempty"`
 	// Status holds the value of the "status" field.
 	Status bool `json:"status,omitempty"`
 	// Password holds the value of the "password" field.
@@ -58,6 +60,10 @@ type UserEdges struct {
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [3]bool
+
+	namedSessions       map[string][]*Session
+	namedWorkspaces     map[string][]*Workspace
+	namedWorkspaceUsers map[string][]*WorkspaceUser
 }
 
 // SessionsOrErr returns the Sessions value or an error if the edge
@@ -94,7 +100,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldStatus, user.FieldWelcomeEmailSent:
 			values[i] = new(sql.NullBool)
-		case user.FieldID, user.FieldEmail, user.FieldPhone, user.FieldFirstName, user.FieldLastName, user.FieldCompany, user.FieldPassword, user.FieldSecret, user.FieldAPIKey:
+		case user.FieldID, user.FieldEmail, user.FieldPhone, user.FieldFirstName, user.FieldLastName, user.FieldCompany, user.FieldRoleID, user.FieldPassword, user.FieldSecret, user.FieldAPIKey:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -160,6 +166,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field company", values[i])
 			} else if value.Valid {
 				u.Company = value.String
+			}
+		case user.FieldRoleID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field role_id", values[i])
+			} else if value.Valid {
+				u.RoleID = value.String
 			}
 		case user.FieldStatus:
 			if value, ok := values[i].(*sql.NullBool); !ok {
@@ -263,6 +275,9 @@ func (u *User) String() string {
 	builder.WriteString("company=")
 	builder.WriteString(u.Company)
 	builder.WriteString(", ")
+	builder.WriteString("role_id=")
+	builder.WriteString(u.RoleID)
+	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", u.Status))
 	builder.WriteString(", ")
@@ -277,6 +292,78 @@ func (u *User) String() string {
 	builder.WriteString(fmt.Sprintf("%v", u.WelcomeEmailSent))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedSessions returns the Sessions named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedSessions(name string) ([]*Session, error) {
+	if u.Edges.namedSessions == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedSessions[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedSessions(name string, edges ...*Session) {
+	if u.Edges.namedSessions == nil {
+		u.Edges.namedSessions = make(map[string][]*Session)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedSessions[name] = []*Session{}
+	} else {
+		u.Edges.namedSessions[name] = append(u.Edges.namedSessions[name], edges...)
+	}
+}
+
+// NamedWorkspaces returns the Workspaces named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedWorkspaces(name string) ([]*Workspace, error) {
+	if u.Edges.namedWorkspaces == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedWorkspaces[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedWorkspaces(name string, edges ...*Workspace) {
+	if u.Edges.namedWorkspaces == nil {
+		u.Edges.namedWorkspaces = make(map[string][]*Workspace)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedWorkspaces[name] = []*Workspace{}
+	} else {
+		u.Edges.namedWorkspaces[name] = append(u.Edges.namedWorkspaces[name], edges...)
+	}
+}
+
+// NamedWorkspaceUsers returns the WorkspaceUsers named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (u *User) NamedWorkspaceUsers(name string) ([]*WorkspaceUser, error) {
+	if u.Edges.namedWorkspaceUsers == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := u.Edges.namedWorkspaceUsers[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (u *User) appendNamedWorkspaceUsers(name string, edges ...*WorkspaceUser) {
+	if u.Edges.namedWorkspaceUsers == nil {
+		u.Edges.namedWorkspaceUsers = make(map[string][]*WorkspaceUser)
+	}
+	if len(edges) == 0 {
+		u.Edges.namedWorkspaceUsers[name] = []*WorkspaceUser{}
+	} else {
+		u.Edges.namedWorkspaceUsers[name] = append(u.Edges.namedWorkspaceUsers[name], edges...)
+	}
 }
 
 // Users is a parsable slice of User.

@@ -319,24 +319,6 @@ type (
 	}
 )
 
-// SetCreatedAt sets the "created_at" field.
-func (u *AdminUpsert) SetCreatedAt(v time.Time) *AdminUpsert {
-	u.Set(admin.FieldCreatedAt, v)
-	return u
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *AdminUpsert) UpdateCreatedAt() *AdminUpsert {
-	u.SetExcluded(admin.FieldCreatedAt)
-	return u
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *AdminUpsert) ClearCreatedAt() *AdminUpsert {
-	u.SetNull(admin.FieldCreatedAt)
-	return u
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (u *AdminUpsert) SetUpdatedAt(v time.Time) *AdminUpsert {
 	u.Set(admin.FieldUpdatedAt, v)
@@ -474,6 +456,9 @@ func (u *AdminUpsertOne) UpdateNewValues() *AdminUpsertOne {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(admin.FieldID)
 		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(admin.FieldCreatedAt)
+		}
 	}))
 	return u
 }
@@ -503,27 +488,6 @@ func (u *AdminUpsertOne) Update(set func(*AdminUpsert)) *AdminUpsertOne {
 		set(&AdminUpsert{UpdateSet: update})
 	}))
 	return u
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (u *AdminUpsertOne) SetCreatedAt(v time.Time) *AdminUpsertOne {
-	return u.Update(func(s *AdminUpsert) {
-		s.SetCreatedAt(v)
-	})
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *AdminUpsertOne) UpdateCreatedAt() *AdminUpsertOne {
-	return u.Update(func(s *AdminUpsert) {
-		s.UpdateCreatedAt()
-	})
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *AdminUpsertOne) ClearCreatedAt() *AdminUpsertOne {
-	return u.Update(func(s *AdminUpsert) {
-		s.ClearCreatedAt()
-	})
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -849,6 +813,9 @@ func (u *AdminUpsertBulk) UpdateNewValues() *AdminUpsertBulk {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(admin.FieldID)
 			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(admin.FieldCreatedAt)
+			}
 		}
 	}))
 	return u
@@ -879,27 +846,6 @@ func (u *AdminUpsertBulk) Update(set func(*AdminUpsert)) *AdminUpsertBulk {
 		set(&AdminUpsert{UpdateSet: update})
 	}))
 	return u
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (u *AdminUpsertBulk) SetCreatedAt(v time.Time) *AdminUpsertBulk {
-	return u.Update(func(s *AdminUpsert) {
-		s.SetCreatedAt(v)
-	})
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *AdminUpsertBulk) UpdateCreatedAt() *AdminUpsertBulk {
-	return u.Update(func(s *AdminUpsert) {
-		s.UpdateCreatedAt()
-	})
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *AdminUpsertBulk) ClearCreatedAt() *AdminUpsertBulk {
-	return u.Update(func(s *AdminUpsert) {
-		s.ClearCreatedAt()
-	})
 }
 
 // SetUpdatedAt sets the "updated_at" field.

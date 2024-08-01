@@ -23,6 +23,7 @@ type SessionQuery struct {
 	inters     []Interceptor
 	predicates []predicate.Session
 	withUser   *UserQuery
+	loadTotal  []func(context.Context, []*Session) error
 	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -398,6 +399,11 @@ func (sq *SessionQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Sess
 	if query := sq.withUser; query != nil {
 		if err := sq.loadUser(ctx, query, nodes, nil,
 			func(n *Session, e *User) { n.Edges.User = e }); err != nil {
+			return nil, err
+		}
+	}
+	for i := range sq.loadTotal {
+		if err := sq.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
 		}
 	}

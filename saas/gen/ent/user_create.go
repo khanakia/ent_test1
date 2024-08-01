@@ -116,6 +116,20 @@ func (uc *UserCreate) SetNillableCompany(s *string) *UserCreate {
 	return uc
 }
 
+// SetRoleID sets the "role_id" field.
+func (uc *UserCreate) SetRoleID(s string) *UserCreate {
+	uc.mutation.SetRoleID(s)
+	return uc
+}
+
+// SetNillableRoleID sets the "role_id" field if the given value is not nil.
+func (uc *UserCreate) SetNillableRoleID(s *string) *UserCreate {
+	if s != nil {
+		uc.SetRoleID(*s)
+	}
+	return uc
+}
+
 // SetStatus sets the "status" field.
 func (uc *UserCreate) SetStatus(b bool) *UserCreate {
 	uc.mutation.SetStatus(b)
@@ -288,6 +302,10 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultUpdatedAt()
 		uc.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := uc.mutation.RoleID(); !ok {
+		v := user.DefaultRoleID
+		uc.mutation.SetRoleID(v)
+	}
 	if _, ok := uc.mutation.Status(); !ok {
 		v := user.DefaultStatus
 		uc.mutation.SetStatus(v)
@@ -366,6 +384,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Company(); ok {
 		_spec.SetField(user.FieldCompany, field.TypeString, value)
 		_node.Company = value
+	}
+	if value, ok := uc.mutation.RoleID(); ok {
+		_spec.SetField(user.FieldRoleID, field.TypeString, value)
+		_node.RoleID = value
 	}
 	if value, ok := uc.mutation.Status(); ok {
 		_spec.SetField(user.FieldStatus, field.TypeBool, value)
@@ -494,24 +516,6 @@ type (
 	}
 )
 
-// SetCreatedAt sets the "created_at" field.
-func (u *UserUpsert) SetCreatedAt(v time.Time) *UserUpsert {
-	u.Set(user.FieldCreatedAt, v)
-	return u
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *UserUpsert) UpdateCreatedAt() *UserUpsert {
-	u.SetExcluded(user.FieldCreatedAt)
-	return u
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *UserUpsert) ClearCreatedAt() *UserUpsert {
-	u.SetNull(user.FieldCreatedAt)
-	return u
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (u *UserUpsert) SetUpdatedAt(v time.Time) *UserUpsert {
 	u.Set(user.FieldUpdatedAt, v)
@@ -611,6 +615,24 @@ func (u *UserUpsert) UpdateCompany() *UserUpsert {
 // ClearCompany clears the value of the "company" field.
 func (u *UserUpsert) ClearCompany() *UserUpsert {
 	u.SetNull(user.FieldCompany)
+	return u
+}
+
+// SetRoleID sets the "role_id" field.
+func (u *UserUpsert) SetRoleID(v string) *UserUpsert {
+	u.Set(user.FieldRoleID, v)
+	return u
+}
+
+// UpdateRoleID sets the "role_id" field to the value that was provided on create.
+func (u *UserUpsert) UpdateRoleID() *UserUpsert {
+	u.SetExcluded(user.FieldRoleID)
+	return u
+}
+
+// ClearRoleID clears the value of the "role_id" field.
+func (u *UserUpsert) ClearRoleID() *UserUpsert {
+	u.SetNull(user.FieldRoleID)
 	return u
 }
 
@@ -721,6 +743,9 @@ func (u *UserUpsertOne) UpdateNewValues() *UserUpsertOne {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(user.FieldID)
 		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(user.FieldCreatedAt)
+		}
 	}))
 	return u
 }
@@ -750,27 +775,6 @@ func (u *UserUpsertOne) Update(set func(*UserUpsert)) *UserUpsertOne {
 		set(&UserUpsert{UpdateSet: update})
 	}))
 	return u
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (u *UserUpsertOne) SetCreatedAt(v time.Time) *UserUpsertOne {
-	return u.Update(func(s *UserUpsert) {
-		s.SetCreatedAt(v)
-	})
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *UserUpsertOne) UpdateCreatedAt() *UserUpsertOne {
-	return u.Update(func(s *UserUpsert) {
-		s.UpdateCreatedAt()
-	})
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *UserUpsertOne) ClearCreatedAt() *UserUpsertOne {
-	return u.Update(func(s *UserUpsert) {
-		s.ClearCreatedAt()
-	})
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -889,6 +893,27 @@ func (u *UserUpsertOne) UpdateCompany() *UserUpsertOne {
 func (u *UserUpsertOne) ClearCompany() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearCompany()
+	})
+}
+
+// SetRoleID sets the "role_id" field.
+func (u *UserUpsertOne) SetRoleID(v string) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetRoleID(v)
+	})
+}
+
+// UpdateRoleID sets the "role_id" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateRoleID() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateRoleID()
+	})
+}
+
+// ClearRoleID clears the value of the "role_id" field.
+func (u *UserUpsertOne) ClearRoleID() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearRoleID()
 	})
 }
 
@@ -1180,6 +1205,9 @@ func (u *UserUpsertBulk) UpdateNewValues() *UserUpsertBulk {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(user.FieldID)
 			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(user.FieldCreatedAt)
+			}
 		}
 	}))
 	return u
@@ -1210,27 +1238,6 @@ func (u *UserUpsertBulk) Update(set func(*UserUpsert)) *UserUpsertBulk {
 		set(&UserUpsert{UpdateSet: update})
 	}))
 	return u
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (u *UserUpsertBulk) SetCreatedAt(v time.Time) *UserUpsertBulk {
-	return u.Update(func(s *UserUpsert) {
-		s.SetCreatedAt(v)
-	})
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *UserUpsertBulk) UpdateCreatedAt() *UserUpsertBulk {
-	return u.Update(func(s *UserUpsert) {
-		s.UpdateCreatedAt()
-	})
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *UserUpsertBulk) ClearCreatedAt() *UserUpsertBulk {
-	return u.Update(func(s *UserUpsert) {
-		s.ClearCreatedAt()
-	})
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -1349,6 +1356,27 @@ func (u *UserUpsertBulk) UpdateCompany() *UserUpsertBulk {
 func (u *UserUpsertBulk) ClearCompany() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearCompany()
+	})
+}
+
+// SetRoleID sets the "role_id" field.
+func (u *UserUpsertBulk) SetRoleID(v string) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetRoleID(v)
+	})
+}
+
+// UpdateRoleID sets the "role_id" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateRoleID() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateRoleID()
+	})
+}
+
+// ClearRoleID clears the value of the "role_id" field.
+func (u *UserUpsertBulk) ClearRoleID() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearRoleID()
 	})
 }
 

@@ -21,14 +21,18 @@ import (
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	ctx                *QueryContext
-	order              []user.OrderOption
-	inters             []Interceptor
-	predicates         []predicate.User
-	withSessions       *SessionQuery
-	withWorkspaces     *WorkspaceQuery
-	withWorkspaceUsers *WorkspaceUserQuery
-	modifiers          []func(*sql.Selector)
+	ctx                     *QueryContext
+	order                   []user.OrderOption
+	inters                  []Interceptor
+	predicates              []predicate.User
+	withSessions            *SessionQuery
+	withWorkspaces          *WorkspaceQuery
+	withWorkspaceUsers      *WorkspaceUserQuery
+	loadTotal               []func(context.Context, []*User) error
+	modifiers               []func(*sql.Selector)
+	withNamedSessions       map[string]*SessionQuery
+	withNamedWorkspaces     map[string]*WorkspaceQuery
+	withNamedWorkspaceUsers map[string]*WorkspaceUserQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -491,6 +495,32 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 			return nil, err
 		}
 	}
+	for name, query := range uq.withNamedSessions {
+		if err := uq.loadSessions(ctx, query, nodes,
+			func(n *User) { n.appendNamedSessions(name) },
+			func(n *User, e *Session) { n.appendNamedSessions(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range uq.withNamedWorkspaces {
+		if err := uq.loadWorkspaces(ctx, query, nodes,
+			func(n *User) { n.appendNamedWorkspaces(name) },
+			func(n *User, e *Workspace) { n.appendNamedWorkspaces(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range uq.withNamedWorkspaceUsers {
+		if err := uq.loadWorkspaceUsers(ctx, query, nodes,
+			func(n *User) { n.appendNamedWorkspaceUsers(name) },
+			func(n *User, e *WorkspaceUser) { n.appendNamedWorkspaceUsers(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for i := range uq.loadTotal {
+		if err := uq.loadTotal[i](ctx, nodes); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
 }
 
@@ -707,6 +737,48 @@ func (uq *UserQuery) sqlQuery(ctx context.Context) *sql.Selector {
 func (uq *UserQuery) Modify(modifiers ...func(s *sql.Selector)) *UserSelect {
 	uq.modifiers = append(uq.modifiers, modifiers...)
 	return uq.Select()
+}
+
+// WithNamedSessions tells the query-builder to eager-load the nodes that are connected to the "sessions"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithNamedSessions(name string, opts ...func(*SessionQuery)) *UserQuery {
+	query := (&SessionClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if uq.withNamedSessions == nil {
+		uq.withNamedSessions = make(map[string]*SessionQuery)
+	}
+	uq.withNamedSessions[name] = query
+	return uq
+}
+
+// WithNamedWorkspaces tells the query-builder to eager-load the nodes that are connected to the "workspaces"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithNamedWorkspaces(name string, opts ...func(*WorkspaceQuery)) *UserQuery {
+	query := (&WorkspaceClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if uq.withNamedWorkspaces == nil {
+		uq.withNamedWorkspaces = make(map[string]*WorkspaceQuery)
+	}
+	uq.withNamedWorkspaces[name] = query
+	return uq
+}
+
+// WithNamedWorkspaceUsers tells the query-builder to eager-load the nodes that are connected to the "workspace_users"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithNamedWorkspaceUsers(name string, opts ...func(*WorkspaceUserQuery)) *UserQuery {
+	query := (&WorkspaceUserClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if uq.withNamedWorkspaceUsers == nil {
+		uq.withNamedWorkspaceUsers = make(map[string]*WorkspaceUserQuery)
+	}
+	uq.withNamedWorkspaceUsers[name] = query
+	return uq
 }
 
 // UserGroupBy is the group-by builder for User entities.

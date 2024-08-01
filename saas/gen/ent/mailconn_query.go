@@ -21,6 +21,7 @@ type MailConnQuery struct {
 	order      []mailconn.OrderOption
 	inters     []Interceptor
 	predicates []predicate.MailConn
+	loadTotal  []func(context.Context, []*MailConn) error
 	modifiers  []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
@@ -354,6 +355,11 @@ func (mcq *MailConnQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Ma
 	}
 	if len(nodes) == 0 {
 		return nodes, nil
+	}
+	for i := range mcq.loadTotal {
+		if err := mcq.loadTotal[i](ctx, nodes); err != nil {
+			return nil, err
+		}
 	}
 	return nodes, nil
 }

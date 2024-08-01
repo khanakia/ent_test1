@@ -518,24 +518,6 @@ type (
 	}
 )
 
-// SetCreatedAt sets the "created_at" field.
-func (u *AppSettingUpsert) SetCreatedAt(v time.Time) *AppSettingUpsert {
-	u.Set(appsetting.FieldCreatedAt, v)
-	return u
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *AppSettingUpsert) UpdateCreatedAt() *AppSettingUpsert {
-	u.SetExcluded(appsetting.FieldCreatedAt)
-	return u
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *AppSettingUpsert) ClearCreatedAt() *AppSettingUpsert {
-	u.SetNull(appsetting.FieldCreatedAt)
-	return u
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (u *AppSettingUpsert) SetUpdatedAt(v time.Time) *AppSettingUpsert {
 	u.Set(appsetting.FieldUpdatedAt, v)
@@ -877,6 +859,9 @@ func (u *AppSettingUpsertOne) UpdateNewValues() *AppSettingUpsertOne {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(appsetting.FieldID)
 		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(appsetting.FieldCreatedAt)
+		}
 	}))
 	return u
 }
@@ -906,27 +891,6 @@ func (u *AppSettingUpsertOne) Update(set func(*AppSettingUpsert)) *AppSettingUps
 		set(&AppSettingUpsert{UpdateSet: update})
 	}))
 	return u
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (u *AppSettingUpsertOne) SetCreatedAt(v time.Time) *AppSettingUpsertOne {
-	return u.Update(func(s *AppSettingUpsert) {
-		s.SetCreatedAt(v)
-	})
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *AppSettingUpsertOne) UpdateCreatedAt() *AppSettingUpsertOne {
-	return u.Update(func(s *AppSettingUpsert) {
-		s.UpdateCreatedAt()
-	})
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *AppSettingUpsertOne) ClearCreatedAt() *AppSettingUpsertOne {
-	return u.Update(func(s *AppSettingUpsert) {
-		s.ClearCreatedAt()
-	})
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -1490,6 +1454,9 @@ func (u *AppSettingUpsertBulk) UpdateNewValues() *AppSettingUpsertBulk {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(appsetting.FieldID)
 			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(appsetting.FieldCreatedAt)
+			}
 		}
 	}))
 	return u
@@ -1520,27 +1487,6 @@ func (u *AppSettingUpsertBulk) Update(set func(*AppSettingUpsert)) *AppSettingUp
 		set(&AppSettingUpsert{UpdateSet: update})
 	}))
 	return u
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (u *AppSettingUpsertBulk) SetCreatedAt(v time.Time) *AppSettingUpsertBulk {
-	return u.Update(func(s *AppSettingUpsert) {
-		s.SetCreatedAt(v)
-	})
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *AppSettingUpsertBulk) UpdateCreatedAt() *AppSettingUpsertBulk {
-	return u.Update(func(s *AppSettingUpsert) {
-		s.UpdateCreatedAt()
-	})
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *AppSettingUpsertBulk) ClearCreatedAt() *AppSettingUpsertBulk {
-	return u.Update(func(s *AppSettingUpsert) {
-		s.ClearCreatedAt()
-	})
 }
 
 // SetUpdatedAt sets the "updated_at" field.

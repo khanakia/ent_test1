@@ -28,14 +28,24 @@ type Tx struct {
 	OauthConnection *OauthConnectionClient
 	// Plan is the client for interacting with the Plan builders.
 	Plan *PlanClient
-	// Project is the client for interacting with the Project builders.
-	Project *ProjectClient
+	// Post is the client for interacting with the Post builders.
+	Post *PostClient
+	// PostCategory is the client for interacting with the PostCategory builders.
+	PostCategory *PostCategoryClient
+	// PostStatus is the client for interacting with the PostStatus builders.
+	PostStatus *PostStatusClient
+	// PostTag is the client for interacting with the PostTag builders.
+	PostTag *PostTagClient
+	// PostType is the client for interacting with the PostType builders.
+	PostType *PostTypeClient
 	// Session is the client for interacting with the Session builders.
 	Session *SessionClient
 	// Temp is the client for interacting with the Temp builders.
 	Temp *TempClient
 	// Templ is the client for interacting with the Templ builders.
 	Templ *TemplClient
+	// Todo is the client for interacting with the Todo builders.
+	Todo *TodoClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 	// Workspace is the client for interacting with the Workspace builders.
@@ -182,10 +192,15 @@ func (tx *Tx) init() {
 	tx.MailConn = NewMailConnClient(tx.config)
 	tx.OauthConnection = NewOauthConnectionClient(tx.config)
 	tx.Plan = NewPlanClient(tx.config)
-	tx.Project = NewProjectClient(tx.config)
+	tx.Post = NewPostClient(tx.config)
+	tx.PostCategory = NewPostCategoryClient(tx.config)
+	tx.PostStatus = NewPostStatusClient(tx.config)
+	tx.PostTag = NewPostTagClient(tx.config)
+	tx.PostType = NewPostTypeClient(tx.config)
 	tx.Session = NewSessionClient(tx.config)
 	tx.Temp = NewTempClient(tx.config)
 	tx.Templ = NewTemplClient(tx.config)
+	tx.Todo = NewTodoClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 	tx.Workspace = NewWorkspaceClient(tx.config)
 	tx.WorkspaceInvite = NewWorkspaceInviteClient(tx.config)

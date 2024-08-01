@@ -29,26 +29,6 @@ func (pu *PlanUpdate) Where(ps ...predicate.Plan) *PlanUpdate {
 	return pu
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (pu *PlanUpdate) SetCreatedAt(t time.Time) *PlanUpdate {
-	pu.mutation.SetCreatedAt(t)
-	return pu
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (pu *PlanUpdate) SetNillableCreatedAt(t *time.Time) *PlanUpdate {
-	if t != nil {
-		pu.SetCreatedAt(*t)
-	}
-	return pu
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (pu *PlanUpdate) ClearCreatedAt() *PlanUpdate {
-	pu.mutation.ClearCreatedAt()
-	return pu
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (pu *PlanUpdate) SetUpdatedAt(t time.Time) *PlanUpdate {
 	pu.mutation.SetUpdatedAt(t)
@@ -197,9 +177,6 @@ func (pu *PlanUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := pu.mutation.CreatedAt(); ok {
-		_spec.SetField(plan.FieldCreatedAt, field.TypeTime, value)
-	}
 	if pu.mutation.CreatedAtCleared() {
 		_spec.ClearField(plan.FieldCreatedAt, field.TypeTime)
 	}
@@ -253,26 +230,6 @@ type PlanUpdateOne struct {
 	hooks     []Hook
 	mutation  *PlanMutation
 	modifiers []func(*sql.UpdateBuilder)
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (puo *PlanUpdateOne) SetCreatedAt(t time.Time) *PlanUpdateOne {
-	puo.mutation.SetCreatedAt(t)
-	return puo
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (puo *PlanUpdateOne) SetNillableCreatedAt(t *time.Time) *PlanUpdateOne {
-	if t != nil {
-		puo.SetCreatedAt(*t)
-	}
-	return puo
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (puo *PlanUpdateOne) ClearCreatedAt() *PlanUpdateOne {
-	puo.mutation.ClearCreatedAt()
-	return puo
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -452,9 +409,6 @@ func (puo *PlanUpdateOne) sqlSave(ctx context.Context) (_node *Plan, err error) 
 				ps[i](selector)
 			}
 		}
-	}
-	if value, ok := puo.mutation.CreatedAt(); ok {
-		_spec.SetField(plan.FieldCreatedAt, field.TypeTime, value)
 	}
 	if puo.mutation.CreatedAtCleared() {
 		_spec.ClearField(plan.FieldCreatedAt, field.TypeTime)

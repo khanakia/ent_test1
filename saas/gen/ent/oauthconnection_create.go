@@ -374,24 +374,6 @@ type (
 	}
 )
 
-// SetCreatedAt sets the "created_at" field.
-func (u *OauthConnectionUpsert) SetCreatedAt(v time.Time) *OauthConnectionUpsert {
-	u.Set(oauthconnection.FieldCreatedAt, v)
-	return u
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *OauthConnectionUpsert) UpdateCreatedAt() *OauthConnectionUpsert {
-	u.SetExcluded(oauthconnection.FieldCreatedAt)
-	return u
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *OauthConnectionUpsert) ClearCreatedAt() *OauthConnectionUpsert {
-	u.SetNull(oauthconnection.FieldCreatedAt)
-	return u
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (u *OauthConnectionUpsert) SetUpdatedAt(v time.Time) *OauthConnectionUpsert {
 	u.Set(oauthconnection.FieldUpdatedAt, v)
@@ -589,6 +571,9 @@ func (u *OauthConnectionUpsertOne) UpdateNewValues() *OauthConnectionUpsertOne {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(oauthconnection.FieldID)
 		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(oauthconnection.FieldCreatedAt)
+		}
 	}))
 	return u
 }
@@ -618,27 +603,6 @@ func (u *OauthConnectionUpsertOne) Update(set func(*OauthConnectionUpsert)) *Oau
 		set(&OauthConnectionUpsert{UpdateSet: update})
 	}))
 	return u
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (u *OauthConnectionUpsertOne) SetCreatedAt(v time.Time) *OauthConnectionUpsertOne {
-	return u.Update(func(s *OauthConnectionUpsert) {
-		s.SetCreatedAt(v)
-	})
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *OauthConnectionUpsertOne) UpdateCreatedAt() *OauthConnectionUpsertOne {
-	return u.Update(func(s *OauthConnectionUpsert) {
-		s.UpdateCreatedAt()
-	})
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *OauthConnectionUpsertOne) ClearCreatedAt() *OauthConnectionUpsertOne {
-	return u.Update(func(s *OauthConnectionUpsert) {
-		s.ClearCreatedAt()
-	})
 }
 
 // SetUpdatedAt sets the "updated_at" field.
@@ -1034,6 +998,9 @@ func (u *OauthConnectionUpsertBulk) UpdateNewValues() *OauthConnectionUpsertBulk
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(oauthconnection.FieldID)
 			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(oauthconnection.FieldCreatedAt)
+			}
 		}
 	}))
 	return u
@@ -1064,27 +1031,6 @@ func (u *OauthConnectionUpsertBulk) Update(set func(*OauthConnectionUpsert)) *Oa
 		set(&OauthConnectionUpsert{UpdateSet: update})
 	}))
 	return u
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (u *OauthConnectionUpsertBulk) SetCreatedAt(v time.Time) *OauthConnectionUpsertBulk {
-	return u.Update(func(s *OauthConnectionUpsert) {
-		s.SetCreatedAt(v)
-	})
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *OauthConnectionUpsertBulk) UpdateCreatedAt() *OauthConnectionUpsertBulk {
-	return u.Update(func(s *OauthConnectionUpsert) {
-		s.UpdateCreatedAt()
-	})
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *OauthConnectionUpsertBulk) ClearCreatedAt() *OauthConnectionUpsertBulk {
-	return u.Update(func(s *OauthConnectionUpsert) {
-		s.ClearCreatedAt()
-	})
 }
 
 // SetUpdatedAt sets the "updated_at" field.
