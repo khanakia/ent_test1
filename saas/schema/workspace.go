@@ -1,6 +1,7 @@
 package schema
 
 import (
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
@@ -28,7 +29,9 @@ func (Workspace) Edges() []ent.Edge {
 }
 
 func (Workspace) Annotations() []schema.Annotation {
-	return []schema.Annotation{}
+	return []schema.Annotation{
+		entgql.Skip(entgql.SkipAll),
+	}
 }
 
 func (Workspace) Mixin() []ent.Mixin {

@@ -3,6 +3,7 @@ package schema
 import (
 	"time"
 
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
@@ -34,5 +35,7 @@ func (Keyvalue) Edges() []ent.Edge {
 }
 
 func (Keyvalue) Annotations() []schema.Annotation {
-	return []schema.Annotation{}
+	return []schema.Annotation{
+		entgql.Skip(entgql.SkipAll),
+	}
 }

@@ -5,6 +5,8 @@ const (
 	// RoleMemberID = 2
 	WorkspaceRoleOwner = "owner"
 
+	UserRoleSa = "sa"
+
 	_ = iota
 	LockReadonly
 	LockU
@@ -13,4 +15,9 @@ const (
 	_ = iota
 	A
 	B
+)
+
+const (
+	PrefixPostType   = "a"
+	PrefixPostStatus = "b"
 )

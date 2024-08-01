@@ -3,6 +3,7 @@ package schema
 import (
 	"lace/jsontype"
 
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
@@ -32,9 +33,10 @@ func (Temp) Edges() []ent.Edge {
 }
 
 func (Temp) Annotations() []schema.Annotation {
-	return []schema.Annotation{}
+	return []schema.Annotation{
+		entgql.Skip(entgql.SkipAll),
+	}
 }
-
 func (Temp) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},

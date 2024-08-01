@@ -1,0 +1,17 @@
+# scalar Time
+scalar Uint64
+scalar Map
+scalar JSON
+
+
+type Student {
+  name: String!
+}
+
+extend type Query {
+  ping: String!
+}
+
+extend type Mutation {
+  ping: String!
+}

@@ -1,6 +1,9 @@
 package schema
 
 import (
+	"saas/pkg/constants"
+
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
@@ -22,6 +25,7 @@ func (User) Fields() []ent.Field {
 		field.String("first_name").Optional(),
 		field.String("last_name").Optional(),
 		field.String("company").Optional(),
+		field.String("role_id").Optional().Default(constants.UserRoleSa),
 		field.Bool("status").Optional().Default(false),
 		field.String("password").
 			Sensitive().
@@ -43,7 +47,9 @@ func (User) Edges() []ent.Edge {
 }
 
 func (User) Annotations() []schema.Annotation {
-	return []schema.Annotation{}
+	return []schema.Annotation{
+		entgql.Skip(entgql.SkipAll),
+	}
 }
 
 func (User) Mixin() []ent.Mixin {

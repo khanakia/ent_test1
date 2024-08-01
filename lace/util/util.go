@@ -116,3 +116,17 @@ func ParseName(fullName string) Name {
 
 	return name
 }
+
+// todo_5lwjnp2kas will return todo used in graphql detect Noder type
+func GetNodeType(s string) string {
+	// Find the index of the first
+	index := strings.Index(s, "_")
+
+	// If there's no, return the original string
+	if index == -1 {
+		return ""
+	}
+
+	// Return the substring before the first underscore
+	return s[:index]
+}

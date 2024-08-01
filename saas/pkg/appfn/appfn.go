@@ -70,3 +70,7 @@ func MustGetAppSettings() *ent.AppSetting {
 	}
 	return record
 }
+
+func IsUserSA(user *ent.User) bool {
+	return user.RoleID == constants.UserRoleSa
+}

@@ -4,6 +4,7 @@ import (
 	"lace/publicid"
 	"time"
 
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
@@ -44,6 +45,6 @@ func (Kache) Edges() []ent.Edge {
 
 func (Kache) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		// entgql.Skip(entgql.SkipAll),
+		entgql.Skip(entgql.SkipAll),
 	}
 }

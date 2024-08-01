@@ -1,0 +1,17 @@
+version: 0.01
+models:
+  table: post_types
+  primaryKey: id
+  keyType: string
+  incrementing: true
+  fields:
+    - name: id
+      type: string
+      unique: true
+
+    - name: slug
+      type: string
+    
+    - name: status
+      type: string
+      

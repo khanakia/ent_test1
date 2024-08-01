@@ -3,6 +3,7 @@ package schema
 import (
 	"time"
 
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
@@ -47,9 +48,10 @@ func (Session) Edges() []ent.Edge {
 }
 
 func (Session) Annotations() []schema.Annotation {
-	return []schema.Annotation{}
+	return []schema.Annotation{
+		entgql.Skip(entgql.SkipAll),
+	}
 }
-
 func (Session) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		// BaseMixin{},

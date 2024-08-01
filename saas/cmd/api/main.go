@@ -5,6 +5,8 @@ import (
 	"configmgr/gen/appconfig/environment"
 	"gql"
 	"gql/graph/resolverfn"
+	"gqlsa"
+	"gqlsa/graph/gqlsaresolver"
 	"lace/ginserver"
 	"lace/natso"
 	"lace/util"
@@ -27,6 +29,11 @@ func main() {
 
 	// add this line to init or add the graphql to the api
 	gql.Boot(serverServer.Router, &resolverfn.Resolver{
+		Plugin:    app.GetPlugins(),
+		AppConfig: appcfg,
+	})
+
+	gqlsa.Boot(serverServer.Router, &gqlsaresolver.Resolver{
 		Plugin:    app.GetPlugins(),
 		AppConfig: appcfg,
 	})

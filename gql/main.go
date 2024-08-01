@@ -25,5 +25,5 @@ func Boot(ginEngine *gin.Engine, resolver *resolverfn.Resolver) {
 		GqlServer:     gserver,
 		PlaygroundKey: resolver.AppConfig.Graphql.Key,
 	})
-	fmt.Println("boot ddd")
+	fmt.Println("boot gql")
 }
