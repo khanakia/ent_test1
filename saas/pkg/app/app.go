@@ -10,6 +10,7 @@ import (
 
 	"lace/cache"
 	"lace/db"
+	"lace/medialibrary"
 	"lace/nlog"
 
 	"lace/cli"
@@ -34,6 +35,8 @@ func New() Plugin {
 		AppConfig: appcfg,
 		Cache:     cacherdbms.New(entClient.Client()),
 	}
+
+	medialibrary.Construct(db)
 
 	return plugins
 }
