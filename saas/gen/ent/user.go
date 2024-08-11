@@ -31,6 +31,8 @@ type User struct {
 	LastName string `json:"last_name,omitempty"`
 	// Company holds the value of the "company" field.
 	Company string `json:"company,omitempty"`
+	// Locale holds the value of the "locale" field.
+	Locale string `json:"locale,omitempty"`
 	// RoleID holds the value of the "role_id" field.
 	RoleID string `json:"role_id,omitempty"`
 	// Status holds the value of the "status" field.
@@ -100,7 +102,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldStatus, user.FieldWelcomeEmailSent:
 			values[i] = new(sql.NullBool)
-		case user.FieldID, user.FieldEmail, user.FieldPhone, user.FieldFirstName, user.FieldLastName, user.FieldCompany, user.FieldRoleID, user.FieldPassword, user.FieldSecret, user.FieldAPIKey:
+		case user.FieldID, user.FieldEmail, user.FieldPhone, user.FieldFirstName, user.FieldLastName, user.FieldCompany, user.FieldLocale, user.FieldRoleID, user.FieldPassword, user.FieldSecret, user.FieldAPIKey:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -166,6 +168,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field company", values[i])
 			} else if value.Valid {
 				u.Company = value.String
+			}
+		case user.FieldLocale:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field locale", values[i])
+			} else if value.Valid {
+				u.Locale = value.String
 			}
 		case user.FieldRoleID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -274,6 +282,9 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("company=")
 	builder.WriteString(u.Company)
+	builder.WriteString(", ")
+	builder.WriteString("locale=")
+	builder.WriteString(u.Locale)
 	builder.WriteString(", ")
 	builder.WriteString("role_id=")
 	builder.WriteString(u.RoleID)

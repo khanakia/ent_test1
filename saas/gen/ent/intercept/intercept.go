@@ -11,6 +11,7 @@ import (
 	"saas/gen/ent/kache"
 	"saas/gen/ent/keyvalue"
 	"saas/gen/ent/mailconn"
+	"saas/gen/ent/media"
 	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/plan"
 	"saas/gen/ent/post"
@@ -220,6 +221,33 @@ func (f TraverseMailConn) Traverse(ctx context.Context, q ent.Query) error {
 		return f(ctx, q)
 	}
 	return fmt.Errorf("unexpected query type %T. expect *ent.MailConnQuery", q)
+}
+
+// The MediaFunc type is an adapter to allow the use of ordinary function as a Querier.
+type MediaFunc func(context.Context, *ent.MediaQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f MediaFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.MediaQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.MediaQuery", q)
+}
+
+// The TraverseMedia type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseMedia func(context.Context, *ent.MediaQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseMedia) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseMedia) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.MediaQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.MediaQuery", q)
 }
 
 // The OauthConnectionFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -640,6 +668,8 @@ func NewQuery(q ent.Query) (Query, error) {
 		return &query[*ent.KeyvalueQuery, predicate.Keyvalue, keyvalue.OrderOption]{typ: ent.TypeKeyvalue, tq: q}, nil
 	case *ent.MailConnQuery:
 		return &query[*ent.MailConnQuery, predicate.MailConn, mailconn.OrderOption]{typ: ent.TypeMailConn, tq: q}, nil
+	case *ent.MediaQuery:
+		return &query[*ent.MediaQuery, predicate.Media, media.OrderOption]{typ: ent.TypeMedia, tq: q}, nil
 	case *ent.OauthConnectionQuery:
 		return &query[*ent.OauthConnectionQuery, predicate.OauthConnection, oauthconnection.OrderOption]{typ: ent.TypeOauthConnection, tq: q}, nil
 	case *ent.PlanQuery:

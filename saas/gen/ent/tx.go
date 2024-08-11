@@ -24,6 +24,8 @@ type Tx struct {
 	Keyvalue *KeyvalueClient
 	// MailConn is the client for interacting with the MailConn builders.
 	MailConn *MailConnClient
+	// Media is the client for interacting with the Media builders.
+	Media *MediaClient
 	// OauthConnection is the client for interacting with the OauthConnection builders.
 	OauthConnection *OauthConnectionClient
 	// Plan is the client for interacting with the Plan builders.
@@ -190,6 +192,7 @@ func (tx *Tx) init() {
 	tx.Kache = NewKacheClient(tx.config)
 	tx.Keyvalue = NewKeyvalueClient(tx.config)
 	tx.MailConn = NewMailConnClient(tx.config)
+	tx.Media = NewMediaClient(tx.config)
 	tx.OauthConnection = NewOauthConnectionClient(tx.config)
 	tx.Plan = NewPlanClient(tx.config)
 	tx.Post = NewPostClient(tx.config)

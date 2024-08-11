@@ -8,6 +8,7 @@ import (
 	"saas/gen/ent/kache"
 	"saas/gen/ent/keyvalue"
 	"saas/gen/ent/mailconn"
+	"saas/gen/ent/media"
 	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/plan"
 	"saas/gen/ent/post"
@@ -146,6 +147,29 @@ func init() {
 	mailconnDescID := mailconnMixinFields0[0].Descriptor()
 	// mailconn.DefaultID holds the default value on creation for the id field.
 	mailconn.DefaultID = mailconnDescID.Default.(func() string)
+	mediaMixin := schema.Media{}.Mixin()
+	mediaMixinFields0 := mediaMixin[0].Fields()
+	_ = mediaMixinFields0
+	mediaFields := schema.Media{}.Fields()
+	_ = mediaFields
+	// mediaDescCreatedAt is the schema descriptor for created_at field.
+	mediaDescCreatedAt := mediaMixinFields0[1].Descriptor()
+	// media.DefaultCreatedAt holds the default value on creation for the created_at field.
+	media.DefaultCreatedAt = mediaDescCreatedAt.Default.(func() time.Time)
+	// mediaDescUpdatedAt is the schema descriptor for updated_at field.
+	mediaDescUpdatedAt := mediaMixinFields0[2].Descriptor()
+	// media.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	media.DefaultUpdatedAt = mediaDescUpdatedAt.Default.(func() time.Time)
+	// media.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	media.UpdateDefaultUpdatedAt = mediaDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// mediaDescStatus is the schema descriptor for status field.
+	mediaDescStatus := mediaFields[16].Descriptor()
+	// media.DefaultStatus holds the default value on creation for the status field.
+	media.DefaultStatus = mediaDescStatus.Default.(bool)
+	// mediaDescID is the schema descriptor for id field.
+	mediaDescID := mediaMixinFields0[0].Descriptor()
+	// media.DefaultID holds the default value on creation for the id field.
+	media.DefaultID = mediaDescID.Default.(func() string)
 	oauthconnectionMixin := schema.OauthConnection{}.Mixin()
 	oauthconnectionMixinFields0 := oauthconnectionMixin[0].Fields()
 	_ = oauthconnectionMixinFields0
@@ -388,11 +412,11 @@ func init() {
 	// user.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	user.UpdateDefaultUpdatedAt = userDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// userDescRoleID is the schema descriptor for role_id field.
-	userDescRoleID := userFields[5].Descriptor()
+	userDescRoleID := userFields[6].Descriptor()
 	// user.DefaultRoleID holds the default value on creation for the role_id field.
 	user.DefaultRoleID = userDescRoleID.Default.(string)
 	// userDescStatus is the schema descriptor for status field.
-	userDescStatus := userFields[6].Descriptor()
+	userDescStatus := userFields[7].Descriptor()
 	// user.DefaultStatus holds the default value on creation for the status field.
 	user.DefaultStatus = userDescStatus.Default.(bool)
 	// userDescID is the schema descriptor for id field.

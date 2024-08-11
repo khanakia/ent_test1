@@ -21,6 +21,9 @@ type Keyvalue func(*sql.Selector)
 // MailConn is the predicate function for mailconn builders.
 type MailConn func(*sql.Selector)
 
+// Media is the predicate function for media builders.
+type Media func(*sql.Selector)
+
 // OauthConnection is the predicate function for oauthconnection builders.
 type OauthConnection func(*sql.Selector)
 

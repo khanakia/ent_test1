@@ -68,6 +68,18 @@ func (f MailConnFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, er
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MailConnMutation", m)
 }
 
+// The MediaFunc type is an adapter to allow the use of ordinary
+// function as Media mutator.
+type MediaFunc func(context.Context, *ent.MediaMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f MediaFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.MediaMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.MediaMutation", m)
+}
+
 // The OauthConnectionFunc type is an adapter to allow the use of ordinary
 // function as OauthConnection mutator.
 type OauthConnectionFunc func(context.Context, *ent.OauthConnectionMutation) (ent.Value, error)

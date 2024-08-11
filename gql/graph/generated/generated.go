@@ -61,6 +61,7 @@ type ComplexityRoot struct {
 		AuthLoginViaOauth     func(childComplexity int, cacheID string) int
 		AuthRegister          func(childComplexity int, input authfn.RegisterInput) int
 		AuthRegisterVerify    func(childComplexity int, input handlertypes.RegisterVerifyInput) int
+		AuthRegisterViaOauth  func(childComplexity int, cacheID string) int
 		AuthResetPassword     func(childComplexity int, input model.ResetPasswordInput) int
 		ChangePassword        func(childComplexity int, input model.ChangePasswordInput) int
 		OauthCallback         func(childComplexity int, callbackURL string) int
@@ -138,6 +139,7 @@ type ComplexityRoot struct {
 type MutationResolver interface {
 	Ping(ctx context.Context) (string, error)
 	AuthLoginViaOauth(ctx context.Context, cacheID string) (*handlertypes.LoginResponse, error)
+	AuthRegisterViaOauth(ctx context.Context, cacheID string) (*handlertypes.LoginResponse, error)
 	AuthRegister(ctx context.Context, input authfn.RegisterInput) (bool, error)
 	AuthRegisterVerify(ctx context.Context, input handlertypes.RegisterVerifyInput) (*handlertypes.LoginResponse, error)
 	AuthLogin(ctx context.Context, input authfn.LoginParams) (*handlertypes.LoginResponse, error)
@@ -256,6 +258,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.AuthRegisterVerify(childComplexity, args["input"].(handlertypes.RegisterVerifyInput)), true
+
+	case "Mutation.authRegisterViaOauth":
+		if e.complexity.Mutation.AuthRegisterViaOauth == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_authRegisterViaOauth_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AuthRegisterViaOauth(childComplexity, args["cacheId"].(string)), true
 
 	case "Mutation.authResetPassword":
 		if e.complexity.Mutation.AuthResetPassword == nil {
@@ -832,6 +846,7 @@ input ResetPasswordInput {
 
 extend type Mutation {
   authLoginViaOauth(cacheId: String!): LoginResponse!
+  authRegisterViaOauth(cacheId: String!): LoginResponse!
 
   authRegister(input: RegisterInput!): Boolean!
   authRegisterVerify(input: RegisterVerifyInput!): LoginResponse!
@@ -840,6 +855,8 @@ extend type Mutation {
   authResetPassword(input: ResetPasswordInput!): Boolean!
   changePassword(input: ChangePasswordInput!): Boolean!
   updateProfile(input: UpdateProfileInput!): Boolean!
+
+
 }
 
 extend type Query {
@@ -1030,6 +1047,21 @@ func (ec *executionContext) field_Mutation_authRegisterVerify_args(ctx context.C
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_authRegisterViaOauth_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["cacheId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cacheId"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["cacheId"] = arg0
 	return args, nil
 }
 
@@ -1527,6 +1559,67 @@ func (ec *executionContext) fieldContext_Mutation_authLoginViaOauth(ctx context.
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_authLoginViaOauth_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_authRegisterViaOauth(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_authRegisterViaOauth(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().AuthRegisterViaOauth(rctx, fc.Args["cacheId"].(string))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*handlertypes.LoginResponse)
+	fc.Result = res
+	return ec.marshalNLoginResponse2ᚖsaasᚋpkgᚋhandlerᚋhandlertypesᚐLoginResponse(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_authRegisterViaOauth(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "token":
+				return ec.fieldContext_LoginResponse_token(ctx, field)
+			case "me":
+				return ec.fieldContext_LoginResponse_me(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type LoginResponse", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_authRegisterViaOauth_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -6538,6 +6631,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "authLoginViaOauth":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_authLoginViaOauth(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "authRegisterViaOauth":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_authRegisterViaOauth(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++

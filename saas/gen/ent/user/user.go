@@ -28,6 +28,8 @@ const (
 	FieldLastName = "last_name"
 	// FieldCompany holds the string denoting the company field in the database.
 	FieldCompany = "company"
+	// FieldLocale holds the string denoting the locale field in the database.
+	FieldLocale = "locale"
 	// FieldRoleID holds the string denoting the role_id field in the database.
 	FieldRoleID = "role_id"
 	// FieldStatus holds the string denoting the status field in the database.
@@ -79,6 +81,7 @@ var Columns = []string{
 	FieldFirstName,
 	FieldLastName,
 	FieldCompany,
+	FieldLocale,
 	FieldRoleID,
 	FieldStatus,
 	FieldPassword,
@@ -159,6 +162,11 @@ func ByLastName(opts ...sql.OrderTermOption) OrderOption {
 // ByCompany orders the results by the company field.
 func ByCompany(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCompany, opts...).ToFunc()
+}
+
+// ByLocale orders the results by the locale field.
+func ByLocale(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldLocale, opts...).ToFunc()
 }
 
 // ByRoleID orders the results by the role_id field.

@@ -102,6 +102,35 @@ var (
 		Columns:    MailConnsColumns,
 		PrimaryKey: []*schema.Column{MailConnsColumns[0]},
 	}
+	// MediaColumns holds the columns for the "media" table.
+	MediaColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "disk", Type: field.TypeString, Nullable: true},
+		{Name: "directory", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString, Nullable: true},
+		{Name: "original_name", Type: field.TypeString, Nullable: true},
+		{Name: "extension", Type: field.TypeString, Nullable: true},
+		{Name: "mime_type", Type: field.TypeString, Nullable: true},
+		{Name: "aggregate_type", Type: field.TypeString, Nullable: true},
+		{Name: "size", Type: field.TypeUint, Nullable: true},
+		{Name: "description", Type: field.TypeString, Nullable: true},
+		{Name: "is_variant", Type: field.TypeBool, Nullable: true},
+		{Name: "variant_name", Type: field.TypeString, Nullable: true},
+		{Name: "original_media_id", Type: field.TypeString, Nullable: true},
+		{Name: "checksum", Type: field.TypeString, Nullable: true},
+		{Name: "workspace_id", Type: field.TypeString},
+		{Name: "alt", Type: field.TypeString, Nullable: true},
+		{Name: "uid", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "status", Type: field.TypeBool, Nullable: true, Default: false},
+	}
+	// MediaTable holds the schema information for the "media" table.
+	MediaTable = &schema.Table{
+		Name:       "media",
+		Columns:    MediaColumns,
+		PrimaryKey: []*schema.Column{MediaColumns[0]},
+	}
 	// OauthConnectionsColumns holds the columns for the "oauth_connections" table.
 	OauthConnectionsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString, Unique: true},
@@ -361,6 +390,7 @@ var (
 		{Name: "first_name", Type: field.TypeString, Nullable: true},
 		{Name: "last_name", Type: field.TypeString, Nullable: true},
 		{Name: "company", Type: field.TypeString, Nullable: true},
+		{Name: "locale", Type: field.TypeString, Nullable: true},
 		{Name: "role_id", Type: field.TypeString, Nullable: true, Default: "sa"},
 		{Name: "status", Type: field.TypeBool, Nullable: true, Default: false},
 		{Name: "password", Type: field.TypeString, Nullable: true},
@@ -462,6 +492,7 @@ var (
 		KachesTable,
 		KeyvaluesTable,
 		MailConnsTable,
+		MediaTable,
 		OauthConnectionsTable,
 		PlansTable,
 		PostsTable,

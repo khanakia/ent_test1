@@ -116,6 +116,20 @@ func (uc *UserCreate) SetNillableCompany(s *string) *UserCreate {
 	return uc
 }
 
+// SetLocale sets the "locale" field.
+func (uc *UserCreate) SetLocale(s string) *UserCreate {
+	uc.mutation.SetLocale(s)
+	return uc
+}
+
+// SetNillableLocale sets the "locale" field if the given value is not nil.
+func (uc *UserCreate) SetNillableLocale(s *string) *UserCreate {
+	if s != nil {
+		uc.SetLocale(*s)
+	}
+	return uc
+}
+
 // SetRoleID sets the "role_id" field.
 func (uc *UserCreate) SetRoleID(s string) *UserCreate {
 	uc.mutation.SetRoleID(s)
@@ -385,6 +399,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldCompany, field.TypeString, value)
 		_node.Company = value
 	}
+	if value, ok := uc.mutation.Locale(); ok {
+		_spec.SetField(user.FieldLocale, field.TypeString, value)
+		_node.Locale = value
+	}
 	if value, ok := uc.mutation.RoleID(); ok {
 		_spec.SetField(user.FieldRoleID, field.TypeString, value)
 		_node.RoleID = value
@@ -615,6 +633,24 @@ func (u *UserUpsert) UpdateCompany() *UserUpsert {
 // ClearCompany clears the value of the "company" field.
 func (u *UserUpsert) ClearCompany() *UserUpsert {
 	u.SetNull(user.FieldCompany)
+	return u
+}
+
+// SetLocale sets the "locale" field.
+func (u *UserUpsert) SetLocale(v string) *UserUpsert {
+	u.Set(user.FieldLocale, v)
+	return u
+}
+
+// UpdateLocale sets the "locale" field to the value that was provided on create.
+func (u *UserUpsert) UpdateLocale() *UserUpsert {
+	u.SetExcluded(user.FieldLocale)
+	return u
+}
+
+// ClearLocale clears the value of the "locale" field.
+func (u *UserUpsert) ClearLocale() *UserUpsert {
+	u.SetNull(user.FieldLocale)
 	return u
 }
 
@@ -893,6 +929,27 @@ func (u *UserUpsertOne) UpdateCompany() *UserUpsertOne {
 func (u *UserUpsertOne) ClearCompany() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearCompany()
+	})
+}
+
+// SetLocale sets the "locale" field.
+func (u *UserUpsertOne) SetLocale(v string) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetLocale(v)
+	})
+}
+
+// UpdateLocale sets the "locale" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateLocale() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateLocale()
+	})
+}
+
+// ClearLocale clears the value of the "locale" field.
+func (u *UserUpsertOne) ClearLocale() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearLocale()
 	})
 }
 
@@ -1356,6 +1413,27 @@ func (u *UserUpsertBulk) UpdateCompany() *UserUpsertBulk {
 func (u *UserUpsertBulk) ClearCompany() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearCompany()
+	})
+}
+
+// SetLocale sets the "locale" field.
+func (u *UserUpsertBulk) SetLocale(v string) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetLocale(v)
+	})
+}
+
+// UpdateLocale sets the "locale" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateLocale() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateLocale()
+	})
+}
+
+// ClearLocale clears the value of the "locale" field.
+func (u *UserUpsertBulk) ClearLocale() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearLocale()
 	})
 }
 

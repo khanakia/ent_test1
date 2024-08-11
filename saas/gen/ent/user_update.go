@@ -138,6 +138,26 @@ func (uu *UserUpdate) ClearCompany() *UserUpdate {
 	return uu
 }
 
+// SetLocale sets the "locale" field.
+func (uu *UserUpdate) SetLocale(s string) *UserUpdate {
+	uu.mutation.SetLocale(s)
+	return uu
+}
+
+// SetNillableLocale sets the "locale" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableLocale(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetLocale(*s)
+	}
+	return uu
+}
+
+// ClearLocale clears the value of the "locale" field.
+func (uu *UserUpdate) ClearLocale() *UserUpdate {
+	uu.mutation.ClearLocale()
+	return uu
+}
+
 // SetRoleID sets the "role_id" field.
 func (uu *UserUpdate) SetRoleID(s string) *UserUpdate {
 	uu.mutation.SetRoleID(s)
@@ -458,6 +478,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if uu.mutation.CompanyCleared() {
 		_spec.ClearField(user.FieldCompany, field.TypeString)
 	}
+	if value, ok := uu.mutation.Locale(); ok {
+		_spec.SetField(user.FieldLocale, field.TypeString, value)
+	}
+	if uu.mutation.LocaleCleared() {
+		_spec.ClearField(user.FieldLocale, field.TypeString)
+	}
 	if value, ok := uu.mutation.RoleID(); ok {
 		_spec.SetField(user.FieldRoleID, field.TypeString, value)
 	}
@@ -775,6 +801,26 @@ func (uuo *UserUpdateOne) SetNillableCompany(s *string) *UserUpdateOne {
 // ClearCompany clears the value of the "company" field.
 func (uuo *UserUpdateOne) ClearCompany() *UserUpdateOne {
 	uuo.mutation.ClearCompany()
+	return uuo
+}
+
+// SetLocale sets the "locale" field.
+func (uuo *UserUpdateOne) SetLocale(s string) *UserUpdateOne {
+	uuo.mutation.SetLocale(s)
+	return uuo
+}
+
+// SetNillableLocale sets the "locale" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableLocale(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetLocale(*s)
+	}
+	return uuo
+}
+
+// ClearLocale clears the value of the "locale" field.
+func (uuo *UserUpdateOne) ClearLocale() *UserUpdateOne {
+	uuo.mutation.ClearLocale()
 	return uuo
 }
 
@@ -1127,6 +1173,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.CompanyCleared() {
 		_spec.ClearField(user.FieldCompany, field.TypeString)
+	}
+	if value, ok := uuo.mutation.Locale(); ok {
+		_spec.SetField(user.FieldLocale, field.TypeString, value)
+	}
+	if uuo.mutation.LocaleCleared() {
+		_spec.ClearField(user.FieldLocale, field.TypeString)
 	}
 	if value, ok := uuo.mutation.RoleID(); ok {
 		_spec.SetField(user.FieldRoleID, field.TypeString, value)
