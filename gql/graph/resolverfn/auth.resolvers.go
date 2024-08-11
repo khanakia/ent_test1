@@ -14,13 +14,68 @@ import (
 	"saas/pkg/handler/handlerfn"
 	"saas/pkg/handler/handlertypes"
 	"saas/pkg/middleware"
+	"saas/pkg/oauth/oauthconnectionfn"
+	"saas/pkg/oauth/oauthuserinfo"
 
 	"github.com/spf13/cast"
+	"github.com/ubgo/goutil"
 )
 
 // AuthLoginViaOauth is the resolver for the authLoginViaOauth field.
 func (r *mutationResolver) AuthLoginViaOauth(ctx context.Context, cacheID string) (*handlertypes.LoginResponse, error) {
-	panic(fmt.Errorf("not implemented: AuthLoginViaOauth - authLoginViaOauth"))
+	// panic(fmt.Errorf("not implemented: AuthLoginViaOauth - authLoginViaOauth"))
+	oauthRespCacheAny := r.Plugin.Cache.Get(cacheID)
+	// goutil.PrintToJSON(oauthRespCacheAny)
+
+	var oauthRespCache oauthconnectionfn.OauthResponseCache
+	err := util.InterfaceToStruct(oauthRespCacheAny, &oauthRespCache)
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, fmt.Errorf("something went wrong")
+	}
+
+	goutil.PrintToJSON(oauthRespCache)
+	// oauth2.StaticTokenSource()
+
+	oauth2Token, err := oauthconnectionfn.OauthTokenFromResponseCache(oauthRespCache)
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, fmt.Errorf("something went wrong")
+	}
+	goutil.PrintToJSON(oauth2Token)
+
+	// tokenSource := oauth2.StaticTokenSource(oauth2Token)
+
+	userinfo, err := oauthuserinfo.UserInfoGet(oauthRespCache.Provider, oauth2Token)
+	goutil.PrintToJSON(userinfo)
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, fmt.Errorf("something went wrong")
+	}
+	// return nil, nil
+
+	user, session, err := authfn.Login(authfn.LoginParams{
+		Email: userinfo.Email,
+	}, false, r.Plugin.EntDB.Client())
+
+	if err != nil {
+		return nil, util.ErrorToGqlError(err, ctx)
+	}
+
+	r.Plugin.Cache.Del(cacheID)
+
+	return &handlertypes.LoginResponse{
+		Token: session.ID,
+		Me:    user,
+	}, err
+}
+
+// AuthRegisterViaOauth is the resolver for the authRegisterViaOauth field.
+func (r *mutationResolver) AuthRegisterViaOauth(ctx context.Context, cacheID string) (*handlertypes.LoginResponse, error) {
+	panic(fmt.Errorf("not implemented: AuthRegisterViaOauth - authRegisterViaOauth"))
 }
 
 // AuthRegister is the resolver for the authRegister field.

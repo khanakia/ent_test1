@@ -17,7 +17,7 @@ type UserInfo struct {
 	Locale        string `json:"locale"` // en
 }
 
-func GetUserInfoFromToken(accessToken string) (*UserInfo, error) {
+func GetUserInfo(accessToken string) (*UserInfo, error) {
 	hreq := httpreq.RequestParam{
 		EndPoint: "https://www.googleapis.com/oauth2/v3/userinfo",
 		Method:   "GET",

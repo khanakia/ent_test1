@@ -36,6 +36,7 @@ func (r *mutationResolver) OauthRequest(ctx context.Context, input *model.OauthR
 		OauthConnectionID: input.OatConnectionID,
 		Metadata:          input.Metadata,
 		RedirectURL:       oauthRequester.GetRedirectURL(),
+		// Provider:          oauthRequester.GetOauthConnection().Provider,
 	}, 15000)
 
 	url := oauthRequester.GetAuthUrl()
@@ -78,11 +79,14 @@ func (r *mutationResolver) OauthCallback(ctx context.Context, callbackURL string
 		return nil, fmt.Errorf("something went wrong")
 	}
 
+	r.Plugin.Cache.Del(cacheId)
+
 	uid := publicid.Must()
 	r.Plugin.Cache.Put(uid, oauthconnectionfn.OauthResponseCache{
 		Code:              code,
 		OauthConnectionID: oauthReqCache.OauthConnectionID,
 		Token:             token,
+		Provider:          oauthRequester.GetOauthConnection().Provider,
 	}, 10000)
 
 	oauthConnection := oauthRequester.GetOauthConnection()

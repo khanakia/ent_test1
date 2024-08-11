@@ -1406,10 +1406,6 @@ type Query {
     where: TodoWhereInput
   ): TodoConnection!
 }
-"""
-The builtin Time type
-"""
-scalar Time
 type Todo implements Node {
   id: ID!
   createdAt: Time

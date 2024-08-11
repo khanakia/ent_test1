@@ -53,6 +53,7 @@ input ResetPasswordInput {
 
 extend type Mutation {
   authLoginViaOauth(cacheId: String!): LoginResponse!
+  authRegisterViaOauth(cacheId: String!): LoginResponse!
 
   authRegister(input: RegisterInput!): Boolean!
   authRegisterVerify(input: RegisterVerifyInput!): LoginResponse!
@@ -61,6 +62,8 @@ extend type Mutation {
   authResetPassword(input: ResetPasswordInput!): Boolean!
   changePassword(input: ChangePasswordInput!): Boolean!
   updateProfile(input: UpdateProfileInput!): Boolean!
+
+
 }
 
 extend type Query {

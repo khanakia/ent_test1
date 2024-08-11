@@ -25,6 +25,7 @@ func (User) Fields() []ent.Field {
 		field.String("first_name").Optional(),
 		field.String("last_name").Optional(),
 		field.String("company").Optional(),
+		field.String("locale").Optional(), // en
 		field.String("role_id").Optional().Default(constants.UserRoleSa),
 		field.Bool("status").Optional().Default(false),
 		field.String("password").

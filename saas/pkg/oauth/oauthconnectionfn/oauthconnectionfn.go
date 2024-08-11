@@ -2,24 +2,32 @@ package oauthconnectionfn
 
 import (
 	"context"
+	"errors"
+	"lace/util"
 	"saas/gen/ent"
 	"saas/gen/ent/oauthconnection"
 	"strings"
+	"time"
 
 	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/facebook"
+	"golang.org/x/oauth2/github"
 	"golang.org/x/oauth2/google"
+	"golang.org/x/oauth2/linkedin"
 )
 
 type OauthRequestCache struct {
 	RedirectURL       string                 `json:"redirectUrl"`
 	OauthConnectionID string                 `json:"oauthConnectionId"`
 	Metadata          map[string]interface{} `json:"metadata"`
+	// Provider          string                 `json:"provider"` // google | github
 }
 
 type OauthResponseCache struct {
 	Code              string        `json:"code"`              // retruned in callback url
 	OauthConnectionID string        `json:"oauthConnectionId"` // retruned in callback url as state
 	Token             *oauth2.Token `json:"token"`             // genertated token from code
+	Provider          string        `json:"provider"`          // google | github
 }
 
 type OauthRequestParams struct {
@@ -29,6 +37,11 @@ type OauthRequestParams struct {
 
 const (
 	ProviderGoogle = "google"
+	// ProviderTwitter   = "twitter"
+	ProviderGithub   = "github"
+	ProviderLinkedin = "linkedin"
+	// ProviderMicrosoft = "microsoft"
+	ProviderFacebook = "facebook"
 )
 
 func NewOauthRequester(oatconnId string, client *ent.Client) (*OauthRequester, error) {
@@ -86,6 +99,21 @@ func (cls OauthRequester) Endpoint() oauth2.Endpoint {
 	switch cls.oauthConnection.Provider {
 	case ProviderGoogle:
 		return google.Endpoint
+	case ProviderGithub:
+		return github.Endpoint
+	case ProviderLinkedin:
+		return linkedin.Endpoint
+	// case ProviderMicrosoft:
+	// 	return microsoft.Endpoint
+	case ProviderFacebook:
+		return facebook.Endpoint
+		// case ProviderTwitter:
+		// 	return oauth2.Endpoint{
+		// 		AuthURL:  "https://twitter.com/i/oauth2/authorize",
+		// 		TokenURL: "https://api.twitter.com/oauth2/token",
+		// 		// DeviceAuthURL: "https://oauth2.googleapis.com/device/code",
+		// 		AuthStyle: oauth2.AuthStyleInParams,
+		// 	}
 	}
 
 	return oauth2.Endpoint{}
@@ -101,4 +129,40 @@ func (cls OauthRequester) OauthConfig() *oauth2.Config {
 		Endpoint:     cls.Endpoint(),
 	}
 	return config
+}
+
+func OauthTokenFromResponseCache(responseCache OauthResponseCache) (*oauth2.Token, error) {
+	if responseCache.Token == nil {
+		return nil, errors.New("token is missing in response cache")
+	}
+
+	// some oauth2 does not have referesh token e.g. github
+	// if len(responseCache.Token.RefreshToken) == 0 {
+	// 	return nil, errors.New("refresh token is missing in response cache")
+	// }
+
+	var oauth2Token *oauth2.Token
+
+	err := util.InterfaceToStruct(responseCache.Token, &oauth2Token)
+	if err != nil {
+		return nil, err
+	}
+
+	return oauth2Token, nil
+}
+
+func OauthToken(accessToken, refreshToken string, expiry time.Time, tokenType string) *oauth2.Token {
+	// if time is zero or not passed then expire the token so it can be regnerated otherwise it will
+	// keep returning the same token
+	if expiry.IsZero() {
+		expiry = time.Now().Add(time.Duration(-24) * time.Hour)
+	}
+
+	oauth2Token := &oauth2.Token{
+		AccessToken:  accessToken,
+		TokenType:    tokenType,
+		RefreshToken: refreshToken,
+		Expiry:       expiry,
+	}
+	return oauth2Token
 }

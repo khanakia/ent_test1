@@ -135,11 +135,17 @@ type LoginParams struct {
 	// ExpiresAt time.Time
 }
 
-func LoginValidate(params LoginParams) error {
+func LoginValidate(params LoginParams, matchPass bool) error {
 	val := valgo.Is(
 		valgo.String(params.Email, "email").Not().Blank().OfLengthBetween(4, 20),
-		valgo.String(params.Password, "password").Not().Blank().OfLengthBetween(4, 20),
 	)
+
+	if matchPass {
+		val.Is(
+			valgo.String(params.Password, "password").Not().Blank().OfLengthBetween(4, 20),
+		)
+	}
+
 	if !val.Valid() {
 		return val.Error()
 	}
@@ -148,7 +154,7 @@ func LoginValidate(params LoginParams) error {
 }
 
 func Login(params LoginParams, matchPass bool, client *ent.Client) (*ent.User, *ent.Session, error) {
-	err := LoginValidate(params)
+	err := LoginValidate(params, matchPass)
 	if err != nil {
 		return nil, nil, err
 	}
