@@ -38,12 +38,14 @@ func main() {
 		AppConfig: appcfg,
 	})
 
-	natsnats := natso.New(natso.WithAppKey(appcfg.Nats.AppKey), natso.WithURL(appcfg.Nats.Url), natso.WithEnabled(true))
-	natshandlers.New(natshandlers.Config{
-		Natso: natsnats,
-		// EntClient: appApp.EntDB.Client(),
-		// Nlog:      appApp.Nlog,
-	})
+	if appcfg.Nats.Status {
+		natsnats := natso.New(natso.WithAppKey(appcfg.Nats.AppKey), natso.WithURL(appcfg.Nats.Url), natso.WithEnabled(true))
+		natshandlers.New(natshandlers.Config{
+			Natso: natsnats,
+			// EntClient: appApp.EntDB.Client(),
+			// Nlog:      appApp.Nlog,
+		})
+	}
 
 	apphandlers.New(apphandlers.Config{
 		Server:    serverServer,

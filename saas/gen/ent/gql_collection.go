@@ -188,24 +188,30 @@ func newPostPaginateArgs(rv map[string]any) *postPaginateArgs {
 	}
 	if v, ok := rv[orderByField]; ok {
 		switch v := v.(type) {
-		case map[string]any:
-			var (
-				err1, err2 error
-				order      = &PostOrder{Field: &PostOrderField{}, Direction: entgql.OrderDirectionAsc}
-			)
-			if d, ok := v[directionField]; ok {
-				err1 = order.Direction.UnmarshalGQL(d)
+		case []*PostOrder:
+			args.opts = append(args.opts, WithPostOrder(v))
+		case []any:
+			var orders []*PostOrder
+			for i := range v {
+				mv, ok := v[i].(map[string]any)
+				if !ok {
+					continue
+				}
+				var (
+					err1, err2 error
+					order      = &PostOrder{Field: &PostOrderField{}, Direction: entgql.OrderDirectionAsc}
+				)
+				if d, ok := mv[directionField]; ok {
+					err1 = order.Direction.UnmarshalGQL(d)
+				}
+				if f, ok := mv[fieldField]; ok {
+					err2 = order.Field.UnmarshalGQL(f)
+				}
+				if err1 == nil && err2 == nil {
+					orders = append(orders, order)
+				}
 			}
-			if f, ok := v[fieldField]; ok {
-				err2 = order.Field.UnmarshalGQL(f)
-			}
-			if err1 == nil && err2 == nil {
-				args.opts = append(args.opts, WithPostOrder(order))
-			}
-		case *PostOrder:
-			if v != nil {
-				args.opts = append(args.opts, WithPostOrder(v))
-			}
+			args.opts = append(args.opts, WithPostOrder(orders))
 		}
 	}
 	if v, ok := rv[whereField].(*PostWhereInput); ok {
@@ -340,24 +346,30 @@ func newPostCategoryPaginateArgs(rv map[string]any) *postcategoryPaginateArgs {
 	}
 	if v, ok := rv[orderByField]; ok {
 		switch v := v.(type) {
-		case map[string]any:
-			var (
-				err1, err2 error
-				order      = &PostCategoryOrder{Field: &PostCategoryOrderField{}, Direction: entgql.OrderDirectionAsc}
-			)
-			if d, ok := v[directionField]; ok {
-				err1 = order.Direction.UnmarshalGQL(d)
+		case []*PostCategoryOrder:
+			args.opts = append(args.opts, WithPostCategoryOrder(v))
+		case []any:
+			var orders []*PostCategoryOrder
+			for i := range v {
+				mv, ok := v[i].(map[string]any)
+				if !ok {
+					continue
+				}
+				var (
+					err1, err2 error
+					order      = &PostCategoryOrder{Field: &PostCategoryOrderField{}, Direction: entgql.OrderDirectionAsc}
+				)
+				if d, ok := mv[directionField]; ok {
+					err1 = order.Direction.UnmarshalGQL(d)
+				}
+				if f, ok := mv[fieldField]; ok {
+					err2 = order.Field.UnmarshalGQL(f)
+				}
+				if err1 == nil && err2 == nil {
+					orders = append(orders, order)
+				}
 			}
-			if f, ok := v[fieldField]; ok {
-				err2 = order.Field.UnmarshalGQL(f)
-			}
-			if err1 == nil && err2 == nil {
-				args.opts = append(args.opts, WithPostCategoryOrder(order))
-			}
-		case *PostCategoryOrder:
-			if v != nil {
-				args.opts = append(args.opts, WithPostCategoryOrder(v))
-			}
+			args.opts = append(args.opts, WithPostCategoryOrder(orders))
 		}
 	}
 	if v, ok := rv[whereField].(*PostCategoryWhereInput); ok {
@@ -482,24 +494,30 @@ func newPostStatusPaginateArgs(rv map[string]any) *poststatusPaginateArgs {
 	}
 	if v, ok := rv[orderByField]; ok {
 		switch v := v.(type) {
-		case map[string]any:
-			var (
-				err1, err2 error
-				order      = &PostStatusOrder{Field: &PostStatusOrderField{}, Direction: entgql.OrderDirectionAsc}
-			)
-			if d, ok := v[directionField]; ok {
-				err1 = order.Direction.UnmarshalGQL(d)
+		case []*PostStatusOrder:
+			args.opts = append(args.opts, WithPostStatusOrder(v))
+		case []any:
+			var orders []*PostStatusOrder
+			for i := range v {
+				mv, ok := v[i].(map[string]any)
+				if !ok {
+					continue
+				}
+				var (
+					err1, err2 error
+					order      = &PostStatusOrder{Field: &PostStatusOrderField{}, Direction: entgql.OrderDirectionAsc}
+				)
+				if d, ok := mv[directionField]; ok {
+					err1 = order.Direction.UnmarshalGQL(d)
+				}
+				if f, ok := mv[fieldField]; ok {
+					err2 = order.Field.UnmarshalGQL(f)
+				}
+				if err1 == nil && err2 == nil {
+					orders = append(orders, order)
+				}
 			}
-			if f, ok := v[fieldField]; ok {
-				err2 = order.Field.UnmarshalGQL(f)
-			}
-			if err1 == nil && err2 == nil {
-				args.opts = append(args.opts, WithPostStatusOrder(order))
-			}
-		case *PostStatusOrder:
-			if v != nil {
-				args.opts = append(args.opts, WithPostStatusOrder(v))
-			}
+			args.opts = append(args.opts, WithPostStatusOrder(orders))
 		}
 	}
 	if v, ok := rv[whereField].(*PostStatusWhereInput); ok {

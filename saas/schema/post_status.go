@@ -1,7 +1,9 @@
 package schema
 
 import (
+	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -15,7 +17,9 @@ func (PostStatus) Fields() []ent.Field {
 		field.String("name").Optional(),
 		field.String("slug").Optional(), // let if user wants to give any custom name instead of remember the postStatusId
 		field.Bool("status").Optional(),
-		field.String("post_type_id").Optional(),
+		field.String("post_type_id").Optional().Annotations(
+		// entgql.MapsTo("postTypeId"),
+		),
 	}
 }
 
@@ -33,5 +37,14 @@ func (PostStatus) Edges() []ent.Edge {
 func (PostStatus) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+	}
+}
+
+func (PostStatus) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entgql.RelayConnection(),
+		entgql.QueryField("postStatuses"),
+		entgql.MultiOrder(),
+		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 	}
 }

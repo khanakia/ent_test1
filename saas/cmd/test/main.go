@@ -1,15 +1,38 @@
 package main
 
 import (
-	"saas/pkg/app"
-	"saas/pkg/emailfn"
+	"fmt"
+	"lace/filesystem"
+	"saas/pkg/oauth/facebookapi"
+
+	. "github.com/kkdai/twitter"
 )
 
-func main() {
-	app := app.New()
-	app.Cli.Execute()
+var twitterClient *ServerClient
 
-	emailfn.SendForgotPassword("khanakia@gmail.com", "34343", app.EntDB.Client())
+func main() {
+	// app := app.New()
+	// app.Cli.Execute()
+
+	// fmt.Println(strings.TrimLeft("/user//aman", "\\/"))
+
+	userinfo, err := facebookapi.GetUserInfo("EAAGFP9GoB5MBO63fZCXbciHOi6HfazD10G8eoiiEIqiFaZCN0jFfmPrC5Bx7q3izZBACTfZCjudd8ZB63yPgNLIvRjZBreN7Un2LpeyTORiZBoCd5K86AvRdhPsn2ZBmH7hFb0ZAJZBnAVViLrYJKmrAl4YXdWdZCDwYx9Qk7G7YqCtcuSbuw81T6pPzDYrekwgckAg0i1gQqqyHxxb4ZCpzt3bj1x63rBrRAqKxJK0PKHr364QWgWimkCKPrcjj8j1t6MMHGgZDZD")
+
+	fmt.Println(userinfo, err)
+
+	return
+
+	lfs := filesystem.LocalFileSystemAdapter{}
+	// fmt.Println(lfs.FileExists("/Volumes/D/www/projects/khanakia/saasfly/saasfly_api/tmp/api"))
+	// fmt.Println(lfs.DirectoryExists("/Volumes/D/www/projects/khanakia/saasfly/saasfly_api/tmp"))
+	// fmt.Println(lfs.DirectoryExists("/Volumes/D/www/projects/khanakia/saasfly/saasfly_api/tmp/api1"))
+	fmt.Println(lfs.ReadStream("/Volumes/D/www/projects/khanakia/saasfly/saasfly_api/tmp"))
+
+	// twitterClient = NewServerClient("cHpmWmExelMwZFNMVV9WWlQ3QVc6MTpjaQ", "e712JBTEPXizz3OOUqx55EhinYSD2MmfQVlFzV65THVeaI_2DW")
+
+	// requestUrl, _ := twitterClient.GetAuthURL("http://localhost:2304/auth/oauth/callback")
+	// fmt.Println(requestUrl)
+	// emailfn.SendForgotPassword("khanakia@gmail.com", "34343", app.EntDB.Client())
 
 	// mailer, err := mailer.NewMailer("fake", app.EntDB.Client())
 	// fmt.Println(err)

@@ -29,6 +29,7 @@ nats: Nats
 graphql: Graphql
 
 class Nats {
+  status: Boolean
   appKey: String
   url: String
 }

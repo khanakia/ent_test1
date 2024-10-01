@@ -13,6 +13,7 @@ environment = "dev"
 logFile = "/Volumes/D/www/projects/solverhood/analyzifygo_2024/logs/app.log"
 
 nats {
+  status = false
   appKey = "anago"
   url = "nats://localhost:4222"
 }

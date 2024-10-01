@@ -8,6 +8,488 @@ import (
 	"time"
 )
 
+// CreatePostInput represents a mutation input for creating posts.
+type CreatePostInput struct {
+	CreatedAt         *time.Time
+	UpdatedAt         *time.Time
+	Name              *string
+	Slug              *string
+	Headline          *string
+	Excerpt           *string
+	Content           *string
+	MetaTitle         *string
+	MetaDescr         *string
+	MetaCanonicalURL  *string
+	MetaRobots        *string
+	PostStatusID      *string
+	PostTypeID        *string
+	PrimaryCategoryID *string
+}
+
+// Mutate applies the CreatePostInput on the PostMutation builder.
+func (i *CreatePostInput) Mutate(m *PostMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if v := i.Slug; v != nil {
+		m.SetSlug(*v)
+	}
+	if v := i.Headline; v != nil {
+		m.SetHeadline(*v)
+	}
+	if v := i.Excerpt; v != nil {
+		m.SetExcerpt(*v)
+	}
+	if v := i.Content; v != nil {
+		m.SetContent(*v)
+	}
+	if v := i.MetaTitle; v != nil {
+		m.SetMetaTitle(*v)
+	}
+	if v := i.MetaDescr; v != nil {
+		m.SetMetaDescr(*v)
+	}
+	if v := i.MetaCanonicalURL; v != nil {
+		m.SetMetaCanonicalURL(*v)
+	}
+	if v := i.MetaRobots; v != nil {
+		m.SetMetaRobots(*v)
+	}
+	if v := i.PostStatusID; v != nil {
+		m.SetPostStatusID(*v)
+	}
+	if v := i.PostTypeID; v != nil {
+		m.SetPostTypeID(*v)
+	}
+	if v := i.PrimaryCategoryID; v != nil {
+		m.SetPrimaryCategoryID(*v)
+	}
+}
+
+// SetInput applies the change-set in the CreatePostInput on the PostCreate builder.
+func (c *PostCreate) SetInput(i CreatePostInput) *PostCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdatePostInput represents a mutation input for updating posts.
+type UpdatePostInput struct {
+	ClearUpdatedAt        bool
+	UpdatedAt             *time.Time
+	ClearName             bool
+	Name                  *string
+	ClearSlug             bool
+	Slug                  *string
+	ClearHeadline         bool
+	Headline              *string
+	ClearExcerpt          bool
+	Excerpt               *string
+	ClearContent          bool
+	Content               *string
+	ClearMetaTitle        bool
+	MetaTitle             *string
+	ClearMetaDescr        bool
+	MetaDescr             *string
+	ClearMetaCanonicalURL bool
+	MetaCanonicalURL      *string
+	ClearMetaRobots       bool
+	MetaRobots            *string
+	ClearPostStatus       bool
+	PostStatusID          *string
+	ClearPostType         bool
+	PostTypeID            *string
+	ClearPrimaryCategory  bool
+	PrimaryCategoryID     *string
+}
+
+// Mutate applies the UpdatePostInput on the PostMutation builder.
+func (i *UpdatePostInput) Mutate(m *PostMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearName {
+		m.ClearName()
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if i.ClearSlug {
+		m.ClearSlug()
+	}
+	if v := i.Slug; v != nil {
+		m.SetSlug(*v)
+	}
+	if i.ClearHeadline {
+		m.ClearHeadline()
+	}
+	if v := i.Headline; v != nil {
+		m.SetHeadline(*v)
+	}
+	if i.ClearExcerpt {
+		m.ClearExcerpt()
+	}
+	if v := i.Excerpt; v != nil {
+		m.SetExcerpt(*v)
+	}
+	if i.ClearContent {
+		m.ClearContent()
+	}
+	if v := i.Content; v != nil {
+		m.SetContent(*v)
+	}
+	if i.ClearMetaTitle {
+		m.ClearMetaTitle()
+	}
+	if v := i.MetaTitle; v != nil {
+		m.SetMetaTitle(*v)
+	}
+	if i.ClearMetaDescr {
+		m.ClearMetaDescr()
+	}
+	if v := i.MetaDescr; v != nil {
+		m.SetMetaDescr(*v)
+	}
+	if i.ClearMetaCanonicalURL {
+		m.ClearMetaCanonicalURL()
+	}
+	if v := i.MetaCanonicalURL; v != nil {
+		m.SetMetaCanonicalURL(*v)
+	}
+	if i.ClearMetaRobots {
+		m.ClearMetaRobots()
+	}
+	if v := i.MetaRobots; v != nil {
+		m.SetMetaRobots(*v)
+	}
+	if i.ClearPostStatus {
+		m.ClearPostStatus()
+	}
+	if v := i.PostStatusID; v != nil {
+		m.SetPostStatusID(*v)
+	}
+	if i.ClearPostType {
+		m.ClearPostType()
+	}
+	if v := i.PostTypeID; v != nil {
+		m.SetPostTypeID(*v)
+	}
+	if i.ClearPrimaryCategory {
+		m.ClearPrimaryCategory()
+	}
+	if v := i.PrimaryCategoryID; v != nil {
+		m.SetPrimaryCategoryID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdatePostInput on the PostUpdate builder.
+func (c *PostUpdate) SetInput(i UpdatePostInput) *PostUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdatePostInput on the PostUpdateOne builder.
+func (c *PostUpdateOne) SetInput(i UpdatePostInput) *PostUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreatePostCategoryInput represents a mutation input for creating postcategories.
+type CreatePostCategoryInput struct {
+	CreatedAt        *time.Time
+	UpdatedAt        *time.Time
+	Name             *string
+	Slug             *string
+	Status           *string
+	Excerpt          *string
+	Content          *string
+	MetaTitle        *string
+	MetaDescr        *string
+	MetaCanonicalURL *string
+	MetaRobots       *string
+	PostIDs          []string
+}
+
+// Mutate applies the CreatePostCategoryInput on the PostCategoryMutation builder.
+func (i *CreatePostCategoryInput) Mutate(m *PostCategoryMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if v := i.Slug; v != nil {
+		m.SetSlug(*v)
+	}
+	if v := i.Status; v != nil {
+		m.SetStatus(*v)
+	}
+	if v := i.Excerpt; v != nil {
+		m.SetExcerpt(*v)
+	}
+	if v := i.Content; v != nil {
+		m.SetContent(*v)
+	}
+	if v := i.MetaTitle; v != nil {
+		m.SetMetaTitle(*v)
+	}
+	if v := i.MetaDescr; v != nil {
+		m.SetMetaDescr(*v)
+	}
+	if v := i.MetaCanonicalURL; v != nil {
+		m.SetMetaCanonicalURL(*v)
+	}
+	if v := i.MetaRobots; v != nil {
+		m.SetMetaRobots(*v)
+	}
+	if v := i.PostIDs; len(v) > 0 {
+		m.AddPostIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreatePostCategoryInput on the PostCategoryCreate builder.
+func (c *PostCategoryCreate) SetInput(i CreatePostCategoryInput) *PostCategoryCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdatePostCategoryInput represents a mutation input for updating postcategories.
+type UpdatePostCategoryInput struct {
+	ClearUpdatedAt        bool
+	UpdatedAt             *time.Time
+	ClearName             bool
+	Name                  *string
+	ClearSlug             bool
+	Slug                  *string
+	ClearStatus           bool
+	Status                *string
+	ClearExcerpt          bool
+	Excerpt               *string
+	ClearContent          bool
+	Content               *string
+	ClearMetaTitle        bool
+	MetaTitle             *string
+	ClearMetaDescr        bool
+	MetaDescr             *string
+	ClearMetaCanonicalURL bool
+	MetaCanonicalURL      *string
+	ClearMetaRobots       bool
+	MetaRobots            *string
+	ClearPosts            bool
+	AddPostIDs            []string
+	RemovePostIDs         []string
+}
+
+// Mutate applies the UpdatePostCategoryInput on the PostCategoryMutation builder.
+func (i *UpdatePostCategoryInput) Mutate(m *PostCategoryMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearName {
+		m.ClearName()
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if i.ClearSlug {
+		m.ClearSlug()
+	}
+	if v := i.Slug; v != nil {
+		m.SetSlug(*v)
+	}
+	if i.ClearStatus {
+		m.ClearStatus()
+	}
+	if v := i.Status; v != nil {
+		m.SetStatus(*v)
+	}
+	if i.ClearExcerpt {
+		m.ClearExcerpt()
+	}
+	if v := i.Excerpt; v != nil {
+		m.SetExcerpt(*v)
+	}
+	if i.ClearContent {
+		m.ClearContent()
+	}
+	if v := i.Content; v != nil {
+		m.SetContent(*v)
+	}
+	if i.ClearMetaTitle {
+		m.ClearMetaTitle()
+	}
+	if v := i.MetaTitle; v != nil {
+		m.SetMetaTitle(*v)
+	}
+	if i.ClearMetaDescr {
+		m.ClearMetaDescr()
+	}
+	if v := i.MetaDescr; v != nil {
+		m.SetMetaDescr(*v)
+	}
+	if i.ClearMetaCanonicalURL {
+		m.ClearMetaCanonicalURL()
+	}
+	if v := i.MetaCanonicalURL; v != nil {
+		m.SetMetaCanonicalURL(*v)
+	}
+	if i.ClearMetaRobots {
+		m.ClearMetaRobots()
+	}
+	if v := i.MetaRobots; v != nil {
+		m.SetMetaRobots(*v)
+	}
+	if i.ClearPosts {
+		m.ClearPosts()
+	}
+	if v := i.AddPostIDs; len(v) > 0 {
+		m.AddPostIDs(v...)
+	}
+	if v := i.RemovePostIDs; len(v) > 0 {
+		m.RemovePostIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdatePostCategoryInput on the PostCategoryUpdate builder.
+func (c *PostCategoryUpdate) SetInput(i UpdatePostCategoryInput) *PostCategoryUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdatePostCategoryInput on the PostCategoryUpdateOne builder.
+func (c *PostCategoryUpdateOne) SetInput(i UpdatePostCategoryInput) *PostCategoryUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreatePostStatusInput represents a mutation input for creating poststatusslice.
+type CreatePostStatusInput struct {
+	CreatedAt  *time.Time
+	UpdatedAt  *time.Time
+	Name       *string
+	Slug       *string
+	Status     *bool
+	PostTypeID *string
+	PostIDs    []string
+}
+
+// Mutate applies the CreatePostStatusInput on the PostStatusMutation builder.
+func (i *CreatePostStatusInput) Mutate(m *PostStatusMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if v := i.Slug; v != nil {
+		m.SetSlug(*v)
+	}
+	if v := i.Status; v != nil {
+		m.SetStatus(*v)
+	}
+	if v := i.PostTypeID; v != nil {
+		m.SetPostTypeID(*v)
+	}
+	if v := i.PostIDs; len(v) > 0 {
+		m.AddPostIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreatePostStatusInput on the PostStatusCreate builder.
+func (c *PostStatusCreate) SetInput(i CreatePostStatusInput) *PostStatusCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdatePostStatusInput represents a mutation input for updating poststatusslice.
+type UpdatePostStatusInput struct {
+	ClearUpdatedAt bool
+	UpdatedAt      *time.Time
+	ClearName      bool
+	Name           *string
+	ClearSlug      bool
+	Slug           *string
+	ClearStatus    bool
+	Status         *bool
+	ClearPostType  bool
+	PostTypeID     *string
+	ClearPosts     bool
+	AddPostIDs     []string
+	RemovePostIDs  []string
+}
+
+// Mutate applies the UpdatePostStatusInput on the PostStatusMutation builder.
+func (i *UpdatePostStatusInput) Mutate(m *PostStatusMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearName {
+		m.ClearName()
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if i.ClearSlug {
+		m.ClearSlug()
+	}
+	if v := i.Slug; v != nil {
+		m.SetSlug(*v)
+	}
+	if i.ClearStatus {
+		m.ClearStatus()
+	}
+	if v := i.Status; v != nil {
+		m.SetStatus(*v)
+	}
+	if i.ClearPostType {
+		m.ClearPostType()
+	}
+	if v := i.PostTypeID; v != nil {
+		m.SetPostTypeID(*v)
+	}
+	if i.ClearPosts {
+		m.ClearPosts()
+	}
+	if v := i.AddPostIDs; len(v) > 0 {
+		m.AddPostIDs(v...)
+	}
+	if v := i.RemovePostIDs; len(v) > 0 {
+		m.RemovePostIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdatePostStatusInput on the PostStatusUpdate builder.
+func (c *PostStatusUpdate) SetInput(i UpdatePostStatusInput) *PostStatusUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdatePostStatusInput on the PostStatusUpdateOne builder.
+func (c *PostStatusUpdateOne) SetInput(i UpdatePostStatusInput) *PostStatusUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreatePostTypeInput represents a mutation input for creating posttypes.
 type CreatePostTypeInput struct {
 	CreatedAt        *time.Time

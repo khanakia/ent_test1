@@ -1,5 +1,11 @@
 extend type Mutation {
   createPostType(input: CreatePostTypeInput!): PostType!
   updatePostType(id: ID!, input: UpdatePostTypeInput!): PostType!
+  createPostStatus(input: CreatePostStatusInput!): PostStatus!
+  updatePostStatus(id: ID!, input: UpdatePostStatusInput!): PostStatus!
+  createPostCategory(input: CreatePostCategoryInput!): PostCategory!
+  updatePostCategory(id: ID!, input: UpdatePostCategoryInput!): PostCategory!
+  createPost(input: CreatePostInput!): Post!
+  updatePost(id: ID!, input: UpdatePostInput!): Post!
 }
 

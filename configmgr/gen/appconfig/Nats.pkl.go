@@ -2,6 +2,8 @@
 package appconfig
 
 type Nats struct {
+	Status bool `pkl:"status"`
+
 	AppKey string `pkl:"appKey"`
 
 	Url string `pkl:"url"`

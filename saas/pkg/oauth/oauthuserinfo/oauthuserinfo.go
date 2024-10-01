@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"saas/pkg/oauth/facebookapi"
 	"saas/pkg/oauth/githubapi"
 	"saas/pkg/oauth/googleauthfn"
 	"saas/pkg/oauth/oauthconnectionfn"
@@ -46,6 +47,17 @@ func UserInfoGet(provider string, token *oauth2.Token) (*UserInfo, error) {
 
 	case oauthconnectionfn.ProviderGithub:
 		userinfo, err := githubapi.GetUserInfo(token.AccessToken)
+		if err != nil {
+			return nil, err
+		}
+		return &UserInfo{
+			Email:     userinfo.Email,
+			FirstName: userinfo.FirstName,
+			LastName:  userinfo.LastName,
+		}, nil
+
+	case oauthconnectionfn.ProviderFacebook:
+		userinfo, err := facebookapi.GetUserInfo(token.AccessToken)
 		if err != nil {
 			return nil, err
 		}

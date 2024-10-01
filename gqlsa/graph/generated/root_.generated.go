@@ -43,11 +43,17 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Mutation struct {
-		CreatePostType func(childComplexity int, input ent.CreatePostTypeInput) int
-		CreateTodo     func(childComplexity int, input ent.CreateTodoInput) int
-		Ping           func(childComplexity int) int
-		UpdatePostType func(childComplexity int, id string, input ent.UpdatePostTypeInput) int
-		UpdateTodo     func(childComplexity int, id string, input ent.UpdateTodoInput) int
+		CreatePost         func(childComplexity int, input ent.CreatePostInput) int
+		CreatePostCategory func(childComplexity int, input ent.CreatePostCategoryInput) int
+		CreatePostStatus   func(childComplexity int, input ent.CreatePostStatusInput) int
+		CreatePostType     func(childComplexity int, input ent.CreatePostTypeInput) int
+		CreateTodo         func(childComplexity int, input ent.CreateTodoInput) int
+		Ping               func(childComplexity int) int
+		UpdatePost         func(childComplexity int, id string, input ent.UpdatePostInput) int
+		UpdatePostCategory func(childComplexity int, id string, input ent.UpdatePostCategoryInput) int
+		UpdatePostStatus   func(childComplexity int, id string, input ent.UpdatePostStatusInput) int
+		UpdatePostType     func(childComplexity int, id string, input ent.UpdatePostTypeInput) int
+		UpdateTodo         func(childComplexity int, id string, input ent.UpdateTodoInput) int
 	}
 
 	PageInfo struct {
@@ -94,6 +100,28 @@ type ComplexityRoot struct {
 		UpdatedAt        func(childComplexity int) int
 	}
 
+	PostCategoryConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	PostCategoryEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
+	PostConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	PostEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	PostStatus struct {
 		CreatedAt  func(childComplexity int) int
 		ID         func(childComplexity int) int
@@ -104,6 +132,17 @@ type ComplexityRoot struct {
 		Slug       func(childComplexity int) int
 		Status     func(childComplexity int) int
 		UpdatedAt  func(childComplexity int) int
+	}
+
+	PostStatusConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	PostStatusEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
 	}
 
 	PostTag struct {
@@ -150,11 +189,14 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Node      func(childComplexity int, id string) int
-		Nodes     func(childComplexity int, ids []string) int
-		Ping      func(childComplexity int) int
-		PostTypes func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostTypeOrder, where *ent.PostTypeWhereInput) int
-		Todos     func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *ent.TodoOrder, where *ent.TodoWhereInput) int
+		Node           func(childComplexity int, id string) int
+		Nodes          func(childComplexity int, ids []string) int
+		Ping           func(childComplexity int) int
+		PostCategories func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostCategoryOrder, where *ent.PostCategoryWhereInput) int
+		PostStatuses   func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostStatusOrder, where *ent.PostStatusWhereInput) int
+		PostTypes      func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostTypeOrder, where *ent.PostTypeWhereInput) int
+		Posts          func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostOrder, where *ent.PostWhereInput) int
+		Todos          func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *ent.TodoOrder, where *ent.TodoWhereInput) int
 	}
 
 	Student struct {
@@ -203,6 +245,42 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
+	case "Mutation.createPost":
+		if e.complexity.Mutation.CreatePost == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createPost_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreatePost(childComplexity, args["input"].(ent.CreatePostInput)), true
+
+	case "Mutation.createPostCategory":
+		if e.complexity.Mutation.CreatePostCategory == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createPostCategory_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreatePostCategory(childComplexity, args["input"].(ent.CreatePostCategoryInput)), true
+
+	case "Mutation.createPostStatus":
+		if e.complexity.Mutation.CreatePostStatus == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createPostStatus_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreatePostStatus(childComplexity, args["input"].(ent.CreatePostStatusInput)), true
+
 	case "Mutation.createPostType":
 		if e.complexity.Mutation.CreatePostType == nil {
 			break
@@ -233,6 +311,42 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.Ping(childComplexity), true
+
+	case "Mutation.updatePost":
+		if e.complexity.Mutation.UpdatePost == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updatePost_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdatePost(childComplexity, args["id"].(string), args["input"].(ent.UpdatePostInput)), true
+
+	case "Mutation.updatePostCategory":
+		if e.complexity.Mutation.UpdatePostCategory == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updatePostCategory_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdatePostCategory(childComplexity, args["id"].(string), args["input"].(ent.UpdatePostCategoryInput)), true
+
+	case "Mutation.updatePostStatus":
+		if e.complexity.Mutation.UpdatePostStatus == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updatePostStatus_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdatePostStatus(childComplexity, args["id"].(string), args["input"].(ent.UpdatePostStatusInput)), true
 
 	case "Mutation.updatePostType":
 		if e.complexity.Mutation.UpdatePostType == nil {
@@ -503,6 +617,76 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PostCategory.UpdatedAt(childComplexity), true
 
+	case "PostCategoryConnection.edges":
+		if e.complexity.PostCategoryConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.PostCategoryConnection.Edges(childComplexity), true
+
+	case "PostCategoryConnection.pageInfo":
+		if e.complexity.PostCategoryConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.PostCategoryConnection.PageInfo(childComplexity), true
+
+	case "PostCategoryConnection.totalCount":
+		if e.complexity.PostCategoryConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.PostCategoryConnection.TotalCount(childComplexity), true
+
+	case "PostCategoryEdge.cursor":
+		if e.complexity.PostCategoryEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.PostCategoryEdge.Cursor(childComplexity), true
+
+	case "PostCategoryEdge.node":
+		if e.complexity.PostCategoryEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.PostCategoryEdge.Node(childComplexity), true
+
+	case "PostConnection.edges":
+		if e.complexity.PostConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.PostConnection.Edges(childComplexity), true
+
+	case "PostConnection.pageInfo":
+		if e.complexity.PostConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.PostConnection.PageInfo(childComplexity), true
+
+	case "PostConnection.totalCount":
+		if e.complexity.PostConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.PostConnection.TotalCount(childComplexity), true
+
+	case "PostEdge.cursor":
+		if e.complexity.PostEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.PostEdge.Cursor(childComplexity), true
+
+	case "PostEdge.node":
+		if e.complexity.PostEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.PostEdge.Node(childComplexity), true
+
 	case "PostStatus.createdAt":
 		if e.complexity.PostStatus.CreatedAt == nil {
 			break
@@ -565,6 +749,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PostStatus.UpdatedAt(childComplexity), true
+
+	case "PostStatusConnection.edges":
+		if e.complexity.PostStatusConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.PostStatusConnection.Edges(childComplexity), true
+
+	case "PostStatusConnection.pageInfo":
+		if e.complexity.PostStatusConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.PostStatusConnection.PageInfo(childComplexity), true
+
+	case "PostStatusConnection.totalCount":
+		if e.complexity.PostStatusConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.PostStatusConnection.TotalCount(childComplexity), true
+
+	case "PostStatusEdge.cursor":
+		if e.complexity.PostStatusEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.PostStatusEdge.Cursor(childComplexity), true
+
+	case "PostStatusEdge.node":
+		if e.complexity.PostStatusEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.PostStatusEdge.Node(childComplexity), true
 
 	case "PostTag.content":
 		if e.complexity.PostTag.Content == nil {
@@ -814,6 +1033,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Ping(childComplexity), true
 
+	case "Query.postCategories":
+		if e.complexity.Query.PostCategories == nil {
+			break
+		}
+
+		args, err := ec.field_Query_postCategories_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.PostCategories(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].([]*ent.PostCategoryOrder), args["where"].(*ent.PostCategoryWhereInput)), true
+
+	case "Query.postStatuses":
+		if e.complexity.Query.PostStatuses == nil {
+			break
+		}
+
+		args, err := ec.field_Query_postStatuses_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.PostStatuses(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].([]*ent.PostStatusOrder), args["where"].(*ent.PostStatusWhereInput)), true
+
 	case "Query.postTypes":
 		if e.complexity.Query.PostTypes == nil {
 			break
@@ -825,6 +1068,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.PostTypes(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].([]*ent.PostTypeOrder), args["where"].(*ent.PostTypeWhereInput)), true
+
+	case "Query.posts":
+		if e.complexity.Query.Posts == nil {
+			break
+		}
+
+		args, err := ec.field_Query_posts_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Posts(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].([]*ent.PostOrder), args["where"].(*ent.PostWhereInput)), true
 
 	case "Query.todos":
 		if e.complexity.Query.Todos == nil {
@@ -944,6 +1199,9 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputCreatePostCategoryInput,
+		ec.unmarshalInputCreatePostInput,
+		ec.unmarshalInputCreatePostStatusInput,
 		ec.unmarshalInputCreatePostTypeInput,
 		ec.unmarshalInputCreateTodoInput,
 		ec.unmarshalInputPostCategoryOrder,
@@ -958,6 +1216,9 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputPostWhereInput,
 		ec.unmarshalInputTodoOrder,
 		ec.unmarshalInputTodoWhereInput,
+		ec.unmarshalInputUpdatePostCategoryInput,
+		ec.unmarshalInputUpdatePostInput,
+		ec.unmarshalInputUpdatePostStatusInput,
 		ec.unmarshalInputUpdatePostTypeInput,
 		ec.unmarshalInputUpdateTodoInput,
 	)
@@ -1060,11 +1321,68 @@ var sources = []*ast.Source{
 	{Name: "../cms.graphql", Input: `extend type Mutation {
   createPostType(input: CreatePostTypeInput!): PostType!
   updatePostType(id: ID!, input: UpdatePostTypeInput!): PostType!
+  createPostStatus(input: CreatePostStatusInput!): PostStatus!
+  updatePostStatus(id: ID!, input: UpdatePostStatusInput!): PostStatus!
+  createPostCategory(input: CreatePostCategoryInput!): PostCategory!
+  updatePostCategory(id: ID!, input: UpdatePostCategoryInput!): PostCategory!
+  createPost(input: CreatePostInput!): Post!
+  updatePost(id: ID!, input: UpdatePostInput!): Post!
 }
 
 `, BuiltIn: false},
 	{Name: "../ent.graphql", Input: `directive @goField(forceResolver: Boolean, name: String, omittable: Boolean) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 directive @goModel(model: String, models: [String!], forceGenerate: Boolean) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
+"""
+CreatePostCategoryInput is used for create PostCategory object.
+Input was generated by ent.
+"""
+input CreatePostCategoryInput {
+  createdAt: Time
+  updatedAt: Time
+  name: String
+  slug: String
+  status: String
+  excerpt: String
+  content: String
+  metaTitle: String
+  metaDescr: String
+  metaCanonicalURL: String
+  metaRobots: String
+  postIDs: [ID!]
+}
+"""
+CreatePostInput is used for create Post object.
+Input was generated by ent.
+"""
+input CreatePostInput {
+  createdAt: Time
+  updatedAt: Time
+  name: String
+  slug: String
+  headline: String
+  excerpt: String
+  content: String
+  metaTitle: String
+  metaDescr: String
+  metaCanonicalURL: String
+  metaRobots: String
+  postStatusID: ID
+  postTypeID: ID
+  primaryCategoryID: ID
+}
+"""
+CreatePostStatusInput is used for create PostStatus object.
+Input was generated by ent.
+"""
+input CreatePostStatusInput {
+  createdAt: Time
+  updatedAt: Time
+  name: String
+  slug: String
+  status: Boolean
+  postTypeID: ID
+  postIDs: [ID!]
+}
 """
 CreatePostTypeInput is used for create PostType object.
 Input was generated by ent.
@@ -1181,6 +1499,36 @@ type PostCategory implements Node {
   metaCanonicalURL: String
   metaRobots: String
   posts: [Post!]
+}
+"""
+A connection to a list of items.
+"""
+type PostCategoryConnection {
+  """
+  A list of edges.
+  """
+  edges: [PostCategoryEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type PostCategoryEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: PostCategory
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
 }
 """
 Ordering options for PostCategory connections
@@ -1417,6 +1765,36 @@ input PostCategoryWhereInput {
   hasPostsWith: [PostWhereInput!]
 }
 """
+A connection to a list of items.
+"""
+type PostConnection {
+  """
+  A list of edges.
+  """
+  edges: [PostEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type PostEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Post
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
 Ordering options for Post connections
 """
 input PostOrder {
@@ -1445,6 +1823,36 @@ type PostStatus implements Node {
   postTypeID: ID
   postType: PostType
   posts: [Post!]
+}
+"""
+A connection to a list of items.
+"""
+type PostStatusConnection {
+  """
+  A list of edges.
+  """
+  edges: [PostStatusEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type PostStatusEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: PostStatus
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
 }
 """
 Ordering options for PostStatus connections
@@ -2408,6 +2816,99 @@ type Query {
     """
     ids: [ID!]!
   ): [Node]!
+  posts(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for Posts returned from the connection.
+    """
+    orderBy: [PostOrder!]
+
+    """
+    Filtering options for Posts returned from the connection.
+    """
+    where: PostWhereInput
+  ): PostConnection!
+  postCategories(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for PostCategories returned from the connection.
+    """
+    orderBy: [PostCategoryOrder!]
+
+    """
+    Filtering options for PostCategories returned from the connection.
+    """
+    where: PostCategoryWhereInput
+  ): PostCategoryConnection!
+  postStatuses(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for PostStatusSlice returned from the connection.
+    """
+    orderBy: [PostStatusOrder!]
+
+    """
+    Filtering options for PostStatusSlice returned from the connection.
+    """
+    where: PostStatusWhereInput
+  ): PostStatusConnection!
   postTypes(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -2471,10 +2972,6 @@ type Query {
     where: TodoWhereInput
   ): TodoConnection!
 }
-"""
-The builtin Time type
-"""
-scalar Time
 type Todo implements Node {
   id: ID!
   createdAt: Time
@@ -2637,6 +3134,86 @@ input TodoWhereInput {
   hasParentWith: [TodoWhereInput!]
 }
 """
+UpdatePostCategoryInput is used for update PostCategory object.
+Input was generated by ent.
+"""
+input UpdatePostCategoryInput {
+  updatedAt: Time
+  clearUpdatedAt: Boolean
+  name: String
+  clearName: Boolean
+  slug: String
+  clearSlug: Boolean
+  status: String
+  clearStatus: Boolean
+  excerpt: String
+  clearExcerpt: Boolean
+  content: String
+  clearContent: Boolean
+  metaTitle: String
+  clearMetaTitle: Boolean
+  metaDescr: String
+  clearMetaDescr: Boolean
+  metaCanonicalURL: String
+  clearMetaCanonicalURL: Boolean
+  metaRobots: String
+  clearMetaRobots: Boolean
+  addPostIDs: [ID!]
+  removePostIDs: [ID!]
+  clearPosts: Boolean
+}
+"""
+UpdatePostInput is used for update Post object.
+Input was generated by ent.
+"""
+input UpdatePostInput {
+  updatedAt: Time
+  clearUpdatedAt: Boolean
+  name: String
+  clearName: Boolean
+  slug: String
+  clearSlug: Boolean
+  headline: String
+  clearHeadline: Boolean
+  excerpt: String
+  clearExcerpt: Boolean
+  content: String
+  clearContent: Boolean
+  metaTitle: String
+  clearMetaTitle: Boolean
+  metaDescr: String
+  clearMetaDescr: Boolean
+  metaCanonicalURL: String
+  clearMetaCanonicalURL: Boolean
+  metaRobots: String
+  clearMetaRobots: Boolean
+  postStatusID: ID
+  clearPostStatus: Boolean
+  postTypeID: ID
+  clearPostType: Boolean
+  primaryCategoryID: ID
+  clearPrimaryCategory: Boolean
+}
+"""
+UpdatePostStatusInput is used for update PostStatus object.
+Input was generated by ent.
+"""
+input UpdatePostStatusInput {
+  updatedAt: Time
+  clearUpdatedAt: Boolean
+  name: String
+  clearName: Boolean
+  slug: String
+  clearSlug: Boolean
+  status: Boolean
+  clearStatus: Boolean
+  postTypeID: ID
+  clearPostType: Boolean
+  addPostIDs: [ID!]
+  removePostIDs: [ID!]
+  clearPosts: Boolean
+}
+"""
 UpdatePostTypeInput is used for update PostType object.
 Input was generated by ent.
 """
@@ -2684,7 +3261,7 @@ input UpdateTodoInput {
   clearParent: Boolean
 }
 `, BuiltIn: false},
-	{Name: "../schema.graphql", Input: `# scalar Time
+	{Name: "../schema.graphql", Input: `scalar Time
 scalar Uint64
 scalar Map
 scalar JSON
