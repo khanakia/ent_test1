@@ -540,6 +540,9 @@ Properties by which PostStatus connections can be ordered.
 """
 enum PostStatusOrderField {
   CREATED_AT
+  NAME
+  STATUS
+  POST_TYPE_NAME
 }
 """
 PostStatusWhereInput is used for filtering PostStatus objects.
@@ -1474,7 +1477,7 @@ type Query {
     ID of the object.
     """
     id: ID!
-  ): Node
+  ): Node @canAdmin
   """
   Lookup nodes by a list of IDs.
   """
@@ -1483,7 +1486,7 @@ type Query {
     The list of node IDs.
     """
     ids: [ID!]!
-  ): [Node]!
+  ): [Node]! @canAdmin
   posts(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -1514,7 +1517,7 @@ type Query {
     Filtering options for Posts returned from the connection.
     """
     where: PostWhereInput
-  ): PostConnection!
+  ): PostConnection! @canAdmin
   postCategories(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -1545,7 +1548,7 @@ type Query {
     Filtering options for PostCategories returned from the connection.
     """
     where: PostCategoryWhereInput
-  ): PostCategoryConnection!
+  ): PostCategoryConnection! @canAdmin
   postStatuses(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -1576,7 +1579,7 @@ type Query {
     Filtering options for PostStatusSlice returned from the connection.
     """
     where: PostStatusWhereInput
-  ): PostStatusConnection!
+  ): PostStatusConnection! @canAdmin
   postTypes(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -1607,7 +1610,7 @@ type Query {
     Filtering options for PostTypes returned from the connection.
     """
     where: PostTypeWhereInput
-  ): PostTypeConnection!
+  ): PostTypeConnection! @canAdmin
   todos(
     """
     Returns the elements in the list that come after the specified cursor.

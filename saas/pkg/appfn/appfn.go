@@ -72,5 +72,6 @@ func MustGetAppSettings() *ent.AppSetting {
 }
 
 func IsUserSA(user *ent.User) bool {
-	return user.RoleID == constants.UserRoleSa
+	return user.CanAdmin
+	// return user.RoleID == constants.UserRoleSa
 }

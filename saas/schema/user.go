@@ -34,6 +34,7 @@ func (User) Fields() []ent.Field {
 		field.String("secret").Sensitive().Optional(),
 		field.String("api_key").Optional(),
 		field.Bool("welcome_email_sent").Annotations().Optional(),
+		field.Bool("can_admin").Optional().Default(false), // if true allow user to login to super admin
 	}
 }
 

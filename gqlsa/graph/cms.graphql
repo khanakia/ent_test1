@@ -1,11 +1,11 @@
 extend type Mutation {
-  createPostType(input: CreatePostTypeInput!): PostType!
-  updatePostType(id: ID!, input: UpdatePostTypeInput!): PostType!
-  createPostStatus(input: CreatePostStatusInput!): PostStatus!
-  updatePostStatus(id: ID!, input: UpdatePostStatusInput!): PostStatus!
-  createPostCategory(input: CreatePostCategoryInput!): PostCategory!
-  updatePostCategory(id: ID!, input: UpdatePostCategoryInput!): PostCategory!
-  createPost(input: CreatePostInput!): Post!
-  updatePost(id: ID!, input: UpdatePostInput!): Post!
+  createPostType(input: CreatePostTypeInput!): PostType! @canAdmin
+  updatePostType(id: ID!, input: UpdatePostTypeInput!): PostType! @canAdmin
+  createPostStatus(input: CreatePostStatusInput!): PostStatus! @canAdmin
+  updatePostStatus(id: ID!, input: UpdatePostStatusInput!): PostStatus! @canAdmin
+  createPostCategory(input: CreatePostCategoryInput!): PostCategory! @canAdmin
+  updatePostCategory(id: ID!, input: UpdatePostCategoryInput!): PostCategory! @canAdmin
+  createPost(input: CreatePostInput!): Post! @canAdmin
+  updatePost(id: ID!, input: UpdatePostInput!): Post! @canAdmin
 }
 

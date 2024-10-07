@@ -18,7 +18,7 @@ type Gql struct {
 }
 
 type Config struct {
-	GinEngine        *gin.Engine
+	RouterGroup      *gin.RouterGroup
 	GqlServer        *handler.Server
 	Middleware       []gin.HandlerFunc
 	RouteGroupPrefix string
@@ -47,7 +47,7 @@ func (cls *Gql) graphqlHandler(gserver *handler.Server) gin.HandlerFunc {
 
 // Defining the Playground handler
 func playgroundHandler(routeGroupPrefix string) gin.HandlerFunc {
-	h := playground.Handler("GraphQL", fmt.Sprintf("%squery", routeGroupPrefix))
+	h := playground.Handler("GraphQL", fmt.Sprintf("%s/query", routeGroupPrefix))
 
 	return func(c *gin.Context) {
 		h.ServeHTTP(c.Writer, c.Request)
@@ -116,16 +116,16 @@ func New(config Config) Gql {
 		Config: config,
 	}
 
-	routeGroupPrefix := "/"
+	routeGroupPrefix := ""
 	if len(config.RouteGroupPrefix) > 0 {
 		routeGroupPrefix = config.RouteGroupPrefix
 	}
 
-	rg := config.GinEngine.Group(routeGroupPrefix)
-	if len(config.Middleware) > 0 {
-		rg.Use(config.Middleware[0:]...)
-	}
-	rg.POST("/query", gqlgin.graphqlHandler(config.GqlServer))
+	rg := config.RouterGroup
+
+	queryHandlers := append(config.Middleware, gqlgin.graphqlHandler(config.GqlServer))
+	rg.POST("/query", queryHandlers...)
+
 	rg.GET("/gql", playgroundAccessMiddleware(), playgroundHandler(routeGroupPrefix))
 
 	return gqlgin

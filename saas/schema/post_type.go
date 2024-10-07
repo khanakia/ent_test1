@@ -19,7 +19,7 @@ func (PostType) Fields() []ent.Field {
 		field.String("name").Optional().Annotations(
 			entgql.OrderField("NAME"),
 		),
-		field.String("slug").Optional(),
+		field.String("slug").Optional().Unique(),
 		field.Enum("status").NamedValues(
 			"Published", "PUBLISHED",
 			"Draft", "DRAFT",
@@ -55,7 +55,7 @@ func (PostType) Mixin() []ent.Mixin {
 func (PostType) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.RelayConnection(),
-		entgql.QueryField(),
+		entgql.QueryField().Directives(entgql.Directive{Name: "canAdmin"}),
 		entgql.MultiOrder(),
 		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 	}

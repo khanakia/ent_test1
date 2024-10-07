@@ -5,6 +5,7 @@ type User {
   lastName: String
   company: String
   phone: String
+  canAdmin: Boolean
 }
 
 input RegisterInput {

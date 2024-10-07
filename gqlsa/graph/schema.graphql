@@ -1,3 +1,6 @@
+directive @canAdmin on FIELD_DEFINITION
+
+
 scalar Time
 scalar Uint64
 scalar Map

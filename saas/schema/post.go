@@ -56,7 +56,7 @@ func (Post) Mixin() []ent.Mixin {
 func (Post) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.RelayConnection(),
-		entgql.QueryField("posts"),
+		entgql.QueryField("posts").Directives(entgql.Directive{Name: "canAdmin"}),
 		entgql.MultiOrder(),
 		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 	}

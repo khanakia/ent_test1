@@ -1,9 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	_ "github.com/lib/pq"
+	"github.com/vektah/gqlparser/v2/ast"
 
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent/entc"
@@ -18,6 +20,19 @@ func main() {
 		entgql.WithWhereInputs(true),
 		entgql.WithSchemaPath("../gqlsa/graph/ent.graphql"),
 		entgql.WithConfigPath("../gqlsa/gqlgen.yml"),
+
+		// add @canAdmin directive to the node and nodes query in ent.graphql
+		// https://github.com/ent/ent/issues/3173
+		entgql.WithSchemaHook(func(_ *gen.Graph, s *ast.Schema) error {
+			for _, name := range []string{"node", "nodes"} {
+				f := s.Types["Query"].Fields.ForName(name)
+				if f == nil {
+					return fmt.Errorf("missing query field %q", name)
+				}
+				f.Directives = append(f.Directives, &ast.Directive{Name: "canAdmin"})
+			}
+			return nil
+		}),
 	)
 	if err != nil {
 		log.Fatalf("creating entgql extension: %v", err)

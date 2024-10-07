@@ -1,12 +1,14 @@
 package gqlsa
 
 import (
+	"context"
 	"fmt"
 	"gqlsa/graph/generated"
 	"gqlsa/graph/gqlsaresolver"
 	"gqlsa/internal/gqlgin"
 	"lace/gqlgenfn"
 	"reflect"
+	"saas/pkg/appfn"
 	"saas/pkg/middleware"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -17,20 +19,37 @@ import (
 )
 
 func Boot(ginEngine *gin.Engine, resolver *gqlsaresolver.Resolver) {
-	ginEngine.Use(middleware.MiddlewareSilent(resolver.Plugin.EntDB.Client()))
-	ginEngine.Use(gqlgenfn.GinContextToContextMiddleware())
+	prefix := "/sa"
+	rg := ginEngine.Group(prefix)
 
 	c := generated.Config{Resolvers: resolver}
+	c.Directives.CanAdmin = func(ctx context.Context, obj interface{}, next graphql.Resolver) (interface{}, error) {
+		cuser, _ := middleware.GetUserFromGqlCtx(ctx)
+		if cuser == nil {
+			return nil, fmt.Errorf("access denied")
+		}
+
+		if !appfn.IsUserSA(cuser) {
+			return nil, fmt.Errorf("access denied")
+		}
+
+		// or let it pass through
+		return next(ctx)
+	}
 
 	schm := generated.NewExecutableSchema(c)
 	// extendSchema(&schm)
 	gserver := handler.NewDefaultServer(schm)
 
 	gqlgin.New(gqlgin.Config{
-		GinEngine:        ginEngine,
+		RouterGroup:      rg,
 		GqlServer:        gserver,
 		PlaygroundKey:    resolver.AppConfig.Graphql.Key,
-		RouteGroupPrefix: "/sa/",
+		RouteGroupPrefix: prefix,
+		Middleware: []gin.HandlerFunc{
+			middleware.MiddlewareSilent(resolver.Plugin.EntDB.Client()),
+			gqlgenfn.GinContextToContextMiddleware(),
+		},
 	})
 	fmt.Println("boot gqlsa")
 }
@@ -41,8 +60,6 @@ func extendSchema(schema *graphql.ExecutableSchema) {
 	// if err != nil {
 	// 	log.Fatalf("failed to fetch dynamic fields: %v", err)
 	// }
-
-	fmt.Println("sfsdhjfkdshjfkhsdjkhds")
 
 	aa := *schema
 	// fmt.Println(aa.Schema().Query.Fields)
