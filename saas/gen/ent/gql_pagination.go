@@ -921,8 +921,12 @@ func (p *poststatusPager) applyOrder(query *PostStatusQuery) *PostStatusQuery {
 		if o.Field.column == DefaultPostStatusOrder.Field.column {
 			defaultOrdered = true
 		}
-		if len(query.ctx.Fields) > 0 {
-			query.ctx.AppendFieldOnce(o.Field.column)
+		switch o.Field.column {
+		case PostStatusOrderFieldPostTypeName.column:
+		default:
+			if len(query.ctx.Fields) > 0 {
+				query.ctx.AppendFieldOnce(o.Field.column)
+			}
 		}
 	}
 	if !defaultOrdered {
@@ -936,9 +940,18 @@ func (p *poststatusPager) applyOrder(query *PostStatusQuery) *PostStatusQuery {
 }
 
 func (p *poststatusPager) orderExpr(query *PostStatusQuery) sql.Querier {
-	if len(query.ctx.Fields) > 0 {
-		for _, o := range p.order {
-			query.ctx.AppendFieldOnce(o.Field.column)
+	for _, o := range p.order {
+		switch o.Field.column {
+		case PostStatusOrderFieldPostTypeName.column:
+			direction := o.Direction
+			if p.reverse {
+				direction = direction.Reverse()
+			}
+			query = query.Order(o.Field.toTerm(direction.OrderTermOption()))
+		default:
+			if len(query.ctx.Fields) > 0 {
+				query.ctx.AppendFieldOnce(o.Field.column)
+			}
 		}
 	}
 	return sql.ExprFunc(func(b *sql.Builder) {
@@ -1026,6 +1039,54 @@ var (
 			}
 		},
 	}
+	// PostStatusOrderFieldName orders PostStatus by name.
+	PostStatusOrderFieldName = &PostStatusOrderField{
+		Value: func(ps *PostStatus) (ent.Value, error) {
+			return ps.Name, nil
+		},
+		column: poststatus.FieldName,
+		toTerm: poststatus.ByName,
+		toCursor: func(ps *PostStatus) Cursor {
+			return Cursor{
+				ID:    ps.ID,
+				Value: ps.Name,
+			}
+		},
+	}
+	// PostStatusOrderFieldStatus orders PostStatus by status.
+	PostStatusOrderFieldStatus = &PostStatusOrderField{
+		Value: func(ps *PostStatus) (ent.Value, error) {
+			return ps.Status, nil
+		},
+		column: poststatus.FieldStatus,
+		toTerm: poststatus.ByStatus,
+		toCursor: func(ps *PostStatus) Cursor {
+			return Cursor{
+				ID:    ps.ID,
+				Value: ps.Status,
+			}
+		},
+	}
+	// PostStatusOrderFieldPostTypeName orders by POST_TYPE_NAME.
+	PostStatusOrderFieldPostTypeName = &PostStatusOrderField{
+		Value: func(ps *PostStatus) (ent.Value, error) {
+			return ps.Value("post_type_name")
+		},
+		column: "post_type_name",
+		toTerm: func(opts ...sql.OrderTermOption) poststatus.OrderOption {
+			return poststatus.ByPostTypeField(
+				posttype.FieldName,
+				append(opts, sql.OrderSelectAs("post_type_name"))...,
+			)
+		},
+		toCursor: func(ps *PostStatus) Cursor {
+			cv, _ := ps.Value("post_type_name")
+			return Cursor{
+				ID:    ps.ID,
+				Value: cv,
+			}
+		},
+	}
 )
 
 // String implement fmt.Stringer interface.
@@ -1034,6 +1095,12 @@ func (f PostStatusOrderField) String() string {
 	switch f.column {
 	case PostStatusOrderFieldCreatedAt.column:
 		str = "CREATED_AT"
+	case PostStatusOrderFieldName.column:
+		str = "NAME"
+	case PostStatusOrderFieldStatus.column:
+		str = "STATUS"
+	case PostStatusOrderFieldPostTypeName.column:
+		str = "POST_TYPE_NAME"
 	}
 	return str
 }
@@ -1052,6 +1119,12 @@ func (f *PostStatusOrderField) UnmarshalGQL(v interface{}) error {
 	switch str {
 	case "CREATED_AT":
 		*f = *PostStatusOrderFieldCreatedAt
+	case "NAME":
+		*f = *PostStatusOrderFieldName
+	case "STATUS":
+		*f = *PostStatusOrderFieldStatus
+	case "POST_TYPE_NAME":
+		*f = *PostStatusOrderFieldPostTypeName
 	default:
 		return fmt.Errorf("%s is not a valid PostStatusOrderField", str)
 	}

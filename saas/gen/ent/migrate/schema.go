@@ -284,7 +284,7 @@ var (
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "name", Type: field.TypeString, Nullable: true},
-		{Name: "slug", Type: field.TypeString, Nullable: true},
+		{Name: "slug", Type: field.TypeString, Unique: true, Nullable: true},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"PUBLISHED", "DRAFT"}, Default: "PUBLISHED"},
 		{Name: "excerpt", Type: field.TypeString, Nullable: true},
 		{Name: "content", Type: field.TypeString, Nullable: true, Size: 255},
@@ -397,6 +397,7 @@ var (
 		{Name: "secret", Type: field.TypeString, Nullable: true},
 		{Name: "api_key", Type: field.TypeString, Nullable: true},
 		{Name: "welcome_email_sent", Type: field.TypeBool, Nullable: true},
+		{Name: "can_admin", Type: field.TypeBool, Nullable: true, Default: false},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{

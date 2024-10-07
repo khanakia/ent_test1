@@ -17168,6 +17168,7 @@ type UserMutation struct {
 	secret                 *string
 	api_key                *string
 	welcome_email_sent     *bool
+	can_admin              *bool
 	clearedFields          map[string]struct{}
 	sessions               map[string]struct{}
 	removedsessions        map[string]struct{}
@@ -17960,6 +17961,55 @@ func (m *UserMutation) ResetWelcomeEmailSent() {
 	delete(m.clearedFields, user.FieldWelcomeEmailSent)
 }
 
+// SetCanAdmin sets the "can_admin" field.
+func (m *UserMutation) SetCanAdmin(b bool) {
+	m.can_admin = &b
+}
+
+// CanAdmin returns the value of the "can_admin" field in the mutation.
+func (m *UserMutation) CanAdmin() (r bool, exists bool) {
+	v := m.can_admin
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCanAdmin returns the old "can_admin" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldCanAdmin(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCanAdmin is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCanAdmin requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCanAdmin: %w", err)
+	}
+	return oldValue.CanAdmin, nil
+}
+
+// ClearCanAdmin clears the value of the "can_admin" field.
+func (m *UserMutation) ClearCanAdmin() {
+	m.can_admin = nil
+	m.clearedFields[user.FieldCanAdmin] = struct{}{}
+}
+
+// CanAdminCleared returns if the "can_admin" field was cleared in this mutation.
+func (m *UserMutation) CanAdminCleared() bool {
+	_, ok := m.clearedFields[user.FieldCanAdmin]
+	return ok
+}
+
+// ResetCanAdmin resets all changes to the "can_admin" field.
+func (m *UserMutation) ResetCanAdmin() {
+	m.can_admin = nil
+	delete(m.clearedFields, user.FieldCanAdmin)
+}
+
 // AddSessionIDs adds the "sessions" edge to the Session entity by ids.
 func (m *UserMutation) AddSessionIDs(ids ...string) {
 	if m.sessions == nil {
@@ -18156,7 +18206,7 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
 	}
@@ -18199,6 +18249,9 @@ func (m *UserMutation) Fields() []string {
 	if m.welcome_email_sent != nil {
 		fields = append(fields, user.FieldWelcomeEmailSent)
 	}
+	if m.can_admin != nil {
+		fields = append(fields, user.FieldCanAdmin)
+	}
 	return fields
 }
 
@@ -18235,6 +18288,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.APIKey()
 	case user.FieldWelcomeEmailSent:
 		return m.WelcomeEmailSent()
+	case user.FieldCanAdmin:
+		return m.CanAdmin()
 	}
 	return nil, false
 }
@@ -18272,6 +18327,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldAPIKey(ctx)
 	case user.FieldWelcomeEmailSent:
 		return m.OldWelcomeEmailSent(ctx)
+	case user.FieldCanAdmin:
+		return m.OldCanAdmin(ctx)
 	}
 	return nil, fmt.Errorf("unknown User field %s", name)
 }
@@ -18379,6 +18436,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetWelcomeEmailSent(v)
 		return nil
+	case user.FieldCanAdmin:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCanAdmin(v)
+		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)
 }
@@ -18448,6 +18512,9 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldWelcomeEmailSent) {
 		fields = append(fields, user.FieldWelcomeEmailSent)
 	}
+	if m.FieldCleared(user.FieldCanAdmin) {
+		fields = append(fields, user.FieldCanAdmin)
+	}
 	return fields
 }
 
@@ -18501,6 +18568,9 @@ func (m *UserMutation) ClearField(name string) error {
 	case user.FieldWelcomeEmailSent:
 		m.ClearWelcomeEmailSent()
 		return nil
+	case user.FieldCanAdmin:
+		m.ClearCanAdmin()
+		return nil
 	}
 	return fmt.Errorf("unknown User nullable field %s", name)
 }
@@ -18550,6 +18620,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldWelcomeEmailSent:
 		m.ResetWelcomeEmailSent()
+		return nil
+	case user.FieldCanAdmin:
+		m.ResetCanAdmin()
 		return nil
 	}
 	return fmt.Errorf("unknown User field %s", name)

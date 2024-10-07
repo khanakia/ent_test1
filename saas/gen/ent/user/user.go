@@ -42,6 +42,8 @@ const (
 	FieldAPIKey = "api_key"
 	// FieldWelcomeEmailSent holds the string denoting the welcome_email_sent field in the database.
 	FieldWelcomeEmailSent = "welcome_email_sent"
+	// FieldCanAdmin holds the string denoting the can_admin field in the database.
+	FieldCanAdmin = "can_admin"
 	// EdgeSessions holds the string denoting the sessions edge name in mutations.
 	EdgeSessions = "sessions"
 	// EdgeWorkspaces holds the string denoting the workspaces edge name in mutations.
@@ -88,6 +90,7 @@ var Columns = []string{
 	FieldSecret,
 	FieldAPIKey,
 	FieldWelcomeEmailSent,
+	FieldCanAdmin,
 }
 
 var (
@@ -117,6 +120,8 @@ var (
 	DefaultRoleID string
 	// DefaultStatus holds the default value on creation for the "status" field.
 	DefaultStatus bool
+	// DefaultCanAdmin holds the default value on creation for the "can_admin" field.
+	DefaultCanAdmin bool
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
@@ -197,6 +202,11 @@ func ByAPIKey(opts ...sql.OrderTermOption) OrderOption {
 // ByWelcomeEmailSent orders the results by the welcome_email_sent field.
 func ByWelcomeEmailSent(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldWelcomeEmailSent, opts...).ToFunc()
+}
+
+// ByCanAdmin orders the results by the can_admin field.
+func ByCanAdmin(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCanAdmin, opts...).ToFunc()
 }
 
 // BySessionsCount orders the results by sessions count.

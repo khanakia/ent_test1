@@ -45,6 +45,8 @@ type User struct {
 	APIKey string `json:"api_key,omitempty"`
 	// WelcomeEmailSent holds the value of the "welcome_email_sent" field.
 	WelcomeEmailSent bool `json:"welcome_email_sent,omitempty"`
+	// CanAdmin holds the value of the "can_admin" field.
+	CanAdmin bool `json:"can_admin,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the UserQuery when eager-loading is set.
 	Edges        UserEdges `json:"edges"`
@@ -100,7 +102,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case user.FieldStatus, user.FieldWelcomeEmailSent:
+		case user.FieldStatus, user.FieldWelcomeEmailSent, user.FieldCanAdmin:
 			values[i] = new(sql.NullBool)
 		case user.FieldID, user.FieldEmail, user.FieldPhone, user.FieldFirstName, user.FieldLastName, user.FieldCompany, user.FieldLocale, user.FieldRoleID, user.FieldPassword, user.FieldSecret, user.FieldAPIKey:
 			values[i] = new(sql.NullString)
@@ -211,6 +213,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.WelcomeEmailSent = value.Bool
 			}
+		case user.FieldCanAdmin:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field can_admin", values[i])
+			} else if value.Valid {
+				u.CanAdmin = value.Bool
+			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
 		}
@@ -301,6 +309,9 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("welcome_email_sent=")
 	builder.WriteString(fmt.Sprintf("%v", u.WelcomeEmailSent))
+	builder.WriteString(", ")
+	builder.WriteString("can_admin=")
+	builder.WriteString(fmt.Sprintf("%v", u.CanAdmin))
 	builder.WriteByte(')')
 	return builder.String()
 }

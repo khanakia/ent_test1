@@ -278,6 +278,26 @@ func (uu *UserUpdate) ClearWelcomeEmailSent() *UserUpdate {
 	return uu
 }
 
+// SetCanAdmin sets the "can_admin" field.
+func (uu *UserUpdate) SetCanAdmin(b bool) *UserUpdate {
+	uu.mutation.SetCanAdmin(b)
+	return uu
+}
+
+// SetNillableCanAdmin sets the "can_admin" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableCanAdmin(b *bool) *UserUpdate {
+	if b != nil {
+		uu.SetCanAdmin(*b)
+	}
+	return uu
+}
+
+// ClearCanAdmin clears the value of the "can_admin" field.
+func (uu *UserUpdate) ClearCanAdmin() *UserUpdate {
+	uu.mutation.ClearCanAdmin()
+	return uu
+}
+
 // AddSessionIDs adds the "sessions" edge to the Session entity by IDs.
 func (uu *UserUpdate) AddSessionIDs(ids ...string) *UserUpdate {
 	uu.mutation.AddSessionIDs(ids...)
@@ -519,6 +539,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if uu.mutation.WelcomeEmailSentCleared() {
 		_spec.ClearField(user.FieldWelcomeEmailSent, field.TypeBool)
+	}
+	if value, ok := uu.mutation.CanAdmin(); ok {
+		_spec.SetField(user.FieldCanAdmin, field.TypeBool, value)
+	}
+	if uu.mutation.CanAdminCleared() {
+		_spec.ClearField(user.FieldCanAdmin, field.TypeBool)
 	}
 	if uu.mutation.SessionsCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -944,6 +970,26 @@ func (uuo *UserUpdateOne) ClearWelcomeEmailSent() *UserUpdateOne {
 	return uuo
 }
 
+// SetCanAdmin sets the "can_admin" field.
+func (uuo *UserUpdateOne) SetCanAdmin(b bool) *UserUpdateOne {
+	uuo.mutation.SetCanAdmin(b)
+	return uuo
+}
+
+// SetNillableCanAdmin sets the "can_admin" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableCanAdmin(b *bool) *UserUpdateOne {
+	if b != nil {
+		uuo.SetCanAdmin(*b)
+	}
+	return uuo
+}
+
+// ClearCanAdmin clears the value of the "can_admin" field.
+func (uuo *UserUpdateOne) ClearCanAdmin() *UserUpdateOne {
+	uuo.mutation.ClearCanAdmin()
+	return uuo
+}
+
 // AddSessionIDs adds the "sessions" edge to the Session entity by IDs.
 func (uuo *UserUpdateOne) AddSessionIDs(ids ...string) *UserUpdateOne {
 	uuo.mutation.AddSessionIDs(ids...)
@@ -1215,6 +1261,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.WelcomeEmailSentCleared() {
 		_spec.ClearField(user.FieldWelcomeEmailSent, field.TypeBool)
+	}
+	if value, ok := uuo.mutation.CanAdmin(); ok {
+		_spec.SetField(user.FieldCanAdmin, field.TypeBool, value)
+	}
+	if uuo.mutation.CanAdminCleared() {
+		_spec.ClearField(user.FieldCanAdmin, field.TypeBool)
 	}
 	if uuo.mutation.SessionsCleared() {
 		edge := &sqlgraph.EdgeSpec{

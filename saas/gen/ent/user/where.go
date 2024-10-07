@@ -135,6 +135,11 @@ func WelcomeEmailSent(v bool) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldWelcomeEmailSent, v))
 }
 
+// CanAdmin applies equality check predicate on the "can_admin" field. It's identical to CanAdminEQ.
+func CanAdmin(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldCanAdmin, v))
+}
+
 // CreatedAtEQ applies the EQ predicate on the "created_at" field.
 func CreatedAtEQ(v time.Time) predicate.User {
 	return predicate.User(sql.FieldEQ(FieldCreatedAt, v))
@@ -1013,6 +1018,26 @@ func WelcomeEmailSentIsNil() predicate.User {
 // WelcomeEmailSentNotNil applies the NotNil predicate on the "welcome_email_sent" field.
 func WelcomeEmailSentNotNil() predicate.User {
 	return predicate.User(sql.FieldNotNull(FieldWelcomeEmailSent))
+}
+
+// CanAdminEQ applies the EQ predicate on the "can_admin" field.
+func CanAdminEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldEQ(FieldCanAdmin, v))
+}
+
+// CanAdminNEQ applies the NEQ predicate on the "can_admin" field.
+func CanAdminNEQ(v bool) predicate.User {
+	return predicate.User(sql.FieldNEQ(FieldCanAdmin, v))
+}
+
+// CanAdminIsNil applies the IsNil predicate on the "can_admin" field.
+func CanAdminIsNil() predicate.User {
+	return predicate.User(sql.FieldIsNull(FieldCanAdmin))
+}
+
+// CanAdminNotNil applies the NotNil predicate on the "can_admin" field.
+func CanAdminNotNil() predicate.User {
+	return predicate.User(sql.FieldNotNull(FieldCanAdmin))
 }
 
 // HasSessions applies the HasEdge predicate on the "sessions" edge.

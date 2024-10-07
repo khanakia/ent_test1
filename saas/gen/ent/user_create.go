@@ -214,6 +214,20 @@ func (uc *UserCreate) SetNillableWelcomeEmailSent(b *bool) *UserCreate {
 	return uc
 }
 
+// SetCanAdmin sets the "can_admin" field.
+func (uc *UserCreate) SetCanAdmin(b bool) *UserCreate {
+	uc.mutation.SetCanAdmin(b)
+	return uc
+}
+
+// SetNillableCanAdmin sets the "can_admin" field if the given value is not nil.
+func (uc *UserCreate) SetNillableCanAdmin(b *bool) *UserCreate {
+	if b != nil {
+		uc.SetCanAdmin(*b)
+	}
+	return uc
+}
+
 // SetID sets the "id" field.
 func (uc *UserCreate) SetID(s string) *UserCreate {
 	uc.mutation.SetID(s)
@@ -324,6 +338,10 @@ func (uc *UserCreate) defaults() {
 		v := user.DefaultStatus
 		uc.mutation.SetStatus(v)
 	}
+	if _, ok := uc.mutation.CanAdmin(); !ok {
+		v := user.DefaultCanAdmin
+		uc.mutation.SetCanAdmin(v)
+	}
 	if _, ok := uc.mutation.ID(); !ok {
 		v := user.DefaultID()
 		uc.mutation.SetID(v)
@@ -426,6 +444,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.WelcomeEmailSent(); ok {
 		_spec.SetField(user.FieldWelcomeEmailSent, field.TypeBool, value)
 		_node.WelcomeEmailSent = value
+	}
+	if value, ok := uc.mutation.CanAdmin(); ok {
+		_spec.SetField(user.FieldCanAdmin, field.TypeBool, value)
+		_node.CanAdmin = value
 	}
 	if nodes := uc.mutation.SessionsIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -762,6 +784,24 @@ func (u *UserUpsert) ClearWelcomeEmailSent() *UserUpsert {
 	return u
 }
 
+// SetCanAdmin sets the "can_admin" field.
+func (u *UserUpsert) SetCanAdmin(v bool) *UserUpsert {
+	u.Set(user.FieldCanAdmin, v)
+	return u
+}
+
+// UpdateCanAdmin sets the "can_admin" field to the value that was provided on create.
+func (u *UserUpsert) UpdateCanAdmin() *UserUpsert {
+	u.SetExcluded(user.FieldCanAdmin)
+	return u
+}
+
+// ClearCanAdmin clears the value of the "can_admin" field.
+func (u *UserUpsert) ClearCanAdmin() *UserUpsert {
+	u.SetNull(user.FieldCanAdmin)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -1076,6 +1116,27 @@ func (u *UserUpsertOne) UpdateWelcomeEmailSent() *UserUpsertOne {
 func (u *UserUpsertOne) ClearWelcomeEmailSent() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearWelcomeEmailSent()
+	})
+}
+
+// SetCanAdmin sets the "can_admin" field.
+func (u *UserUpsertOne) SetCanAdmin(v bool) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetCanAdmin(v)
+	})
+}
+
+// UpdateCanAdmin sets the "can_admin" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateCanAdmin() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateCanAdmin()
+	})
+}
+
+// ClearCanAdmin clears the value of the "can_admin" field.
+func (u *UserUpsertOne) ClearCanAdmin() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearCanAdmin()
 	})
 }
 
@@ -1560,6 +1621,27 @@ func (u *UserUpsertBulk) UpdateWelcomeEmailSent() *UserUpsertBulk {
 func (u *UserUpsertBulk) ClearWelcomeEmailSent() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearWelcomeEmailSent()
+	})
+}
+
+// SetCanAdmin sets the "can_admin" field.
+func (u *UserUpsertBulk) SetCanAdmin(v bool) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetCanAdmin(v)
+	})
+}
+
+// UpdateCanAdmin sets the "can_admin" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateCanAdmin() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateCanAdmin()
+	})
+}
+
+// ClearCanAdmin clears the value of the "can_admin" field.
+func (u *UserUpsertBulk) ClearCanAdmin() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearCanAdmin()
 	})
 }
 

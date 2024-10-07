@@ -419,6 +419,10 @@ func init() {
 	userDescStatus := userFields[7].Descriptor()
 	// user.DefaultStatus holds the default value on creation for the status field.
 	user.DefaultStatus = userDescStatus.Default.(bool)
+	// userDescCanAdmin is the schema descriptor for can_admin field.
+	userDescCanAdmin := userFields[12].Descriptor()
+	// user.DefaultCanAdmin holds the default value on creation for the can_admin field.
+	user.DefaultCanAdmin = userDescCanAdmin.Default.(bool)
 	// userDescID is the schema descriptor for id field.
 	userDescID := userMixinFields0[0].Descriptor()
 	// user.DefaultID holds the default value on creation for the id field.

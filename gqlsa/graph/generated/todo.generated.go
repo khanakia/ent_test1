@@ -396,8 +396,28 @@ func (ec *executionContext) _Mutation_createPostType(ctx context.Context, field 
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreatePostType(rctx, fc.Args["input"].(ent.CreatePostTypeInput))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CreatePostType(rctx, fc.Args["input"].(ent.CreatePostTypeInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.CanAdmin == nil {
+				return nil, errors.New("directive canAdmin is not implemented")
+			}
+			return ec.directives.CanAdmin(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*ent.PostType); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *saas/gen/ent.PostType`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -481,8 +501,28 @@ func (ec *executionContext) _Mutation_updatePostType(ctx context.Context, field 
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdatePostType(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdatePostTypeInput))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdatePostType(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdatePostTypeInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.CanAdmin == nil {
+				return nil, errors.New("directive canAdmin is not implemented")
+			}
+			return ec.directives.CanAdmin(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*ent.PostType); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *saas/gen/ent.PostType`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -566,8 +606,28 @@ func (ec *executionContext) _Mutation_createPostStatus(ctx context.Context, fiel
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreatePostStatus(rctx, fc.Args["input"].(ent.CreatePostStatusInput))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CreatePostStatus(rctx, fc.Args["input"].(ent.CreatePostStatusInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.CanAdmin == nil {
+				return nil, errors.New("directive canAdmin is not implemented")
+			}
+			return ec.directives.CanAdmin(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*ent.PostStatus); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *saas/gen/ent.PostStatus`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -641,8 +701,28 @@ func (ec *executionContext) _Mutation_updatePostStatus(ctx context.Context, fiel
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdatePostStatus(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdatePostStatusInput))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdatePostStatus(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdatePostStatusInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.CanAdmin == nil {
+				return nil, errors.New("directive canAdmin is not implemented")
+			}
+			return ec.directives.CanAdmin(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*ent.PostStatus); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *saas/gen/ent.PostStatus`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -716,8 +796,28 @@ func (ec *executionContext) _Mutation_createPostCategory(ctx context.Context, fi
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreatePostCategory(rctx, fc.Args["input"].(ent.CreatePostCategoryInput))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CreatePostCategory(rctx, fc.Args["input"].(ent.CreatePostCategoryInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.CanAdmin == nil {
+				return nil, errors.New("directive canAdmin is not implemented")
+			}
+			return ec.directives.CanAdmin(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*ent.PostCategory); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *saas/gen/ent.PostCategory`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -799,8 +899,28 @@ func (ec *executionContext) _Mutation_updatePostCategory(ctx context.Context, fi
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdatePostCategory(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdatePostCategoryInput))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdatePostCategory(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdatePostCategoryInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.CanAdmin == nil {
+				return nil, errors.New("directive canAdmin is not implemented")
+			}
+			return ec.directives.CanAdmin(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*ent.PostCategory); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *saas/gen/ent.PostCategory`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -882,8 +1002,28 @@ func (ec *executionContext) _Mutation_createPost(ctx context.Context, field grap
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().CreatePost(rctx, fc.Args["input"].(ent.CreatePostInput))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CreatePost(rctx, fc.Args["input"].(ent.CreatePostInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.CanAdmin == nil {
+				return nil, errors.New("directive canAdmin is not implemented")
+			}
+			return ec.directives.CanAdmin(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*ent.Post); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *saas/gen/ent.Post`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -975,8 +1115,28 @@ func (ec *executionContext) _Mutation_updatePost(ctx context.Context, field grap
 		}
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Mutation().UpdatePost(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdatePostInput))
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdatePost(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdatePostInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.CanAdmin == nil {
+				return nil, errors.New("directive canAdmin is not implemented")
+			}
+			return ec.directives.CanAdmin(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*ent.Post); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *saas/gen/ent.Post`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)

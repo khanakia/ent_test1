@@ -39,6 +39,7 @@ type ResolverRoot interface {
 }
 
 type DirectiveRoot struct {
+	CanAdmin func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
 }
 
 type ComplexityRoot struct {
@@ -1319,14 +1320,14 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 
 var sources = []*ast.Source{
 	{Name: "../cms.graphql", Input: `extend type Mutation {
-  createPostType(input: CreatePostTypeInput!): PostType!
-  updatePostType(id: ID!, input: UpdatePostTypeInput!): PostType!
-  createPostStatus(input: CreatePostStatusInput!): PostStatus!
-  updatePostStatus(id: ID!, input: UpdatePostStatusInput!): PostStatus!
-  createPostCategory(input: CreatePostCategoryInput!): PostCategory!
-  updatePostCategory(id: ID!, input: UpdatePostCategoryInput!): PostCategory!
-  createPost(input: CreatePostInput!): Post!
-  updatePost(id: ID!, input: UpdatePostInput!): Post!
+  createPostType(input: CreatePostTypeInput!): PostType! @canAdmin
+  updatePostType(id: ID!, input: UpdatePostTypeInput!): PostType! @canAdmin
+  createPostStatus(input: CreatePostStatusInput!): PostStatus! @canAdmin
+  updatePostStatus(id: ID!, input: UpdatePostStatusInput!): PostStatus! @canAdmin
+  createPostCategory(input: CreatePostCategoryInput!): PostCategory! @canAdmin
+  updatePostCategory(id: ID!, input: UpdatePostCategoryInput!): PostCategory! @canAdmin
+  createPost(input: CreatePostInput!): Post! @canAdmin
+  updatePost(id: ID!, input: UpdatePostInput!): Post! @canAdmin
 }
 
 `, BuiltIn: false},
@@ -1872,6 +1873,9 @@ Properties by which PostStatus connections can be ordered.
 """
 enum PostStatusOrderField {
   CREATED_AT
+  NAME
+  STATUS
+  POST_TYPE_NAME
 }
 """
 PostStatusWhereInput is used for filtering PostStatus objects.
@@ -2806,7 +2810,7 @@ type Query {
     ID of the object.
     """
     id: ID!
-  ): Node
+  ): Node @canAdmin
   """
   Lookup nodes by a list of IDs.
   """
@@ -2815,7 +2819,7 @@ type Query {
     The list of node IDs.
     """
     ids: [ID!]!
-  ): [Node]!
+  ): [Node]! @canAdmin
   posts(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -2846,7 +2850,7 @@ type Query {
     Filtering options for Posts returned from the connection.
     """
     where: PostWhereInput
-  ): PostConnection!
+  ): PostConnection! @canAdmin
   postCategories(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -2877,7 +2881,7 @@ type Query {
     Filtering options for PostCategories returned from the connection.
     """
     where: PostCategoryWhereInput
-  ): PostCategoryConnection!
+  ): PostCategoryConnection! @canAdmin
   postStatuses(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -2908,7 +2912,7 @@ type Query {
     Filtering options for PostStatusSlice returned from the connection.
     """
     where: PostStatusWhereInput
-  ): PostStatusConnection!
+  ): PostStatusConnection! @canAdmin
   postTypes(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -2939,7 +2943,7 @@ type Query {
     Filtering options for PostTypes returned from the connection.
     """
     where: PostTypeWhereInput
-  ): PostTypeConnection!
+  ): PostTypeConnection! @canAdmin
   todos(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -3261,7 +3265,10 @@ input UpdateTodoInput {
   clearParent: Boolean
 }
 `, BuiltIn: false},
-	{Name: "../schema.graphql", Input: `scalar Time
+	{Name: "../schema.graphql", Input: `directive @canAdmin on FIELD_DEFINITION
+
+
+scalar Time
 scalar Uint64
 scalar Map
 scalar JSON
