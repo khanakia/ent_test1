@@ -5,12 +5,17 @@ package ent
 import (
 	"context"
 	"fmt"
+	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/post"
 	"saas/gen/ent/postcategory"
 	"saas/gen/ent/poststatus"
 	"saas/gen/ent/posttag"
 	"saas/gen/ent/posttype"
 	"saas/gen/ent/todo"
+	"saas/gen/ent/user"
+	"saas/gen/ent/workspace"
+	"saas/gen/ent/workspaceinvite"
+	"saas/gen/ent/workspaceuser"
 
 	"entgo.io/contrib/entgql"
 	"github.com/99designs/gqlgen/graphql"
@@ -21,6 +26,11 @@ import (
 type Noder interface {
 	IsNode()
 }
+
+var oauthconnectionImplementors = []string{"OauthConnection", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*OauthConnection) IsNode() {}
 
 var postImplementors = []string{"Post", "Node"}
 
@@ -51,6 +61,26 @@ var todoImplementors = []string{"Todo", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
 func (*Todo) IsNode() {}
+
+var userImplementors = []string{"User", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*User) IsNode() {}
+
+var workspaceImplementors = []string{"Workspace", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*Workspace) IsNode() {}
+
+var workspaceinviteImplementors = []string{"WorkspaceInvite", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*WorkspaceInvite) IsNode() {}
+
+var workspaceuserImplementors = []string{"WorkspaceUser", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*WorkspaceUser) IsNode() {}
 
 var errNodeInvalidID = &NotFoundError{"node"}
 
@@ -110,6 +140,15 @@ func (c *Client) Noder(ctx context.Context, id string, opts ...NodeOption) (_ No
 
 func (c *Client) noder(ctx context.Context, table string, id string) (Noder, error) {
 	switch table {
+	case oauthconnection.Table:
+		query := c.OauthConnection.Query().
+			Where(oauthconnection.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, oauthconnectionImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
 	case post.Table:
 		query := c.Post.Query().
 			Where(post.ID(id))
@@ -160,6 +199,42 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			Where(todo.ID(id))
 		if fc := graphql.GetFieldContext(ctx); fc != nil {
 			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, todoImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case user.Table:
+		query := c.User.Query().
+			Where(user.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, userImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case workspace.Table:
+		query := c.Workspace.Query().
+			Where(workspace.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, workspaceImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case workspaceinvite.Table:
+		query := c.WorkspaceInvite.Query().
+			Where(workspaceinvite.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, workspaceinviteImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case workspaceuser.Table:
+		query := c.WorkspaceUser.Query().
+			Where(workspaceuser.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, workspaceuserImplementors...); err != nil {
 				return nil, err
 			}
 		}
@@ -237,6 +312,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		idmap[id] = append(idmap[id], &noders[i])
 	}
 	switch table {
+	case oauthconnection.Table:
+		query := c.OauthConnection.Query().
+			Where(oauthconnection.IDIn(ids...))
+		query, err := query.CollectFields(ctx, oauthconnectionImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
 	case post.Table:
 		query := c.Post.Query().
 			Where(post.IDIn(ids...))
@@ -321,6 +412,70 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		query := c.Todo.Query().
 			Where(todo.IDIn(ids...))
 		query, err := query.CollectFields(ctx, todoImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case user.Table:
+		query := c.User.Query().
+			Where(user.IDIn(ids...))
+		query, err := query.CollectFields(ctx, userImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case workspace.Table:
+		query := c.Workspace.Query().
+			Where(workspace.IDIn(ids...))
+		query, err := query.CollectFields(ctx, workspaceImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case workspaceinvite.Table:
+		query := c.WorkspaceInvite.Query().
+			Where(workspaceinvite.IDIn(ids...))
+		query, err := query.CollectFields(ctx, workspaceinviteImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case workspaceuser.Table:
+		query := c.WorkspaceUser.Query().
+			Where(workspaceuser.IDIn(ids...))
+		query, err := query.CollectFields(ctx, workspaceuserImplementors...)
 		if err != nil {
 			return nil, err
 		}

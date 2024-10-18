@@ -3,9 +3,6 @@
 package posttype
 
 import (
-	"fmt"
-	"io"
-	"strconv"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -94,37 +91,13 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultStatus holds the default value on creation for the "status" field.
+	DefaultStatus string
 	// ContentValidator is a validator for the "content" field. It is called by the builders before save.
 	ContentValidator func(string) error
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
-
-// Status defines the type for the "status" enum field.
-type Status string
-
-// StatusPublished is the default value of the Status enum.
-const DefaultStatus = StatusPublished
-
-// Status values.
-const (
-	StatusPublished Status = "PUBLISHED"
-	StatusDraft     Status = "DRAFT"
-)
-
-func (s Status) String() string {
-	return string(s)
-}
-
-// StatusValidator is a validator for the "status" field enum values. It is called by the builders before save.
-func StatusValidator(s Status) error {
-	switch s {
-	case StatusPublished, StatusDraft:
-		return nil
-	default:
-		return fmt.Errorf("posttype: invalid enum value for status field: %q", s)
-	}
-}
 
 // OrderOption defines the ordering options for the PostType queries.
 type OrderOption func(*sql.Selector)
@@ -229,22 +202,4 @@ func newPostStatusesStep() *sqlgraph.Step {
 		sqlgraph.To(PostStatusesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, PostStatusesTable, PostStatusesColumn),
 	)
-}
-
-// MarshalGQL implements graphql.Marshaler interface.
-func (e Status) MarshalGQL(w io.Writer) {
-	io.WriteString(w, strconv.Quote(e.String()))
-}
-
-// UnmarshalGQL implements graphql.Unmarshaler interface.
-func (e *Status) UnmarshalGQL(val interface{}) error {
-	str, ok := val.(string)
-	if !ok {
-		return fmt.Errorf("enum %T must be a string", val)
-	}
-	*e = Status(str)
-	if err := StatusValidator(*e); err != nil {
-		return fmt.Errorf("%s is not a valid Status", str)
-	}
-	return nil
 }

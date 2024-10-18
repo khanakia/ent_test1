@@ -20,7 +20,9 @@ func (User) Fields() []ent.Field {
 	// incrementalEnabled := true
 
 	return []ent.Field{
-		field.String("email").Unique(),
+		field.String("email").Unique().Annotations(
+			entgql.OrderField("EMAIL"),
+		),
 		field.String("phone").Unique().Optional(),
 		field.String("first_name").Optional(),
 		field.String("last_name").Optional(),
@@ -33,8 +35,12 @@ func (User) Fields() []ent.Field {
 			Optional(),
 		field.String("secret").Sensitive().Optional(),
 		field.String("api_key").Optional(),
-		field.Bool("welcome_email_sent").Annotations().Optional(),
-		field.Bool("can_admin").Optional().Default(false), // if true allow user to login to super admin
+		field.Bool("welcome_email_sent").Annotations().Optional().Annotations(
+			entgql.OrderField("WELCOME_EMAIL_SENT"),
+		),
+		field.Bool("can_admin").Optional().Default(false).Annotations().Optional().Annotations(
+			entgql.OrderField("CAN_ADMIN"),
+		), // if true allow user to login to super admin
 	}
 }
 
@@ -50,7 +56,10 @@ func (User) Edges() []ent.Edge {
 
 func (User) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entgql.Skip(entgql.SkipAll),
+		entgql.RelayConnection(),
+		entgql.QueryField().Directives(entgql.Directive{Name: constants.DirectiveCanAdmin}),
+		entgql.MultiOrder(),
+		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 	}
 }
 

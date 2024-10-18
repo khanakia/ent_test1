@@ -4,16 +4,166 @@ package ent
 
 import (
 	"context"
+	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/post"
 	"saas/gen/ent/postcategory"
 	"saas/gen/ent/poststatus"
 	"saas/gen/ent/posttag"
 	"saas/gen/ent/posttype"
 	"saas/gen/ent/todo"
+	"saas/gen/ent/user"
+	"saas/gen/ent/workspace"
+	"saas/gen/ent/workspaceinvite"
+	"saas/gen/ent/workspaceuser"
 
 	"entgo.io/contrib/entgql"
 	"github.com/99designs/gqlgen/graphql"
 )
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (oc *OauthConnectionQuery) CollectFields(ctx context.Context, satisfies ...string) (*OauthConnectionQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return oc, nil
+	}
+	if err := oc.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return oc, nil
+}
+
+func (oc *OauthConnectionQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(oauthconnection.Columns))
+		selectedFields = []string{oauthconnection.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "createdAt":
+			if _, ok := fieldSeen[oauthconnection.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, oauthconnection.FieldCreatedAt)
+				fieldSeen[oauthconnection.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[oauthconnection.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, oauthconnection.FieldUpdatedAt)
+				fieldSeen[oauthconnection.FieldUpdatedAt] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[oauthconnection.FieldName]; !ok {
+				selectedFields = append(selectedFields, oauthconnection.FieldName)
+				fieldSeen[oauthconnection.FieldName] = struct{}{}
+			}
+		case "provider":
+			if _, ok := fieldSeen[oauthconnection.FieldProvider]; !ok {
+				selectedFields = append(selectedFields, oauthconnection.FieldProvider)
+				fieldSeen[oauthconnection.FieldProvider] = struct{}{}
+			}
+		case "clientID":
+			if _, ok := fieldSeen[oauthconnection.FieldClientID]; !ok {
+				selectedFields = append(selectedFields, oauthconnection.FieldClientID)
+				fieldSeen[oauthconnection.FieldClientID] = struct{}{}
+			}
+		case "clientSecret":
+			if _, ok := fieldSeen[oauthconnection.FieldClientSecret]; !ok {
+				selectedFields = append(selectedFields, oauthconnection.FieldClientSecret)
+				fieldSeen[oauthconnection.FieldClientSecret] = struct{}{}
+			}
+		case "scopes":
+			if _, ok := fieldSeen[oauthconnection.FieldScopes]; !ok {
+				selectedFields = append(selectedFields, oauthconnection.FieldScopes)
+				fieldSeen[oauthconnection.FieldScopes] = struct{}{}
+			}
+		case "redirectURL":
+			if _, ok := fieldSeen[oauthconnection.FieldRedirectURL]; !ok {
+				selectedFields = append(selectedFields, oauthconnection.FieldRedirectURL)
+				fieldSeen[oauthconnection.FieldRedirectURL] = struct{}{}
+			}
+		case "dashboardLink":
+			if _, ok := fieldSeen[oauthconnection.FieldDashboardLink]; !ok {
+				selectedFields = append(selectedFields, oauthconnection.FieldDashboardLink)
+				fieldSeen[oauthconnection.FieldDashboardLink] = struct{}{}
+			}
+		case "note":
+			if _, ok := fieldSeen[oauthconnection.FieldNote]; !ok {
+				selectedFields = append(selectedFields, oauthconnection.FieldNote)
+				fieldSeen[oauthconnection.FieldNote] = struct{}{}
+			}
+		case "status":
+			if _, ok := fieldSeen[oauthconnection.FieldStatus]; !ok {
+				selectedFields = append(selectedFields, oauthconnection.FieldStatus)
+				fieldSeen[oauthconnection.FieldStatus] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		oc.Select(selectedFields...)
+	}
+	return nil
+}
+
+type oauthconnectionPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []OauthConnectionPaginateOption
+}
+
+func newOauthConnectionPaginateArgs(rv map[string]any) *oauthconnectionPaginateArgs {
+	args := &oauthconnectionPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[orderByField]; ok {
+		switch v := v.(type) {
+		case []*OauthConnectionOrder:
+			args.opts = append(args.opts, WithOauthConnectionOrder(v))
+		case []any:
+			var orders []*OauthConnectionOrder
+			for i := range v {
+				mv, ok := v[i].(map[string]any)
+				if !ok {
+					continue
+				}
+				var (
+					err1, err2 error
+					order      = &OauthConnectionOrder{Field: &OauthConnectionOrderField{}, Direction: entgql.OrderDirectionAsc}
+				)
+				if d, ok := mv[directionField]; ok {
+					err1 = order.Direction.UnmarshalGQL(d)
+				}
+				if f, ok := mv[fieldField]; ok {
+					err2 = order.Field.UnmarshalGQL(f)
+				}
+				if err1 == nil && err2 == nil {
+					orders = append(orders, order)
+				}
+			}
+			args.opts = append(args.opts, WithOauthConnectionOrder(orders))
+		}
+	}
+	if v, ok := rv[whereField].(*OauthConnectionWhereInput); ok {
+		args.opts = append(args.opts, WithOauthConnectionFilter(v.Filter))
+	}
+	return args
+}
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (po *PostQuery) CollectFields(ctx context.Context, satisfies ...string) (*PostQuery, error) {
@@ -965,6 +1115,616 @@ func newTodoPaginateArgs(rv map[string]any) *todoPaginateArgs {
 	}
 	if v, ok := rv[whereField].(*TodoWhereInput); ok {
 		args.opts = append(args.opts, WithTodoFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (u *UserQuery) CollectFields(ctx context.Context, satisfies ...string) (*UserQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return u, nil
+	}
+	if err := u.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return u, nil
+}
+
+func (u *UserQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(user.Columns))
+		selectedFields = []string{user.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+
+		case "workspaces":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&WorkspaceClient{config: u.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, workspaceImplementors)...); err != nil {
+				return err
+			}
+			u.WithNamedWorkspaces(alias, func(wq *WorkspaceQuery) {
+				*wq = *query
+			})
+
+		case "workspaceUsers":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&WorkspaceUserClient{config: u.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, workspaceuserImplementors)...); err != nil {
+				return err
+			}
+			u.WithNamedWorkspaceUsers(alias, func(wq *WorkspaceUserQuery) {
+				*wq = *query
+			})
+		case "createdAt":
+			if _, ok := fieldSeen[user.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, user.FieldCreatedAt)
+				fieldSeen[user.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[user.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, user.FieldUpdatedAt)
+				fieldSeen[user.FieldUpdatedAt] = struct{}{}
+			}
+		case "email":
+			if _, ok := fieldSeen[user.FieldEmail]; !ok {
+				selectedFields = append(selectedFields, user.FieldEmail)
+				fieldSeen[user.FieldEmail] = struct{}{}
+			}
+		case "phone":
+			if _, ok := fieldSeen[user.FieldPhone]; !ok {
+				selectedFields = append(selectedFields, user.FieldPhone)
+				fieldSeen[user.FieldPhone] = struct{}{}
+			}
+		case "firstName":
+			if _, ok := fieldSeen[user.FieldFirstName]; !ok {
+				selectedFields = append(selectedFields, user.FieldFirstName)
+				fieldSeen[user.FieldFirstName] = struct{}{}
+			}
+		case "lastName":
+			if _, ok := fieldSeen[user.FieldLastName]; !ok {
+				selectedFields = append(selectedFields, user.FieldLastName)
+				fieldSeen[user.FieldLastName] = struct{}{}
+			}
+		case "company":
+			if _, ok := fieldSeen[user.FieldCompany]; !ok {
+				selectedFields = append(selectedFields, user.FieldCompany)
+				fieldSeen[user.FieldCompany] = struct{}{}
+			}
+		case "locale":
+			if _, ok := fieldSeen[user.FieldLocale]; !ok {
+				selectedFields = append(selectedFields, user.FieldLocale)
+				fieldSeen[user.FieldLocale] = struct{}{}
+			}
+		case "roleID":
+			if _, ok := fieldSeen[user.FieldRoleID]; !ok {
+				selectedFields = append(selectedFields, user.FieldRoleID)
+				fieldSeen[user.FieldRoleID] = struct{}{}
+			}
+		case "status":
+			if _, ok := fieldSeen[user.FieldStatus]; !ok {
+				selectedFields = append(selectedFields, user.FieldStatus)
+				fieldSeen[user.FieldStatus] = struct{}{}
+			}
+		case "apiKey":
+			if _, ok := fieldSeen[user.FieldAPIKey]; !ok {
+				selectedFields = append(selectedFields, user.FieldAPIKey)
+				fieldSeen[user.FieldAPIKey] = struct{}{}
+			}
+		case "welcomeEmailSent":
+			if _, ok := fieldSeen[user.FieldWelcomeEmailSent]; !ok {
+				selectedFields = append(selectedFields, user.FieldWelcomeEmailSent)
+				fieldSeen[user.FieldWelcomeEmailSent] = struct{}{}
+			}
+		case "canAdmin":
+			if _, ok := fieldSeen[user.FieldCanAdmin]; !ok {
+				selectedFields = append(selectedFields, user.FieldCanAdmin)
+				fieldSeen[user.FieldCanAdmin] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		u.Select(selectedFields...)
+	}
+	return nil
+}
+
+type userPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []UserPaginateOption
+}
+
+func newUserPaginateArgs(rv map[string]any) *userPaginateArgs {
+	args := &userPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[orderByField]; ok {
+		switch v := v.(type) {
+		case []*UserOrder:
+			args.opts = append(args.opts, WithUserOrder(v))
+		case []any:
+			var orders []*UserOrder
+			for i := range v {
+				mv, ok := v[i].(map[string]any)
+				if !ok {
+					continue
+				}
+				var (
+					err1, err2 error
+					order      = &UserOrder{Field: &UserOrderField{}, Direction: entgql.OrderDirectionAsc}
+				)
+				if d, ok := mv[directionField]; ok {
+					err1 = order.Direction.UnmarshalGQL(d)
+				}
+				if f, ok := mv[fieldField]; ok {
+					err2 = order.Field.UnmarshalGQL(f)
+				}
+				if err1 == nil && err2 == nil {
+					orders = append(orders, order)
+				}
+			}
+			args.opts = append(args.opts, WithUserOrder(orders))
+		}
+	}
+	if v, ok := rv[whereField].(*UserWhereInput); ok {
+		args.opts = append(args.opts, WithUserFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (w *WorkspaceQuery) CollectFields(ctx context.Context, satisfies ...string) (*WorkspaceQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return w, nil
+	}
+	if err := w.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return w, nil
+}
+
+func (w *WorkspaceQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(workspace.Columns))
+		selectedFields = []string{workspace.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+
+		case "users":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&UserClient{config: w.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, userImplementors)...); err != nil {
+				return err
+			}
+			w.WithNamedUsers(alias, func(wq *UserQuery) {
+				*wq = *query
+			})
+
+		case "workspaceInvites":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&WorkspaceInviteClient{config: w.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, workspaceinviteImplementors)...); err != nil {
+				return err
+			}
+			w.WithNamedWorkspaceInvites(alias, func(wq *WorkspaceInviteQuery) {
+				*wq = *query
+			})
+
+		case "workspaceUsers":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&WorkspaceUserClient{config: w.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, workspaceuserImplementors)...); err != nil {
+				return err
+			}
+			w.WithNamedWorkspaceUsers(alias, func(wq *WorkspaceUserQuery) {
+				*wq = *query
+			})
+		case "createdAt":
+			if _, ok := fieldSeen[workspace.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, workspace.FieldCreatedAt)
+				fieldSeen[workspace.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[workspace.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, workspace.FieldUpdatedAt)
+				fieldSeen[workspace.FieldUpdatedAt] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[workspace.FieldName]; !ok {
+				selectedFields = append(selectedFields, workspace.FieldName)
+				fieldSeen[workspace.FieldName] = struct{}{}
+			}
+		case "isPersonal":
+			if _, ok := fieldSeen[workspace.FieldIsPersonal]; !ok {
+				selectedFields = append(selectedFields, workspace.FieldIsPersonal)
+				fieldSeen[workspace.FieldIsPersonal] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[workspace.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, workspace.FieldUserID)
+				fieldSeen[workspace.FieldUserID] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		w.Select(selectedFields...)
+	}
+	return nil
+}
+
+type workspacePaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []WorkspacePaginateOption
+}
+
+func newWorkspacePaginateArgs(rv map[string]any) *workspacePaginateArgs {
+	args := &workspacePaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[orderByField]; ok {
+		switch v := v.(type) {
+		case []*WorkspaceOrder:
+			args.opts = append(args.opts, WithWorkspaceOrder(v))
+		case []any:
+			var orders []*WorkspaceOrder
+			for i := range v {
+				mv, ok := v[i].(map[string]any)
+				if !ok {
+					continue
+				}
+				var (
+					err1, err2 error
+					order      = &WorkspaceOrder{Field: &WorkspaceOrderField{}, Direction: entgql.OrderDirectionAsc}
+				)
+				if d, ok := mv[directionField]; ok {
+					err1 = order.Direction.UnmarshalGQL(d)
+				}
+				if f, ok := mv[fieldField]; ok {
+					err2 = order.Field.UnmarshalGQL(f)
+				}
+				if err1 == nil && err2 == nil {
+					orders = append(orders, order)
+				}
+			}
+			args.opts = append(args.opts, WithWorkspaceOrder(orders))
+		}
+	}
+	if v, ok := rv[whereField].(*WorkspaceWhereInput); ok {
+		args.opts = append(args.opts, WithWorkspaceFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (wi *WorkspaceInviteQuery) CollectFields(ctx context.Context, satisfies ...string) (*WorkspaceInviteQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return wi, nil
+	}
+	if err := wi.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return wi, nil
+}
+
+func (wi *WorkspaceInviteQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(workspaceinvite.Columns))
+		selectedFields = []string{workspaceinvite.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+
+		case "workspace":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&WorkspaceClient{config: wi.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, workspaceImplementors)...); err != nil {
+				return err
+			}
+			wi.withWorkspace = query
+			if _, ok := fieldSeen[workspaceinvite.FieldWorkspaceID]; !ok {
+				selectedFields = append(selectedFields, workspaceinvite.FieldWorkspaceID)
+				fieldSeen[workspaceinvite.FieldWorkspaceID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[workspaceinvite.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, workspaceinvite.FieldCreatedAt)
+				fieldSeen[workspaceinvite.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[workspaceinvite.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, workspaceinvite.FieldUpdatedAt)
+				fieldSeen[workspaceinvite.FieldUpdatedAt] = struct{}{}
+			}
+		case "workspaceID":
+			if _, ok := fieldSeen[workspaceinvite.FieldWorkspaceID]; !ok {
+				selectedFields = append(selectedFields, workspaceinvite.FieldWorkspaceID)
+				fieldSeen[workspaceinvite.FieldWorkspaceID] = struct{}{}
+			}
+		case "email":
+			if _, ok := fieldSeen[workspaceinvite.FieldEmail]; !ok {
+				selectedFields = append(selectedFields, workspaceinvite.FieldEmail)
+				fieldSeen[workspaceinvite.FieldEmail] = struct{}{}
+			}
+		case "role":
+			if _, ok := fieldSeen[workspaceinvite.FieldRole]; !ok {
+				selectedFields = append(selectedFields, workspaceinvite.FieldRole)
+				fieldSeen[workspaceinvite.FieldRole] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		wi.Select(selectedFields...)
+	}
+	return nil
+}
+
+type workspaceinvitePaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []WorkspaceInvitePaginateOption
+}
+
+func newWorkspaceInvitePaginateArgs(rv map[string]any) *workspaceinvitePaginateArgs {
+	args := &workspaceinvitePaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[orderByField]; ok {
+		switch v := v.(type) {
+		case []*WorkspaceInviteOrder:
+			args.opts = append(args.opts, WithWorkspaceInviteOrder(v))
+		case []any:
+			var orders []*WorkspaceInviteOrder
+			for i := range v {
+				mv, ok := v[i].(map[string]any)
+				if !ok {
+					continue
+				}
+				var (
+					err1, err2 error
+					order      = &WorkspaceInviteOrder{Field: &WorkspaceInviteOrderField{}, Direction: entgql.OrderDirectionAsc}
+				)
+				if d, ok := mv[directionField]; ok {
+					err1 = order.Direction.UnmarshalGQL(d)
+				}
+				if f, ok := mv[fieldField]; ok {
+					err2 = order.Field.UnmarshalGQL(f)
+				}
+				if err1 == nil && err2 == nil {
+					orders = append(orders, order)
+				}
+			}
+			args.opts = append(args.opts, WithWorkspaceInviteOrder(orders))
+		}
+	}
+	if v, ok := rv[whereField].(*WorkspaceInviteWhereInput); ok {
+		args.opts = append(args.opts, WithWorkspaceInviteFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (wu *WorkspaceUserQuery) CollectFields(ctx context.Context, satisfies ...string) (*WorkspaceUserQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return wu, nil
+	}
+	if err := wu.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return wu, nil
+}
+
+func (wu *WorkspaceUserQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(workspaceuser.Columns))
+		selectedFields = []string{workspaceuser.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+
+		case "user":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&UserClient{config: wu.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, userImplementors)...); err != nil {
+				return err
+			}
+			wu.withUser = query
+			if _, ok := fieldSeen[workspaceuser.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, workspaceuser.FieldUserID)
+				fieldSeen[workspaceuser.FieldUserID] = struct{}{}
+			}
+
+		case "workspace":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&WorkspaceClient{config: wu.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, workspaceImplementors)...); err != nil {
+				return err
+			}
+			wu.withWorkspace = query
+			if _, ok := fieldSeen[workspaceuser.FieldWorkspaceID]; !ok {
+				selectedFields = append(selectedFields, workspaceuser.FieldWorkspaceID)
+				fieldSeen[workspaceuser.FieldWorkspaceID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[workspaceuser.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, workspaceuser.FieldCreatedAt)
+				fieldSeen[workspaceuser.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[workspaceuser.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, workspaceuser.FieldUpdatedAt)
+				fieldSeen[workspaceuser.FieldUpdatedAt] = struct{}{}
+			}
+		case "workspaceID":
+			if _, ok := fieldSeen[workspaceuser.FieldWorkspaceID]; !ok {
+				selectedFields = append(selectedFields, workspaceuser.FieldWorkspaceID)
+				fieldSeen[workspaceuser.FieldWorkspaceID] = struct{}{}
+			}
+		case "userID":
+			if _, ok := fieldSeen[workspaceuser.FieldUserID]; !ok {
+				selectedFields = append(selectedFields, workspaceuser.FieldUserID)
+				fieldSeen[workspaceuser.FieldUserID] = struct{}{}
+			}
+		case "role":
+			if _, ok := fieldSeen[workspaceuser.FieldRole]; !ok {
+				selectedFields = append(selectedFields, workspaceuser.FieldRole)
+				fieldSeen[workspaceuser.FieldRole] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		wu.Select(selectedFields...)
+	}
+	return nil
+}
+
+type workspaceuserPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []WorkspaceUserPaginateOption
+}
+
+func newWorkspaceUserPaginateArgs(rv map[string]any) *workspaceuserPaginateArgs {
+	args := &workspaceuserPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[orderByField]; ok {
+		switch v := v.(type) {
+		case []*WorkspaceUserOrder:
+			args.opts = append(args.opts, WithWorkspaceUserOrder(v))
+		case []any:
+			var orders []*WorkspaceUserOrder
+			for i := range v {
+				mv, ok := v[i].(map[string]any)
+				if !ok {
+					continue
+				}
+				var (
+					err1, err2 error
+					order      = &WorkspaceUserOrder{Field: &WorkspaceUserOrderField{}, Direction: entgql.OrderDirectionAsc}
+				)
+				if d, ok := mv[directionField]; ok {
+					err1 = order.Direction.UnmarshalGQL(d)
+				}
+				if f, ok := mv[fieldField]; ok {
+					err2 = order.Field.UnmarshalGQL(f)
+				}
+				if err1 == nil && err2 == nil {
+					orders = append(orders, order)
+				}
+			}
+			args.opts = append(args.opts, WithWorkspaceUserOrder(orders))
+		}
+	}
+	if v, ok := rv[whereField].(*WorkspaceUserWhereInput); ok {
+		args.opts = append(args.opts, WithWorkspaceUserFilter(v.Filter))
 	}
 	return args
 }

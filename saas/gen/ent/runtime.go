@@ -303,6 +303,10 @@ func init() {
 	posttype.DefaultUpdatedAt = posttypeDescUpdatedAt.Default.(func() time.Time)
 	// posttype.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	posttype.UpdateDefaultUpdatedAt = posttypeDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// posttypeDescStatus is the schema descriptor for status field.
+	posttypeDescStatus := posttypeFields[2].Descriptor()
+	// posttype.DefaultStatus holds the default value on creation for the status field.
+	posttype.DefaultStatus = posttypeDescStatus.Default.(string)
 	// posttypeDescContent is the schema descriptor for content field.
 	posttypeDescContent := posttypeFields[4].Descriptor()
 	// posttype.ContentValidator is a validator for the "content" field. It is called by the builders before save.

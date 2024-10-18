@@ -35,6 +35,7 @@ func (r *mutationResolver) UpdatePostType(ctx context.Context, id string, input 
 	if !appfn.IsUserSA(cuser) {
 		return nil, fmt.Errorf("unauthorized access")
 	}
+
 	return r.Plugin.EntDB.Client().PostType.UpdateOneID(id).SetInput(input).Save(ctx)
 }
 

@@ -82,15 +82,15 @@ func (ptc *PostTypeCreate) SetNillableSlug(s *string) *PostTypeCreate {
 }
 
 // SetStatus sets the "status" field.
-func (ptc *PostTypeCreate) SetStatus(po posttype.Status) *PostTypeCreate {
-	ptc.mutation.SetStatus(po)
+func (ptc *PostTypeCreate) SetStatus(s string) *PostTypeCreate {
+	ptc.mutation.SetStatus(s)
 	return ptc
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (ptc *PostTypeCreate) SetNillableStatus(po *posttype.Status) *PostTypeCreate {
-	if po != nil {
-		ptc.SetStatus(*po)
+func (ptc *PostTypeCreate) SetNillableStatus(s *string) *PostTypeCreate {
+	if s != nil {
+		ptc.SetStatus(*s)
 	}
 	return ptc
 }
@@ -278,14 +278,6 @@ func (ptc *PostTypeCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (ptc *PostTypeCreate) check() error {
-	if _, ok := ptc.mutation.Status(); !ok {
-		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "PostType.status"`)}
-	}
-	if v, ok := ptc.mutation.Status(); ok {
-		if err := posttype.StatusValidator(v); err != nil {
-			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "PostType.status": %w`, err)}
-		}
-	}
 	if v, ok := ptc.mutation.Content(); ok {
 		if err := posttype.ContentValidator(v); err != nil {
 			return &ValidationError{Name: "content", err: fmt.Errorf(`ent: validator failed for field "PostType.content": %w`, err)}
@@ -344,7 +336,7 @@ func (ptc *PostTypeCreate) createSpec() (*PostType, *sqlgraph.CreateSpec) {
 		_node.Slug = value
 	}
 	if value, ok := ptc.mutation.Status(); ok {
-		_spec.SetField(posttype.FieldStatus, field.TypeEnum, value)
+		_spec.SetField(posttype.FieldStatus, field.TypeString, value)
 		_node.Status = value
 	}
 	if value, ok := ptc.mutation.Excerpt(); ok {
@@ -510,7 +502,7 @@ func (u *PostTypeUpsert) ClearSlug() *PostTypeUpsert {
 }
 
 // SetStatus sets the "status" field.
-func (u *PostTypeUpsert) SetStatus(v posttype.Status) *PostTypeUpsert {
+func (u *PostTypeUpsert) SetStatus(v string) *PostTypeUpsert {
 	u.Set(posttype.FieldStatus, v)
 	return u
 }
@@ -518,6 +510,12 @@ func (u *PostTypeUpsert) SetStatus(v posttype.Status) *PostTypeUpsert {
 // UpdateStatus sets the "status" field to the value that was provided on create.
 func (u *PostTypeUpsert) UpdateStatus() *PostTypeUpsert {
 	u.SetExcluded(posttype.FieldStatus)
+	return u
+}
+
+// ClearStatus clears the value of the "status" field.
+func (u *PostTypeUpsert) ClearStatus() *PostTypeUpsert {
+	u.SetNull(posttype.FieldStatus)
 	return u
 }
 
@@ -744,7 +742,7 @@ func (u *PostTypeUpsertOne) ClearSlug() *PostTypeUpsertOne {
 }
 
 // SetStatus sets the "status" field.
-func (u *PostTypeUpsertOne) SetStatus(v posttype.Status) *PostTypeUpsertOne {
+func (u *PostTypeUpsertOne) SetStatus(v string) *PostTypeUpsertOne {
 	return u.Update(func(s *PostTypeUpsert) {
 		s.SetStatus(v)
 	})
@@ -754,6 +752,13 @@ func (u *PostTypeUpsertOne) SetStatus(v posttype.Status) *PostTypeUpsertOne {
 func (u *PostTypeUpsertOne) UpdateStatus() *PostTypeUpsertOne {
 	return u.Update(func(s *PostTypeUpsert) {
 		s.UpdateStatus()
+	})
+}
+
+// ClearStatus clears the value of the "status" field.
+func (u *PostTypeUpsertOne) ClearStatus() *PostTypeUpsertOne {
+	return u.Update(func(s *PostTypeUpsert) {
+		s.ClearStatus()
 	})
 }
 
@@ -1165,7 +1170,7 @@ func (u *PostTypeUpsertBulk) ClearSlug() *PostTypeUpsertBulk {
 }
 
 // SetStatus sets the "status" field.
-func (u *PostTypeUpsertBulk) SetStatus(v posttype.Status) *PostTypeUpsertBulk {
+func (u *PostTypeUpsertBulk) SetStatus(v string) *PostTypeUpsertBulk {
 	return u.Update(func(s *PostTypeUpsert) {
 		s.SetStatus(v)
 	})
@@ -1175,6 +1180,13 @@ func (u *PostTypeUpsertBulk) SetStatus(v posttype.Status) *PostTypeUpsertBulk {
 func (u *PostTypeUpsertBulk) UpdateStatus() *PostTypeUpsertBulk {
 	return u.Update(func(s *PostTypeUpsert) {
 		s.UpdateStatus()
+	})
+}
+
+// ClearStatus clears the value of the "status" field.
+func (u *PostTypeUpsertBulk) ClearStatus() *PostTypeUpsertBulk {
+	return u.Update(func(s *PostTypeUpsert) {
+		s.ClearStatus()
 	})
 }
 

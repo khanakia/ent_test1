@@ -64,6 +64,8 @@ type UserEdges struct {
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
 	loadedTypes [3]bool
+	// totalCount holds the count of the edges above.
+	totalCount [2]map[string]int
 
 	namedSessions       map[string][]*Session
 	namedWorkspaces     map[string][]*Workspace

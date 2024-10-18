@@ -26,7 +26,7 @@ type PostType struct {
 	// Slug holds the value of the "slug" field.
 	Slug string `json:"slug,omitempty"`
 	// Status holds the value of the "status" field.
-	Status posttype.Status `json:"status,omitempty"`
+	Status string `json:"status,omitempty"`
 	// Excerpt holds the value of the "excerpt" field.
 	Excerpt string `json:"excerpt,omitempty"`
 	// Content holds the value of the "content" field.
@@ -137,7 +137,7 @@ func (pt *PostType) assignValues(columns []string, values []any) error {
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
-				pt.Status = posttype.Status(value.String)
+				pt.Status = value.String
 			}
 		case posttype.FieldExcerpt:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -234,7 +234,7 @@ func (pt *PostType) String() string {
 	builder.WriteString(pt.Slug)
 	builder.WriteString(", ")
 	builder.WriteString("status=")
-	builder.WriteString(fmt.Sprintf("%v", pt.Status))
+	builder.WriteString(pt.Status)
 	builder.WriteString(", ")
 	builder.WriteString("excerpt=")
 	builder.WriteString(pt.Excerpt)

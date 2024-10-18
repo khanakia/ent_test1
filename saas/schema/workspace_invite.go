@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"saas/pkg/constants"
+
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
@@ -44,6 +46,9 @@ func (WorkspaceInvite) Mixin() []ent.Mixin {
 
 func (WorkspaceInvite) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entgql.Skip(entgql.SkipAll),
+		entgql.RelayConnection(),
+		entgql.QueryField().Directives(entgql.Directive{Name: constants.DirectiveCanAdmin}),
+		entgql.MultiOrder(),
+		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 	}
 }

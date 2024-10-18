@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"saas/pkg/constants"
+
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
@@ -14,7 +16,9 @@ type Workspace struct {
 
 func (Workspace) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("name").Optional(),
+		field.String("name").Optional().Annotations(
+			entgql.OrderField("NAME"),
+		),
 		field.Bool("is_personal").Optional(),
 		field.String("user_id").Optional(),
 	}
@@ -30,7 +34,11 @@ func (Workspace) Edges() []ent.Edge {
 
 func (Workspace) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entgql.Skip(entgql.SkipAll),
+		// entgql.Skip(entgql.SkipAll),
+		entgql.RelayConnection(),
+		entgql.QueryField().Directives(entgql.Directive{Name: constants.DirectiveCanAdmin}),
+		entgql.MultiOrder(),
+		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 	}
 }
 

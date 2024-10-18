@@ -1,0 +1,5 @@
+extend type Mutation {
+  createOauthConnection(input: CreateOauthConnectionInput!): OauthConnection! @canAdmin
+  updateOauthConnection(id: ID!, input: UpdateOauthConnectionInput!): OauthConnection! @canAdmin
+}
+

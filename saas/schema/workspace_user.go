@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"saas/pkg/constants"
+
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
@@ -25,11 +27,13 @@ func (WorkspaceUser) Edges() []ent.Edge {
 		edge.To("user", User.Type).
 			Required().
 			Unique().
-			Field("user_id"),
+			Field("user_id").
+			Annotations(entgql.OrderField("USER_EMAIL")),
 		edge.To("workspace", Workspace.Type).
 			Required().
 			Unique().
-			Field("workspace_id"),
+			Field("workspace_id").
+			Annotations(entgql.OrderField("WORKSPACE_NAME")),
 	}
 }
 
@@ -48,6 +52,9 @@ func (WorkspaceUser) Mixin() []ent.Mixin {
 
 func (WorkspaceUser) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entgql.Skip(entgql.SkipAll),
+		entgql.RelayConnection(),
+		entgql.QueryField().Directives(entgql.Directive{Name: constants.DirectiveCanAdmin}),
+		entgql.MultiOrder(),
+		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 	}
 }

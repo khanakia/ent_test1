@@ -9,11 +9,17 @@ import (
 	"fmt"
 	"gqlsa/graph/generated"
 	"saas/gen/ent"
+	"saas/gen/ent/oauthconnection"
+	"saas/gen/ent/post"
 	"saas/gen/ent/postcategory"
 	"saas/gen/ent/poststatus"
 	"saas/gen/ent/posttag"
 	"saas/gen/ent/posttype"
 	"saas/gen/ent/todo"
+	"saas/gen/ent/user"
+	"saas/gen/ent/workspace"
+	"saas/gen/ent/workspaceinvite"
+	"saas/gen/ent/workspaceuser"
 	"saas/pkg/appfn"
 	"saas/pkg/middleware"
 	"strings"
@@ -41,6 +47,18 @@ func (r *queryResolver) Node(ctx context.Context, id string) (ent.Noder, error) 
 		table = posttag.Table
 	case "PostCategory":
 		table = postcategory.Table
+	case "Post":
+		table = post.Table
+	case "OauthConnection":
+		table = oauthconnection.Table
+	case "User":
+		table = user.Table
+	case "Workspace":
+		table = workspace.Table
+	case "WorkspaceInvite":
+		table = workspaceinvite.Table
+	case "WorkspaceUser":
+		table = workspaceuser.Table
 	}
 
 	return r.Plugin.EntDB.Client().Noder(ctx, idtail[1], ent.WithFixedNodeType(table))
@@ -50,6 +68,24 @@ func (r *queryResolver) Node(ctx context.Context, id string) (ent.Noder, error) 
 // Nodes is the resolver for the nodes field.
 func (r *queryResolver) Nodes(ctx context.Context, ids []string) ([]ent.Noder, error) {
 	return r.Plugin.EntDB.Client().Noders(ctx, ids)
+}
+
+// OauthConnections is the resolver for the oauthConnections field.
+func (r *queryResolver) OauthConnections(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.OauthConnectionOrder, where *ent.OauthConnectionWhereInput) (*ent.OauthConnectionConnection, error) {
+	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	if cuser == nil {
+		return nil, err
+	}
+
+	if !appfn.IsUserSA(cuser) {
+		return nil, fmt.Errorf("unauthorized access")
+	}
+
+	return r.Plugin.EntDB.Client().OauthConnection.Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithOauthConnectionOrder(orderBy),
+			ent.WithOauthConnectionFilter(where.Filter),
+		)
 }
 
 // Posts is the resolver for the posts field.
@@ -117,6 +153,8 @@ func (r *queryResolver) PostTypes(ctx context.Context, after *entgql.Cursor[stri
 		return nil, fmt.Errorf("unauthorized access")
 	}
 
+	// time.Sleep(4 * time.Second)
+
 	return r.Plugin.EntDB.Client().PostType.Query().
 		Paginate(ctx, after, first, before, last,
 			ent.WithPostTypeOrder(orderBy),
@@ -138,6 +176,78 @@ func (r *queryResolver) Todos(ctx context.Context, after *entgql.Cursor[string],
 		Paginate(ctx, after, first, before, last,
 			ent.WithTodoOrder(orderBy),
 			ent.WithTodoFilter(where.Filter),
+		)
+}
+
+// Users is the resolver for the users field.
+func (r *queryResolver) Users(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.UserOrder, where *ent.UserWhereInput) (*ent.UserConnection, error) {
+	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	if cuser == nil {
+		return nil, err
+	}
+
+	if !appfn.IsUserSA(cuser) {
+		return nil, fmt.Errorf("unauthorized access")
+	}
+
+	return r.Plugin.EntDB.Client().User.Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithUserOrder(orderBy),
+			ent.WithUserFilter(where.Filter),
+		)
+}
+
+// Workspaces is the resolver for the workspaces field.
+func (r *queryResolver) Workspaces(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.WorkspaceOrder, where *ent.WorkspaceWhereInput) (*ent.WorkspaceConnection, error) {
+	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	if cuser == nil {
+		return nil, err
+	}
+
+	if !appfn.IsUserSA(cuser) {
+		return nil, fmt.Errorf("unauthorized access")
+	}
+
+	return r.Plugin.EntDB.Client().Workspace.Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithWorkspaceOrder(orderBy),
+			ent.WithWorkspaceFilter(where.Filter),
+		)
+}
+
+// WorkspaceInvites is the resolver for the workspaceInvites field.
+func (r *queryResolver) WorkspaceInvites(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.WorkspaceInviteOrder, where *ent.WorkspaceInviteWhereInput) (*ent.WorkspaceInviteConnection, error) {
+	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	if cuser == nil {
+		return nil, err
+	}
+
+	if !appfn.IsUserSA(cuser) {
+		return nil, fmt.Errorf("unauthorized access")
+	}
+
+	return r.Plugin.EntDB.Client().WorkspaceInvite.Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithWorkspaceInviteOrder(orderBy),
+			ent.WithWorkspaceInviteFilter(where.Filter),
+		)
+}
+
+// WorkspaceUsers is the resolver for the workspaceUsers field.
+func (r *queryResolver) WorkspaceUsers(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.WorkspaceUserOrder, where *ent.WorkspaceUserWhereInput) (*ent.WorkspaceUserConnection, error) {
+	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	if cuser == nil {
+		return nil, err
+	}
+
+	if !appfn.IsUserSA(cuser) {
+		return nil, fmt.Errorf("unauthorized access")
+	}
+
+	return r.Plugin.EntDB.Client().WorkspaceUser.Query().
+		Paginate(ctx, after, first, before, last,
+			ent.WithWorkspaceUserOrder(orderBy),
+			ent.WithWorkspaceUserFilter(where.Filter),
 		)
 }
 

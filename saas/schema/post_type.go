@@ -20,14 +20,20 @@ func (PostType) Fields() []ent.Field {
 			entgql.OrderField("NAME"),
 		),
 		field.String("slug").Optional().Unique(),
-		field.Enum("status").NamedValues(
-			"Published", "PUBLISHED",
-			"Draft", "DRAFT",
-		).
-			Default("PUBLISHED").
+		field.String("status").
+			Optional().
+			Default("published").
 			Annotations(
 				entgql.OrderField("STATUS"),
 			),
+		// field.Enum("status").NamedValues(
+		// 	"Published", "PUBLISHED",
+		// 	"Draft", "DRAFT",
+		// ).
+		// 	Default("PUBLISHED").
+		// 	Annotations(
+		// 		entgql.OrderField("STATUS"),
+		// 	),
 		field.String("excerpt").Optional(),
 		field.Text("content").Optional().MaxLen(255),
 		field.String("meta_title").Optional(),
@@ -39,8 +45,8 @@ func (PostType) Fields() []ent.Field {
 
 func (PostType) Edges() []ent.Edge {
 	return []ent.Edge{
-		edge.To("posts", Post.Type),
-		edge.To("post_statuses", PostStatus.Type),
+		edge.To("posts", Post.Type).Annotations(entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput)),
+		edge.To("post_statuses", PostStatus.Type).Annotations(entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput)),
 	}
 }
 
@@ -55,7 +61,7 @@ func (PostType) Mixin() []ent.Mixin {
 func (PostType) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.RelayConnection(),
-		entgql.QueryField().Directives(entgql.Directive{Name: "canAdmin"}),
+		entgql.QueryField().Directives(entgql.Directive{Name: constants.DirectiveCanAdmin}),
 		entgql.MultiOrder(),
 		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 	}

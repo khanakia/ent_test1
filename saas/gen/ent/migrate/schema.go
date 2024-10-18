@@ -285,7 +285,7 @@ var (
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
 		{Name: "name", Type: field.TypeString, Nullable: true},
 		{Name: "slug", Type: field.TypeString, Unique: true, Nullable: true},
-		{Name: "status", Type: field.TypeEnum, Enums: []string{"PUBLISHED", "DRAFT"}, Default: "PUBLISHED"},
+		{Name: "status", Type: field.TypeString, Nullable: true, Default: "published"},
 		{Name: "excerpt", Type: field.TypeString, Nullable: true},
 		{Name: "content", Type: field.TypeString, Nullable: true, Size: 255},
 		{Name: "meta_title", Type: field.TypeString, Nullable: true},

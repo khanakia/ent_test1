@@ -84,16 +84,22 @@ func (ptu *PostTypeUpdate) ClearSlug() *PostTypeUpdate {
 }
 
 // SetStatus sets the "status" field.
-func (ptu *PostTypeUpdate) SetStatus(po posttype.Status) *PostTypeUpdate {
-	ptu.mutation.SetStatus(po)
+func (ptu *PostTypeUpdate) SetStatus(s string) *PostTypeUpdate {
+	ptu.mutation.SetStatus(s)
 	return ptu
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (ptu *PostTypeUpdate) SetNillableStatus(po *posttype.Status) *PostTypeUpdate {
-	if po != nil {
-		ptu.SetStatus(*po)
+func (ptu *PostTypeUpdate) SetNillableStatus(s *string) *PostTypeUpdate {
+	if s != nil {
+		ptu.SetStatus(*s)
 	}
+	return ptu
+}
+
+// ClearStatus clears the value of the "status" field.
+func (ptu *PostTypeUpdate) ClearStatus() *PostTypeUpdate {
+	ptu.mutation.ClearStatus()
 	return ptu
 }
 
@@ -332,11 +338,6 @@ func (ptu *PostTypeUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (ptu *PostTypeUpdate) check() error {
-	if v, ok := ptu.mutation.Status(); ok {
-		if err := posttype.StatusValidator(v); err != nil {
-			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "PostType.status": %w`, err)}
-		}
-	}
 	if v, ok := ptu.mutation.Content(); ok {
 		if err := posttype.ContentValidator(v); err != nil {
 			return &ValidationError{Name: "content", err: fmt.Errorf(`ent: validator failed for field "PostType.content": %w`, err)}
@@ -385,7 +386,10 @@ func (ptu *PostTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.ClearField(posttype.FieldSlug, field.TypeString)
 	}
 	if value, ok := ptu.mutation.Status(); ok {
-		_spec.SetField(posttype.FieldStatus, field.TypeEnum, value)
+		_spec.SetField(posttype.FieldStatus, field.TypeString, value)
+	}
+	if ptu.mutation.StatusCleared() {
+		_spec.ClearField(posttype.FieldStatus, field.TypeString)
 	}
 	if value, ok := ptu.mutation.Excerpt(); ok {
 		_spec.SetField(posttype.FieldExcerpt, field.TypeString, value)
@@ -588,16 +592,22 @@ func (ptuo *PostTypeUpdateOne) ClearSlug() *PostTypeUpdateOne {
 }
 
 // SetStatus sets the "status" field.
-func (ptuo *PostTypeUpdateOne) SetStatus(po posttype.Status) *PostTypeUpdateOne {
-	ptuo.mutation.SetStatus(po)
+func (ptuo *PostTypeUpdateOne) SetStatus(s string) *PostTypeUpdateOne {
+	ptuo.mutation.SetStatus(s)
 	return ptuo
 }
 
 // SetNillableStatus sets the "status" field if the given value is not nil.
-func (ptuo *PostTypeUpdateOne) SetNillableStatus(po *posttype.Status) *PostTypeUpdateOne {
-	if po != nil {
-		ptuo.SetStatus(*po)
+func (ptuo *PostTypeUpdateOne) SetNillableStatus(s *string) *PostTypeUpdateOne {
+	if s != nil {
+		ptuo.SetStatus(*s)
 	}
+	return ptuo
+}
+
+// ClearStatus clears the value of the "status" field.
+func (ptuo *PostTypeUpdateOne) ClearStatus() *PostTypeUpdateOne {
+	ptuo.mutation.ClearStatus()
 	return ptuo
 }
 
@@ -849,11 +859,6 @@ func (ptuo *PostTypeUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (ptuo *PostTypeUpdateOne) check() error {
-	if v, ok := ptuo.mutation.Status(); ok {
-		if err := posttype.StatusValidator(v); err != nil {
-			return &ValidationError{Name: "status", err: fmt.Errorf(`ent: validator failed for field "PostType.status": %w`, err)}
-		}
-	}
 	if v, ok := ptuo.mutation.Content(); ok {
 		if err := posttype.ContentValidator(v); err != nil {
 			return &ValidationError{Name: "content", err: fmt.Errorf(`ent: validator failed for field "PostType.content": %w`, err)}
@@ -919,7 +924,10 @@ func (ptuo *PostTypeUpdateOne) sqlSave(ctx context.Context) (_node *PostType, er
 		_spec.ClearField(posttype.FieldSlug, field.TypeString)
 	}
 	if value, ok := ptuo.mutation.Status(); ok {
-		_spec.SetField(posttype.FieldStatus, field.TypeEnum, value)
+		_spec.SetField(posttype.FieldStatus, field.TypeString, value)
+	}
+	if ptuo.mutation.StatusCleared() {
+		_spec.ClearField(posttype.FieldStatus, field.TypeString)
 	}
 	if value, ok := ptuo.mutation.Excerpt(); ok {
 		_spec.SetField(posttype.FieldExcerpt, field.TypeString, value)

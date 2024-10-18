@@ -27,12 +27,29 @@ type MutationResolver interface {
 	UpdatePostCategory(ctx context.Context, id string, input ent.UpdatePostCategoryInput) (*ent.PostCategory, error)
 	CreatePost(ctx context.Context, input ent.CreatePostInput) (*ent.Post, error)
 	UpdatePost(ctx context.Context, id string, input ent.UpdatePostInput) (*ent.Post, error)
+	CreateOauthConnection(ctx context.Context, input ent.CreateOauthConnectionInput) (*ent.OauthConnection, error)
+	UpdateOauthConnection(ctx context.Context, id string, input ent.UpdateOauthConnectionInput) (*ent.OauthConnection, error)
 	Ping(ctx context.Context) (string, error)
 }
 
 // endregion ************************** generated!.gotpl **************************
 
 // region    ***************************** args.gotpl *****************************
+
+func (ec *executionContext) field_Mutation_createOauthConnection_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 ent.CreateOauthConnectionInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNCreateOauthConnectionInput2saasᚋgenᚋentᚐCreateOauthConnectionInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
 
 func (ec *executionContext) field_Mutation_createPostCategory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
@@ -106,6 +123,30 @@ func (ec *executionContext) field_Mutation_createTodo_args(ctx context.Context, 
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateOauthConnection_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 ent.UpdateOauthConnectionInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNUpdateOauthConnectionInput2saasᚋgenᚋentᚐUpdateOauthConnectionInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
 	return args, nil
 }
 
@@ -1215,6 +1256,208 @@ func (ec *executionContext) fieldContext_Mutation_updatePost(ctx context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_createOauthConnection(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createOauthConnection(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CreateOauthConnection(rctx, fc.Args["input"].(ent.CreateOauthConnectionInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.CanAdmin == nil {
+				return nil, errors.New("directive canAdmin is not implemented")
+			}
+			return ec.directives.CanAdmin(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*ent.OauthConnection); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *saas/gen/ent.OauthConnection`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.OauthConnection)
+	fc.Result = res
+	return ec.marshalNOauthConnection2ᚖsaasᚋgenᚋentᚐOauthConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createOauthConnection(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_OauthConnection_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_OauthConnection_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_OauthConnection_updatedAt(ctx, field)
+			case "name":
+				return ec.fieldContext_OauthConnection_name(ctx, field)
+			case "provider":
+				return ec.fieldContext_OauthConnection_provider(ctx, field)
+			case "clientID":
+				return ec.fieldContext_OauthConnection_clientID(ctx, field)
+			case "clientSecret":
+				return ec.fieldContext_OauthConnection_clientSecret(ctx, field)
+			case "scopes":
+				return ec.fieldContext_OauthConnection_scopes(ctx, field)
+			case "redirectURL":
+				return ec.fieldContext_OauthConnection_redirectURL(ctx, field)
+			case "dashboardLink":
+				return ec.fieldContext_OauthConnection_dashboardLink(ctx, field)
+			case "note":
+				return ec.fieldContext_OauthConnection_note(ctx, field)
+			case "status":
+				return ec.fieldContext_OauthConnection_status(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OauthConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createOauthConnection_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateOauthConnection(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateOauthConnection(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateOauthConnection(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdateOauthConnectionInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.CanAdmin == nil {
+				return nil, errors.New("directive canAdmin is not implemented")
+			}
+			return ec.directives.CanAdmin(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*ent.OauthConnection); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *saas/gen/ent.OauthConnection`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.OauthConnection)
+	fc.Result = res
+	return ec.marshalNOauthConnection2ᚖsaasᚋgenᚋentᚐOauthConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateOauthConnection(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_OauthConnection_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_OauthConnection_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_OauthConnection_updatedAt(ctx, field)
+			case "name":
+				return ec.fieldContext_OauthConnection_name(ctx, field)
+			case "provider":
+				return ec.fieldContext_OauthConnection_provider(ctx, field)
+			case "clientID":
+				return ec.fieldContext_OauthConnection_clientID(ctx, field)
+			case "clientSecret":
+				return ec.fieldContext_OauthConnection_clientSecret(ctx, field)
+			case "scopes":
+				return ec.fieldContext_OauthConnection_scopes(ctx, field)
+			case "redirectURL":
+				return ec.fieldContext_OauthConnection_redirectURL(ctx, field)
+			case "dashboardLink":
+				return ec.fieldContext_OauthConnection_dashboardLink(ctx, field)
+			case "note":
+				return ec.fieldContext_OauthConnection_note(ctx, field)
+			case "status":
+				return ec.fieldContext_OauthConnection_status(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OauthConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateOauthConnection_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_ping(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_ping(ctx, field)
 	if err != nil {
@@ -1356,6 +1599,20 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "updatePost":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updatePost(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createOauthConnection":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createOauthConnection(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateOauthConnection":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateOauthConnection(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++

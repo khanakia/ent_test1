@@ -3,10 +3,167 @@
 package ent
 
 import (
-	"saas/gen/ent/posttype"
 	"saas/gen/ent/todo"
 	"time"
 )
+
+// CreateOauthConnectionInput represents a mutation input for creating oauthconnections.
+type CreateOauthConnectionInput struct {
+	CreatedAt     *time.Time
+	UpdatedAt     *time.Time
+	Name          *string
+	Provider      *string
+	ClientID      *string
+	ClientSecret  *string
+	Scopes        *string
+	RedirectURL   *string
+	DashboardLink *string
+	Note          *string
+	Status        *bool
+}
+
+// Mutate applies the CreateOauthConnectionInput on the OauthConnectionMutation builder.
+func (i *CreateOauthConnectionInput) Mutate(m *OauthConnectionMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if v := i.Provider; v != nil {
+		m.SetProvider(*v)
+	}
+	if v := i.ClientID; v != nil {
+		m.SetClientID(*v)
+	}
+	if v := i.ClientSecret; v != nil {
+		m.SetClientSecret(*v)
+	}
+	if v := i.Scopes; v != nil {
+		m.SetScopes(*v)
+	}
+	if v := i.RedirectURL; v != nil {
+		m.SetRedirectURL(*v)
+	}
+	if v := i.DashboardLink; v != nil {
+		m.SetDashboardLink(*v)
+	}
+	if v := i.Note; v != nil {
+		m.SetNote(*v)
+	}
+	if v := i.Status; v != nil {
+		m.SetStatus(*v)
+	}
+}
+
+// SetInput applies the change-set in the CreateOauthConnectionInput on the OauthConnectionCreate builder.
+func (c *OauthConnectionCreate) SetInput(i CreateOauthConnectionInput) *OauthConnectionCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateOauthConnectionInput represents a mutation input for updating oauthconnections.
+type UpdateOauthConnectionInput struct {
+	ClearUpdatedAt     bool
+	UpdatedAt          *time.Time
+	ClearName          bool
+	Name               *string
+	ClearProvider      bool
+	Provider           *string
+	ClearClientID      bool
+	ClientID           *string
+	ClearClientSecret  bool
+	ClientSecret       *string
+	ClearScopes        bool
+	Scopes             *string
+	ClearRedirectURL   bool
+	RedirectURL        *string
+	ClearDashboardLink bool
+	DashboardLink      *string
+	ClearNote          bool
+	Note               *string
+	ClearStatus        bool
+	Status             *bool
+}
+
+// Mutate applies the UpdateOauthConnectionInput on the OauthConnectionMutation builder.
+func (i *UpdateOauthConnectionInput) Mutate(m *OauthConnectionMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearName {
+		m.ClearName()
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if i.ClearProvider {
+		m.ClearProvider()
+	}
+	if v := i.Provider; v != nil {
+		m.SetProvider(*v)
+	}
+	if i.ClearClientID {
+		m.ClearClientID()
+	}
+	if v := i.ClientID; v != nil {
+		m.SetClientID(*v)
+	}
+	if i.ClearClientSecret {
+		m.ClearClientSecret()
+	}
+	if v := i.ClientSecret; v != nil {
+		m.SetClientSecret(*v)
+	}
+	if i.ClearScopes {
+		m.ClearScopes()
+	}
+	if v := i.Scopes; v != nil {
+		m.SetScopes(*v)
+	}
+	if i.ClearRedirectURL {
+		m.ClearRedirectURL()
+	}
+	if v := i.RedirectURL; v != nil {
+		m.SetRedirectURL(*v)
+	}
+	if i.ClearDashboardLink {
+		m.ClearDashboardLink()
+	}
+	if v := i.DashboardLink; v != nil {
+		m.SetDashboardLink(*v)
+	}
+	if i.ClearNote {
+		m.ClearNote()
+	}
+	if v := i.Note; v != nil {
+		m.SetNote(*v)
+	}
+	if i.ClearStatus {
+		m.ClearStatus()
+	}
+	if v := i.Status; v != nil {
+		m.SetStatus(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateOauthConnectionInput on the OauthConnectionUpdate builder.
+func (c *OauthConnectionUpdate) SetInput(i UpdateOauthConnectionInput) *OauthConnectionUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateOauthConnectionInput on the OauthConnectionUpdateOne builder.
+func (c *OauthConnectionUpdateOne) SetInput(i UpdateOauthConnectionInput) *OauthConnectionUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
 
 // CreatePostInput represents a mutation input for creating posts.
 type CreatePostInput struct {
@@ -384,7 +541,6 @@ type CreatePostStatusInput struct {
 	Slug       *string
 	Status     *bool
 	PostTypeID *string
-	PostIDs    []string
 }
 
 // Mutate applies the CreatePostStatusInput on the PostStatusMutation builder.
@@ -407,9 +563,6 @@ func (i *CreatePostStatusInput) Mutate(m *PostStatusMutation) {
 	if v := i.PostTypeID; v != nil {
 		m.SetPostTypeID(*v)
 	}
-	if v := i.PostIDs; len(v) > 0 {
-		m.AddPostIDs(v...)
-	}
 }
 
 // SetInput applies the change-set in the CreatePostStatusInput on the PostStatusCreate builder.
@@ -430,9 +583,6 @@ type UpdatePostStatusInput struct {
 	Status         *bool
 	ClearPostType  bool
 	PostTypeID     *string
-	ClearPosts     bool
-	AddPostIDs     []string
-	RemovePostIDs  []string
 }
 
 // Mutate applies the UpdatePostStatusInput on the PostStatusMutation builder.
@@ -467,15 +617,6 @@ func (i *UpdatePostStatusInput) Mutate(m *PostStatusMutation) {
 	if v := i.PostTypeID; v != nil {
 		m.SetPostTypeID(*v)
 	}
-	if i.ClearPosts {
-		m.ClearPosts()
-	}
-	if v := i.AddPostIDs; len(v) > 0 {
-		m.AddPostIDs(v...)
-	}
-	if v := i.RemovePostIDs; len(v) > 0 {
-		m.RemovePostIDs(v...)
-	}
 }
 
 // SetInput applies the change-set in the UpdatePostStatusInput on the PostStatusUpdate builder.
@@ -496,15 +637,13 @@ type CreatePostTypeInput struct {
 	UpdatedAt        *time.Time
 	Name             *string
 	Slug             *string
-	Status           *posttype.Status
+	Status           *string
 	Excerpt          *string
 	Content          *string
 	MetaTitle        *string
 	MetaDescr        *string
 	MetaCanonicalURL *string
 	MetaRobots       *string
-	PostIDs          []string
-	PostStatusIDs    []string
 }
 
 // Mutate applies the CreatePostTypeInput on the PostTypeMutation builder.
@@ -542,12 +681,6 @@ func (i *CreatePostTypeInput) Mutate(m *PostTypeMutation) {
 	if v := i.MetaRobots; v != nil {
 		m.SetMetaRobots(*v)
 	}
-	if v := i.PostIDs; len(v) > 0 {
-		m.AddPostIDs(v...)
-	}
-	if v := i.PostStatusIDs; len(v) > 0 {
-		m.AddPostStatusIDs(v...)
-	}
 }
 
 // SetInput applies the change-set in the CreatePostTypeInput on the PostTypeCreate builder.
@@ -564,7 +697,8 @@ type UpdatePostTypeInput struct {
 	Name                  *string
 	ClearSlug             bool
 	Slug                  *string
-	Status                *posttype.Status
+	ClearStatus           bool
+	Status                *string
 	ClearExcerpt          bool
 	Excerpt               *string
 	ClearContent          bool
@@ -577,12 +711,6 @@ type UpdatePostTypeInput struct {
 	MetaCanonicalURL      *string
 	ClearMetaRobots       bool
 	MetaRobots            *string
-	ClearPosts            bool
-	AddPostIDs            []string
-	RemovePostIDs         []string
-	ClearPostStatuses     bool
-	AddPostStatusIDs      []string
-	RemovePostStatusIDs   []string
 }
 
 // Mutate applies the UpdatePostTypeInput on the PostTypeMutation builder.
@@ -604,6 +732,9 @@ func (i *UpdatePostTypeInput) Mutate(m *PostTypeMutation) {
 	}
 	if v := i.Slug; v != nil {
 		m.SetSlug(*v)
+	}
+	if i.ClearStatus {
+		m.ClearStatus()
 	}
 	if v := i.Status; v != nil {
 		m.SetStatus(*v)
@@ -643,24 +774,6 @@ func (i *UpdatePostTypeInput) Mutate(m *PostTypeMutation) {
 	}
 	if v := i.MetaRobots; v != nil {
 		m.SetMetaRobots(*v)
-	}
-	if i.ClearPosts {
-		m.ClearPosts()
-	}
-	if v := i.AddPostIDs; len(v) > 0 {
-		m.AddPostIDs(v...)
-	}
-	if v := i.RemovePostIDs; len(v) > 0 {
-		m.RemovePostIDs(v...)
-	}
-	if i.ClearPostStatuses {
-		m.ClearPostStatuses()
-	}
-	if v := i.AddPostStatusIDs; len(v) > 0 {
-		m.AddPostStatusIDs(v...)
-	}
-	if v := i.RemovePostStatusIDs; len(v) > 0 {
-		m.RemovePostStatusIDs(v...)
 	}
 }
 
@@ -772,6 +885,516 @@ func (c *TodoUpdate) SetInput(i UpdateTodoInput) *TodoUpdate {
 
 // SetInput applies the change-set in the UpdateTodoInput on the TodoUpdateOne builder.
 func (c *TodoUpdateOne) SetInput(i UpdateTodoInput) *TodoUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateUserInput represents a mutation input for creating users.
+type CreateUserInput struct {
+	CreatedAt        *time.Time
+	UpdatedAt        *time.Time
+	Email            string
+	Phone            *string
+	FirstName        *string
+	LastName         *string
+	Company          *string
+	Locale           *string
+	RoleID           *string
+	Status           *bool
+	Password         *string
+	Secret           *string
+	APIKey           *string
+	WelcomeEmailSent *bool
+	CanAdmin         *bool
+	SessionIDs       []string
+	WorkspaceIDs     []string
+}
+
+// Mutate applies the CreateUserInput on the UserMutation builder.
+func (i *CreateUserInput) Mutate(m *UserMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	m.SetEmail(i.Email)
+	if v := i.Phone; v != nil {
+		m.SetPhone(*v)
+	}
+	if v := i.FirstName; v != nil {
+		m.SetFirstName(*v)
+	}
+	if v := i.LastName; v != nil {
+		m.SetLastName(*v)
+	}
+	if v := i.Company; v != nil {
+		m.SetCompany(*v)
+	}
+	if v := i.Locale; v != nil {
+		m.SetLocale(*v)
+	}
+	if v := i.RoleID; v != nil {
+		m.SetRoleID(*v)
+	}
+	if v := i.Status; v != nil {
+		m.SetStatus(*v)
+	}
+	if v := i.Password; v != nil {
+		m.SetPassword(*v)
+	}
+	if v := i.Secret; v != nil {
+		m.SetSecret(*v)
+	}
+	if v := i.APIKey; v != nil {
+		m.SetAPIKey(*v)
+	}
+	if v := i.WelcomeEmailSent; v != nil {
+		m.SetWelcomeEmailSent(*v)
+	}
+	if v := i.CanAdmin; v != nil {
+		m.SetCanAdmin(*v)
+	}
+	if v := i.SessionIDs; len(v) > 0 {
+		m.AddSessionIDs(v...)
+	}
+	if v := i.WorkspaceIDs; len(v) > 0 {
+		m.AddWorkspaceIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreateUserInput on the UserCreate builder.
+func (c *UserCreate) SetInput(i CreateUserInput) *UserCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateUserInput represents a mutation input for updating users.
+type UpdateUserInput struct {
+	ClearUpdatedAt        bool
+	UpdatedAt             *time.Time
+	Email                 *string
+	ClearPhone            bool
+	Phone                 *string
+	ClearFirstName        bool
+	FirstName             *string
+	ClearLastName         bool
+	LastName              *string
+	ClearCompany          bool
+	Company               *string
+	ClearLocale           bool
+	Locale                *string
+	ClearRoleID           bool
+	RoleID                *string
+	ClearStatus           bool
+	Status                *bool
+	ClearPassword         bool
+	Password              *string
+	ClearSecret           bool
+	Secret                *string
+	ClearAPIKey           bool
+	APIKey                *string
+	ClearWelcomeEmailSent bool
+	WelcomeEmailSent      *bool
+	ClearCanAdmin         bool
+	CanAdmin              *bool
+	ClearSessions         bool
+	AddSessionIDs         []string
+	RemoveSessionIDs      []string
+	ClearWorkspaces       bool
+	AddWorkspaceIDs       []string
+	RemoveWorkspaceIDs    []string
+}
+
+// Mutate applies the UpdateUserInput on the UserMutation builder.
+func (i *UpdateUserInput) Mutate(m *UserMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.Email; v != nil {
+		m.SetEmail(*v)
+	}
+	if i.ClearPhone {
+		m.ClearPhone()
+	}
+	if v := i.Phone; v != nil {
+		m.SetPhone(*v)
+	}
+	if i.ClearFirstName {
+		m.ClearFirstName()
+	}
+	if v := i.FirstName; v != nil {
+		m.SetFirstName(*v)
+	}
+	if i.ClearLastName {
+		m.ClearLastName()
+	}
+	if v := i.LastName; v != nil {
+		m.SetLastName(*v)
+	}
+	if i.ClearCompany {
+		m.ClearCompany()
+	}
+	if v := i.Company; v != nil {
+		m.SetCompany(*v)
+	}
+	if i.ClearLocale {
+		m.ClearLocale()
+	}
+	if v := i.Locale; v != nil {
+		m.SetLocale(*v)
+	}
+	if i.ClearRoleID {
+		m.ClearRoleID()
+	}
+	if v := i.RoleID; v != nil {
+		m.SetRoleID(*v)
+	}
+	if i.ClearStatus {
+		m.ClearStatus()
+	}
+	if v := i.Status; v != nil {
+		m.SetStatus(*v)
+	}
+	if i.ClearPassword {
+		m.ClearPassword()
+	}
+	if v := i.Password; v != nil {
+		m.SetPassword(*v)
+	}
+	if i.ClearSecret {
+		m.ClearSecret()
+	}
+	if v := i.Secret; v != nil {
+		m.SetSecret(*v)
+	}
+	if i.ClearAPIKey {
+		m.ClearAPIKey()
+	}
+	if v := i.APIKey; v != nil {
+		m.SetAPIKey(*v)
+	}
+	if i.ClearWelcomeEmailSent {
+		m.ClearWelcomeEmailSent()
+	}
+	if v := i.WelcomeEmailSent; v != nil {
+		m.SetWelcomeEmailSent(*v)
+	}
+	if i.ClearCanAdmin {
+		m.ClearCanAdmin()
+	}
+	if v := i.CanAdmin; v != nil {
+		m.SetCanAdmin(*v)
+	}
+	if i.ClearSessions {
+		m.ClearSessions()
+	}
+	if v := i.AddSessionIDs; len(v) > 0 {
+		m.AddSessionIDs(v...)
+	}
+	if v := i.RemoveSessionIDs; len(v) > 0 {
+		m.RemoveSessionIDs(v...)
+	}
+	if i.ClearWorkspaces {
+		m.ClearWorkspaces()
+	}
+	if v := i.AddWorkspaceIDs; len(v) > 0 {
+		m.AddWorkspaceIDs(v...)
+	}
+	if v := i.RemoveWorkspaceIDs; len(v) > 0 {
+		m.RemoveWorkspaceIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdateUserInput on the UserUpdate builder.
+func (c *UserUpdate) SetInput(i UpdateUserInput) *UserUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateUserInput on the UserUpdateOne builder.
+func (c *UserUpdateOne) SetInput(i UpdateUserInput) *UserUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateWorkspaceInput represents a mutation input for creating workspaces.
+type CreateWorkspaceInput struct {
+	CreatedAt          *time.Time
+	UpdatedAt          *time.Time
+	Name               *string
+	IsPersonal         *bool
+	UserID             *string
+	UserIDs            []string
+	WorkspaceInviteIDs []string
+}
+
+// Mutate applies the CreateWorkspaceInput on the WorkspaceMutation builder.
+func (i *CreateWorkspaceInput) Mutate(m *WorkspaceMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if v := i.IsPersonal; v != nil {
+		m.SetIsPersonal(*v)
+	}
+	if v := i.UserID; v != nil {
+		m.SetUserID(*v)
+	}
+	if v := i.UserIDs; len(v) > 0 {
+		m.AddUserIDs(v...)
+	}
+	if v := i.WorkspaceInviteIDs; len(v) > 0 {
+		m.AddWorkspaceInviteIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreateWorkspaceInput on the WorkspaceCreate builder.
+func (c *WorkspaceCreate) SetInput(i CreateWorkspaceInput) *WorkspaceCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateWorkspaceInput represents a mutation input for updating workspaces.
+type UpdateWorkspaceInput struct {
+	ClearUpdatedAt           bool
+	UpdatedAt                *time.Time
+	ClearName                bool
+	Name                     *string
+	ClearIsPersonal          bool
+	IsPersonal               *bool
+	ClearUserID              bool
+	UserID                   *string
+	ClearUsers               bool
+	AddUserIDs               []string
+	RemoveUserIDs            []string
+	ClearWorkspaceInvites    bool
+	AddWorkspaceInviteIDs    []string
+	RemoveWorkspaceInviteIDs []string
+}
+
+// Mutate applies the UpdateWorkspaceInput on the WorkspaceMutation builder.
+func (i *UpdateWorkspaceInput) Mutate(m *WorkspaceMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearName {
+		m.ClearName()
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if i.ClearIsPersonal {
+		m.ClearIsPersonal()
+	}
+	if v := i.IsPersonal; v != nil {
+		m.SetIsPersonal(*v)
+	}
+	if i.ClearUserID {
+		m.ClearUserID()
+	}
+	if v := i.UserID; v != nil {
+		m.SetUserID(*v)
+	}
+	if i.ClearUsers {
+		m.ClearUsers()
+	}
+	if v := i.AddUserIDs; len(v) > 0 {
+		m.AddUserIDs(v...)
+	}
+	if v := i.RemoveUserIDs; len(v) > 0 {
+		m.RemoveUserIDs(v...)
+	}
+	if i.ClearWorkspaceInvites {
+		m.ClearWorkspaceInvites()
+	}
+	if v := i.AddWorkspaceInviteIDs; len(v) > 0 {
+		m.AddWorkspaceInviteIDs(v...)
+	}
+	if v := i.RemoveWorkspaceInviteIDs; len(v) > 0 {
+		m.RemoveWorkspaceInviteIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdateWorkspaceInput on the WorkspaceUpdate builder.
+func (c *WorkspaceUpdate) SetInput(i UpdateWorkspaceInput) *WorkspaceUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateWorkspaceInput on the WorkspaceUpdateOne builder.
+func (c *WorkspaceUpdateOne) SetInput(i UpdateWorkspaceInput) *WorkspaceUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateWorkspaceInviteInput represents a mutation input for creating workspaceinvites.
+type CreateWorkspaceInviteInput struct {
+	CreatedAt   *time.Time
+	UpdatedAt   *time.Time
+	Email       *string
+	Role        *string
+	WorkspaceID *string
+}
+
+// Mutate applies the CreateWorkspaceInviteInput on the WorkspaceInviteMutation builder.
+func (i *CreateWorkspaceInviteInput) Mutate(m *WorkspaceInviteMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.Email; v != nil {
+		m.SetEmail(*v)
+	}
+	if v := i.Role; v != nil {
+		m.SetRole(*v)
+	}
+	if v := i.WorkspaceID; v != nil {
+		m.SetWorkspaceID(*v)
+	}
+}
+
+// SetInput applies the change-set in the CreateWorkspaceInviteInput on the WorkspaceInviteCreate builder.
+func (c *WorkspaceInviteCreate) SetInput(i CreateWorkspaceInviteInput) *WorkspaceInviteCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateWorkspaceInviteInput represents a mutation input for updating workspaceinvites.
+type UpdateWorkspaceInviteInput struct {
+	ClearUpdatedAt bool
+	UpdatedAt      *time.Time
+	ClearEmail     bool
+	Email          *string
+	ClearRole      bool
+	Role           *string
+	ClearWorkspace bool
+	WorkspaceID    *string
+}
+
+// Mutate applies the UpdateWorkspaceInviteInput on the WorkspaceInviteMutation builder.
+func (i *UpdateWorkspaceInviteInput) Mutate(m *WorkspaceInviteMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearEmail {
+		m.ClearEmail()
+	}
+	if v := i.Email; v != nil {
+		m.SetEmail(*v)
+	}
+	if i.ClearRole {
+		m.ClearRole()
+	}
+	if v := i.Role; v != nil {
+		m.SetRole(*v)
+	}
+	if i.ClearWorkspace {
+		m.ClearWorkspace()
+	}
+	if v := i.WorkspaceID; v != nil {
+		m.SetWorkspaceID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateWorkspaceInviteInput on the WorkspaceInviteUpdate builder.
+func (c *WorkspaceInviteUpdate) SetInput(i UpdateWorkspaceInviteInput) *WorkspaceInviteUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateWorkspaceInviteInput on the WorkspaceInviteUpdateOne builder.
+func (c *WorkspaceInviteUpdateOne) SetInput(i UpdateWorkspaceInviteInput) *WorkspaceInviteUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateWorkspaceUserInput represents a mutation input for creating workspaceusers.
+type CreateWorkspaceUserInput struct {
+	CreatedAt   *time.Time
+	UpdatedAt   *time.Time
+	Role        *string
+	UserID      string
+	WorkspaceID string
+}
+
+// Mutate applies the CreateWorkspaceUserInput on the WorkspaceUserMutation builder.
+func (i *CreateWorkspaceUserInput) Mutate(m *WorkspaceUserMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.Role; v != nil {
+		m.SetRole(*v)
+	}
+	m.SetUserID(i.UserID)
+	m.SetWorkspaceID(i.WorkspaceID)
+}
+
+// SetInput applies the change-set in the CreateWorkspaceUserInput on the WorkspaceUserCreate builder.
+func (c *WorkspaceUserCreate) SetInput(i CreateWorkspaceUserInput) *WorkspaceUserCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateWorkspaceUserInput represents a mutation input for updating workspaceusers.
+type UpdateWorkspaceUserInput struct {
+	ClearUpdatedAt bool
+	UpdatedAt      *time.Time
+	ClearRole      bool
+	Role           *string
+	UserID         *string
+	WorkspaceID    *string
+}
+
+// Mutate applies the UpdateWorkspaceUserInput on the WorkspaceUserMutation builder.
+func (i *UpdateWorkspaceUserInput) Mutate(m *WorkspaceUserMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearRole {
+		m.ClearRole()
+	}
+	if v := i.Role; v != nil {
+		m.SetRole(*v)
+	}
+	if v := i.UserID; v != nil {
+		m.SetUserID(*v)
+	}
+	if v := i.WorkspaceID; v != nil {
+		m.SetWorkspaceID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateWorkspaceUserInput on the WorkspaceUserUpdate builder.
+func (c *WorkspaceUserUpdate) SetInput(i UpdateWorkspaceUserInput) *WorkspaceUserUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateWorkspaceUserInput on the WorkspaceUserUpdateOne builder.
+func (c *WorkspaceUserUpdateOne) SetInput(i UpdateWorkspaceUserInput) *WorkspaceUserUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }

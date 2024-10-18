@@ -12822,7 +12822,7 @@ type PostTypeMutation struct {
 	updated_at           *time.Time
 	name                 *string
 	slug                 *string
-	status               *posttype.Status
+	status               *string
 	excerpt              *string
 	content              *string
 	meta_title           *string
@@ -13142,12 +13142,12 @@ func (m *PostTypeMutation) ResetSlug() {
 }
 
 // SetStatus sets the "status" field.
-func (m *PostTypeMutation) SetStatus(po posttype.Status) {
-	m.status = &po
+func (m *PostTypeMutation) SetStatus(s string) {
+	m.status = &s
 }
 
 // Status returns the value of the "status" field in the mutation.
-func (m *PostTypeMutation) Status() (r posttype.Status, exists bool) {
+func (m *PostTypeMutation) Status() (r string, exists bool) {
 	v := m.status
 	if v == nil {
 		return
@@ -13158,7 +13158,7 @@ func (m *PostTypeMutation) Status() (r posttype.Status, exists bool) {
 // OldStatus returns the old "status" field's value of the PostType entity.
 // If the PostType object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PostTypeMutation) OldStatus(ctx context.Context) (v posttype.Status, err error) {
+func (m *PostTypeMutation) OldStatus(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
@@ -13172,9 +13172,22 @@ func (m *PostTypeMutation) OldStatus(ctx context.Context) (v posttype.Status, er
 	return oldValue.Status, nil
 }
 
+// ClearStatus clears the value of the "status" field.
+func (m *PostTypeMutation) ClearStatus() {
+	m.status = nil
+	m.clearedFields[posttype.FieldStatus] = struct{}{}
+}
+
+// StatusCleared returns if the "status" field was cleared in this mutation.
+func (m *PostTypeMutation) StatusCleared() bool {
+	_, ok := m.clearedFields[posttype.FieldStatus]
+	return ok
+}
+
 // ResetStatus resets all changes to the "status" field.
 func (m *PostTypeMutation) ResetStatus() {
 	m.status = nil
+	delete(m.clearedFields, posttype.FieldStatus)
 }
 
 // SetExcerpt sets the "excerpt" field.
@@ -13746,7 +13759,7 @@ func (m *PostTypeMutation) SetField(name string, value ent.Value) error {
 		m.SetSlug(v)
 		return nil
 	case posttype.FieldStatus:
-		v, ok := value.(posttype.Status)
+		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -13836,6 +13849,9 @@ func (m *PostTypeMutation) ClearedFields() []string {
 	if m.FieldCleared(posttype.FieldSlug) {
 		fields = append(fields, posttype.FieldSlug)
 	}
+	if m.FieldCleared(posttype.FieldStatus) {
+		fields = append(fields, posttype.FieldStatus)
+	}
 	if m.FieldCleared(posttype.FieldExcerpt) {
 		fields = append(fields, posttype.FieldExcerpt)
 	}
@@ -13879,6 +13895,9 @@ func (m *PostTypeMutation) ClearField(name string) error {
 		return nil
 	case posttype.FieldSlug:
 		m.ClearSlug()
+		return nil
+	case posttype.FieldStatus:
+		m.ClearStatus()
 		return nil
 	case posttype.FieldExcerpt:
 		m.ClearExcerpt()

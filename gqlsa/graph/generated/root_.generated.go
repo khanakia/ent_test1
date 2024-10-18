@@ -44,17 +44,45 @@ type DirectiveRoot struct {
 
 type ComplexityRoot struct {
 	Mutation struct {
-		CreatePost         func(childComplexity int, input ent.CreatePostInput) int
-		CreatePostCategory func(childComplexity int, input ent.CreatePostCategoryInput) int
-		CreatePostStatus   func(childComplexity int, input ent.CreatePostStatusInput) int
-		CreatePostType     func(childComplexity int, input ent.CreatePostTypeInput) int
-		CreateTodo         func(childComplexity int, input ent.CreateTodoInput) int
-		Ping               func(childComplexity int) int
-		UpdatePost         func(childComplexity int, id string, input ent.UpdatePostInput) int
-		UpdatePostCategory func(childComplexity int, id string, input ent.UpdatePostCategoryInput) int
-		UpdatePostStatus   func(childComplexity int, id string, input ent.UpdatePostStatusInput) int
-		UpdatePostType     func(childComplexity int, id string, input ent.UpdatePostTypeInput) int
-		UpdateTodo         func(childComplexity int, id string, input ent.UpdateTodoInput) int
+		CreateOauthConnection func(childComplexity int, input ent.CreateOauthConnectionInput) int
+		CreatePost            func(childComplexity int, input ent.CreatePostInput) int
+		CreatePostCategory    func(childComplexity int, input ent.CreatePostCategoryInput) int
+		CreatePostStatus      func(childComplexity int, input ent.CreatePostStatusInput) int
+		CreatePostType        func(childComplexity int, input ent.CreatePostTypeInput) int
+		CreateTodo            func(childComplexity int, input ent.CreateTodoInput) int
+		Ping                  func(childComplexity int) int
+		UpdateOauthConnection func(childComplexity int, id string, input ent.UpdateOauthConnectionInput) int
+		UpdatePost            func(childComplexity int, id string, input ent.UpdatePostInput) int
+		UpdatePostCategory    func(childComplexity int, id string, input ent.UpdatePostCategoryInput) int
+		UpdatePostStatus      func(childComplexity int, id string, input ent.UpdatePostStatusInput) int
+		UpdatePostType        func(childComplexity int, id string, input ent.UpdatePostTypeInput) int
+		UpdateTodo            func(childComplexity int, id string, input ent.UpdateTodoInput) int
+	}
+
+	OauthConnection struct {
+		ClientID      func(childComplexity int) int
+		ClientSecret  func(childComplexity int) int
+		CreatedAt     func(childComplexity int) int
+		DashboardLink func(childComplexity int) int
+		ID            func(childComplexity int) int
+		Name          func(childComplexity int) int
+		Note          func(childComplexity int) int
+		Provider      func(childComplexity int) int
+		RedirectURL   func(childComplexity int) int
+		Scopes        func(childComplexity int) int
+		Status        func(childComplexity int) int
+		UpdatedAt     func(childComplexity int) int
+	}
+
+	OauthConnectionConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	OauthConnectionEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
 	}
 
 	PageInfo struct {
@@ -190,14 +218,19 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Node           func(childComplexity int, id string) int
-		Nodes          func(childComplexity int, ids []string) int
-		Ping           func(childComplexity int) int
-		PostCategories func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostCategoryOrder, where *ent.PostCategoryWhereInput) int
-		PostStatuses   func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostStatusOrder, where *ent.PostStatusWhereInput) int
-		PostTypes      func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostTypeOrder, where *ent.PostTypeWhereInput) int
-		Posts          func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostOrder, where *ent.PostWhereInput) int
-		Todos          func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *ent.TodoOrder, where *ent.TodoWhereInput) int
+		Node             func(childComplexity int, id string) int
+		Nodes            func(childComplexity int, ids []string) int
+		OauthConnections func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.OauthConnectionOrder, where *ent.OauthConnectionWhereInput) int
+		Ping             func(childComplexity int) int
+		PostCategories   func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostCategoryOrder, where *ent.PostCategoryWhereInput) int
+		PostStatuses     func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostStatusOrder, where *ent.PostStatusWhereInput) int
+		PostTypes        func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostTypeOrder, where *ent.PostTypeWhereInput) int
+		Posts            func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostOrder, where *ent.PostWhereInput) int
+		Todos            func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *ent.TodoOrder, where *ent.TodoWhereInput) int
+		Users            func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.UserOrder, where *ent.UserWhereInput) int
+		WorkspaceInvites func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.WorkspaceInviteOrder, where *ent.WorkspaceInviteWhereInput) int
+		WorkspaceUsers   func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.WorkspaceUserOrder, where *ent.WorkspaceUserWhereInput) int
+		Workspaces       func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.WorkspaceOrder, where *ent.WorkspaceWhereInput) int
 	}
 
 	Student struct {
@@ -225,6 +258,102 @@ type ComplexityRoot struct {
 		Cursor func(childComplexity int) int
 		Node   func(childComplexity int) int
 	}
+
+	User struct {
+		APIKey           func(childComplexity int) int
+		CanAdmin         func(childComplexity int) int
+		Company          func(childComplexity int) int
+		CreatedAt        func(childComplexity int) int
+		Email            func(childComplexity int) int
+		FirstName        func(childComplexity int) int
+		ID               func(childComplexity int) int
+		LastName         func(childComplexity int) int
+		Locale           func(childComplexity int) int
+		Phone            func(childComplexity int) int
+		RoleID           func(childComplexity int) int
+		Status           func(childComplexity int) int
+		UpdatedAt        func(childComplexity int) int
+		WelcomeEmailSent func(childComplexity int) int
+		WorkspaceUsers   func(childComplexity int) int
+		Workspaces       func(childComplexity int) int
+	}
+
+	UserConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	UserEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
+	Workspace struct {
+		CreatedAt        func(childComplexity int) int
+		ID               func(childComplexity int) int
+		IsPersonal       func(childComplexity int) int
+		Name             func(childComplexity int) int
+		UpdatedAt        func(childComplexity int) int
+		UserID           func(childComplexity int) int
+		Users            func(childComplexity int) int
+		WorkspaceInvites func(childComplexity int) int
+		WorkspaceUsers   func(childComplexity int) int
+	}
+
+	WorkspaceConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	WorkspaceEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
+	WorkspaceInvite struct {
+		CreatedAt   func(childComplexity int) int
+		Email       func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Role        func(childComplexity int) int
+		UpdatedAt   func(childComplexity int) int
+		Workspace   func(childComplexity int) int
+		WorkspaceID func(childComplexity int) int
+	}
+
+	WorkspaceInviteConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	WorkspaceInviteEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
+	WorkspaceUser struct {
+		CreatedAt   func(childComplexity int) int
+		ID          func(childComplexity int) int
+		Role        func(childComplexity int) int
+		UpdatedAt   func(childComplexity int) int
+		User        func(childComplexity int) int
+		UserID      func(childComplexity int) int
+		Workspace   func(childComplexity int) int
+		WorkspaceID func(childComplexity int) int
+	}
+
+	WorkspaceUserConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	WorkspaceUserEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
 }
 
 type executableSchema struct {
@@ -245,6 +374,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "Mutation.createOauthConnection":
+		if e.complexity.Mutation.CreateOauthConnection == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createOauthConnection_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateOauthConnection(childComplexity, args["input"].(ent.CreateOauthConnectionInput)), true
 
 	case "Mutation.createPost":
 		if e.complexity.Mutation.CreatePost == nil {
@@ -313,6 +454,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.Ping(childComplexity), true
 
+	case "Mutation.updateOauthConnection":
+		if e.complexity.Mutation.UpdateOauthConnection == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateOauthConnection_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateOauthConnection(childComplexity, args["id"].(string), args["input"].(ent.UpdateOauthConnectionInput)), true
+
 	case "Mutation.updatePost":
 		if e.complexity.Mutation.UpdatePost == nil {
 			break
@@ -372,6 +525,125 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateTodo(childComplexity, args["id"].(string), args["input"].(ent.UpdateTodoInput)), true
+
+	case "OauthConnection.clientID":
+		if e.complexity.OauthConnection.ClientID == nil {
+			break
+		}
+
+		return e.complexity.OauthConnection.ClientID(childComplexity), true
+
+	case "OauthConnection.clientSecret":
+		if e.complexity.OauthConnection.ClientSecret == nil {
+			break
+		}
+
+		return e.complexity.OauthConnection.ClientSecret(childComplexity), true
+
+	case "OauthConnection.createdAt":
+		if e.complexity.OauthConnection.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.OauthConnection.CreatedAt(childComplexity), true
+
+	case "OauthConnection.dashboardLink":
+		if e.complexity.OauthConnection.DashboardLink == nil {
+			break
+		}
+
+		return e.complexity.OauthConnection.DashboardLink(childComplexity), true
+
+	case "OauthConnection.id":
+		if e.complexity.OauthConnection.ID == nil {
+			break
+		}
+
+		return e.complexity.OauthConnection.ID(childComplexity), true
+
+	case "OauthConnection.name":
+		if e.complexity.OauthConnection.Name == nil {
+			break
+		}
+
+		return e.complexity.OauthConnection.Name(childComplexity), true
+
+	case "OauthConnection.note":
+		if e.complexity.OauthConnection.Note == nil {
+			break
+		}
+
+		return e.complexity.OauthConnection.Note(childComplexity), true
+
+	case "OauthConnection.provider":
+		if e.complexity.OauthConnection.Provider == nil {
+			break
+		}
+
+		return e.complexity.OauthConnection.Provider(childComplexity), true
+
+	case "OauthConnection.redirectURL":
+		if e.complexity.OauthConnection.RedirectURL == nil {
+			break
+		}
+
+		return e.complexity.OauthConnection.RedirectURL(childComplexity), true
+
+	case "OauthConnection.scopes":
+		if e.complexity.OauthConnection.Scopes == nil {
+			break
+		}
+
+		return e.complexity.OauthConnection.Scopes(childComplexity), true
+
+	case "OauthConnection.status":
+		if e.complexity.OauthConnection.Status == nil {
+			break
+		}
+
+		return e.complexity.OauthConnection.Status(childComplexity), true
+
+	case "OauthConnection.updatedAt":
+		if e.complexity.OauthConnection.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.OauthConnection.UpdatedAt(childComplexity), true
+
+	case "OauthConnectionConnection.edges":
+		if e.complexity.OauthConnectionConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.OauthConnectionConnection.Edges(childComplexity), true
+
+	case "OauthConnectionConnection.pageInfo":
+		if e.complexity.OauthConnectionConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.OauthConnectionConnection.PageInfo(childComplexity), true
+
+	case "OauthConnectionConnection.totalCount":
+		if e.complexity.OauthConnectionConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.OauthConnectionConnection.TotalCount(childComplexity), true
+
+	case "OauthConnectionEdge.cursor":
+		if e.complexity.OauthConnectionEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.OauthConnectionEdge.Cursor(childComplexity), true
+
+	case "OauthConnectionEdge.node":
+		if e.complexity.OauthConnectionEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.OauthConnectionEdge.Node(childComplexity), true
 
 	case "PageInfo.endCursor":
 		if e.complexity.PageInfo.EndCursor == nil {
@@ -1027,6 +1299,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Nodes(childComplexity, args["ids"].([]string)), true
 
+	case "Query.oauthConnections":
+		if e.complexity.Query.OauthConnections == nil {
+			break
+		}
+
+		args, err := ec.field_Query_oauthConnections_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.OauthConnections(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].([]*ent.OauthConnectionOrder), args["where"].(*ent.OauthConnectionWhereInput)), true
+
 	case "Query.ping":
 		if e.complexity.Query.Ping == nil {
 			break
@@ -1093,6 +1377,54 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.Todos(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].(*ent.TodoOrder), args["where"].(*ent.TodoWhereInput)), true
+
+	case "Query.users":
+		if e.complexity.Query.Users == nil {
+			break
+		}
+
+		args, err := ec.field_Query_users_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Users(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].([]*ent.UserOrder), args["where"].(*ent.UserWhereInput)), true
+
+	case "Query.workspaceInvites":
+		if e.complexity.Query.WorkspaceInvites == nil {
+			break
+		}
+
+		args, err := ec.field_Query_workspaceInvites_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.WorkspaceInvites(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].([]*ent.WorkspaceInviteOrder), args["where"].(*ent.WorkspaceInviteWhereInput)), true
+
+	case "Query.workspaceUsers":
+		if e.complexity.Query.WorkspaceUsers == nil {
+			break
+		}
+
+		args, err := ec.field_Query_workspaceUsers_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.WorkspaceUsers(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].([]*ent.WorkspaceUserOrder), args["where"].(*ent.WorkspaceUserWhereInput)), true
+
+	case "Query.workspaces":
+		if e.complexity.Query.Workspaces == nil {
+			break
+		}
+
+		args, err := ec.field_Query_workspaces_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Workspaces(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].([]*ent.WorkspaceOrder), args["where"].(*ent.WorkspaceWhereInput)), true
 
 	case "Student.name":
 		if e.complexity.Student.Name == nil {
@@ -1192,6 +1524,426 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.TodoEdge.Node(childComplexity), true
 
+	case "User.apiKey":
+		if e.complexity.User.APIKey == nil {
+			break
+		}
+
+		return e.complexity.User.APIKey(childComplexity), true
+
+	case "User.canAdmin":
+		if e.complexity.User.CanAdmin == nil {
+			break
+		}
+
+		return e.complexity.User.CanAdmin(childComplexity), true
+
+	case "User.company":
+		if e.complexity.User.Company == nil {
+			break
+		}
+
+		return e.complexity.User.Company(childComplexity), true
+
+	case "User.createdAt":
+		if e.complexity.User.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.User.CreatedAt(childComplexity), true
+
+	case "User.email":
+		if e.complexity.User.Email == nil {
+			break
+		}
+
+		return e.complexity.User.Email(childComplexity), true
+
+	case "User.firstName":
+		if e.complexity.User.FirstName == nil {
+			break
+		}
+
+		return e.complexity.User.FirstName(childComplexity), true
+
+	case "User.id":
+		if e.complexity.User.ID == nil {
+			break
+		}
+
+		return e.complexity.User.ID(childComplexity), true
+
+	case "User.lastName":
+		if e.complexity.User.LastName == nil {
+			break
+		}
+
+		return e.complexity.User.LastName(childComplexity), true
+
+	case "User.locale":
+		if e.complexity.User.Locale == nil {
+			break
+		}
+
+		return e.complexity.User.Locale(childComplexity), true
+
+	case "User.phone":
+		if e.complexity.User.Phone == nil {
+			break
+		}
+
+		return e.complexity.User.Phone(childComplexity), true
+
+	case "User.roleID":
+		if e.complexity.User.RoleID == nil {
+			break
+		}
+
+		return e.complexity.User.RoleID(childComplexity), true
+
+	case "User.status":
+		if e.complexity.User.Status == nil {
+			break
+		}
+
+		return e.complexity.User.Status(childComplexity), true
+
+	case "User.updatedAt":
+		if e.complexity.User.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.User.UpdatedAt(childComplexity), true
+
+	case "User.welcomeEmailSent":
+		if e.complexity.User.WelcomeEmailSent == nil {
+			break
+		}
+
+		return e.complexity.User.WelcomeEmailSent(childComplexity), true
+
+	case "User.workspaceUsers":
+		if e.complexity.User.WorkspaceUsers == nil {
+			break
+		}
+
+		return e.complexity.User.WorkspaceUsers(childComplexity), true
+
+	case "User.workspaces":
+		if e.complexity.User.Workspaces == nil {
+			break
+		}
+
+		return e.complexity.User.Workspaces(childComplexity), true
+
+	case "UserConnection.edges":
+		if e.complexity.UserConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.UserConnection.Edges(childComplexity), true
+
+	case "UserConnection.pageInfo":
+		if e.complexity.UserConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.UserConnection.PageInfo(childComplexity), true
+
+	case "UserConnection.totalCount":
+		if e.complexity.UserConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.UserConnection.TotalCount(childComplexity), true
+
+	case "UserEdge.cursor":
+		if e.complexity.UserEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.UserEdge.Cursor(childComplexity), true
+
+	case "UserEdge.node":
+		if e.complexity.UserEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.UserEdge.Node(childComplexity), true
+
+	case "Workspace.createdAt":
+		if e.complexity.Workspace.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.Workspace.CreatedAt(childComplexity), true
+
+	case "Workspace.id":
+		if e.complexity.Workspace.ID == nil {
+			break
+		}
+
+		return e.complexity.Workspace.ID(childComplexity), true
+
+	case "Workspace.isPersonal":
+		if e.complexity.Workspace.IsPersonal == nil {
+			break
+		}
+
+		return e.complexity.Workspace.IsPersonal(childComplexity), true
+
+	case "Workspace.name":
+		if e.complexity.Workspace.Name == nil {
+			break
+		}
+
+		return e.complexity.Workspace.Name(childComplexity), true
+
+	case "Workspace.updatedAt":
+		if e.complexity.Workspace.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.Workspace.UpdatedAt(childComplexity), true
+
+	case "Workspace.userID":
+		if e.complexity.Workspace.UserID == nil {
+			break
+		}
+
+		return e.complexity.Workspace.UserID(childComplexity), true
+
+	case "Workspace.users":
+		if e.complexity.Workspace.Users == nil {
+			break
+		}
+
+		return e.complexity.Workspace.Users(childComplexity), true
+
+	case "Workspace.workspaceInvites":
+		if e.complexity.Workspace.WorkspaceInvites == nil {
+			break
+		}
+
+		return e.complexity.Workspace.WorkspaceInvites(childComplexity), true
+
+	case "Workspace.workspaceUsers":
+		if e.complexity.Workspace.WorkspaceUsers == nil {
+			break
+		}
+
+		return e.complexity.Workspace.WorkspaceUsers(childComplexity), true
+
+	case "WorkspaceConnection.edges":
+		if e.complexity.WorkspaceConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceConnection.Edges(childComplexity), true
+
+	case "WorkspaceConnection.pageInfo":
+		if e.complexity.WorkspaceConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceConnection.PageInfo(childComplexity), true
+
+	case "WorkspaceConnection.totalCount":
+		if e.complexity.WorkspaceConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceConnection.TotalCount(childComplexity), true
+
+	case "WorkspaceEdge.cursor":
+		if e.complexity.WorkspaceEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceEdge.Cursor(childComplexity), true
+
+	case "WorkspaceEdge.node":
+		if e.complexity.WorkspaceEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceEdge.Node(childComplexity), true
+
+	case "WorkspaceInvite.createdAt":
+		if e.complexity.WorkspaceInvite.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceInvite.CreatedAt(childComplexity), true
+
+	case "WorkspaceInvite.email":
+		if e.complexity.WorkspaceInvite.Email == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceInvite.Email(childComplexity), true
+
+	case "WorkspaceInvite.id":
+		if e.complexity.WorkspaceInvite.ID == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceInvite.ID(childComplexity), true
+
+	case "WorkspaceInvite.role":
+		if e.complexity.WorkspaceInvite.Role == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceInvite.Role(childComplexity), true
+
+	case "WorkspaceInvite.updatedAt":
+		if e.complexity.WorkspaceInvite.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceInvite.UpdatedAt(childComplexity), true
+
+	case "WorkspaceInvite.workspace":
+		if e.complexity.WorkspaceInvite.Workspace == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceInvite.Workspace(childComplexity), true
+
+	case "WorkspaceInvite.workspaceID":
+		if e.complexity.WorkspaceInvite.WorkspaceID == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceInvite.WorkspaceID(childComplexity), true
+
+	case "WorkspaceInviteConnection.edges":
+		if e.complexity.WorkspaceInviteConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceInviteConnection.Edges(childComplexity), true
+
+	case "WorkspaceInviteConnection.pageInfo":
+		if e.complexity.WorkspaceInviteConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceInviteConnection.PageInfo(childComplexity), true
+
+	case "WorkspaceInviteConnection.totalCount":
+		if e.complexity.WorkspaceInviteConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceInviteConnection.TotalCount(childComplexity), true
+
+	case "WorkspaceInviteEdge.cursor":
+		if e.complexity.WorkspaceInviteEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceInviteEdge.Cursor(childComplexity), true
+
+	case "WorkspaceInviteEdge.node":
+		if e.complexity.WorkspaceInviteEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceInviteEdge.Node(childComplexity), true
+
+	case "WorkspaceUser.createdAt":
+		if e.complexity.WorkspaceUser.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceUser.CreatedAt(childComplexity), true
+
+	case "WorkspaceUser.id":
+		if e.complexity.WorkspaceUser.ID == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceUser.ID(childComplexity), true
+
+	case "WorkspaceUser.role":
+		if e.complexity.WorkspaceUser.Role == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceUser.Role(childComplexity), true
+
+	case "WorkspaceUser.updatedAt":
+		if e.complexity.WorkspaceUser.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceUser.UpdatedAt(childComplexity), true
+
+	case "WorkspaceUser.user":
+		if e.complexity.WorkspaceUser.User == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceUser.User(childComplexity), true
+
+	case "WorkspaceUser.userID":
+		if e.complexity.WorkspaceUser.UserID == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceUser.UserID(childComplexity), true
+
+	case "WorkspaceUser.workspace":
+		if e.complexity.WorkspaceUser.Workspace == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceUser.Workspace(childComplexity), true
+
+	case "WorkspaceUser.workspaceID":
+		if e.complexity.WorkspaceUser.WorkspaceID == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceUser.WorkspaceID(childComplexity), true
+
+	case "WorkspaceUserConnection.edges":
+		if e.complexity.WorkspaceUserConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceUserConnection.Edges(childComplexity), true
+
+	case "WorkspaceUserConnection.pageInfo":
+		if e.complexity.WorkspaceUserConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceUserConnection.PageInfo(childComplexity), true
+
+	case "WorkspaceUserConnection.totalCount":
+		if e.complexity.WorkspaceUserConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceUserConnection.TotalCount(childComplexity), true
+
+	case "WorkspaceUserEdge.cursor":
+		if e.complexity.WorkspaceUserEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceUserEdge.Cursor(childComplexity), true
+
+	case "WorkspaceUserEdge.node":
+		if e.complexity.WorkspaceUserEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceUserEdge.Node(childComplexity), true
+
 	}
 	return 0, false
 }
@@ -1200,11 +1952,18 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputCreateOauthConnectionInput,
 		ec.unmarshalInputCreatePostCategoryInput,
 		ec.unmarshalInputCreatePostInput,
 		ec.unmarshalInputCreatePostStatusInput,
 		ec.unmarshalInputCreatePostTypeInput,
 		ec.unmarshalInputCreateTodoInput,
+		ec.unmarshalInputCreateUserInput,
+		ec.unmarshalInputCreateWorkspaceInput,
+		ec.unmarshalInputCreateWorkspaceInviteInput,
+		ec.unmarshalInputCreateWorkspaceUserInput,
+		ec.unmarshalInputOauthConnectionOrder,
+		ec.unmarshalInputOauthConnectionWhereInput,
 		ec.unmarshalInputPostCategoryOrder,
 		ec.unmarshalInputPostCategoryWhereInput,
 		ec.unmarshalInputPostOrder,
@@ -1217,11 +1976,24 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputPostWhereInput,
 		ec.unmarshalInputTodoOrder,
 		ec.unmarshalInputTodoWhereInput,
+		ec.unmarshalInputUpdateOauthConnectionInput,
 		ec.unmarshalInputUpdatePostCategoryInput,
 		ec.unmarshalInputUpdatePostInput,
 		ec.unmarshalInputUpdatePostStatusInput,
 		ec.unmarshalInputUpdatePostTypeInput,
 		ec.unmarshalInputUpdateTodoInput,
+		ec.unmarshalInputUpdateUserInput,
+		ec.unmarshalInputUpdateWorkspaceInput,
+		ec.unmarshalInputUpdateWorkspaceInviteInput,
+		ec.unmarshalInputUpdateWorkspaceUserInput,
+		ec.unmarshalInputUserOrder,
+		ec.unmarshalInputUserWhereInput,
+		ec.unmarshalInputWorkspaceInviteOrder,
+		ec.unmarshalInputWorkspaceInviteWhereInput,
+		ec.unmarshalInputWorkspaceOrder,
+		ec.unmarshalInputWorkspaceUserOrder,
+		ec.unmarshalInputWorkspaceUserWhereInput,
+		ec.unmarshalInputWorkspaceWhereInput,
 	)
 	first := true
 
@@ -1334,6 +2106,23 @@ var sources = []*ast.Source{
 	{Name: "../ent.graphql", Input: `directive @goField(forceResolver: Boolean, name: String, omittable: Boolean) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 directive @goModel(model: String, models: [String!], forceGenerate: Boolean) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
 """
+CreateOauthConnectionInput is used for create OauthConnection object.
+Input was generated by ent.
+"""
+input CreateOauthConnectionInput {
+  createdAt: Time
+  updatedAt: Time
+  name: String
+  provider: String
+  clientID: String
+  clientSecret: String
+  scopes: String
+  redirectURL: String
+  dashboardLink: String
+  note: String
+  status: Boolean
+}
+"""
 CreatePostCategoryInput is used for create PostCategory object.
 Input was generated by ent.
 """
@@ -1382,7 +2171,6 @@ input CreatePostStatusInput {
   slug: String
   status: Boolean
   postTypeID: ID
-  postIDs: [ID!]
 }
 """
 CreatePostTypeInput is used for create PostType object.
@@ -1393,15 +2181,13 @@ input CreatePostTypeInput {
   updatedAt: Time
   name: String
   slug: String
-  status: PostTypeStatus
+  status: String
   excerpt: String
   content: String
   metaTitle: String
   metaDescr: String
   metaCanonicalURL: String
   metaRobots: String
-  postIDs: [ID!]
-  postStatusIDs: [ID!]
 }
 """
 CreateTodoInput is used for create Todo object.
@@ -1417,6 +2203,64 @@ input CreateTodoInput {
   parentID: ID
 }
 """
+CreateUserInput is used for create User object.
+Input was generated by ent.
+"""
+input CreateUserInput {
+  createdAt: Time
+  updatedAt: Time
+  email: String!
+  phone: String
+  firstName: String
+  lastName: String
+  company: String
+  locale: String
+  roleID: String
+  status: Boolean
+  password: String
+  secret: String
+  apiKey: String
+  welcomeEmailSent: Boolean
+  canAdmin: Boolean
+  sessionIDs: [ID!]
+  workspaceIDs: [ID!]
+}
+"""
+CreateWorkspaceInput is used for create Workspace object.
+Input was generated by ent.
+"""
+input CreateWorkspaceInput {
+  createdAt: Time
+  updatedAt: Time
+  name: String
+  isPersonal: Boolean
+  userID: String
+  userIDs: [ID!]
+  workspaceInviteIDs: [ID!]
+}
+"""
+CreateWorkspaceInviteInput is used for create WorkspaceInvite object.
+Input was generated by ent.
+"""
+input CreateWorkspaceInviteInput {
+  createdAt: Time
+  updatedAt: Time
+  email: String
+  role: String
+  workspaceID: ID
+}
+"""
+CreateWorkspaceUserInput is used for create WorkspaceUser object.
+Input was generated by ent.
+"""
+input CreateWorkspaceUserInput {
+  createdAt: Time
+  updatedAt: Time
+  role: String
+  userID: ID!
+  workspaceID: ID!
+}
+"""
 Define a Relay Cursor type:
 https://relay.dev/graphql/connections.htm#sec-Cursor
 """
@@ -1430,6 +2274,268 @@ interface Node @goModel(model: "saas/gen/ent.Noder") {
   The id of the object.
   """
   id: ID!
+}
+type OauthConnection implements Node {
+  id: ID!
+  createdAt: Time
+  updatedAt: Time
+  name: String
+  provider: String
+  clientID: String
+  clientSecret: String
+  scopes: String
+  redirectURL: String
+  dashboardLink: String
+  note: String
+  status: Boolean
+}
+"""
+A connection to a list of items.
+"""
+type OauthConnectionConnection {
+  """
+  A list of edges.
+  """
+  edges: [OauthConnectionEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type OauthConnectionEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: OauthConnection
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+Ordering options for OauthConnection connections
+"""
+input OauthConnectionOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection! = ASC
+  """
+  The field by which to order OauthConnections.
+  """
+  field: OauthConnectionOrderField!
+}
+"""
+Properties by which OauthConnection connections can be ordered.
+"""
+enum OauthConnectionOrderField {
+  CREATED_AT
+}
+"""
+OauthConnectionWhereInput is used for filtering OauthConnection objects.
+Input was generated by ent.
+"""
+input OauthConnectionWhereInput {
+  not: OauthConnectionWhereInput
+  and: [OauthConnectionWhereInput!]
+  or: [OauthConnectionWhereInput!]
+  """
+  id field predicates
+  """
+  id: ID
+  idNEQ: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+  idGT: ID
+  idGTE: ID
+  idLT: ID
+  idLTE: ID
+  idEqualFold: ID
+  idContainsFold: ID
+  """
+  created_at field predicates
+  """
+  createdAt: Time
+  createdAtNEQ: Time
+  createdAtIn: [Time!]
+  createdAtNotIn: [Time!]
+  createdAtGT: Time
+  createdAtGTE: Time
+  createdAtLT: Time
+  createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
+  """
+  updated_at field predicates
+  """
+  updatedAt: Time
+  updatedAtNEQ: Time
+  updatedAtIn: [Time!]
+  updatedAtNotIn: [Time!]
+  updatedAtGT: Time
+  updatedAtGTE: Time
+  updatedAtLT: Time
+  updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
+  """
+  name field predicates
+  """
+  name: String
+  nameNEQ: String
+  nameIn: [String!]
+  nameNotIn: [String!]
+  nameGT: String
+  nameGTE: String
+  nameLT: String
+  nameLTE: String
+  nameContains: String
+  nameHasPrefix: String
+  nameHasSuffix: String
+  nameIsNil: Boolean
+  nameNotNil: Boolean
+  nameEqualFold: String
+  nameContainsFold: String
+  """
+  provider field predicates
+  """
+  provider: String
+  providerNEQ: String
+  providerIn: [String!]
+  providerNotIn: [String!]
+  providerGT: String
+  providerGTE: String
+  providerLT: String
+  providerLTE: String
+  providerContains: String
+  providerHasPrefix: String
+  providerHasSuffix: String
+  providerIsNil: Boolean
+  providerNotNil: Boolean
+  providerEqualFold: String
+  providerContainsFold: String
+  """
+  client_id field predicates
+  """
+  clientID: String
+  clientIDNEQ: String
+  clientIDIn: [String!]
+  clientIDNotIn: [String!]
+  clientIDGT: String
+  clientIDGTE: String
+  clientIDLT: String
+  clientIDLTE: String
+  clientIDContains: String
+  clientIDHasPrefix: String
+  clientIDHasSuffix: String
+  clientIDIsNil: Boolean
+  clientIDNotNil: Boolean
+  clientIDEqualFold: String
+  clientIDContainsFold: String
+  """
+  client_secret field predicates
+  """
+  clientSecret: String
+  clientSecretNEQ: String
+  clientSecretIn: [String!]
+  clientSecretNotIn: [String!]
+  clientSecretGT: String
+  clientSecretGTE: String
+  clientSecretLT: String
+  clientSecretLTE: String
+  clientSecretContains: String
+  clientSecretHasPrefix: String
+  clientSecretHasSuffix: String
+  clientSecretIsNil: Boolean
+  clientSecretNotNil: Boolean
+  clientSecretEqualFold: String
+  clientSecretContainsFold: String
+  """
+  scopes field predicates
+  """
+  scopes: String
+  scopesNEQ: String
+  scopesIn: [String!]
+  scopesNotIn: [String!]
+  scopesGT: String
+  scopesGTE: String
+  scopesLT: String
+  scopesLTE: String
+  scopesContains: String
+  scopesHasPrefix: String
+  scopesHasSuffix: String
+  scopesIsNil: Boolean
+  scopesNotNil: Boolean
+  scopesEqualFold: String
+  scopesContainsFold: String
+  """
+  redirect_url field predicates
+  """
+  redirectURL: String
+  redirectURLNEQ: String
+  redirectURLIn: [String!]
+  redirectURLNotIn: [String!]
+  redirectURLGT: String
+  redirectURLGTE: String
+  redirectURLLT: String
+  redirectURLLTE: String
+  redirectURLContains: String
+  redirectURLHasPrefix: String
+  redirectURLHasSuffix: String
+  redirectURLIsNil: Boolean
+  redirectURLNotNil: Boolean
+  redirectURLEqualFold: String
+  redirectURLContainsFold: String
+  """
+  dashboard_link field predicates
+  """
+  dashboardLink: String
+  dashboardLinkNEQ: String
+  dashboardLinkIn: [String!]
+  dashboardLinkNotIn: [String!]
+  dashboardLinkGT: String
+  dashboardLinkGTE: String
+  dashboardLinkLT: String
+  dashboardLinkLTE: String
+  dashboardLinkContains: String
+  dashboardLinkHasPrefix: String
+  dashboardLinkHasSuffix: String
+  dashboardLinkIsNil: Boolean
+  dashboardLinkNotNil: Boolean
+  dashboardLinkEqualFold: String
+  dashboardLinkContainsFold: String
+  """
+  note field predicates
+  """
+  note: String
+  noteNEQ: String
+  noteIn: [String!]
+  noteNotIn: [String!]
+  noteGT: String
+  noteGTE: String
+  noteLT: String
+  noteLTE: String
+  noteContains: String
+  noteHasPrefix: String
+  noteHasSuffix: String
+  noteIsNil: Boolean
+  noteNotNil: Boolean
+  noteEqualFold: String
+  noteContainsFold: String
+  """
+  status field predicates
+  """
+  status: Boolean
+  statusNEQ: Boolean
+  statusIsNil: Boolean
+  statusNotNil: Boolean
 }
 """
 Possible directions in which to order a list of items when provided an ` + "`" + `orderBy` + "`" + ` argument.
@@ -2245,7 +3351,7 @@ type PostType implements Node {
   updatedAt: Time
   name: String
   slug: String
-  status: PostTypeStatus!
+  status: String
   excerpt: String
   content: String
   metaTitle: String
@@ -2305,13 +3411,6 @@ enum PostTypeOrderField {
   CREATED_AT
   NAME
   STATUS
-}
-"""
-PostTypeStatus is enum for the field status
-"""
-enum PostTypeStatus @goModel(model: "saas/gen/ent/posttype.Status") {
-  PUBLISHED
-  DRAFT
 }
 """
 PostTypeWhereInput is used for filtering PostType objects.
@@ -2399,10 +3498,21 @@ input PostTypeWhereInput {
   """
   status field predicates
   """
-  status: PostTypeStatus
-  statusNEQ: PostTypeStatus
-  statusIn: [PostTypeStatus!]
-  statusNotIn: [PostTypeStatus!]
+  status: String
+  statusNEQ: String
+  statusIn: [String!]
+  statusNotIn: [String!]
+  statusGT: String
+  statusGTE: String
+  statusLT: String
+  statusLTE: String
+  statusContains: String
+  statusHasPrefix: String
+  statusHasSuffix: String
+  statusIsNil: Boolean
+  statusNotNil: Boolean
+  statusEqualFold: String
+  statusContainsFold: String
   """
   excerpt field predicates
   """
@@ -2820,6 +3930,37 @@ type Query {
     """
     ids: [ID!]!
   ): [Node]! @canAdmin
+  oauthConnections(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for OauthConnections returned from the connection.
+    """
+    orderBy: [OauthConnectionOrder!]
+
+    """
+    Filtering options for OauthConnections returned from the connection.
+    """
+    where: OauthConnectionWhereInput
+  ): OauthConnectionConnection! @canAdmin
   posts(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -2975,6 +4116,130 @@ type Query {
     """
     where: TodoWhereInput
   ): TodoConnection!
+  users(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for Users returned from the connection.
+    """
+    orderBy: [UserOrder!]
+
+    """
+    Filtering options for Users returned from the connection.
+    """
+    where: UserWhereInput
+  ): UserConnection! @canAdmin
+  workspaces(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for Workspaces returned from the connection.
+    """
+    orderBy: [WorkspaceOrder!]
+
+    """
+    Filtering options for Workspaces returned from the connection.
+    """
+    where: WorkspaceWhereInput
+  ): WorkspaceConnection! @canAdmin
+  workspaceInvites(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for WorkspaceInvites returned from the connection.
+    """
+    orderBy: [WorkspaceInviteOrder!]
+
+    """
+    Filtering options for WorkspaceInvites returned from the connection.
+    """
+    where: WorkspaceInviteWhereInput
+  ): WorkspaceInviteConnection! @canAdmin
+  workspaceUsers(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for WorkspaceUsers returned from the connection.
+    """
+    orderBy: [WorkspaceUserOrder!]
+
+    """
+    Filtering options for WorkspaceUsers returned from the connection.
+    """
+    where: WorkspaceUserWhereInput
+  ): WorkspaceUserConnection! @canAdmin
 }
 type Todo implements Node {
   id: ID!
@@ -3138,6 +4403,32 @@ input TodoWhereInput {
   hasParentWith: [TodoWhereInput!]
 }
 """
+UpdateOauthConnectionInput is used for update OauthConnection object.
+Input was generated by ent.
+"""
+input UpdateOauthConnectionInput {
+  updatedAt: Time
+  clearUpdatedAt: Boolean
+  name: String
+  clearName: Boolean
+  provider: String
+  clearProvider: Boolean
+  clientID: String
+  clearClientID: Boolean
+  clientSecret: String
+  clearClientSecret: Boolean
+  scopes: String
+  clearScopes: Boolean
+  redirectURL: String
+  clearRedirectURL: Boolean
+  dashboardLink: String
+  clearDashboardLink: Boolean
+  note: String
+  clearNote: Boolean
+  status: Boolean
+  clearStatus: Boolean
+}
+"""
 UpdatePostCategoryInput is used for update PostCategory object.
 Input was generated by ent.
 """
@@ -3213,9 +4504,6 @@ input UpdatePostStatusInput {
   clearStatus: Boolean
   postTypeID: ID
   clearPostType: Boolean
-  addPostIDs: [ID!]
-  removePostIDs: [ID!]
-  clearPosts: Boolean
 }
 """
 UpdatePostTypeInput is used for update PostType object.
@@ -3228,7 +4516,8 @@ input UpdatePostTypeInput {
   clearName: Boolean
   slug: String
   clearSlug: Boolean
-  status: PostTypeStatus
+  status: String
+  clearStatus: Boolean
   excerpt: String
   clearExcerpt: Boolean
   content: String
@@ -3241,12 +4530,6 @@ input UpdatePostTypeInput {
   clearMetaCanonicalURL: Boolean
   metaRobots: String
   clearMetaRobots: Boolean
-  addPostIDs: [ID!]
-  removePostIDs: [ID!]
-  clearPosts: Boolean
-  addPostStatusIDs: [ID!]
-  removePostStatusIDs: [ID!]
-  clearPostStatuses: Boolean
 }
 """
 UpdateTodoInput is used for update Todo object.
@@ -3264,6 +4547,847 @@ input UpdateTodoInput {
   parentID: ID
   clearParent: Boolean
 }
+"""
+UpdateUserInput is used for update User object.
+Input was generated by ent.
+"""
+input UpdateUserInput {
+  updatedAt: Time
+  clearUpdatedAt: Boolean
+  email: String
+  phone: String
+  clearPhone: Boolean
+  firstName: String
+  clearFirstName: Boolean
+  lastName: String
+  clearLastName: Boolean
+  company: String
+  clearCompany: Boolean
+  locale: String
+  clearLocale: Boolean
+  roleID: String
+  clearRoleID: Boolean
+  status: Boolean
+  clearStatus: Boolean
+  password: String
+  clearPassword: Boolean
+  secret: String
+  clearSecret: Boolean
+  apiKey: String
+  clearAPIKey: Boolean
+  welcomeEmailSent: Boolean
+  clearWelcomeEmailSent: Boolean
+  canAdmin: Boolean
+  clearCanAdmin: Boolean
+  addSessionIDs: [ID!]
+  removeSessionIDs: [ID!]
+  clearSessions: Boolean
+  addWorkspaceIDs: [ID!]
+  removeWorkspaceIDs: [ID!]
+  clearWorkspaces: Boolean
+}
+"""
+UpdateWorkspaceInput is used for update Workspace object.
+Input was generated by ent.
+"""
+input UpdateWorkspaceInput {
+  updatedAt: Time
+  clearUpdatedAt: Boolean
+  name: String
+  clearName: Boolean
+  isPersonal: Boolean
+  clearIsPersonal: Boolean
+  userID: String
+  clearUserID: Boolean
+  addUserIDs: [ID!]
+  removeUserIDs: [ID!]
+  clearUsers: Boolean
+  addWorkspaceInviteIDs: [ID!]
+  removeWorkspaceInviteIDs: [ID!]
+  clearWorkspaceInvites: Boolean
+}
+"""
+UpdateWorkspaceInviteInput is used for update WorkspaceInvite object.
+Input was generated by ent.
+"""
+input UpdateWorkspaceInviteInput {
+  updatedAt: Time
+  clearUpdatedAt: Boolean
+  email: String
+  clearEmail: Boolean
+  role: String
+  clearRole: Boolean
+  workspaceID: ID
+  clearWorkspace: Boolean
+}
+"""
+UpdateWorkspaceUserInput is used for update WorkspaceUser object.
+Input was generated by ent.
+"""
+input UpdateWorkspaceUserInput {
+  updatedAt: Time
+  clearUpdatedAt: Boolean
+  role: String
+  clearRole: Boolean
+  userID: ID
+  workspaceID: ID
+}
+type User implements Node {
+  id: ID!
+  createdAt: Time
+  updatedAt: Time
+  email: String!
+  phone: String
+  firstName: String
+  lastName: String
+  company: String
+  locale: String
+  roleID: String
+  status: Boolean
+  apiKey: String
+  welcomeEmailSent: Boolean
+  canAdmin: Boolean
+  workspaces: [Workspace!]
+  workspaceUsers: [WorkspaceUser!]
+}
+"""
+A connection to a list of items.
+"""
+type UserConnection {
+  """
+  A list of edges.
+  """
+  edges: [UserEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type UserEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: User
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+Ordering options for User connections
+"""
+input UserOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection! = ASC
+  """
+  The field by which to order Users.
+  """
+  field: UserOrderField!
+}
+"""
+Properties by which User connections can be ordered.
+"""
+enum UserOrderField {
+  CREATED_AT
+  EMAIL
+  WELCOME_EMAIL_SENT
+  CAN_ADMIN
+}
+"""
+UserWhereInput is used for filtering User objects.
+Input was generated by ent.
+"""
+input UserWhereInput {
+  not: UserWhereInput
+  and: [UserWhereInput!]
+  or: [UserWhereInput!]
+  """
+  id field predicates
+  """
+  id: ID
+  idNEQ: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+  idGT: ID
+  idGTE: ID
+  idLT: ID
+  idLTE: ID
+  idEqualFold: ID
+  idContainsFold: ID
+  """
+  created_at field predicates
+  """
+  createdAt: Time
+  createdAtNEQ: Time
+  createdAtIn: [Time!]
+  createdAtNotIn: [Time!]
+  createdAtGT: Time
+  createdAtGTE: Time
+  createdAtLT: Time
+  createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
+  """
+  updated_at field predicates
+  """
+  updatedAt: Time
+  updatedAtNEQ: Time
+  updatedAtIn: [Time!]
+  updatedAtNotIn: [Time!]
+  updatedAtGT: Time
+  updatedAtGTE: Time
+  updatedAtLT: Time
+  updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
+  """
+  email field predicates
+  """
+  email: String
+  emailNEQ: String
+  emailIn: [String!]
+  emailNotIn: [String!]
+  emailGT: String
+  emailGTE: String
+  emailLT: String
+  emailLTE: String
+  emailContains: String
+  emailHasPrefix: String
+  emailHasSuffix: String
+  emailEqualFold: String
+  emailContainsFold: String
+  """
+  phone field predicates
+  """
+  phone: String
+  phoneNEQ: String
+  phoneIn: [String!]
+  phoneNotIn: [String!]
+  phoneGT: String
+  phoneGTE: String
+  phoneLT: String
+  phoneLTE: String
+  phoneContains: String
+  phoneHasPrefix: String
+  phoneHasSuffix: String
+  phoneIsNil: Boolean
+  phoneNotNil: Boolean
+  phoneEqualFold: String
+  phoneContainsFold: String
+  """
+  first_name field predicates
+  """
+  firstName: String
+  firstNameNEQ: String
+  firstNameIn: [String!]
+  firstNameNotIn: [String!]
+  firstNameGT: String
+  firstNameGTE: String
+  firstNameLT: String
+  firstNameLTE: String
+  firstNameContains: String
+  firstNameHasPrefix: String
+  firstNameHasSuffix: String
+  firstNameIsNil: Boolean
+  firstNameNotNil: Boolean
+  firstNameEqualFold: String
+  firstNameContainsFold: String
+  """
+  last_name field predicates
+  """
+  lastName: String
+  lastNameNEQ: String
+  lastNameIn: [String!]
+  lastNameNotIn: [String!]
+  lastNameGT: String
+  lastNameGTE: String
+  lastNameLT: String
+  lastNameLTE: String
+  lastNameContains: String
+  lastNameHasPrefix: String
+  lastNameHasSuffix: String
+  lastNameIsNil: Boolean
+  lastNameNotNil: Boolean
+  lastNameEqualFold: String
+  lastNameContainsFold: String
+  """
+  company field predicates
+  """
+  company: String
+  companyNEQ: String
+  companyIn: [String!]
+  companyNotIn: [String!]
+  companyGT: String
+  companyGTE: String
+  companyLT: String
+  companyLTE: String
+  companyContains: String
+  companyHasPrefix: String
+  companyHasSuffix: String
+  companyIsNil: Boolean
+  companyNotNil: Boolean
+  companyEqualFold: String
+  companyContainsFold: String
+  """
+  locale field predicates
+  """
+  locale: String
+  localeNEQ: String
+  localeIn: [String!]
+  localeNotIn: [String!]
+  localeGT: String
+  localeGTE: String
+  localeLT: String
+  localeLTE: String
+  localeContains: String
+  localeHasPrefix: String
+  localeHasSuffix: String
+  localeIsNil: Boolean
+  localeNotNil: Boolean
+  localeEqualFold: String
+  localeContainsFold: String
+  """
+  role_id field predicates
+  """
+  roleID: String
+  roleIDNEQ: String
+  roleIDIn: [String!]
+  roleIDNotIn: [String!]
+  roleIDGT: String
+  roleIDGTE: String
+  roleIDLT: String
+  roleIDLTE: String
+  roleIDContains: String
+  roleIDHasPrefix: String
+  roleIDHasSuffix: String
+  roleIDIsNil: Boolean
+  roleIDNotNil: Boolean
+  roleIDEqualFold: String
+  roleIDContainsFold: String
+  """
+  status field predicates
+  """
+  status: Boolean
+  statusNEQ: Boolean
+  statusIsNil: Boolean
+  statusNotNil: Boolean
+  """
+  api_key field predicates
+  """
+  apiKey: String
+  apiKeyNEQ: String
+  apiKeyIn: [String!]
+  apiKeyNotIn: [String!]
+  apiKeyGT: String
+  apiKeyGTE: String
+  apiKeyLT: String
+  apiKeyLTE: String
+  apiKeyContains: String
+  apiKeyHasPrefix: String
+  apiKeyHasSuffix: String
+  apiKeyIsNil: Boolean
+  apiKeyNotNil: Boolean
+  apiKeyEqualFold: String
+  apiKeyContainsFold: String
+  """
+  welcome_email_sent field predicates
+  """
+  welcomeEmailSent: Boolean
+  welcomeEmailSentNEQ: Boolean
+  welcomeEmailSentIsNil: Boolean
+  welcomeEmailSentNotNil: Boolean
+  """
+  can_admin field predicates
+  """
+  canAdmin: Boolean
+  canAdminNEQ: Boolean
+  canAdminIsNil: Boolean
+  canAdminNotNil: Boolean
+  """
+  workspaces edge predicates
+  """
+  hasWorkspaces: Boolean
+  hasWorkspacesWith: [WorkspaceWhereInput!]
+  """
+  workspace_users edge predicates
+  """
+  hasWorkspaceUsers: Boolean
+  hasWorkspaceUsersWith: [WorkspaceUserWhereInput!]
+}
+type Workspace implements Node {
+  id: ID!
+  createdAt: Time
+  updatedAt: Time
+  name: String
+  isPersonal: Boolean
+  userID: String
+  users: [User!]
+  workspaceInvites: [WorkspaceInvite!]
+  workspaceUsers: [WorkspaceUser!]
+}
+"""
+A connection to a list of items.
+"""
+type WorkspaceConnection {
+  """
+  A list of edges.
+  """
+  edges: [WorkspaceEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type WorkspaceEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Workspace
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+type WorkspaceInvite implements Node {
+  id: ID!
+  createdAt: Time
+  updatedAt: Time
+  workspaceID: ID
+  email: String
+  role: String
+  workspace: Workspace
+}
+"""
+A connection to a list of items.
+"""
+type WorkspaceInviteConnection {
+  """
+  A list of edges.
+  """
+  edges: [WorkspaceInviteEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type WorkspaceInviteEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: WorkspaceInvite
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+Ordering options for WorkspaceInvite connections
+"""
+input WorkspaceInviteOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection! = ASC
+  """
+  The field by which to order WorkspaceInvites.
+  """
+  field: WorkspaceInviteOrderField!
+}
+"""
+Properties by which WorkspaceInvite connections can be ordered.
+"""
+enum WorkspaceInviteOrderField {
+  CREATED_AT
+}
+"""
+WorkspaceInviteWhereInput is used for filtering WorkspaceInvite objects.
+Input was generated by ent.
+"""
+input WorkspaceInviteWhereInput {
+  not: WorkspaceInviteWhereInput
+  and: [WorkspaceInviteWhereInput!]
+  or: [WorkspaceInviteWhereInput!]
+  """
+  id field predicates
+  """
+  id: ID
+  idNEQ: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+  idGT: ID
+  idGTE: ID
+  idLT: ID
+  idLTE: ID
+  idEqualFold: ID
+  idContainsFold: ID
+  """
+  created_at field predicates
+  """
+  createdAt: Time
+  createdAtNEQ: Time
+  createdAtIn: [Time!]
+  createdAtNotIn: [Time!]
+  createdAtGT: Time
+  createdAtGTE: Time
+  createdAtLT: Time
+  createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
+  """
+  updated_at field predicates
+  """
+  updatedAt: Time
+  updatedAtNEQ: Time
+  updatedAtIn: [Time!]
+  updatedAtNotIn: [Time!]
+  updatedAtGT: Time
+  updatedAtGTE: Time
+  updatedAtLT: Time
+  updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
+  """
+  workspace_id field predicates
+  """
+  workspaceID: ID
+  workspaceIDNEQ: ID
+  workspaceIDIn: [ID!]
+  workspaceIDNotIn: [ID!]
+  workspaceIDGT: ID
+  workspaceIDGTE: ID
+  workspaceIDLT: ID
+  workspaceIDLTE: ID
+  workspaceIDContains: ID
+  workspaceIDHasPrefix: ID
+  workspaceIDHasSuffix: ID
+  workspaceIDIsNil: Boolean
+  workspaceIDNotNil: Boolean
+  workspaceIDEqualFold: ID
+  workspaceIDContainsFold: ID
+  """
+  email field predicates
+  """
+  email: String
+  emailNEQ: String
+  emailIn: [String!]
+  emailNotIn: [String!]
+  emailGT: String
+  emailGTE: String
+  emailLT: String
+  emailLTE: String
+  emailContains: String
+  emailHasPrefix: String
+  emailHasSuffix: String
+  emailIsNil: Boolean
+  emailNotNil: Boolean
+  emailEqualFold: String
+  emailContainsFold: String
+  """
+  role field predicates
+  """
+  role: String
+  roleNEQ: String
+  roleIn: [String!]
+  roleNotIn: [String!]
+  roleGT: String
+  roleGTE: String
+  roleLT: String
+  roleLTE: String
+  roleContains: String
+  roleHasPrefix: String
+  roleHasSuffix: String
+  roleIsNil: Boolean
+  roleNotNil: Boolean
+  roleEqualFold: String
+  roleContainsFold: String
+  """
+  workspace edge predicates
+  """
+  hasWorkspace: Boolean
+  hasWorkspaceWith: [WorkspaceWhereInput!]
+}
+"""
+Ordering options for Workspace connections
+"""
+input WorkspaceOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection! = ASC
+  """
+  The field by which to order Workspaces.
+  """
+  field: WorkspaceOrderField!
+}
+"""
+Properties by which Workspace connections can be ordered.
+"""
+enum WorkspaceOrderField {
+  CREATED_AT
+  NAME
+}
+type WorkspaceUser implements Node {
+  id: ID!
+  createdAt: Time
+  updatedAt: Time
+  workspaceID: ID!
+  userID: ID!
+  role: String
+  user: User!
+  workspace: Workspace!
+}
+"""
+A connection to a list of items.
+"""
+type WorkspaceUserConnection {
+  """
+  A list of edges.
+  """
+  edges: [WorkspaceUserEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type WorkspaceUserEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: WorkspaceUser
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+Ordering options for WorkspaceUser connections
+"""
+input WorkspaceUserOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection! = ASC
+  """
+  The field by which to order WorkspaceUsers.
+  """
+  field: WorkspaceUserOrderField!
+}
+"""
+Properties by which WorkspaceUser connections can be ordered.
+"""
+enum WorkspaceUserOrderField {
+  CREATED_AT
+  USER_EMAIL
+  WORKSPACE_NAME
+}
+"""
+WorkspaceUserWhereInput is used for filtering WorkspaceUser objects.
+Input was generated by ent.
+"""
+input WorkspaceUserWhereInput {
+  not: WorkspaceUserWhereInput
+  and: [WorkspaceUserWhereInput!]
+  or: [WorkspaceUserWhereInput!]
+  """
+  id field predicates
+  """
+  id: ID
+  idNEQ: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+  idGT: ID
+  idGTE: ID
+  idLT: ID
+  idLTE: ID
+  idEqualFold: ID
+  idContainsFold: ID
+  """
+  created_at field predicates
+  """
+  createdAt: Time
+  createdAtNEQ: Time
+  createdAtIn: [Time!]
+  createdAtNotIn: [Time!]
+  createdAtGT: Time
+  createdAtGTE: Time
+  createdAtLT: Time
+  createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
+  """
+  updated_at field predicates
+  """
+  updatedAt: Time
+  updatedAtNEQ: Time
+  updatedAtIn: [Time!]
+  updatedAtNotIn: [Time!]
+  updatedAtGT: Time
+  updatedAtGTE: Time
+  updatedAtLT: Time
+  updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
+  """
+  role field predicates
+  """
+  role: String
+  roleNEQ: String
+  roleIn: [String!]
+  roleNotIn: [String!]
+  roleGT: String
+  roleGTE: String
+  roleLT: String
+  roleLTE: String
+  roleContains: String
+  roleHasPrefix: String
+  roleHasSuffix: String
+  roleIsNil: Boolean
+  roleNotNil: Boolean
+  roleEqualFold: String
+  roleContainsFold: String
+}
+"""
+WorkspaceWhereInput is used for filtering Workspace objects.
+Input was generated by ent.
+"""
+input WorkspaceWhereInput {
+  not: WorkspaceWhereInput
+  and: [WorkspaceWhereInput!]
+  or: [WorkspaceWhereInput!]
+  """
+  id field predicates
+  """
+  id: ID
+  idNEQ: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+  idGT: ID
+  idGTE: ID
+  idLT: ID
+  idLTE: ID
+  idEqualFold: ID
+  idContainsFold: ID
+  """
+  created_at field predicates
+  """
+  createdAt: Time
+  createdAtNEQ: Time
+  createdAtIn: [Time!]
+  createdAtNotIn: [Time!]
+  createdAtGT: Time
+  createdAtGTE: Time
+  createdAtLT: Time
+  createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
+  """
+  updated_at field predicates
+  """
+  updatedAt: Time
+  updatedAtNEQ: Time
+  updatedAtIn: [Time!]
+  updatedAtNotIn: [Time!]
+  updatedAtGT: Time
+  updatedAtGTE: Time
+  updatedAtLT: Time
+  updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
+  """
+  name field predicates
+  """
+  name: String
+  nameNEQ: String
+  nameIn: [String!]
+  nameNotIn: [String!]
+  nameGT: String
+  nameGTE: String
+  nameLT: String
+  nameLTE: String
+  nameContains: String
+  nameHasPrefix: String
+  nameHasSuffix: String
+  nameIsNil: Boolean
+  nameNotNil: Boolean
+  nameEqualFold: String
+  nameContainsFold: String
+  """
+  is_personal field predicates
+  """
+  isPersonal: Boolean
+  isPersonalNEQ: Boolean
+  isPersonalIsNil: Boolean
+  isPersonalNotNil: Boolean
+  """
+  user_id field predicates
+  """
+  userID: String
+  userIDNEQ: String
+  userIDIn: [String!]
+  userIDNotIn: [String!]
+  userIDGT: String
+  userIDGTE: String
+  userIDLT: String
+  userIDLTE: String
+  userIDContains: String
+  userIDHasPrefix: String
+  userIDHasSuffix: String
+  userIDIsNil: Boolean
+  userIDNotNil: Boolean
+  userIDEqualFold: String
+  userIDContainsFold: String
+  """
+  users edge predicates
+  """
+  hasUsers: Boolean
+  hasUsersWith: [UserWhereInput!]
+  """
+  workspace_invites edge predicates
+  """
+  hasWorkspaceInvites: Boolean
+  hasWorkspaceInvitesWith: [WorkspaceInviteWhereInput!]
+  """
+  workspace_users edge predicates
+  """
+  hasWorkspaceUsers: Boolean
+  hasWorkspaceUsersWith: [WorkspaceUserWhereInput!]
+}
+`, BuiltIn: false},
+	{Name: "../other.graphql", Input: `extend type Mutation {
+  createOauthConnection(input: CreateOauthConnectionInput!): OauthConnection! @canAdmin
+  updateOauthConnection(id: ID!, input: UpdateOauthConnectionInput!): OauthConnection! @canAdmin
+}
+
 `, BuiltIn: false},
 	{Name: "../schema.graphql", Input: `directive @canAdmin on FIELD_DEFINITION
 

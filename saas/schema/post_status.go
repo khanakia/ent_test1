@@ -34,7 +34,7 @@ func (PostStatus) Edges() []ent.Edge {
 			Ref("post_statuses").
 			Unique().Annotations(entgql.OrderField("POST_TYPE_NAME")),
 
-		edge.To("posts", Post.Type),
+		edge.To("posts", Post.Type).Annotations(entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput)),
 	}
 }
 

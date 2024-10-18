@@ -7,12 +7,17 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/post"
 	"saas/gen/ent/postcategory"
 	"saas/gen/ent/poststatus"
 	"saas/gen/ent/posttag"
 	"saas/gen/ent/posttype"
 	"saas/gen/ent/todo"
+	"saas/gen/ent/user"
+	"saas/gen/ent/workspace"
+	"saas/gen/ent/workspaceinvite"
+	"saas/gen/ent/workspaceuser"
 	"strconv"
 
 	"entgo.io/contrib/entgql"
@@ -101,6 +106,338 @@ func paginateLimit(first, last *int) int {
 		limit = *last + 1
 	}
 	return limit
+}
+
+// OauthConnectionEdge is the edge representation of OauthConnection.
+type OauthConnectionEdge struct {
+	Node   *OauthConnection `json:"node"`
+	Cursor Cursor           `json:"cursor"`
+}
+
+// OauthConnectionConnection is the connection containing edges to OauthConnection.
+type OauthConnectionConnection struct {
+	Edges      []*OauthConnectionEdge `json:"edges"`
+	PageInfo   PageInfo               `json:"pageInfo"`
+	TotalCount int                    `json:"totalCount"`
+}
+
+func (c *OauthConnectionConnection) build(nodes []*OauthConnection, pager *oauthconnectionPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *OauthConnection
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *OauthConnection {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *OauthConnection {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*OauthConnectionEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &OauthConnectionEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// OauthConnectionPaginateOption enables pagination customization.
+type OauthConnectionPaginateOption func(*oauthconnectionPager) error
+
+// WithOauthConnectionOrder configures pagination ordering.
+func WithOauthConnectionOrder(order []*OauthConnectionOrder) OauthConnectionPaginateOption {
+	return func(pager *oauthconnectionPager) error {
+		for _, o := range order {
+			if err := o.Direction.Validate(); err != nil {
+				return err
+			}
+		}
+		pager.order = append(pager.order, order...)
+		return nil
+	}
+}
+
+// WithOauthConnectionFilter configures pagination filter.
+func WithOauthConnectionFilter(filter func(*OauthConnectionQuery) (*OauthConnectionQuery, error)) OauthConnectionPaginateOption {
+	return func(pager *oauthconnectionPager) error {
+		if filter == nil {
+			return errors.New("OauthConnectionQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type oauthconnectionPager struct {
+	reverse bool
+	order   []*OauthConnectionOrder
+	filter  func(*OauthConnectionQuery) (*OauthConnectionQuery, error)
+}
+
+func newOauthConnectionPager(opts []OauthConnectionPaginateOption, reverse bool) (*oauthconnectionPager, error) {
+	pager := &oauthconnectionPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	for i, o := range pager.order {
+		if i > 0 && o.Field == pager.order[i-1].Field {
+			return nil, fmt.Errorf("duplicate order direction %q", o.Direction)
+		}
+	}
+	return pager, nil
+}
+
+func (p *oauthconnectionPager) applyFilter(query *OauthConnectionQuery) (*OauthConnectionQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *oauthconnectionPager) toCursor(oc *OauthConnection) Cursor {
+	cs_ := make([]any, 0, len(p.order))
+	for _, o_ := range p.order {
+		cs_ = append(cs_, o_.Field.toCursor(oc).Value)
+	}
+	return Cursor{ID: oc.ID, Value: cs_}
+}
+
+func (p *oauthconnectionPager) applyCursors(query *OauthConnectionQuery, after, before *Cursor) (*OauthConnectionQuery, error) {
+	idDirection := entgql.OrderDirectionAsc
+	if p.reverse {
+		idDirection = entgql.OrderDirectionDesc
+	}
+	fields, directions := make([]string, 0, len(p.order)), make([]OrderDirection, 0, len(p.order))
+	for _, o := range p.order {
+		fields = append(fields, o.Field.column)
+		direction := o.Direction
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		directions = append(directions, direction)
+	}
+	predicates, err := entgql.MultiCursorsPredicate(after, before, &entgql.MultiCursorsOptions{
+		FieldID:     DefaultOauthConnectionOrder.Field.column,
+		DirectionID: idDirection,
+		Fields:      fields,
+		Directions:  directions,
+	})
+	if err != nil {
+		return nil, err
+	}
+	for _, predicate := range predicates {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *oauthconnectionPager) applyOrder(query *OauthConnectionQuery) *OauthConnectionQuery {
+	var defaultOrdered bool
+	for _, o := range p.order {
+		direction := o.Direction
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		query = query.Order(o.Field.toTerm(direction.OrderTermOption()))
+		if o.Field.column == DefaultOauthConnectionOrder.Field.column {
+			defaultOrdered = true
+		}
+		if len(query.ctx.Fields) > 0 {
+			query.ctx.AppendFieldOnce(o.Field.column)
+		}
+	}
+	if !defaultOrdered {
+		direction := entgql.OrderDirectionAsc
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		query = query.Order(DefaultOauthConnectionOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	return query
+}
+
+func (p *oauthconnectionPager) orderExpr(query *OauthConnectionQuery) sql.Querier {
+	if len(query.ctx.Fields) > 0 {
+		for _, o := range p.order {
+			query.ctx.AppendFieldOnce(o.Field.column)
+		}
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		for _, o := range p.order {
+			direction := o.Direction
+			if p.reverse {
+				direction = direction.Reverse()
+			}
+			b.Ident(o.Field.column).Pad().WriteString(string(direction))
+			b.Comma()
+		}
+		direction := entgql.OrderDirectionAsc
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		b.Ident(DefaultOauthConnectionOrder.Field.column).Pad().WriteString(string(direction))
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to OauthConnection.
+func (oc *OauthConnectionQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...OauthConnectionPaginateOption,
+) (*OauthConnectionConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newOauthConnectionPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if oc, err = pager.applyFilter(oc); err != nil {
+		return nil, err
+	}
+	conn := &OauthConnectionConnection{Edges: []*OauthConnectionEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := oc.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if oc, err = pager.applyCursors(oc, after, before); err != nil {
+		return nil, err
+	}
+	limit := paginateLimit(first, last)
+	if limit != 0 {
+		oc.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := oc.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	oc = pager.applyOrder(oc)
+	nodes, err := oc.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+var (
+	// OauthConnectionOrderFieldCreatedAt orders OauthConnection by created_at.
+	OauthConnectionOrderFieldCreatedAt = &OauthConnectionOrderField{
+		Value: func(oc *OauthConnection) (ent.Value, error) {
+			return oc.CreatedAt, nil
+		},
+		column: oauthconnection.FieldCreatedAt,
+		toTerm: oauthconnection.ByCreatedAt,
+		toCursor: func(oc *OauthConnection) Cursor {
+			return Cursor{
+				ID:    oc.ID,
+				Value: oc.CreatedAt,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f OauthConnectionOrderField) String() string {
+	var str string
+	switch f.column {
+	case OauthConnectionOrderFieldCreatedAt.column:
+		str = "CREATED_AT"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f OauthConnectionOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *OauthConnectionOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("OauthConnectionOrderField %T must be a string", v)
+	}
+	switch str {
+	case "CREATED_AT":
+		*f = *OauthConnectionOrderFieldCreatedAt
+	default:
+		return fmt.Errorf("%s is not a valid OauthConnectionOrderField", str)
+	}
+	return nil
+}
+
+// OauthConnectionOrderField defines the ordering field of OauthConnection.
+type OauthConnectionOrderField struct {
+	// Value extracts the ordering value from the given OauthConnection.
+	Value    func(*OauthConnection) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) oauthconnection.OrderOption
+	toCursor func(*OauthConnection) Cursor
+}
+
+// OauthConnectionOrder defines the ordering of OauthConnection.
+type OauthConnectionOrder struct {
+	Direction OrderDirection             `json:"direction"`
+	Field     *OauthConnectionOrderField `json:"field"`
+}
+
+// DefaultOauthConnectionOrder is the default ordering of OauthConnection.
+var DefaultOauthConnectionOrder = &OauthConnectionOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &OauthConnectionOrderField{
+		Value: func(oc *OauthConnection) (ent.Value, error) {
+			return oc.ID, nil
+		},
+		column: oauthconnection.FieldID,
+		toTerm: oauthconnection.ByID,
+		toCursor: func(oc *OauthConnection) Cursor {
+			return Cursor{ID: oc.ID}
+		},
+	},
+}
+
+// ToEdge converts OauthConnection into OauthConnectionEdge.
+func (oc *OauthConnection) ToEdge(order *OauthConnectionOrder) *OauthConnectionEdge {
+	if order == nil {
+		order = DefaultOauthConnectionOrder
+	}
+	return &OauthConnectionEdge{
+		Node:   oc,
+		Cursor: order.Field.toCursor(oc),
+	}
 }
 
 // PostEdge is the edge representation of Post.
@@ -2183,5 +2520,1466 @@ func (t *Todo) ToEdge(order *TodoOrder) *TodoEdge {
 	return &TodoEdge{
 		Node:   t,
 		Cursor: order.Field.toCursor(t),
+	}
+}
+
+// UserEdge is the edge representation of User.
+type UserEdge struct {
+	Node   *User  `json:"node"`
+	Cursor Cursor `json:"cursor"`
+}
+
+// UserConnection is the connection containing edges to User.
+type UserConnection struct {
+	Edges      []*UserEdge `json:"edges"`
+	PageInfo   PageInfo    `json:"pageInfo"`
+	TotalCount int         `json:"totalCount"`
+}
+
+func (c *UserConnection) build(nodes []*User, pager *userPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *User
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *User {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *User {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*UserEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &UserEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// UserPaginateOption enables pagination customization.
+type UserPaginateOption func(*userPager) error
+
+// WithUserOrder configures pagination ordering.
+func WithUserOrder(order []*UserOrder) UserPaginateOption {
+	return func(pager *userPager) error {
+		for _, o := range order {
+			if err := o.Direction.Validate(); err != nil {
+				return err
+			}
+		}
+		pager.order = append(pager.order, order...)
+		return nil
+	}
+}
+
+// WithUserFilter configures pagination filter.
+func WithUserFilter(filter func(*UserQuery) (*UserQuery, error)) UserPaginateOption {
+	return func(pager *userPager) error {
+		if filter == nil {
+			return errors.New("UserQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type userPager struct {
+	reverse bool
+	order   []*UserOrder
+	filter  func(*UserQuery) (*UserQuery, error)
+}
+
+func newUserPager(opts []UserPaginateOption, reverse bool) (*userPager, error) {
+	pager := &userPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	for i, o := range pager.order {
+		if i > 0 && o.Field == pager.order[i-1].Field {
+			return nil, fmt.Errorf("duplicate order direction %q", o.Direction)
+		}
+	}
+	return pager, nil
+}
+
+func (p *userPager) applyFilter(query *UserQuery) (*UserQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *userPager) toCursor(u *User) Cursor {
+	cs_ := make([]any, 0, len(p.order))
+	for _, o_ := range p.order {
+		cs_ = append(cs_, o_.Field.toCursor(u).Value)
+	}
+	return Cursor{ID: u.ID, Value: cs_}
+}
+
+func (p *userPager) applyCursors(query *UserQuery, after, before *Cursor) (*UserQuery, error) {
+	idDirection := entgql.OrderDirectionAsc
+	if p.reverse {
+		idDirection = entgql.OrderDirectionDesc
+	}
+	fields, directions := make([]string, 0, len(p.order)), make([]OrderDirection, 0, len(p.order))
+	for _, o := range p.order {
+		fields = append(fields, o.Field.column)
+		direction := o.Direction
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		directions = append(directions, direction)
+	}
+	predicates, err := entgql.MultiCursorsPredicate(after, before, &entgql.MultiCursorsOptions{
+		FieldID:     DefaultUserOrder.Field.column,
+		DirectionID: idDirection,
+		Fields:      fields,
+		Directions:  directions,
+	})
+	if err != nil {
+		return nil, err
+	}
+	for _, predicate := range predicates {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *userPager) applyOrder(query *UserQuery) *UserQuery {
+	var defaultOrdered bool
+	for _, o := range p.order {
+		direction := o.Direction
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		query = query.Order(o.Field.toTerm(direction.OrderTermOption()))
+		if o.Field.column == DefaultUserOrder.Field.column {
+			defaultOrdered = true
+		}
+		if len(query.ctx.Fields) > 0 {
+			query.ctx.AppendFieldOnce(o.Field.column)
+		}
+	}
+	if !defaultOrdered {
+		direction := entgql.OrderDirectionAsc
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		query = query.Order(DefaultUserOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	return query
+}
+
+func (p *userPager) orderExpr(query *UserQuery) sql.Querier {
+	if len(query.ctx.Fields) > 0 {
+		for _, o := range p.order {
+			query.ctx.AppendFieldOnce(o.Field.column)
+		}
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		for _, o := range p.order {
+			direction := o.Direction
+			if p.reverse {
+				direction = direction.Reverse()
+			}
+			b.Ident(o.Field.column).Pad().WriteString(string(direction))
+			b.Comma()
+		}
+		direction := entgql.OrderDirectionAsc
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		b.Ident(DefaultUserOrder.Field.column).Pad().WriteString(string(direction))
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to User.
+func (u *UserQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...UserPaginateOption,
+) (*UserConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newUserPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if u, err = pager.applyFilter(u); err != nil {
+		return nil, err
+	}
+	conn := &UserConnection{Edges: []*UserEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := u.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if u, err = pager.applyCursors(u, after, before); err != nil {
+		return nil, err
+	}
+	limit := paginateLimit(first, last)
+	if limit != 0 {
+		u.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := u.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	u = pager.applyOrder(u)
+	nodes, err := u.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+var (
+	// UserOrderFieldCreatedAt orders User by created_at.
+	UserOrderFieldCreatedAt = &UserOrderField{
+		Value: func(u *User) (ent.Value, error) {
+			return u.CreatedAt, nil
+		},
+		column: user.FieldCreatedAt,
+		toTerm: user.ByCreatedAt,
+		toCursor: func(u *User) Cursor {
+			return Cursor{
+				ID:    u.ID,
+				Value: u.CreatedAt,
+			}
+		},
+	}
+	// UserOrderFieldEmail orders User by email.
+	UserOrderFieldEmail = &UserOrderField{
+		Value: func(u *User) (ent.Value, error) {
+			return u.Email, nil
+		},
+		column: user.FieldEmail,
+		toTerm: user.ByEmail,
+		toCursor: func(u *User) Cursor {
+			return Cursor{
+				ID:    u.ID,
+				Value: u.Email,
+			}
+		},
+	}
+	// UserOrderFieldWelcomeEmailSent orders User by welcome_email_sent.
+	UserOrderFieldWelcomeEmailSent = &UserOrderField{
+		Value: func(u *User) (ent.Value, error) {
+			return u.WelcomeEmailSent, nil
+		},
+		column: user.FieldWelcomeEmailSent,
+		toTerm: user.ByWelcomeEmailSent,
+		toCursor: func(u *User) Cursor {
+			return Cursor{
+				ID:    u.ID,
+				Value: u.WelcomeEmailSent,
+			}
+		},
+	}
+	// UserOrderFieldCanAdmin orders User by can_admin.
+	UserOrderFieldCanAdmin = &UserOrderField{
+		Value: func(u *User) (ent.Value, error) {
+			return u.CanAdmin, nil
+		},
+		column: user.FieldCanAdmin,
+		toTerm: user.ByCanAdmin,
+		toCursor: func(u *User) Cursor {
+			return Cursor{
+				ID:    u.ID,
+				Value: u.CanAdmin,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f UserOrderField) String() string {
+	var str string
+	switch f.column {
+	case UserOrderFieldCreatedAt.column:
+		str = "CREATED_AT"
+	case UserOrderFieldEmail.column:
+		str = "EMAIL"
+	case UserOrderFieldWelcomeEmailSent.column:
+		str = "WELCOME_EMAIL_SENT"
+	case UserOrderFieldCanAdmin.column:
+		str = "CAN_ADMIN"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f UserOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *UserOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("UserOrderField %T must be a string", v)
+	}
+	switch str {
+	case "CREATED_AT":
+		*f = *UserOrderFieldCreatedAt
+	case "EMAIL":
+		*f = *UserOrderFieldEmail
+	case "WELCOME_EMAIL_SENT":
+		*f = *UserOrderFieldWelcomeEmailSent
+	case "CAN_ADMIN":
+		*f = *UserOrderFieldCanAdmin
+	default:
+		return fmt.Errorf("%s is not a valid UserOrderField", str)
+	}
+	return nil
+}
+
+// UserOrderField defines the ordering field of User.
+type UserOrderField struct {
+	// Value extracts the ordering value from the given User.
+	Value    func(*User) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) user.OrderOption
+	toCursor func(*User) Cursor
+}
+
+// UserOrder defines the ordering of User.
+type UserOrder struct {
+	Direction OrderDirection  `json:"direction"`
+	Field     *UserOrderField `json:"field"`
+}
+
+// DefaultUserOrder is the default ordering of User.
+var DefaultUserOrder = &UserOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &UserOrderField{
+		Value: func(u *User) (ent.Value, error) {
+			return u.ID, nil
+		},
+		column: user.FieldID,
+		toTerm: user.ByID,
+		toCursor: func(u *User) Cursor {
+			return Cursor{ID: u.ID}
+		},
+	},
+}
+
+// ToEdge converts User into UserEdge.
+func (u *User) ToEdge(order *UserOrder) *UserEdge {
+	if order == nil {
+		order = DefaultUserOrder
+	}
+	return &UserEdge{
+		Node:   u,
+		Cursor: order.Field.toCursor(u),
+	}
+}
+
+// WorkspaceEdge is the edge representation of Workspace.
+type WorkspaceEdge struct {
+	Node   *Workspace `json:"node"`
+	Cursor Cursor     `json:"cursor"`
+}
+
+// WorkspaceConnection is the connection containing edges to Workspace.
+type WorkspaceConnection struct {
+	Edges      []*WorkspaceEdge `json:"edges"`
+	PageInfo   PageInfo         `json:"pageInfo"`
+	TotalCount int              `json:"totalCount"`
+}
+
+func (c *WorkspaceConnection) build(nodes []*Workspace, pager *workspacePager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *Workspace
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *Workspace {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *Workspace {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*WorkspaceEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &WorkspaceEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// WorkspacePaginateOption enables pagination customization.
+type WorkspacePaginateOption func(*workspacePager) error
+
+// WithWorkspaceOrder configures pagination ordering.
+func WithWorkspaceOrder(order []*WorkspaceOrder) WorkspacePaginateOption {
+	return func(pager *workspacePager) error {
+		for _, o := range order {
+			if err := o.Direction.Validate(); err != nil {
+				return err
+			}
+		}
+		pager.order = append(pager.order, order...)
+		return nil
+	}
+}
+
+// WithWorkspaceFilter configures pagination filter.
+func WithWorkspaceFilter(filter func(*WorkspaceQuery) (*WorkspaceQuery, error)) WorkspacePaginateOption {
+	return func(pager *workspacePager) error {
+		if filter == nil {
+			return errors.New("WorkspaceQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type workspacePager struct {
+	reverse bool
+	order   []*WorkspaceOrder
+	filter  func(*WorkspaceQuery) (*WorkspaceQuery, error)
+}
+
+func newWorkspacePager(opts []WorkspacePaginateOption, reverse bool) (*workspacePager, error) {
+	pager := &workspacePager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	for i, o := range pager.order {
+		if i > 0 && o.Field == pager.order[i-1].Field {
+			return nil, fmt.Errorf("duplicate order direction %q", o.Direction)
+		}
+	}
+	return pager, nil
+}
+
+func (p *workspacePager) applyFilter(query *WorkspaceQuery) (*WorkspaceQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *workspacePager) toCursor(w *Workspace) Cursor {
+	cs_ := make([]any, 0, len(p.order))
+	for _, o_ := range p.order {
+		cs_ = append(cs_, o_.Field.toCursor(w).Value)
+	}
+	return Cursor{ID: w.ID, Value: cs_}
+}
+
+func (p *workspacePager) applyCursors(query *WorkspaceQuery, after, before *Cursor) (*WorkspaceQuery, error) {
+	idDirection := entgql.OrderDirectionAsc
+	if p.reverse {
+		idDirection = entgql.OrderDirectionDesc
+	}
+	fields, directions := make([]string, 0, len(p.order)), make([]OrderDirection, 0, len(p.order))
+	for _, o := range p.order {
+		fields = append(fields, o.Field.column)
+		direction := o.Direction
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		directions = append(directions, direction)
+	}
+	predicates, err := entgql.MultiCursorsPredicate(after, before, &entgql.MultiCursorsOptions{
+		FieldID:     DefaultWorkspaceOrder.Field.column,
+		DirectionID: idDirection,
+		Fields:      fields,
+		Directions:  directions,
+	})
+	if err != nil {
+		return nil, err
+	}
+	for _, predicate := range predicates {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *workspacePager) applyOrder(query *WorkspaceQuery) *WorkspaceQuery {
+	var defaultOrdered bool
+	for _, o := range p.order {
+		direction := o.Direction
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		query = query.Order(o.Field.toTerm(direction.OrderTermOption()))
+		if o.Field.column == DefaultWorkspaceOrder.Field.column {
+			defaultOrdered = true
+		}
+		if len(query.ctx.Fields) > 0 {
+			query.ctx.AppendFieldOnce(o.Field.column)
+		}
+	}
+	if !defaultOrdered {
+		direction := entgql.OrderDirectionAsc
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		query = query.Order(DefaultWorkspaceOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	return query
+}
+
+func (p *workspacePager) orderExpr(query *WorkspaceQuery) sql.Querier {
+	if len(query.ctx.Fields) > 0 {
+		for _, o := range p.order {
+			query.ctx.AppendFieldOnce(o.Field.column)
+		}
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		for _, o := range p.order {
+			direction := o.Direction
+			if p.reverse {
+				direction = direction.Reverse()
+			}
+			b.Ident(o.Field.column).Pad().WriteString(string(direction))
+			b.Comma()
+		}
+		direction := entgql.OrderDirectionAsc
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		b.Ident(DefaultWorkspaceOrder.Field.column).Pad().WriteString(string(direction))
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to Workspace.
+func (w *WorkspaceQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...WorkspacePaginateOption,
+) (*WorkspaceConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newWorkspacePager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if w, err = pager.applyFilter(w); err != nil {
+		return nil, err
+	}
+	conn := &WorkspaceConnection{Edges: []*WorkspaceEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := w.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if w, err = pager.applyCursors(w, after, before); err != nil {
+		return nil, err
+	}
+	limit := paginateLimit(first, last)
+	if limit != 0 {
+		w.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := w.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	w = pager.applyOrder(w)
+	nodes, err := w.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+var (
+	// WorkspaceOrderFieldCreatedAt orders Workspace by created_at.
+	WorkspaceOrderFieldCreatedAt = &WorkspaceOrderField{
+		Value: func(w *Workspace) (ent.Value, error) {
+			return w.CreatedAt, nil
+		},
+		column: workspace.FieldCreatedAt,
+		toTerm: workspace.ByCreatedAt,
+		toCursor: func(w *Workspace) Cursor {
+			return Cursor{
+				ID:    w.ID,
+				Value: w.CreatedAt,
+			}
+		},
+	}
+	// WorkspaceOrderFieldName orders Workspace by name.
+	WorkspaceOrderFieldName = &WorkspaceOrderField{
+		Value: func(w *Workspace) (ent.Value, error) {
+			return w.Name, nil
+		},
+		column: workspace.FieldName,
+		toTerm: workspace.ByName,
+		toCursor: func(w *Workspace) Cursor {
+			return Cursor{
+				ID:    w.ID,
+				Value: w.Name,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f WorkspaceOrderField) String() string {
+	var str string
+	switch f.column {
+	case WorkspaceOrderFieldCreatedAt.column:
+		str = "CREATED_AT"
+	case WorkspaceOrderFieldName.column:
+		str = "NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f WorkspaceOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *WorkspaceOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("WorkspaceOrderField %T must be a string", v)
+	}
+	switch str {
+	case "CREATED_AT":
+		*f = *WorkspaceOrderFieldCreatedAt
+	case "NAME":
+		*f = *WorkspaceOrderFieldName
+	default:
+		return fmt.Errorf("%s is not a valid WorkspaceOrderField", str)
+	}
+	return nil
+}
+
+// WorkspaceOrderField defines the ordering field of Workspace.
+type WorkspaceOrderField struct {
+	// Value extracts the ordering value from the given Workspace.
+	Value    func(*Workspace) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) workspace.OrderOption
+	toCursor func(*Workspace) Cursor
+}
+
+// WorkspaceOrder defines the ordering of Workspace.
+type WorkspaceOrder struct {
+	Direction OrderDirection       `json:"direction"`
+	Field     *WorkspaceOrderField `json:"field"`
+}
+
+// DefaultWorkspaceOrder is the default ordering of Workspace.
+var DefaultWorkspaceOrder = &WorkspaceOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &WorkspaceOrderField{
+		Value: func(w *Workspace) (ent.Value, error) {
+			return w.ID, nil
+		},
+		column: workspace.FieldID,
+		toTerm: workspace.ByID,
+		toCursor: func(w *Workspace) Cursor {
+			return Cursor{ID: w.ID}
+		},
+	},
+}
+
+// ToEdge converts Workspace into WorkspaceEdge.
+func (w *Workspace) ToEdge(order *WorkspaceOrder) *WorkspaceEdge {
+	if order == nil {
+		order = DefaultWorkspaceOrder
+	}
+	return &WorkspaceEdge{
+		Node:   w,
+		Cursor: order.Field.toCursor(w),
+	}
+}
+
+// WorkspaceInviteEdge is the edge representation of WorkspaceInvite.
+type WorkspaceInviteEdge struct {
+	Node   *WorkspaceInvite `json:"node"`
+	Cursor Cursor           `json:"cursor"`
+}
+
+// WorkspaceInviteConnection is the connection containing edges to WorkspaceInvite.
+type WorkspaceInviteConnection struct {
+	Edges      []*WorkspaceInviteEdge `json:"edges"`
+	PageInfo   PageInfo               `json:"pageInfo"`
+	TotalCount int                    `json:"totalCount"`
+}
+
+func (c *WorkspaceInviteConnection) build(nodes []*WorkspaceInvite, pager *workspaceinvitePager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *WorkspaceInvite
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *WorkspaceInvite {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *WorkspaceInvite {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*WorkspaceInviteEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &WorkspaceInviteEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// WorkspaceInvitePaginateOption enables pagination customization.
+type WorkspaceInvitePaginateOption func(*workspaceinvitePager) error
+
+// WithWorkspaceInviteOrder configures pagination ordering.
+func WithWorkspaceInviteOrder(order []*WorkspaceInviteOrder) WorkspaceInvitePaginateOption {
+	return func(pager *workspaceinvitePager) error {
+		for _, o := range order {
+			if err := o.Direction.Validate(); err != nil {
+				return err
+			}
+		}
+		pager.order = append(pager.order, order...)
+		return nil
+	}
+}
+
+// WithWorkspaceInviteFilter configures pagination filter.
+func WithWorkspaceInviteFilter(filter func(*WorkspaceInviteQuery) (*WorkspaceInviteQuery, error)) WorkspaceInvitePaginateOption {
+	return func(pager *workspaceinvitePager) error {
+		if filter == nil {
+			return errors.New("WorkspaceInviteQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type workspaceinvitePager struct {
+	reverse bool
+	order   []*WorkspaceInviteOrder
+	filter  func(*WorkspaceInviteQuery) (*WorkspaceInviteQuery, error)
+}
+
+func newWorkspaceInvitePager(opts []WorkspaceInvitePaginateOption, reverse bool) (*workspaceinvitePager, error) {
+	pager := &workspaceinvitePager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	for i, o := range pager.order {
+		if i > 0 && o.Field == pager.order[i-1].Field {
+			return nil, fmt.Errorf("duplicate order direction %q", o.Direction)
+		}
+	}
+	return pager, nil
+}
+
+func (p *workspaceinvitePager) applyFilter(query *WorkspaceInviteQuery) (*WorkspaceInviteQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *workspaceinvitePager) toCursor(wi *WorkspaceInvite) Cursor {
+	cs_ := make([]any, 0, len(p.order))
+	for _, o_ := range p.order {
+		cs_ = append(cs_, o_.Field.toCursor(wi).Value)
+	}
+	return Cursor{ID: wi.ID, Value: cs_}
+}
+
+func (p *workspaceinvitePager) applyCursors(query *WorkspaceInviteQuery, after, before *Cursor) (*WorkspaceInviteQuery, error) {
+	idDirection := entgql.OrderDirectionAsc
+	if p.reverse {
+		idDirection = entgql.OrderDirectionDesc
+	}
+	fields, directions := make([]string, 0, len(p.order)), make([]OrderDirection, 0, len(p.order))
+	for _, o := range p.order {
+		fields = append(fields, o.Field.column)
+		direction := o.Direction
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		directions = append(directions, direction)
+	}
+	predicates, err := entgql.MultiCursorsPredicate(after, before, &entgql.MultiCursorsOptions{
+		FieldID:     DefaultWorkspaceInviteOrder.Field.column,
+		DirectionID: idDirection,
+		Fields:      fields,
+		Directions:  directions,
+	})
+	if err != nil {
+		return nil, err
+	}
+	for _, predicate := range predicates {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *workspaceinvitePager) applyOrder(query *WorkspaceInviteQuery) *WorkspaceInviteQuery {
+	var defaultOrdered bool
+	for _, o := range p.order {
+		direction := o.Direction
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		query = query.Order(o.Field.toTerm(direction.OrderTermOption()))
+		if o.Field.column == DefaultWorkspaceInviteOrder.Field.column {
+			defaultOrdered = true
+		}
+		if len(query.ctx.Fields) > 0 {
+			query.ctx.AppendFieldOnce(o.Field.column)
+		}
+	}
+	if !defaultOrdered {
+		direction := entgql.OrderDirectionAsc
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		query = query.Order(DefaultWorkspaceInviteOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	return query
+}
+
+func (p *workspaceinvitePager) orderExpr(query *WorkspaceInviteQuery) sql.Querier {
+	if len(query.ctx.Fields) > 0 {
+		for _, o := range p.order {
+			query.ctx.AppendFieldOnce(o.Field.column)
+		}
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		for _, o := range p.order {
+			direction := o.Direction
+			if p.reverse {
+				direction = direction.Reverse()
+			}
+			b.Ident(o.Field.column).Pad().WriteString(string(direction))
+			b.Comma()
+		}
+		direction := entgql.OrderDirectionAsc
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		b.Ident(DefaultWorkspaceInviteOrder.Field.column).Pad().WriteString(string(direction))
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to WorkspaceInvite.
+func (wi *WorkspaceInviteQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...WorkspaceInvitePaginateOption,
+) (*WorkspaceInviteConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newWorkspaceInvitePager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if wi, err = pager.applyFilter(wi); err != nil {
+		return nil, err
+	}
+	conn := &WorkspaceInviteConnection{Edges: []*WorkspaceInviteEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := wi.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if wi, err = pager.applyCursors(wi, after, before); err != nil {
+		return nil, err
+	}
+	limit := paginateLimit(first, last)
+	if limit != 0 {
+		wi.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := wi.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	wi = pager.applyOrder(wi)
+	nodes, err := wi.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+var (
+	// WorkspaceInviteOrderFieldCreatedAt orders WorkspaceInvite by created_at.
+	WorkspaceInviteOrderFieldCreatedAt = &WorkspaceInviteOrderField{
+		Value: func(wi *WorkspaceInvite) (ent.Value, error) {
+			return wi.CreatedAt, nil
+		},
+		column: workspaceinvite.FieldCreatedAt,
+		toTerm: workspaceinvite.ByCreatedAt,
+		toCursor: func(wi *WorkspaceInvite) Cursor {
+			return Cursor{
+				ID:    wi.ID,
+				Value: wi.CreatedAt,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f WorkspaceInviteOrderField) String() string {
+	var str string
+	switch f.column {
+	case WorkspaceInviteOrderFieldCreatedAt.column:
+		str = "CREATED_AT"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f WorkspaceInviteOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *WorkspaceInviteOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("WorkspaceInviteOrderField %T must be a string", v)
+	}
+	switch str {
+	case "CREATED_AT":
+		*f = *WorkspaceInviteOrderFieldCreatedAt
+	default:
+		return fmt.Errorf("%s is not a valid WorkspaceInviteOrderField", str)
+	}
+	return nil
+}
+
+// WorkspaceInviteOrderField defines the ordering field of WorkspaceInvite.
+type WorkspaceInviteOrderField struct {
+	// Value extracts the ordering value from the given WorkspaceInvite.
+	Value    func(*WorkspaceInvite) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) workspaceinvite.OrderOption
+	toCursor func(*WorkspaceInvite) Cursor
+}
+
+// WorkspaceInviteOrder defines the ordering of WorkspaceInvite.
+type WorkspaceInviteOrder struct {
+	Direction OrderDirection             `json:"direction"`
+	Field     *WorkspaceInviteOrderField `json:"field"`
+}
+
+// DefaultWorkspaceInviteOrder is the default ordering of WorkspaceInvite.
+var DefaultWorkspaceInviteOrder = &WorkspaceInviteOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &WorkspaceInviteOrderField{
+		Value: func(wi *WorkspaceInvite) (ent.Value, error) {
+			return wi.ID, nil
+		},
+		column: workspaceinvite.FieldID,
+		toTerm: workspaceinvite.ByID,
+		toCursor: func(wi *WorkspaceInvite) Cursor {
+			return Cursor{ID: wi.ID}
+		},
+	},
+}
+
+// ToEdge converts WorkspaceInvite into WorkspaceInviteEdge.
+func (wi *WorkspaceInvite) ToEdge(order *WorkspaceInviteOrder) *WorkspaceInviteEdge {
+	if order == nil {
+		order = DefaultWorkspaceInviteOrder
+	}
+	return &WorkspaceInviteEdge{
+		Node:   wi,
+		Cursor: order.Field.toCursor(wi),
+	}
+}
+
+// WorkspaceUserEdge is the edge representation of WorkspaceUser.
+type WorkspaceUserEdge struct {
+	Node   *WorkspaceUser `json:"node"`
+	Cursor Cursor         `json:"cursor"`
+}
+
+// WorkspaceUserConnection is the connection containing edges to WorkspaceUser.
+type WorkspaceUserConnection struct {
+	Edges      []*WorkspaceUserEdge `json:"edges"`
+	PageInfo   PageInfo             `json:"pageInfo"`
+	TotalCount int                  `json:"totalCount"`
+}
+
+func (c *WorkspaceUserConnection) build(nodes []*WorkspaceUser, pager *workspaceuserPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *WorkspaceUser
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *WorkspaceUser {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *WorkspaceUser {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*WorkspaceUserEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &WorkspaceUserEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// WorkspaceUserPaginateOption enables pagination customization.
+type WorkspaceUserPaginateOption func(*workspaceuserPager) error
+
+// WithWorkspaceUserOrder configures pagination ordering.
+func WithWorkspaceUserOrder(order []*WorkspaceUserOrder) WorkspaceUserPaginateOption {
+	return func(pager *workspaceuserPager) error {
+		for _, o := range order {
+			if err := o.Direction.Validate(); err != nil {
+				return err
+			}
+		}
+		pager.order = append(pager.order, order...)
+		return nil
+	}
+}
+
+// WithWorkspaceUserFilter configures pagination filter.
+func WithWorkspaceUserFilter(filter func(*WorkspaceUserQuery) (*WorkspaceUserQuery, error)) WorkspaceUserPaginateOption {
+	return func(pager *workspaceuserPager) error {
+		if filter == nil {
+			return errors.New("WorkspaceUserQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type workspaceuserPager struct {
+	reverse bool
+	order   []*WorkspaceUserOrder
+	filter  func(*WorkspaceUserQuery) (*WorkspaceUserQuery, error)
+}
+
+func newWorkspaceUserPager(opts []WorkspaceUserPaginateOption, reverse bool) (*workspaceuserPager, error) {
+	pager := &workspaceuserPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	for i, o := range pager.order {
+		if i > 0 && o.Field == pager.order[i-1].Field {
+			return nil, fmt.Errorf("duplicate order direction %q", o.Direction)
+		}
+	}
+	return pager, nil
+}
+
+func (p *workspaceuserPager) applyFilter(query *WorkspaceUserQuery) (*WorkspaceUserQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *workspaceuserPager) toCursor(wu *WorkspaceUser) Cursor {
+	cs_ := make([]any, 0, len(p.order))
+	for _, o_ := range p.order {
+		cs_ = append(cs_, o_.Field.toCursor(wu).Value)
+	}
+	return Cursor{ID: wu.ID, Value: cs_}
+}
+
+func (p *workspaceuserPager) applyCursors(query *WorkspaceUserQuery, after, before *Cursor) (*WorkspaceUserQuery, error) {
+	idDirection := entgql.OrderDirectionAsc
+	if p.reverse {
+		idDirection = entgql.OrderDirectionDesc
+	}
+	fields, directions := make([]string, 0, len(p.order)), make([]OrderDirection, 0, len(p.order))
+	for _, o := range p.order {
+		fields = append(fields, o.Field.column)
+		direction := o.Direction
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		directions = append(directions, direction)
+	}
+	predicates, err := entgql.MultiCursorsPredicate(after, before, &entgql.MultiCursorsOptions{
+		FieldID:     DefaultWorkspaceUserOrder.Field.column,
+		DirectionID: idDirection,
+		Fields:      fields,
+		Directions:  directions,
+	})
+	if err != nil {
+		return nil, err
+	}
+	for _, predicate := range predicates {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *workspaceuserPager) applyOrder(query *WorkspaceUserQuery) *WorkspaceUserQuery {
+	var defaultOrdered bool
+	for _, o := range p.order {
+		direction := o.Direction
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		query = query.Order(o.Field.toTerm(direction.OrderTermOption()))
+		if o.Field.column == DefaultWorkspaceUserOrder.Field.column {
+			defaultOrdered = true
+		}
+		switch o.Field.column {
+		case WorkspaceUserOrderFieldUserEmail.column, WorkspaceUserOrderFieldWorkspaceName.column:
+		default:
+			if len(query.ctx.Fields) > 0 {
+				query.ctx.AppendFieldOnce(o.Field.column)
+			}
+		}
+	}
+	if !defaultOrdered {
+		direction := entgql.OrderDirectionAsc
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		query = query.Order(DefaultWorkspaceUserOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	return query
+}
+
+func (p *workspaceuserPager) orderExpr(query *WorkspaceUserQuery) sql.Querier {
+	for _, o := range p.order {
+		switch o.Field.column {
+		case WorkspaceUserOrderFieldUserEmail.column, WorkspaceUserOrderFieldWorkspaceName.column:
+			direction := o.Direction
+			if p.reverse {
+				direction = direction.Reverse()
+			}
+			query = query.Order(o.Field.toTerm(direction.OrderTermOption()))
+		default:
+			if len(query.ctx.Fields) > 0 {
+				query.ctx.AppendFieldOnce(o.Field.column)
+			}
+		}
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		for _, o := range p.order {
+			direction := o.Direction
+			if p.reverse {
+				direction = direction.Reverse()
+			}
+			b.Ident(o.Field.column).Pad().WriteString(string(direction))
+			b.Comma()
+		}
+		direction := entgql.OrderDirectionAsc
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		b.Ident(DefaultWorkspaceUserOrder.Field.column).Pad().WriteString(string(direction))
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to WorkspaceUser.
+func (wu *WorkspaceUserQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...WorkspaceUserPaginateOption,
+) (*WorkspaceUserConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newWorkspaceUserPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if wu, err = pager.applyFilter(wu); err != nil {
+		return nil, err
+	}
+	conn := &WorkspaceUserConnection{Edges: []*WorkspaceUserEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := wu.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if wu, err = pager.applyCursors(wu, after, before); err != nil {
+		return nil, err
+	}
+	limit := paginateLimit(first, last)
+	if limit != 0 {
+		wu.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := wu.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	wu = pager.applyOrder(wu)
+	nodes, err := wu.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+var (
+	// WorkspaceUserOrderFieldCreatedAt orders WorkspaceUser by created_at.
+	WorkspaceUserOrderFieldCreatedAt = &WorkspaceUserOrderField{
+		Value: func(wu *WorkspaceUser) (ent.Value, error) {
+			return wu.CreatedAt, nil
+		},
+		column: workspaceuser.FieldCreatedAt,
+		toTerm: workspaceuser.ByCreatedAt,
+		toCursor: func(wu *WorkspaceUser) Cursor {
+			return Cursor{
+				ID:    wu.ID,
+				Value: wu.CreatedAt,
+			}
+		},
+	}
+	// WorkspaceUserOrderFieldUserEmail orders by USER_EMAIL.
+	WorkspaceUserOrderFieldUserEmail = &WorkspaceUserOrderField{
+		Value: func(wu *WorkspaceUser) (ent.Value, error) {
+			return wu.Value("user_email")
+		},
+		column: "user_email",
+		toTerm: func(opts ...sql.OrderTermOption) workspaceuser.OrderOption {
+			return workspaceuser.ByUserField(
+				user.FieldEmail,
+				append(opts, sql.OrderSelectAs("user_email"))...,
+			)
+		},
+		toCursor: func(wu *WorkspaceUser) Cursor {
+			cv, _ := wu.Value("user_email")
+			return Cursor{
+				ID:    wu.ID,
+				Value: cv,
+			}
+		},
+	}
+	// WorkspaceUserOrderFieldWorkspaceName orders by WORKSPACE_NAME.
+	WorkspaceUserOrderFieldWorkspaceName = &WorkspaceUserOrderField{
+		Value: func(wu *WorkspaceUser) (ent.Value, error) {
+			return wu.Value("workspace_name")
+		},
+		column: "workspace_name",
+		toTerm: func(opts ...sql.OrderTermOption) workspaceuser.OrderOption {
+			return workspaceuser.ByWorkspaceField(
+				workspace.FieldName,
+				append(opts, sql.OrderSelectAs("workspace_name"))...,
+			)
+		},
+		toCursor: func(wu *WorkspaceUser) Cursor {
+			cv, _ := wu.Value("workspace_name")
+			return Cursor{
+				ID:    wu.ID,
+				Value: cv,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f WorkspaceUserOrderField) String() string {
+	var str string
+	switch f.column {
+	case WorkspaceUserOrderFieldCreatedAt.column:
+		str = "CREATED_AT"
+	case WorkspaceUserOrderFieldUserEmail.column:
+		str = "USER_EMAIL"
+	case WorkspaceUserOrderFieldWorkspaceName.column:
+		str = "WORKSPACE_NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f WorkspaceUserOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *WorkspaceUserOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("WorkspaceUserOrderField %T must be a string", v)
+	}
+	switch str {
+	case "CREATED_AT":
+		*f = *WorkspaceUserOrderFieldCreatedAt
+	case "USER_EMAIL":
+		*f = *WorkspaceUserOrderFieldUserEmail
+	case "WORKSPACE_NAME":
+		*f = *WorkspaceUserOrderFieldWorkspaceName
+	default:
+		return fmt.Errorf("%s is not a valid WorkspaceUserOrderField", str)
+	}
+	return nil
+}
+
+// WorkspaceUserOrderField defines the ordering field of WorkspaceUser.
+type WorkspaceUserOrderField struct {
+	// Value extracts the ordering value from the given WorkspaceUser.
+	Value    func(*WorkspaceUser) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) workspaceuser.OrderOption
+	toCursor func(*WorkspaceUser) Cursor
+}
+
+// WorkspaceUserOrder defines the ordering of WorkspaceUser.
+type WorkspaceUserOrder struct {
+	Direction OrderDirection           `json:"direction"`
+	Field     *WorkspaceUserOrderField `json:"field"`
+}
+
+// DefaultWorkspaceUserOrder is the default ordering of WorkspaceUser.
+var DefaultWorkspaceUserOrder = &WorkspaceUserOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &WorkspaceUserOrderField{
+		Value: func(wu *WorkspaceUser) (ent.Value, error) {
+			return wu.ID, nil
+		},
+		column: workspaceuser.FieldID,
+		toTerm: workspaceuser.ByID,
+		toCursor: func(wu *WorkspaceUser) Cursor {
+			return Cursor{ID: wu.ID}
+		},
+	},
+}
+
+// ToEdge converts WorkspaceUser into WorkspaceUserEdge.
+func (wu *WorkspaceUser) ToEdge(order *WorkspaceUserOrder) *WorkspaceUserEdge {
+	if order == nil {
+		order = DefaultWorkspaceUserOrder
+	}
+	return &WorkspaceUserEdge{
+		Node:   wu,
+		Cursor: order.Field.toCursor(wu),
 	}
 }

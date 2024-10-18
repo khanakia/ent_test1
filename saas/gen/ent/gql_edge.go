@@ -107,3 +107,87 @@ func (t *Todo) Parent(ctx context.Context) (*Todo, error) {
 	}
 	return result, MaskNotFound(err)
 }
+
+func (u *User) Workspaces(ctx context.Context) (result []*Workspace, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = u.NamedWorkspaces(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = u.Edges.WorkspacesOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = u.QueryWorkspaces().All(ctx)
+	}
+	return result, err
+}
+
+func (u *User) WorkspaceUsers(ctx context.Context) (result []*WorkspaceUser, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = u.NamedWorkspaceUsers(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = u.Edges.WorkspaceUsersOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = u.QueryWorkspaceUsers().All(ctx)
+	}
+	return result, err
+}
+
+func (w *Workspace) Users(ctx context.Context) (result []*User, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = w.NamedUsers(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = w.Edges.UsersOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = w.QueryUsers().All(ctx)
+	}
+	return result, err
+}
+
+func (w *Workspace) WorkspaceInvites(ctx context.Context) (result []*WorkspaceInvite, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = w.NamedWorkspaceInvites(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = w.Edges.WorkspaceInvitesOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = w.QueryWorkspaceInvites().All(ctx)
+	}
+	return result, err
+}
+
+func (w *Workspace) WorkspaceUsers(ctx context.Context) (result []*WorkspaceUser, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = w.NamedWorkspaceUsers(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = w.Edges.WorkspaceUsersOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = w.QueryWorkspaceUsers().All(ctx)
+	}
+	return result, err
+}
+
+func (wi *WorkspaceInvite) Workspace(ctx context.Context) (*Workspace, error) {
+	result, err := wi.Edges.WorkspaceOrErr()
+	if IsNotLoaded(err) {
+		result, err = wi.QueryWorkspace().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (wu *WorkspaceUser) User(ctx context.Context) (*User, error) {
+	result, err := wu.Edges.UserOrErr()
+	if IsNotLoaded(err) {
+		result, err = wu.QueryUser().Only(ctx)
+	}
+	return result, err
+}
+
+func (wu *WorkspaceUser) Workspace(ctx context.Context) (*Workspace, error) {
+	result, err := wu.Edges.WorkspaceOrErr()
+	if IsNotLoaded(err) {
+		result, err = wu.QueryWorkspace().Only(ctx)
+	}
+	return result, err
+}
