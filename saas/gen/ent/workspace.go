@@ -21,6 +21,8 @@ type Workspace struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// AppID holds the value of the "app_id" field.
+	AppID string `json:"app_id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// IsPersonal holds the value of the "is_personal" field.
@@ -86,7 +88,7 @@ func (*Workspace) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case workspace.FieldIsPersonal:
 			values[i] = new(sql.NullBool)
-		case workspace.FieldID, workspace.FieldName, workspace.FieldUserID:
+		case workspace.FieldID, workspace.FieldAppID, workspace.FieldName, workspace.FieldUserID:
 			values[i] = new(sql.NullString)
 		case workspace.FieldCreatedAt, workspace.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -122,6 +124,12 @@ func (w *Workspace) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				w.UpdatedAt = value.Time
+			}
+		case workspace.FieldAppID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field app_id", values[i])
+			} else if value.Valid {
+				w.AppID = value.String
 			}
 		case workspace.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -197,6 +205,9 @@ func (w *Workspace) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(w.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("app_id=")
+	builder.WriteString(w.AppID)
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(w.Name)

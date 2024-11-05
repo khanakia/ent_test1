@@ -74,6 +74,11 @@ func UpdatedAt(v time.Time) predicate.Plan {
 	return predicate.Plan(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
+// AppID applies equality check predicate on the "app_id" field. It's identical to AppIDEQ.
+func AppID(v string) predicate.Plan {
+	return predicate.Plan(sql.FieldEQ(FieldAppID, v))
+}
+
 // Name applies equality check predicate on the "name" field. It's identical to NameEQ.
 func Name(v string) predicate.Plan {
 	return predicate.Plan(sql.FieldEQ(FieldName, v))
@@ -192,6 +197,81 @@ func UpdatedAtIsNil() predicate.Plan {
 // UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
 func UpdatedAtNotNil() predicate.Plan {
 	return predicate.Plan(sql.FieldNotNull(FieldUpdatedAt))
+}
+
+// AppIDEQ applies the EQ predicate on the "app_id" field.
+func AppIDEQ(v string) predicate.Plan {
+	return predicate.Plan(sql.FieldEQ(FieldAppID, v))
+}
+
+// AppIDNEQ applies the NEQ predicate on the "app_id" field.
+func AppIDNEQ(v string) predicate.Plan {
+	return predicate.Plan(sql.FieldNEQ(FieldAppID, v))
+}
+
+// AppIDIn applies the In predicate on the "app_id" field.
+func AppIDIn(vs ...string) predicate.Plan {
+	return predicate.Plan(sql.FieldIn(FieldAppID, vs...))
+}
+
+// AppIDNotIn applies the NotIn predicate on the "app_id" field.
+func AppIDNotIn(vs ...string) predicate.Plan {
+	return predicate.Plan(sql.FieldNotIn(FieldAppID, vs...))
+}
+
+// AppIDGT applies the GT predicate on the "app_id" field.
+func AppIDGT(v string) predicate.Plan {
+	return predicate.Plan(sql.FieldGT(FieldAppID, v))
+}
+
+// AppIDGTE applies the GTE predicate on the "app_id" field.
+func AppIDGTE(v string) predicate.Plan {
+	return predicate.Plan(sql.FieldGTE(FieldAppID, v))
+}
+
+// AppIDLT applies the LT predicate on the "app_id" field.
+func AppIDLT(v string) predicate.Plan {
+	return predicate.Plan(sql.FieldLT(FieldAppID, v))
+}
+
+// AppIDLTE applies the LTE predicate on the "app_id" field.
+func AppIDLTE(v string) predicate.Plan {
+	return predicate.Plan(sql.FieldLTE(FieldAppID, v))
+}
+
+// AppIDContains applies the Contains predicate on the "app_id" field.
+func AppIDContains(v string) predicate.Plan {
+	return predicate.Plan(sql.FieldContains(FieldAppID, v))
+}
+
+// AppIDHasPrefix applies the HasPrefix predicate on the "app_id" field.
+func AppIDHasPrefix(v string) predicate.Plan {
+	return predicate.Plan(sql.FieldHasPrefix(FieldAppID, v))
+}
+
+// AppIDHasSuffix applies the HasSuffix predicate on the "app_id" field.
+func AppIDHasSuffix(v string) predicate.Plan {
+	return predicate.Plan(sql.FieldHasSuffix(FieldAppID, v))
+}
+
+// AppIDIsNil applies the IsNil predicate on the "app_id" field.
+func AppIDIsNil() predicate.Plan {
+	return predicate.Plan(sql.FieldIsNull(FieldAppID))
+}
+
+// AppIDNotNil applies the NotNil predicate on the "app_id" field.
+func AppIDNotNil() predicate.Plan {
+	return predicate.Plan(sql.FieldNotNull(FieldAppID))
+}
+
+// AppIDEqualFold applies the EqualFold predicate on the "app_id" field.
+func AppIDEqualFold(v string) predicate.Plan {
+	return predicate.Plan(sql.FieldEqualFold(FieldAppID, v))
+}
+
+// AppIDContainsFold applies the ContainsFold predicate on the "app_id" field.
+func AppIDContainsFold(v string) predicate.Plan {
+	return predicate.Plan(sql.FieldContainsFold(FieldAppID, v))
 }
 
 // NameEQ applies the EQ predicate on the "name" field.

@@ -54,6 +54,20 @@ func (pc *PostCreate) SetNillableUpdatedAt(t *time.Time) *PostCreate {
 	return pc
 }
 
+// SetAppID sets the "app_id" field.
+func (pc *PostCreate) SetAppID(s string) *PostCreate {
+	pc.mutation.SetAppID(s)
+	return pc
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (pc *PostCreate) SetNillableAppID(s *string) *PostCreate {
+	if s != nil {
+		pc.SetAppID(*s)
+	}
+	return pc
+}
+
 // SetName sets the "name" field.
 func (pc *PostCreate) SetName(s string) *PostCreate {
 	pc.mutation.SetName(s)
@@ -346,6 +360,10 @@ func (pc *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 		_spec.SetField(post.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
+	if value, ok := pc.mutation.AppID(); ok {
+		_spec.SetField(post.FieldAppID, field.TypeString, value)
+		_node.AppID = value
+	}
 	if value, ok := pc.mutation.Name(); ok {
 		_spec.SetField(post.FieldName, field.TypeString, value)
 		_node.Name = value
@@ -500,6 +518,24 @@ func (u *PostUpsert) UpdateUpdatedAt() *PostUpsert {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (u *PostUpsert) ClearUpdatedAt() *PostUpsert {
 	u.SetNull(post.FieldUpdatedAt)
+	return u
+}
+
+// SetAppID sets the "app_id" field.
+func (u *PostUpsert) SetAppID(v string) *PostUpsert {
+	u.Set(post.FieldAppID, v)
+	return u
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *PostUpsert) UpdateAppID() *PostUpsert {
+	u.SetExcluded(post.FieldAppID)
+	return u
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *PostUpsert) ClearAppID() *PostUpsert {
+	u.SetNull(post.FieldAppID)
 	return u
 }
 
@@ -788,6 +824,27 @@ func (u *PostUpsertOne) UpdateUpdatedAt() *PostUpsertOne {
 func (u *PostUpsertOne) ClearUpdatedAt() *PostUpsertOne {
 	return u.Update(func(s *PostUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *PostUpsertOne) SetAppID(v string) *PostUpsertOne {
+	return u.Update(func(s *PostUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *PostUpsertOne) UpdateAppID() *PostUpsertOne {
+	return u.Update(func(s *PostUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *PostUpsertOne) ClearAppID() *PostUpsertOne {
+	return u.Update(func(s *PostUpsert) {
+		s.ClearAppID()
 	})
 }
 
@@ -1279,6 +1336,27 @@ func (u *PostUpsertBulk) UpdateUpdatedAt() *PostUpsertBulk {
 func (u *PostUpsertBulk) ClearUpdatedAt() *PostUpsertBulk {
 	return u.Update(func(s *PostUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *PostUpsertBulk) SetAppID(v string) *PostUpsertBulk {
+	return u.Update(func(s *PostUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *PostUpsertBulk) UpdateAppID() *PostUpsertBulk {
+	return u.Update(func(s *PostUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *PostUpsertBulk) ClearAppID() *PostUpsertBulk {
+	return u.Update(func(s *PostUpsert) {
+		s.ClearAppID()
 	})
 }
 

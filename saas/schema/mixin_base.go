@@ -41,5 +41,8 @@ func (cls BaseMixin) Fields() []ent.Field {
 			Optional().
 			Default(time.Now).
 			UpdateDefault(time.Now),
+		field.String("app_id").Optional().Annotations(
+			entgql.Skip(),
+		),
 	}
 }

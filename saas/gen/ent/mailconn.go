@@ -21,6 +21,8 @@ type MailConn struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// AppID holds the value of the "app_id" field.
+	AppID string `json:"app_id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Host holds the value of the "host" field.
@@ -51,7 +53,7 @@ func (*MailConn) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case mailconn.FieldPort, mailconn.FieldEncryption:
 			values[i] = new(sql.NullInt64)
-		case mailconn.FieldID, mailconn.FieldName, mailconn.FieldHost, mailconn.FieldUsername, mailconn.FieldPassword, mailconn.FieldFromName, mailconn.FieldFromEmail:
+		case mailconn.FieldID, mailconn.FieldAppID, mailconn.FieldName, mailconn.FieldHost, mailconn.FieldUsername, mailconn.FieldPassword, mailconn.FieldFromName, mailconn.FieldFromEmail:
 			values[i] = new(sql.NullString)
 		case mailconn.FieldCreatedAt, mailconn.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -87,6 +89,12 @@ func (mc *MailConn) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				mc.UpdatedAt = value.Time
+			}
+		case mailconn.FieldAppID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field app_id", values[i])
+			} else if value.Valid {
+				mc.AppID = value.String
 			}
 		case mailconn.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -183,6 +191,9 @@ func (mc *MailConn) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(mc.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("app_id=")
+	builder.WriteString(mc.AppID)
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(mc.Name)

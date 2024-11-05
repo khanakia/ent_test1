@@ -21,6 +21,8 @@ type User struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// AppID holds the value of the "app_id" field.
+	AppID string `json:"app_id,omitempty"`
 	// Email holds the value of the "email" field.
 	Email string `json:"email,omitempty"`
 	// Phone holds the value of the "phone" field.
@@ -106,7 +108,7 @@ func (*User) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case user.FieldStatus, user.FieldWelcomeEmailSent, user.FieldCanAdmin:
 			values[i] = new(sql.NullBool)
-		case user.FieldID, user.FieldEmail, user.FieldPhone, user.FieldFirstName, user.FieldLastName, user.FieldCompany, user.FieldLocale, user.FieldRoleID, user.FieldPassword, user.FieldSecret, user.FieldAPIKey:
+		case user.FieldID, user.FieldAppID, user.FieldEmail, user.FieldPhone, user.FieldFirstName, user.FieldLastName, user.FieldCompany, user.FieldLocale, user.FieldRoleID, user.FieldPassword, user.FieldSecret, user.FieldAPIKey:
 			values[i] = new(sql.NullString)
 		case user.FieldCreatedAt, user.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -142,6 +144,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				u.UpdatedAt = value.Time
+			}
+		case user.FieldAppID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field app_id", values[i])
+			} else if value.Valid {
+				u.AppID = value.String
 			}
 		case user.FieldEmail:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -277,6 +285,9 @@ func (u *User) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(u.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("app_id=")
+	builder.WriteString(u.AppID)
 	builder.WriteString(", ")
 	builder.WriteString("email=")
 	builder.WriteString(u.Email)

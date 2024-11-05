@@ -51,6 +51,20 @@ func (mc *MediaCreate) SetNillableUpdatedAt(t *time.Time) *MediaCreate {
 	return mc
 }
 
+// SetAppID sets the "app_id" field.
+func (mc *MediaCreate) SetAppID(s string) *MediaCreate {
+	mc.mutation.SetAppID(s)
+	return mc
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (mc *MediaCreate) SetNillableAppID(s *string) *MediaCreate {
+	if s != nil {
+		mc.SetAppID(*s)
+	}
+	return mc
+}
+
 // SetDisk sets the "disk" field.
 func (mc *MediaCreate) SetDisk(s string) *MediaCreate {
 	mc.mutation.SetDisk(s)
@@ -397,6 +411,10 @@ func (mc *MediaCreate) createSpec() (*Media, *sqlgraph.CreateSpec) {
 		_spec.SetField(media.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
+	if value, ok := mc.mutation.AppID(); ok {
+		_spec.SetField(media.FieldAppID, field.TypeString, value)
+		_node.AppID = value
+	}
 	if value, ok := mc.mutation.Disk(); ok {
 		_spec.SetField(media.FieldDisk, field.TypeString, value)
 		_node.Disk = value
@@ -532,6 +550,24 @@ func (u *MediaUpsert) UpdateUpdatedAt() *MediaUpsert {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (u *MediaUpsert) ClearUpdatedAt() *MediaUpsert {
 	u.SetNull(media.FieldUpdatedAt)
+	return u
+}
+
+// SetAppID sets the "app_id" field.
+func (u *MediaUpsert) SetAppID(v string) *MediaUpsert {
+	u.Set(media.FieldAppID, v)
+	return u
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *MediaUpsert) UpdateAppID() *MediaUpsert {
+	u.SetExcluded(media.FieldAppID)
+	return u
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *MediaUpsert) ClearAppID() *MediaUpsert {
+	u.SetNull(media.FieldAppID)
 	return u
 }
 
@@ -910,6 +946,27 @@ func (u *MediaUpsertOne) UpdateUpdatedAt() *MediaUpsertOne {
 func (u *MediaUpsertOne) ClearUpdatedAt() *MediaUpsertOne {
 	return u.Update(func(s *MediaUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *MediaUpsertOne) SetAppID(v string) *MediaUpsertOne {
+	return u.Update(func(s *MediaUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *MediaUpsertOne) UpdateAppID() *MediaUpsertOne {
+	return u.Update(func(s *MediaUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *MediaUpsertOne) ClearAppID() *MediaUpsertOne {
+	return u.Update(func(s *MediaUpsert) {
+		s.ClearAppID()
 	})
 }
 
@@ -1506,6 +1563,27 @@ func (u *MediaUpsertBulk) UpdateUpdatedAt() *MediaUpsertBulk {
 func (u *MediaUpsertBulk) ClearUpdatedAt() *MediaUpsertBulk {
 	return u.Update(func(s *MediaUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *MediaUpsertBulk) SetAppID(v string) *MediaUpsertBulk {
+	return u.Update(func(s *MediaUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *MediaUpsertBulk) UpdateAppID() *MediaUpsertBulk {
+	return u.Update(func(s *MediaUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *MediaUpsertBulk) ClearAppID() *MediaUpsertBulk {
+	return u.Update(func(s *MediaUpsert) {
+		s.ClearAppID()
 	})
 }
 

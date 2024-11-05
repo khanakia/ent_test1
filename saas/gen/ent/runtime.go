@@ -4,7 +4,7 @@ package ent
 
 import (
 	"saas/gen/ent/admin"
-	"saas/gen/ent/appsetting"
+	"saas/gen/ent/app"
 	"saas/gen/ent/kache"
 	"saas/gen/ent/keyvalue"
 	"saas/gen/ent/mailconn"
@@ -55,25 +55,12 @@ func init() {
 	adminDescID := adminMixinFields0[0].Descriptor()
 	// admin.DefaultID holds the default value on creation for the id field.
 	admin.DefaultID = adminDescID.Default.(func() string)
-	appsettingMixin := schema.AppSetting{}.Mixin()
-	appsettingMixinFields0 := appsettingMixin[0].Fields()
-	_ = appsettingMixinFields0
-	appsettingFields := schema.AppSetting{}.Fields()
-	_ = appsettingFields
-	// appsettingDescCreatedAt is the schema descriptor for created_at field.
-	appsettingDescCreatedAt := appsettingMixinFields0[1].Descriptor()
-	// appsetting.DefaultCreatedAt holds the default value on creation for the created_at field.
-	appsetting.DefaultCreatedAt = appsettingDescCreatedAt.Default.(func() time.Time)
-	// appsettingDescUpdatedAt is the schema descriptor for updated_at field.
-	appsettingDescUpdatedAt := appsettingMixinFields0[2].Descriptor()
-	// appsetting.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	appsetting.DefaultUpdatedAt = appsettingDescUpdatedAt.Default.(func() time.Time)
-	// appsetting.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
-	appsetting.UpdateDefaultUpdatedAt = appsettingDescUpdatedAt.UpdateDefault.(func() time.Time)
-	// appsettingDescID is the schema descriptor for id field.
-	appsettingDescID := appsettingMixinFields0[0].Descriptor()
-	// appsetting.DefaultID holds the default value on creation for the id field.
-	appsetting.DefaultID = appsettingDescID.Default.(func() string)
+	appFields := schema.App{}.Fields()
+	_ = appFields
+	// appDescID is the schema descriptor for id field.
+	appDescID := appFields[0].Descriptor()
+	// app.DefaultID holds the default value on creation for the id field.
+	app.DefaultID = appDescID.Default.(func() string)
 	kacheFields := schema.Kache{}.Fields()
 	_ = kacheFields
 	// kacheDescCreatedAt is the schema descriptor for created_at field.

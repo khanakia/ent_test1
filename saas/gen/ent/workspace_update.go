@@ -44,6 +44,26 @@ func (wu *WorkspaceUpdate) ClearUpdatedAt() *WorkspaceUpdate {
 	return wu
 }
 
+// SetAppID sets the "app_id" field.
+func (wu *WorkspaceUpdate) SetAppID(s string) *WorkspaceUpdate {
+	wu.mutation.SetAppID(s)
+	return wu
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (wu *WorkspaceUpdate) SetNillableAppID(s *string) *WorkspaceUpdate {
+	if s != nil {
+		wu.SetAppID(*s)
+	}
+	return wu
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (wu *WorkspaceUpdate) ClearAppID() *WorkspaceUpdate {
+	wu.mutation.ClearAppID()
+	return wu
+}
+
 // SetName sets the "name" field.
 func (wu *WorkspaceUpdate) SetName(s string) *WorkspaceUpdate {
 	wu.mutation.SetName(s)
@@ -277,6 +297,12 @@ func (wu *WorkspaceUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if wu.mutation.UpdatedAtCleared() {
 		_spec.ClearField(workspace.FieldUpdatedAt, field.TypeTime)
 	}
+	if value, ok := wu.mutation.AppID(); ok {
+		_spec.SetField(workspace.FieldAppID, field.TypeString, value)
+	}
+	if wu.mutation.AppIDCleared() {
+		_spec.ClearField(workspace.FieldAppID, field.TypeString)
+	}
 	if value, ok := wu.mutation.Name(); ok {
 		_spec.SetField(workspace.FieldName, field.TypeString, value)
 	}
@@ -482,6 +508,26 @@ func (wuo *WorkspaceUpdateOne) SetUpdatedAt(t time.Time) *WorkspaceUpdateOne {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (wuo *WorkspaceUpdateOne) ClearUpdatedAt() *WorkspaceUpdateOne {
 	wuo.mutation.ClearUpdatedAt()
+	return wuo
+}
+
+// SetAppID sets the "app_id" field.
+func (wuo *WorkspaceUpdateOne) SetAppID(s string) *WorkspaceUpdateOne {
+	wuo.mutation.SetAppID(s)
+	return wuo
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (wuo *WorkspaceUpdateOne) SetNillableAppID(s *string) *WorkspaceUpdateOne {
+	if s != nil {
+		wuo.SetAppID(*s)
+	}
+	return wuo
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (wuo *WorkspaceUpdateOne) ClearAppID() *WorkspaceUpdateOne {
+	wuo.mutation.ClearAppID()
 	return wuo
 }
 
@@ -747,6 +793,12 @@ func (wuo *WorkspaceUpdateOne) sqlSave(ctx context.Context) (_node *Workspace, e
 	}
 	if wuo.mutation.UpdatedAtCleared() {
 		_spec.ClearField(workspace.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := wuo.mutation.AppID(); ok {
+		_spec.SetField(workspace.FieldAppID, field.TypeString, value)
+	}
+	if wuo.mutation.AppIDCleared() {
+		_spec.ClearField(workspace.FieldAppID, field.TypeString)
 	}
 	if value, ok := wuo.mutation.Name(); ok {
 		_spec.SetField(workspace.FieldName, field.TypeString, value)

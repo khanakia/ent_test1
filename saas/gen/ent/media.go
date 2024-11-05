@@ -21,6 +21,8 @@ type Media struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// AppID holds the value of the "app_id" field.
+	AppID string `json:"app_id,omitempty"`
 	// Disk holds the value of the "disk" field.
 	Disk string `json:"disk,omitempty"`
 	// Directory holds the value of the "directory" field.
@@ -67,7 +69,7 @@ func (*Media) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullBool)
 		case media.FieldSize:
 			values[i] = new(sql.NullInt64)
-		case media.FieldID, media.FieldDisk, media.FieldDirectory, media.FieldName, media.FieldOriginalName, media.FieldExtension, media.FieldMimeType, media.FieldAggregateType, media.FieldDescription, media.FieldVariantName, media.FieldOriginalMediaID, media.FieldChecksum, media.FieldWorkspaceID, media.FieldAlt, media.FieldUID:
+		case media.FieldID, media.FieldAppID, media.FieldDisk, media.FieldDirectory, media.FieldName, media.FieldOriginalName, media.FieldExtension, media.FieldMimeType, media.FieldAggregateType, media.FieldDescription, media.FieldVariantName, media.FieldOriginalMediaID, media.FieldChecksum, media.FieldWorkspaceID, media.FieldAlt, media.FieldUID:
 			values[i] = new(sql.NullString)
 		case media.FieldCreatedAt, media.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -103,6 +105,12 @@ func (m *Media) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				m.UpdatedAt = value.Time
+			}
+		case media.FieldAppID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field app_id", values[i])
+			} else if value.Valid {
+				m.AppID = value.String
 			}
 		case media.FieldDisk:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -247,6 +255,9 @@ func (m *Media) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(m.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("app_id=")
+	builder.WriteString(m.AppID)
 	builder.WriteString(", ")
 	builder.WriteString("disk=")
 	builder.WriteString(m.Disk)

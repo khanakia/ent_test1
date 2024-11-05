@@ -58,13 +58,13 @@ func CreateDefaultWorkspaceForUser(userID string, client *ent.Client, ctx contex
 	return err
 }
 
-func GetAppSettings(client *ent.Client) (*ent.AppSetting, error) {
-	return client.AppSetting.Query().First(context.Background())
+func GetAppSettings(client *ent.Client) (*ent.App, error) {
+	return client.App.Query().First(context.Background())
 }
 
-func MustGetAppSettings() *ent.AppSetting {
+func MustGetAppSettings() *ent.App {
 	client := app.GetPlugins().EntDB.Client()
-	record, err := client.AppSetting.Query().First(context.Background())
+	record, err := client.App.Query().First(context.Background())
 	if err != nil {
 		panic(err)
 	}

@@ -17,26 +17,6 @@ type CreateInput struct {
 
 type KeyValue map[string]interface{}
 
-func getSchema() *Schema {
-	return &Schema{
-		Version: "v1",
-		Models: []*Model{
-			{
-				Table:        "todos",
-				PrimaryKey:   "id",
-				KeyType:      "string",
-				Incrementing: true,
-				Fields: []Field{
-					{Name: "id", Type: FieldTypeString, Unique: true},
-					{Name: "name", Type: FieldTypeString},
-					{Name: "created_at", Type: FieldTypeDateTime},
-					{Name: "updated_at", Type: FieldTypeDateTime},
-				},
-			},
-		},
-	}
-}
-
 type Schema struct {
 	Version string   `json:"version"`
 	Models  []*Model `json:"models"`

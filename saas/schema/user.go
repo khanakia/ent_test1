@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 )
 
 // User holds the schema definition for the User entity.
@@ -20,10 +21,10 @@ func (User) Fields() []ent.Field {
 	// incrementalEnabled := true
 
 	return []ent.Field{
-		field.String("email").Unique().Annotations(
+		field.String("email").Annotations(
 			entgql.OrderField("EMAIL"),
 		),
-		field.String("phone").Unique().Optional(),
+		field.String("phone").Optional(),
 		field.String("first_name").Optional(),
 		field.String("last_name").Optional(),
 		field.String("company").Optional(),
@@ -51,6 +52,13 @@ func (User) Edges() []ent.Edge {
 		edge.From("workspaces", Workspace.Type).
 			Through("workspace_users", WorkspaceUser.Type).
 			Ref("users"),
+	}
+}
+
+func (User) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("app_id", "email").Unique(),
+		index.Fields("app_id", "phone").Unique(),
 	}
 }
 

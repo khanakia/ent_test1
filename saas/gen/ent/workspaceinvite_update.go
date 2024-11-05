@@ -42,6 +42,26 @@ func (wiu *WorkspaceInviteUpdate) ClearUpdatedAt() *WorkspaceInviteUpdate {
 	return wiu
 }
 
+// SetAppID sets the "app_id" field.
+func (wiu *WorkspaceInviteUpdate) SetAppID(s string) *WorkspaceInviteUpdate {
+	wiu.mutation.SetAppID(s)
+	return wiu
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (wiu *WorkspaceInviteUpdate) SetNillableAppID(s *string) *WorkspaceInviteUpdate {
+	if s != nil {
+		wiu.SetAppID(*s)
+	}
+	return wiu
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (wiu *WorkspaceInviteUpdate) ClearAppID() *WorkspaceInviteUpdate {
+	wiu.mutation.ClearAppID()
+	return wiu
+}
+
 // SetWorkspaceID sets the "workspace_id" field.
 func (wiu *WorkspaceInviteUpdate) SetWorkspaceID(s string) *WorkspaceInviteUpdate {
 	wiu.mutation.SetWorkspaceID(s)
@@ -178,6 +198,12 @@ func (wiu *WorkspaceInviteUpdate) sqlSave(ctx context.Context) (n int, err error
 	if wiu.mutation.UpdatedAtCleared() {
 		_spec.ClearField(workspaceinvite.FieldUpdatedAt, field.TypeTime)
 	}
+	if value, ok := wiu.mutation.AppID(); ok {
+		_spec.SetField(workspaceinvite.FieldAppID, field.TypeString, value)
+	}
+	if wiu.mutation.AppIDCleared() {
+		_spec.ClearField(workspaceinvite.FieldAppID, field.TypeString)
+	}
 	if value, ok := wiu.mutation.Email(); ok {
 		_spec.SetField(workspaceinvite.FieldEmail, field.TypeString, value)
 	}
@@ -250,6 +276,26 @@ func (wiuo *WorkspaceInviteUpdateOne) SetUpdatedAt(t time.Time) *WorkspaceInvite
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (wiuo *WorkspaceInviteUpdateOne) ClearUpdatedAt() *WorkspaceInviteUpdateOne {
 	wiuo.mutation.ClearUpdatedAt()
+	return wiuo
+}
+
+// SetAppID sets the "app_id" field.
+func (wiuo *WorkspaceInviteUpdateOne) SetAppID(s string) *WorkspaceInviteUpdateOne {
+	wiuo.mutation.SetAppID(s)
+	return wiuo
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (wiuo *WorkspaceInviteUpdateOne) SetNillableAppID(s *string) *WorkspaceInviteUpdateOne {
+	if s != nil {
+		wiuo.SetAppID(*s)
+	}
+	return wiuo
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (wiuo *WorkspaceInviteUpdateOne) ClearAppID() *WorkspaceInviteUpdateOne {
+	wiuo.mutation.ClearAppID()
 	return wiuo
 }
 
@@ -418,6 +464,12 @@ func (wiuo *WorkspaceInviteUpdateOne) sqlSave(ctx context.Context) (_node *Works
 	}
 	if wiuo.mutation.UpdatedAtCleared() {
 		_spec.ClearField(workspaceinvite.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := wiuo.mutation.AppID(); ok {
+		_spec.SetField(workspaceinvite.FieldAppID, field.TypeString, value)
+	}
+	if wiuo.mutation.AppIDCleared() {
+		_spec.ClearField(workspaceinvite.FieldAppID, field.TypeString)
 	}
 	if value, ok := wiuo.mutation.Email(); ok {
 		_spec.SetField(workspaceinvite.FieldEmail, field.TypeString, value)

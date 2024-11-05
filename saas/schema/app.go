@@ -1,21 +1,28 @@
 package schema
 
 import (
+	"saas/pkg/constants"
+
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
+	gonanoid "github.com/matoous/go-nanoid/v2"
 )
 
-// AppSetting holds the settings for the whole AppSetting actually there is no team system there will be only one
+// App holds the settings for the whole App actually there is no team system there will be only one
 // single record in the whole team
-type AppSetting struct {
+type App struct {
 	ent.Schema
 }
 
-func (AppSetting) Fields() []ent.Field {
+func (App) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("app_name").Optional(),  // will need on many places e.g email templates
+		field.String("id").
+			DefaultFunc(func() string {
+				return "a" + gonanoid.MustGenerate("0123456789abcdefghijklmnopqrstuvwxyz", 10)
+			}).Unique(),
+		field.String("name").Optional(),      // will need on many places e.g email templates
 		field.String("copyright").Optional(), // need on many places e.g email templates
 		field.String("email").Optional(),     // support email
 		field.String("address").Optional(),   // full address 123 Medalling Jr., Suite 100, Parrot Park, CA 12345
@@ -38,18 +45,22 @@ func (AppSetting) Fields() []ent.Field {
 	}
 }
 
-func (AppSetting) Edges() []ent.Edge {
+func (App) Edges() []ent.Edge {
 	return nil
 }
 
-func (AppSetting) Mixin() []ent.Mixin {
+func (App) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		BaseMixin{},
+		// BaseMixin{},
 	}
 }
 
-func (AppSetting) Annotations() []schema.Annotation {
+func (App) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entgql.Skip(entgql.SkipAll),
+		// entgql.Skip(entgql.SkipAll),
+		entgql.RelayConnection(),
+		entgql.QueryField().Directives(entgql.Directive{Name: constants.DirectiveCanAdmin}),
+		entgql.MultiOrder(),
+		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 	}
 }

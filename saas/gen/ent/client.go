@@ -12,7 +12,7 @@ import (
 	"saas/gen/ent/migrate"
 
 	"saas/gen/ent/admin"
-	"saas/gen/ent/appsetting"
+	"saas/gen/ent/app"
 	"saas/gen/ent/kache"
 	"saas/gen/ent/keyvalue"
 	"saas/gen/ent/mailconn"
@@ -48,8 +48,8 @@ type Client struct {
 	Schema *migrate.Schema
 	// Admin is the client for interacting with the Admin builders.
 	Admin *AdminClient
-	// AppSetting is the client for interacting with the AppSetting builders.
-	AppSetting *AppSettingClient
+	// App is the client for interacting with the App builders.
+	App *AppClient
 	// Kache is the client for interacting with the Kache builders.
 	Kache *KacheClient
 	// Keyvalue is the client for interacting with the Keyvalue builders.
@@ -100,7 +100,7 @@ func NewClient(opts ...Option) *Client {
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.Admin = NewAdminClient(c.config)
-	c.AppSetting = NewAppSettingClient(c.config)
+	c.App = NewAppClient(c.config)
 	c.Kache = NewKacheClient(c.config)
 	c.Keyvalue = NewKeyvalueClient(c.config)
 	c.MailConn = NewMailConnClient(c.config)
@@ -213,7 +213,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ctx:             ctx,
 		config:          cfg,
 		Admin:           NewAdminClient(cfg),
-		AppSetting:      NewAppSettingClient(cfg),
+		App:             NewAppClient(cfg),
 		Kache:           NewKacheClient(cfg),
 		Keyvalue:        NewKeyvalueClient(cfg),
 		MailConn:        NewMailConnClient(cfg),
@@ -253,7 +253,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ctx:             ctx,
 		config:          cfg,
 		Admin:           NewAdminClient(cfg),
-		AppSetting:      NewAppSettingClient(cfg),
+		App:             NewAppClient(cfg),
 		Kache:           NewKacheClient(cfg),
 		Keyvalue:        NewKeyvalueClient(cfg),
 		MailConn:        NewMailConnClient(cfg),
@@ -302,10 +302,10 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Admin, c.AppSetting, c.Kache, c.Keyvalue, c.MailConn, c.Media,
-		c.OauthConnection, c.Plan, c.Post, c.PostCategory, c.PostStatus, c.PostTag,
-		c.PostType, c.Session, c.Temp, c.Templ, c.Todo, c.User, c.Workspace,
-		c.WorkspaceInvite, c.WorkspaceUser,
+		c.Admin, c.App, c.Kache, c.Keyvalue, c.MailConn, c.Media, c.OauthConnection,
+		c.Plan, c.Post, c.PostCategory, c.PostStatus, c.PostTag, c.PostType, c.Session,
+		c.Temp, c.Templ, c.Todo, c.User, c.Workspace, c.WorkspaceInvite,
+		c.WorkspaceUser,
 	} {
 		n.Use(hooks...)
 	}
@@ -315,10 +315,10 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Admin, c.AppSetting, c.Kache, c.Keyvalue, c.MailConn, c.Media,
-		c.OauthConnection, c.Plan, c.Post, c.PostCategory, c.PostStatus, c.PostTag,
-		c.PostType, c.Session, c.Temp, c.Templ, c.Todo, c.User, c.Workspace,
-		c.WorkspaceInvite, c.WorkspaceUser,
+		c.Admin, c.App, c.Kache, c.Keyvalue, c.MailConn, c.Media, c.OauthConnection,
+		c.Plan, c.Post, c.PostCategory, c.PostStatus, c.PostTag, c.PostType, c.Session,
+		c.Temp, c.Templ, c.Todo, c.User, c.Workspace, c.WorkspaceInvite,
+		c.WorkspaceUser,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -329,8 +329,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
 	case *AdminMutation:
 		return c.Admin.mutate(ctx, m)
-	case *AppSettingMutation:
-		return c.AppSetting.mutate(ctx, m)
+	case *AppMutation:
+		return c.App.mutate(ctx, m)
 	case *KacheMutation:
 		return c.Kache.mutate(ctx, m)
 	case *KeyvalueMutation:
@@ -507,107 +507,107 @@ func (c *AdminClient) mutate(ctx context.Context, m *AdminMutation) (Value, erro
 	}
 }
 
-// AppSettingClient is a client for the AppSetting schema.
-type AppSettingClient struct {
+// AppClient is a client for the App schema.
+type AppClient struct {
 	config
 }
 
-// NewAppSettingClient returns a client for the AppSetting from the given config.
-func NewAppSettingClient(c config) *AppSettingClient {
-	return &AppSettingClient{config: c}
+// NewAppClient returns a client for the App from the given config.
+func NewAppClient(c config) *AppClient {
+	return &AppClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `appsetting.Hooks(f(g(h())))`.
-func (c *AppSettingClient) Use(hooks ...Hook) {
-	c.hooks.AppSetting = append(c.hooks.AppSetting, hooks...)
+// A call to `Use(f, g, h)` equals to `app.Hooks(f(g(h())))`.
+func (c *AppClient) Use(hooks ...Hook) {
+	c.hooks.App = append(c.hooks.App, hooks...)
 }
 
 // Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `appsetting.Intercept(f(g(h())))`.
-func (c *AppSettingClient) Intercept(interceptors ...Interceptor) {
-	c.inters.AppSetting = append(c.inters.AppSetting, interceptors...)
+// A call to `Intercept(f, g, h)` equals to `app.Intercept(f(g(h())))`.
+func (c *AppClient) Intercept(interceptors ...Interceptor) {
+	c.inters.App = append(c.inters.App, interceptors...)
 }
 
-// Create returns a builder for creating a AppSetting entity.
-func (c *AppSettingClient) Create() *AppSettingCreate {
-	mutation := newAppSettingMutation(c.config, OpCreate)
-	return &AppSettingCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a builder for creating a App entity.
+func (c *AppClient) Create() *AppCreate {
+	mutation := newAppMutation(c.config, OpCreate)
+	return &AppCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of AppSetting entities.
-func (c *AppSettingClient) CreateBulk(builders ...*AppSettingCreate) *AppSettingCreateBulk {
-	return &AppSettingCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of App entities.
+func (c *AppClient) CreateBulk(builders ...*AppCreate) *AppCreateBulk {
+	return &AppCreateBulk{config: c.config, builders: builders}
 }
 
 // MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
 // a builder and applies setFunc on it.
-func (c *AppSettingClient) MapCreateBulk(slice any, setFunc func(*AppSettingCreate, int)) *AppSettingCreateBulk {
+func (c *AppClient) MapCreateBulk(slice any, setFunc func(*AppCreate, int)) *AppCreateBulk {
 	rv := reflect.ValueOf(slice)
 	if rv.Kind() != reflect.Slice {
-		return &AppSettingCreateBulk{err: fmt.Errorf("calling to AppSettingClient.MapCreateBulk with wrong type %T, need slice", slice)}
+		return &AppCreateBulk{err: fmt.Errorf("calling to AppClient.MapCreateBulk with wrong type %T, need slice", slice)}
 	}
-	builders := make([]*AppSettingCreate, rv.Len())
+	builders := make([]*AppCreate, rv.Len())
 	for i := 0; i < rv.Len(); i++ {
 		builders[i] = c.Create()
 		setFunc(builders[i], i)
 	}
-	return &AppSettingCreateBulk{config: c.config, builders: builders}
+	return &AppCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for AppSetting.
-func (c *AppSettingClient) Update() *AppSettingUpdate {
-	mutation := newAppSettingMutation(c.config, OpUpdate)
-	return &AppSettingUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for App.
+func (c *AppClient) Update() *AppUpdate {
+	mutation := newAppMutation(c.config, OpUpdate)
+	return &AppUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *AppSettingClient) UpdateOne(as *AppSetting) *AppSettingUpdateOne {
-	mutation := newAppSettingMutation(c.config, OpUpdateOne, withAppSetting(as))
-	return &AppSettingUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *AppClient) UpdateOne(a *App) *AppUpdateOne {
+	mutation := newAppMutation(c.config, OpUpdateOne, withApp(a))
+	return &AppUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *AppSettingClient) UpdateOneID(id string) *AppSettingUpdateOne {
-	mutation := newAppSettingMutation(c.config, OpUpdateOne, withAppSettingID(id))
-	return &AppSettingUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *AppClient) UpdateOneID(id string) *AppUpdateOne {
+	mutation := newAppMutation(c.config, OpUpdateOne, withAppID(id))
+	return &AppUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for AppSetting.
-func (c *AppSettingClient) Delete() *AppSettingDelete {
-	mutation := newAppSettingMutation(c.config, OpDelete)
-	return &AppSettingDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for App.
+func (c *AppClient) Delete() *AppDelete {
+	mutation := newAppMutation(c.config, OpDelete)
+	return &AppDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *AppSettingClient) DeleteOne(as *AppSetting) *AppSettingDeleteOne {
-	return c.DeleteOneID(as.ID)
+func (c *AppClient) DeleteOne(a *App) *AppDeleteOne {
+	return c.DeleteOneID(a.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *AppSettingClient) DeleteOneID(id string) *AppSettingDeleteOne {
-	builder := c.Delete().Where(appsetting.ID(id))
+func (c *AppClient) DeleteOneID(id string) *AppDeleteOne {
+	builder := c.Delete().Where(app.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &AppSettingDeleteOne{builder}
+	return &AppDeleteOne{builder}
 }
 
-// Query returns a query builder for AppSetting.
-func (c *AppSettingClient) Query() *AppSettingQuery {
-	return &AppSettingQuery{
+// Query returns a query builder for App.
+func (c *AppClient) Query() *AppQuery {
+	return &AppQuery{
 		config: c.config,
-		ctx:    &QueryContext{Type: TypeAppSetting},
+		ctx:    &QueryContext{Type: TypeApp},
 		inters: c.Interceptors(),
 	}
 }
 
-// Get returns a AppSetting entity by its id.
-func (c *AppSettingClient) Get(ctx context.Context, id string) (*AppSetting, error) {
-	return c.Query().Where(appsetting.ID(id)).Only(ctx)
+// Get returns a App entity by its id.
+func (c *AppClient) Get(ctx context.Context, id string) (*App, error) {
+	return c.Query().Where(app.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *AppSettingClient) GetX(ctx context.Context, id string) *AppSetting {
+func (c *AppClient) GetX(ctx context.Context, id string) *App {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -616,27 +616,27 @@ func (c *AppSettingClient) GetX(ctx context.Context, id string) *AppSetting {
 }
 
 // Hooks returns the client hooks.
-func (c *AppSettingClient) Hooks() []Hook {
-	return c.hooks.AppSetting
+func (c *AppClient) Hooks() []Hook {
+	return c.hooks.App
 }
 
 // Interceptors returns the client interceptors.
-func (c *AppSettingClient) Interceptors() []Interceptor {
-	return c.inters.AppSetting
+func (c *AppClient) Interceptors() []Interceptor {
+	return c.inters.App
 }
 
-func (c *AppSettingClient) mutate(ctx context.Context, m *AppSettingMutation) (Value, error) {
+func (c *AppClient) mutate(ctx context.Context, m *AppMutation) (Value, error) {
 	switch m.Op() {
 	case OpCreate:
-		return (&AppSettingCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&AppCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdate:
-		return (&AppSettingUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&AppUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdateOne:
-		return (&AppSettingUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&AppUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpDelete, OpDeleteOne:
-		return (&AppSettingDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+		return (&AppDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
-		return nil, fmt.Errorf("ent: unknown AppSetting mutation op: %q", m.Op())
+		return nil, fmt.Errorf("ent: unknown App mutation op: %q", m.Op())
 	}
 }
 
@@ -3490,14 +3490,14 @@ func (c *WorkspaceUserClient) mutate(ctx context.Context, m *WorkspaceUserMutati
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Admin, AppSetting, Kache, Keyvalue, MailConn, Media, OauthConnection, Plan,
-		Post, PostCategory, PostStatus, PostTag, PostType, Session, Temp, Templ, Todo,
-		User, Workspace, WorkspaceInvite, WorkspaceUser []ent.Hook
+		Admin, App, Kache, Keyvalue, MailConn, Media, OauthConnection, Plan, Post,
+		PostCategory, PostStatus, PostTag, PostType, Session, Temp, Templ, Todo, User,
+		Workspace, WorkspaceInvite, WorkspaceUser []ent.Hook
 	}
 	inters struct {
-		Admin, AppSetting, Kache, Keyvalue, MailConn, Media, OauthConnection, Plan,
-		Post, PostCategory, PostStatus, PostTag, PostType, Session, Temp, Templ, Todo,
-		User, Workspace, WorkspaceInvite, WorkspaceUser []ent.Interceptor
+		Admin, App, Kache, Keyvalue, MailConn, Media, OauthConnection, Plan, Post,
+		PostCategory, PostStatus, PostTag, PostType, Session, Temp, Templ, Todo, User,
+		Workspace, WorkspaceInvite, WorkspaceUser []ent.Interceptor
 	}
 )
 

@@ -105,6 +105,13 @@ func MiddlewareSilent(client *ent.Client) gin.HandlerFunc {
 // for some routes we need to validate the authorization and fail if auth is not valid
 func CheckAuthMiddleware(client *ent.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
+		isPlayground := gqlgenfn.IsPlaygroundGinCtx(c)
+
+		if isPlayground {
+			c.Next()
+			return
+		}
+
 		err := setUserHandler(c, client)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{

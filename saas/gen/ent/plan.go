@@ -21,6 +21,8 @@ type Plan struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// AppID holds the value of the "app_id" field.
+	AppID string `json:"app_id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Excerpt holds the value of the "excerpt" field.
@@ -39,7 +41,7 @@ func (*Plan) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case plan.FieldStatus:
 			values[i] = new(sql.NullBool)
-		case plan.FieldID, plan.FieldName, plan.FieldExcerpt, plan.FieldDescription:
+		case plan.FieldID, plan.FieldAppID, plan.FieldName, plan.FieldExcerpt, plan.FieldDescription:
 			values[i] = new(sql.NullString)
 		case plan.FieldCreatedAt, plan.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -75,6 +77,12 @@ func (pl *Plan) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				pl.UpdatedAt = value.Time
+			}
+		case plan.FieldAppID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field app_id", values[i])
+			} else if value.Valid {
+				pl.AppID = value.String
 			}
 		case plan.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -141,6 +149,9 @@ func (pl *Plan) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(pl.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("app_id=")
+	builder.WriteString(pl.AppID)
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(pl.Name)

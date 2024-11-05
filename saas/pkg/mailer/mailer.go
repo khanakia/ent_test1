@@ -132,13 +132,13 @@ func NewDefaultMailer(client *ent.Client) (*Mailer, error) {
 type TemplRender struct {
 	templ      *ent.Templ
 	client     *ent.Client
-	appSetting *ent.AppSetting
+	appSetting *ent.App
 }
 
 func (cls *TemplRender) defaultData(data map[string]interface{}) {
 
 	data["app"] = map[string]interface{}{
-		"name":     cls.appSetting.AppName,
+		"name":     cls.appSetting.Name,
 		"email":    cls.appSetting.Email,
 		"socialFb": cls.appSetting.SocialFb,
 		"socialTw": cls.appSetting.SocialTw,

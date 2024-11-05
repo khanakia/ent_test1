@@ -16,8 +16,8 @@ type Tx struct {
 	config
 	// Admin is the client for interacting with the Admin builders.
 	Admin *AdminClient
-	// AppSetting is the client for interacting with the AppSetting builders.
-	AppSetting *AppSettingClient
+	// App is the client for interacting with the App builders.
+	App *AppClient
 	// Kache is the client for interacting with the Kache builders.
 	Kache *KacheClient
 	// Keyvalue is the client for interacting with the Keyvalue builders.
@@ -188,7 +188,7 @@ func (tx *Tx) Client() *Client {
 
 func (tx *Tx) init() {
 	tx.Admin = NewAdminClient(tx.config)
-	tx.AppSetting = NewAppSettingClient(tx.config)
+	tx.App = NewAppClient(tx.config)
 	tx.Kache = NewKacheClient(tx.config)
 	tx.Keyvalue = NewKeyvalueClient(tx.config)
 	tx.MailConn = NewMailConnClient(tx.config)

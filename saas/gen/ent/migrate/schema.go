@@ -13,6 +13,7 @@ var (
 		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "app_id", Type: field.TypeString, Nullable: true},
 		{Name: "email", Type: field.TypeString, Unique: true},
 		{Name: "first_name", Type: field.TypeString, Nullable: true},
 		{Name: "last_name", Type: field.TypeString, Nullable: true},
@@ -26,12 +27,10 @@ var (
 		Columns:    AdminsColumns,
 		PrimaryKey: []*schema.Column{AdminsColumns[0]},
 	}
-	// AppSettingsColumns holds the columns for the "app_settings" table.
-	AppSettingsColumns = []*schema.Column{
+	// AppsColumns holds the columns for the "apps" table.
+	AppsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString, Unique: true},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "app_name", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString, Nullable: true},
 		{Name: "copyright", Type: field.TypeString, Nullable: true},
 		{Name: "email", Type: field.TypeString, Nullable: true},
 		{Name: "address", Type: field.TypeString, Nullable: true},
@@ -49,11 +48,11 @@ var (
 		{Name: "auth_verification_templ_id", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "auth_email_verify", Type: field.TypeString, Nullable: true, Size: 2147483647},
 	}
-	// AppSettingsTable holds the schema information for the "app_settings" table.
-	AppSettingsTable = &schema.Table{
-		Name:       "app_settings",
-		Columns:    AppSettingsColumns,
-		PrimaryKey: []*schema.Column{AppSettingsColumns[0]},
+	// AppsTable holds the schema information for the "apps" table.
+	AppsTable = &schema.Table{
+		Name:       "apps",
+		Columns:    AppsColumns,
+		PrimaryKey: []*schema.Column{AppsColumns[0]},
 	}
 	// KachesColumns holds the columns for the "kaches" table.
 	KachesColumns = []*schema.Column{
@@ -86,6 +85,7 @@ var (
 		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "app_id", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString, Nullable: true},
 		{Name: "host", Type: field.TypeString, Nullable: true},
 		{Name: "port", Type: field.TypeInt, Nullable: true},
@@ -107,6 +107,7 @@ var (
 		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "app_id", Type: field.TypeString, Nullable: true},
 		{Name: "disk", Type: field.TypeString, Nullable: true},
 		{Name: "directory", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString, Nullable: true},
@@ -136,6 +137,7 @@ var (
 		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "app_id", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString, Nullable: true},
 		{Name: "provider", Type: field.TypeString, Nullable: true},
 		{Name: "client_id", Type: field.TypeString, Nullable: true},
@@ -157,6 +159,7 @@ var (
 		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "app_id", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString, Nullable: true},
 		{Name: "excerpt", Type: field.TypeString, Nullable: true},
 		{Name: "description", Type: field.TypeString, Nullable: true},
@@ -173,6 +176,7 @@ var (
 		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "app_id", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString, Nullable: true},
 		{Name: "slug", Type: field.TypeString, Nullable: true},
 		{Name: "headline", Type: field.TypeString, Nullable: true},
@@ -194,21 +198,28 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "posts_post_categories_posts",
-				Columns:    []*schema.Column{PostsColumns[12]},
+				Columns:    []*schema.Column{PostsColumns[13]},
 				RefColumns: []*schema.Column{PostCategoriesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "posts_post_status_posts",
-				Columns:    []*schema.Column{PostsColumns[13]},
+				Columns:    []*schema.Column{PostsColumns[14]},
 				RefColumns: []*schema.Column{PostStatusColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "posts_post_types_posts",
-				Columns:    []*schema.Column{PostsColumns[14]},
+				Columns:    []*schema.Column{PostsColumns[15]},
 				RefColumns: []*schema.Column{PostTypesColumns[0]},
 				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "post_app_id_slug",
+				Unique:  true,
+				Columns: []*schema.Column{PostsColumns[3], PostsColumns[5]},
 			},
 		},
 	}
@@ -217,6 +228,7 @@ var (
 		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "app_id", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString, Nullable: true},
 		{Name: "slug", Type: field.TypeString, Nullable: true},
 		{Name: "status", Type: field.TypeString, Nullable: true},
@@ -238,6 +250,7 @@ var (
 		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "app_id", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString, Nullable: true},
 		{Name: "slug", Type: field.TypeString, Nullable: true},
 		{Name: "status", Type: field.TypeBool, Nullable: true},
@@ -251,7 +264,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "post_status_post_types_post_statuses",
-				Columns:    []*schema.Column{PostStatusColumns[6]},
+				Columns:    []*schema.Column{PostStatusColumns[7]},
 				RefColumns: []*schema.Column{PostTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -262,6 +275,7 @@ var (
 		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "app_id", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString, Nullable: true},
 		{Name: "slug", Type: field.TypeString, Nullable: true},
 		{Name: "status", Type: field.TypeString, Nullable: true},
@@ -283,8 +297,9 @@ var (
 		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "app_id", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString, Nullable: true},
-		{Name: "slug", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "slug", Type: field.TypeString, Nullable: true},
 		{Name: "status", Type: field.TypeString, Nullable: true, Default: "published"},
 		{Name: "excerpt", Type: field.TypeString, Nullable: true},
 		{Name: "content", Type: field.TypeString, Nullable: true, Size: 255},
@@ -298,6 +313,13 @@ var (
 		Name:       "post_types",
 		Columns:    PostTypesColumns,
 		PrimaryKey: []*schema.Column{PostTypesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "posttype_app_id_slug",
+				Unique:  true,
+				Columns: []*schema.Column{PostTypesColumns[3], PostTypesColumns[5]},
+			},
+		},
 	}
 	// SessionsColumns holds the columns for the "sessions" table.
 	SessionsColumns = []*schema.Column{
@@ -329,6 +351,7 @@ var (
 		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "app_id", Type: field.TypeString, Nullable: true},
 		{Name: "ip", Type: field.TypeString, Nullable: true},
 		{Name: "type", Type: field.TypeString, Nullable: true},
 		{Name: "body", Type: field.TypeJSON, Nullable: true},
@@ -345,6 +368,7 @@ var (
 		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "app_id", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString, Nullable: true},
 		{Name: "body", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "compiled", Type: field.TypeString, Nullable: true, Size: 2147483647},
@@ -361,6 +385,7 @@ var (
 		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "app_id", Type: field.TypeString, Nullable: true},
 		{Name: "text", Type: field.TypeString, Size: 2147483647},
 		{Name: "status", Type: field.TypeEnum, Enums: []string{"IN_PROGRESS", "COMPLETED"}, Default: "IN_PROGRESS"},
 		{Name: "priority", Type: field.TypeInt, Default: 0},
@@ -374,7 +399,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "todos_todos_parent",
-				Columns:    []*schema.Column{TodosColumns[6]},
+				Columns:    []*schema.Column{TodosColumns[7]},
 				RefColumns: []*schema.Column{TodosColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -385,8 +410,9 @@ var (
 		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
-		{Name: "email", Type: field.TypeString, Unique: true},
-		{Name: "phone", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "app_id", Type: field.TypeString, Nullable: true},
+		{Name: "email", Type: field.TypeString},
+		{Name: "phone", Type: field.TypeString, Nullable: true},
 		{Name: "first_name", Type: field.TypeString, Nullable: true},
 		{Name: "last_name", Type: field.TypeString, Nullable: true},
 		{Name: "company", Type: field.TypeString, Nullable: true},
@@ -404,12 +430,25 @@ var (
 		Name:       "users",
 		Columns:    UsersColumns,
 		PrimaryKey: []*schema.Column{UsersColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "user_app_id_email",
+				Unique:  true,
+				Columns: []*schema.Column{UsersColumns[3], UsersColumns[4]},
+			},
+			{
+				Name:    "user_app_id_phone",
+				Unique:  true,
+				Columns: []*schema.Column{UsersColumns[3], UsersColumns[5]},
+			},
+		},
 	}
 	// WorkspacesColumns holds the columns for the "workspaces" table.
 	WorkspacesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "app_id", Type: field.TypeString, Nullable: true},
 		{Name: "name", Type: field.TypeString, Nullable: true},
 		{Name: "is_personal", Type: field.TypeBool, Nullable: true},
 		{Name: "user_id", Type: field.TypeString, Nullable: true},
@@ -425,6 +464,7 @@ var (
 		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "app_id", Type: field.TypeString, Nullable: true},
 		{Name: "email", Type: field.TypeString, Nullable: true},
 		{Name: "role", Type: field.TypeString, Nullable: true},
 		{Name: "workspace_id", Type: field.TypeString, Nullable: true},
@@ -437,7 +477,7 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "workspace_invites_workspaces_workspace_invites",
-				Columns:    []*schema.Column{WorkspaceInvitesColumns[5]},
+				Columns:    []*schema.Column{WorkspaceInvitesColumns[6]},
 				RefColumns: []*schema.Column{WorkspacesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -446,7 +486,7 @@ var (
 			{
 				Name:    "workspaceinvite_workspace_id_email",
 				Unique:  false,
-				Columns: []*schema.Column{WorkspaceInvitesColumns[5], WorkspaceInvitesColumns[3]},
+				Columns: []*schema.Column{WorkspaceInvitesColumns[6], WorkspaceInvitesColumns[4]},
 			},
 		},
 	}
@@ -455,6 +495,7 @@ var (
 		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "created_at", Type: field.TypeTime, Nullable: true},
 		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "app_id", Type: field.TypeString, Nullable: true},
 		{Name: "role", Type: field.TypeString, Nullable: true},
 		{Name: "user_id", Type: field.TypeString},
 		{Name: "workspace_id", Type: field.TypeString},
@@ -467,13 +508,13 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "workspace_users_users_user",
-				Columns:    []*schema.Column{WorkspaceUsersColumns[4]},
+				Columns:    []*schema.Column{WorkspaceUsersColumns[5]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
 			{
 				Symbol:     "workspace_users_workspaces_workspace",
-				Columns:    []*schema.Column{WorkspaceUsersColumns[5]},
+				Columns:    []*schema.Column{WorkspaceUsersColumns[6]},
 				RefColumns: []*schema.Column{WorkspacesColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -482,14 +523,14 @@ var (
 			{
 				Name:    "workspaceuser_workspace_id_user_id",
 				Unique:  true,
-				Columns: []*schema.Column{WorkspaceUsersColumns[5], WorkspaceUsersColumns[4]},
+				Columns: []*schema.Column{WorkspaceUsersColumns[6], WorkspaceUsersColumns[5]},
 			},
 		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AdminsTable,
-		AppSettingsTable,
+		AppsTable,
 		KachesTable,
 		KeyvaluesTable,
 		MailConnsTable,

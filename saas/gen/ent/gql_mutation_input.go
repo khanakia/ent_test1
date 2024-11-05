@@ -7,6 +7,244 @@ import (
 	"time"
 )
 
+// CreateAppInput represents a mutation input for creating apps.
+type CreateAppInput struct {
+	Name                    *string
+	Copyright               *string
+	Email                   *string
+	Address                 *string
+	SocialTw                *string
+	SocialFb                *string
+	SocialIn                *string
+	LogoURL                 *string
+	SiteURL                 *string
+	DefaultMailConnID       *string
+	MailLayoutTemplID       *string
+	WsapceInviteTemplID     *string
+	WsapceSuccessTemplID    *string
+	AuthFpTemplID           *string
+	AuthWelcomeEmailTemplID *string
+	AuthVerificationTemplID *string
+	AuthEmailVerify         *string
+}
+
+// Mutate applies the CreateAppInput on the AppMutation builder.
+func (i *CreateAppInput) Mutate(m *AppMutation) {
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if v := i.Copyright; v != nil {
+		m.SetCopyright(*v)
+	}
+	if v := i.Email; v != nil {
+		m.SetEmail(*v)
+	}
+	if v := i.Address; v != nil {
+		m.SetAddress(*v)
+	}
+	if v := i.SocialTw; v != nil {
+		m.SetSocialTw(*v)
+	}
+	if v := i.SocialFb; v != nil {
+		m.SetSocialFb(*v)
+	}
+	if v := i.SocialIn; v != nil {
+		m.SetSocialIn(*v)
+	}
+	if v := i.LogoURL; v != nil {
+		m.SetLogoURL(*v)
+	}
+	if v := i.SiteURL; v != nil {
+		m.SetSiteURL(*v)
+	}
+	if v := i.DefaultMailConnID; v != nil {
+		m.SetDefaultMailConnID(*v)
+	}
+	if v := i.MailLayoutTemplID; v != nil {
+		m.SetMailLayoutTemplID(*v)
+	}
+	if v := i.WsapceInviteTemplID; v != nil {
+		m.SetWsapceInviteTemplID(*v)
+	}
+	if v := i.WsapceSuccessTemplID; v != nil {
+		m.SetWsapceSuccessTemplID(*v)
+	}
+	if v := i.AuthFpTemplID; v != nil {
+		m.SetAuthFpTemplID(*v)
+	}
+	if v := i.AuthWelcomeEmailTemplID; v != nil {
+		m.SetAuthWelcomeEmailTemplID(*v)
+	}
+	if v := i.AuthVerificationTemplID; v != nil {
+		m.SetAuthVerificationTemplID(*v)
+	}
+	if v := i.AuthEmailVerify; v != nil {
+		m.SetAuthEmailVerify(*v)
+	}
+}
+
+// SetInput applies the change-set in the CreateAppInput on the AppCreate builder.
+func (c *AppCreate) SetInput(i CreateAppInput) *AppCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateAppInput represents a mutation input for updating apps.
+type UpdateAppInput struct {
+	ClearName                    bool
+	Name                         *string
+	ClearCopyright               bool
+	Copyright                    *string
+	ClearEmail                   bool
+	Email                        *string
+	ClearAddress                 bool
+	Address                      *string
+	ClearSocialTw                bool
+	SocialTw                     *string
+	ClearSocialFb                bool
+	SocialFb                     *string
+	ClearSocialIn                bool
+	SocialIn                     *string
+	ClearLogoURL                 bool
+	LogoURL                      *string
+	ClearSiteURL                 bool
+	SiteURL                      *string
+	ClearDefaultMailConnID       bool
+	DefaultMailConnID            *string
+	ClearMailLayoutTemplID       bool
+	MailLayoutTemplID            *string
+	ClearWsapceInviteTemplID     bool
+	WsapceInviteTemplID          *string
+	ClearWsapceSuccessTemplID    bool
+	WsapceSuccessTemplID         *string
+	ClearAuthFpTemplID           bool
+	AuthFpTemplID                *string
+	ClearAuthWelcomeEmailTemplID bool
+	AuthWelcomeEmailTemplID      *string
+	ClearAuthVerificationTemplID bool
+	AuthVerificationTemplID      *string
+	ClearAuthEmailVerify         bool
+	AuthEmailVerify              *string
+}
+
+// Mutate applies the UpdateAppInput on the AppMutation builder.
+func (i *UpdateAppInput) Mutate(m *AppMutation) {
+	if i.ClearName {
+		m.ClearName()
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if i.ClearCopyright {
+		m.ClearCopyright()
+	}
+	if v := i.Copyright; v != nil {
+		m.SetCopyright(*v)
+	}
+	if i.ClearEmail {
+		m.ClearEmail()
+	}
+	if v := i.Email; v != nil {
+		m.SetEmail(*v)
+	}
+	if i.ClearAddress {
+		m.ClearAddress()
+	}
+	if v := i.Address; v != nil {
+		m.SetAddress(*v)
+	}
+	if i.ClearSocialTw {
+		m.ClearSocialTw()
+	}
+	if v := i.SocialTw; v != nil {
+		m.SetSocialTw(*v)
+	}
+	if i.ClearSocialFb {
+		m.ClearSocialFb()
+	}
+	if v := i.SocialFb; v != nil {
+		m.SetSocialFb(*v)
+	}
+	if i.ClearSocialIn {
+		m.ClearSocialIn()
+	}
+	if v := i.SocialIn; v != nil {
+		m.SetSocialIn(*v)
+	}
+	if i.ClearLogoURL {
+		m.ClearLogoURL()
+	}
+	if v := i.LogoURL; v != nil {
+		m.SetLogoURL(*v)
+	}
+	if i.ClearSiteURL {
+		m.ClearSiteURL()
+	}
+	if v := i.SiteURL; v != nil {
+		m.SetSiteURL(*v)
+	}
+	if i.ClearDefaultMailConnID {
+		m.ClearDefaultMailConnID()
+	}
+	if v := i.DefaultMailConnID; v != nil {
+		m.SetDefaultMailConnID(*v)
+	}
+	if i.ClearMailLayoutTemplID {
+		m.ClearMailLayoutTemplID()
+	}
+	if v := i.MailLayoutTemplID; v != nil {
+		m.SetMailLayoutTemplID(*v)
+	}
+	if i.ClearWsapceInviteTemplID {
+		m.ClearWsapceInviteTemplID()
+	}
+	if v := i.WsapceInviteTemplID; v != nil {
+		m.SetWsapceInviteTemplID(*v)
+	}
+	if i.ClearWsapceSuccessTemplID {
+		m.ClearWsapceSuccessTemplID()
+	}
+	if v := i.WsapceSuccessTemplID; v != nil {
+		m.SetWsapceSuccessTemplID(*v)
+	}
+	if i.ClearAuthFpTemplID {
+		m.ClearAuthFpTemplID()
+	}
+	if v := i.AuthFpTemplID; v != nil {
+		m.SetAuthFpTemplID(*v)
+	}
+	if i.ClearAuthWelcomeEmailTemplID {
+		m.ClearAuthWelcomeEmailTemplID()
+	}
+	if v := i.AuthWelcomeEmailTemplID; v != nil {
+		m.SetAuthWelcomeEmailTemplID(*v)
+	}
+	if i.ClearAuthVerificationTemplID {
+		m.ClearAuthVerificationTemplID()
+	}
+	if v := i.AuthVerificationTemplID; v != nil {
+		m.SetAuthVerificationTemplID(*v)
+	}
+	if i.ClearAuthEmailVerify {
+		m.ClearAuthEmailVerify()
+	}
+	if v := i.AuthEmailVerify; v != nil {
+		m.SetAuthEmailVerify(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateAppInput on the AppUpdate builder.
+func (c *AppUpdate) SetInput(i UpdateAppInput) *AppUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateAppInput on the AppUpdateOne builder.
+func (c *AppUpdateOne) SetInput(i UpdateAppInput) *AppUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreateOauthConnectionInput represents a mutation input for creating oauthconnections.
 type CreateOauthConnectionInput struct {
 	CreatedAt     *time.Time

@@ -75,6 +75,11 @@ func UpdatedAt(v time.Time) predicate.WorkspaceInvite {
 	return predicate.WorkspaceInvite(sql.FieldEQ(FieldUpdatedAt, v))
 }
 
+// AppID applies equality check predicate on the "app_id" field. It's identical to AppIDEQ.
+func AppID(v string) predicate.WorkspaceInvite {
+	return predicate.WorkspaceInvite(sql.FieldEQ(FieldAppID, v))
+}
+
 // WorkspaceID applies equality check predicate on the "workspace_id" field. It's identical to WorkspaceIDEQ.
 func WorkspaceID(v string) predicate.WorkspaceInvite {
 	return predicate.WorkspaceInvite(sql.FieldEQ(FieldWorkspaceID, v))
@@ -188,6 +193,81 @@ func UpdatedAtIsNil() predicate.WorkspaceInvite {
 // UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
 func UpdatedAtNotNil() predicate.WorkspaceInvite {
 	return predicate.WorkspaceInvite(sql.FieldNotNull(FieldUpdatedAt))
+}
+
+// AppIDEQ applies the EQ predicate on the "app_id" field.
+func AppIDEQ(v string) predicate.WorkspaceInvite {
+	return predicate.WorkspaceInvite(sql.FieldEQ(FieldAppID, v))
+}
+
+// AppIDNEQ applies the NEQ predicate on the "app_id" field.
+func AppIDNEQ(v string) predicate.WorkspaceInvite {
+	return predicate.WorkspaceInvite(sql.FieldNEQ(FieldAppID, v))
+}
+
+// AppIDIn applies the In predicate on the "app_id" field.
+func AppIDIn(vs ...string) predicate.WorkspaceInvite {
+	return predicate.WorkspaceInvite(sql.FieldIn(FieldAppID, vs...))
+}
+
+// AppIDNotIn applies the NotIn predicate on the "app_id" field.
+func AppIDNotIn(vs ...string) predicate.WorkspaceInvite {
+	return predicate.WorkspaceInvite(sql.FieldNotIn(FieldAppID, vs...))
+}
+
+// AppIDGT applies the GT predicate on the "app_id" field.
+func AppIDGT(v string) predicate.WorkspaceInvite {
+	return predicate.WorkspaceInvite(sql.FieldGT(FieldAppID, v))
+}
+
+// AppIDGTE applies the GTE predicate on the "app_id" field.
+func AppIDGTE(v string) predicate.WorkspaceInvite {
+	return predicate.WorkspaceInvite(sql.FieldGTE(FieldAppID, v))
+}
+
+// AppIDLT applies the LT predicate on the "app_id" field.
+func AppIDLT(v string) predicate.WorkspaceInvite {
+	return predicate.WorkspaceInvite(sql.FieldLT(FieldAppID, v))
+}
+
+// AppIDLTE applies the LTE predicate on the "app_id" field.
+func AppIDLTE(v string) predicate.WorkspaceInvite {
+	return predicate.WorkspaceInvite(sql.FieldLTE(FieldAppID, v))
+}
+
+// AppIDContains applies the Contains predicate on the "app_id" field.
+func AppIDContains(v string) predicate.WorkspaceInvite {
+	return predicate.WorkspaceInvite(sql.FieldContains(FieldAppID, v))
+}
+
+// AppIDHasPrefix applies the HasPrefix predicate on the "app_id" field.
+func AppIDHasPrefix(v string) predicate.WorkspaceInvite {
+	return predicate.WorkspaceInvite(sql.FieldHasPrefix(FieldAppID, v))
+}
+
+// AppIDHasSuffix applies the HasSuffix predicate on the "app_id" field.
+func AppIDHasSuffix(v string) predicate.WorkspaceInvite {
+	return predicate.WorkspaceInvite(sql.FieldHasSuffix(FieldAppID, v))
+}
+
+// AppIDIsNil applies the IsNil predicate on the "app_id" field.
+func AppIDIsNil() predicate.WorkspaceInvite {
+	return predicate.WorkspaceInvite(sql.FieldIsNull(FieldAppID))
+}
+
+// AppIDNotNil applies the NotNil predicate on the "app_id" field.
+func AppIDNotNil() predicate.WorkspaceInvite {
+	return predicate.WorkspaceInvite(sql.FieldNotNull(FieldAppID))
+}
+
+// AppIDEqualFold applies the EqualFold predicate on the "app_id" field.
+func AppIDEqualFold(v string) predicate.WorkspaceInvite {
+	return predicate.WorkspaceInvite(sql.FieldEqualFold(FieldAppID, v))
+}
+
+// AppIDContainsFold applies the ContainsFold predicate on the "app_id" field.
+func AppIDContainsFold(v string) predicate.WorkspaceInvite {
+	return predicate.WorkspaceInvite(sql.FieldContainsFold(FieldAppID, v))
 }
 
 // WorkspaceIDEQ applies the EQ predicate on the "workspace_id" field.

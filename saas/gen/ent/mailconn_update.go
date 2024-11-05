@@ -41,6 +41,26 @@ func (mcu *MailConnUpdate) ClearUpdatedAt() *MailConnUpdate {
 	return mcu
 }
 
+// SetAppID sets the "app_id" field.
+func (mcu *MailConnUpdate) SetAppID(s string) *MailConnUpdate {
+	mcu.mutation.SetAppID(s)
+	return mcu
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (mcu *MailConnUpdate) SetNillableAppID(s *string) *MailConnUpdate {
+	if s != nil {
+		mcu.SetAppID(*s)
+	}
+	return mcu
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (mcu *MailConnUpdate) ClearAppID() *MailConnUpdate {
+	mcu.mutation.ClearAppID()
+	return mcu
+}
+
 // SetName sets the "name" field.
 func (mcu *MailConnUpdate) SetName(s string) *MailConnUpdate {
 	mcu.mutation.SetName(s)
@@ -300,6 +320,12 @@ func (mcu *MailConnUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if mcu.mutation.UpdatedAtCleared() {
 		_spec.ClearField(mailconn.FieldUpdatedAt, field.TypeTime)
 	}
+	if value, ok := mcu.mutation.AppID(); ok {
+		_spec.SetField(mailconn.FieldAppID, field.TypeString, value)
+	}
+	if mcu.mutation.AppIDCleared() {
+		_spec.ClearField(mailconn.FieldAppID, field.TypeString)
+	}
 	if value, ok := mcu.mutation.Name(); ok {
 		_spec.SetField(mailconn.FieldName, field.TypeString, value)
 	}
@@ -391,6 +417,26 @@ func (mcuo *MailConnUpdateOne) SetUpdatedAt(t time.Time) *MailConnUpdateOne {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (mcuo *MailConnUpdateOne) ClearUpdatedAt() *MailConnUpdateOne {
 	mcuo.mutation.ClearUpdatedAt()
+	return mcuo
+}
+
+// SetAppID sets the "app_id" field.
+func (mcuo *MailConnUpdateOne) SetAppID(s string) *MailConnUpdateOne {
+	mcuo.mutation.SetAppID(s)
+	return mcuo
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (mcuo *MailConnUpdateOne) SetNillableAppID(s *string) *MailConnUpdateOne {
+	if s != nil {
+		mcuo.SetAppID(*s)
+	}
+	return mcuo
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (mcuo *MailConnUpdateOne) ClearAppID() *MailConnUpdateOne {
+	mcuo.mutation.ClearAppID()
 	return mcuo
 }
 
@@ -682,6 +728,12 @@ func (mcuo *MailConnUpdateOne) sqlSave(ctx context.Context) (_node *MailConn, er
 	}
 	if mcuo.mutation.UpdatedAtCleared() {
 		_spec.ClearField(mailconn.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := mcuo.mutation.AppID(); ok {
+		_spec.SetField(mailconn.FieldAppID, field.TypeString, value)
+	}
+	if mcuo.mutation.AppIDCleared() {
+		_spec.ClearField(mailconn.FieldAppID, field.TypeString)
 	}
 	if value, ok := mcuo.mutation.Name(); ok {
 		_spec.SetField(mailconn.FieldName, field.TypeString, value)

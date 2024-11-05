@@ -52,6 +52,20 @@ func (pcc *PostCategoryCreate) SetNillableUpdatedAt(t *time.Time) *PostCategoryC
 	return pcc
 }
 
+// SetAppID sets the "app_id" field.
+func (pcc *PostCategoryCreate) SetAppID(s string) *PostCategoryCreate {
+	pcc.mutation.SetAppID(s)
+	return pcc
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (pcc *PostCategoryCreate) SetNillableAppID(s *string) *PostCategoryCreate {
+	if s != nil {
+		pcc.SetAppID(*s)
+	}
+	return pcc
+}
+
 // SetName sets the "name" field.
 func (pcc *PostCategoryCreate) SetName(s string) *PostCategoryCreate {
 	pcc.mutation.SetName(s)
@@ -302,6 +316,10 @@ func (pcc *PostCategoryCreate) createSpec() (*PostCategory, *sqlgraph.CreateSpec
 		_spec.SetField(postcategory.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
+	if value, ok := pcc.mutation.AppID(); ok {
+		_spec.SetField(postcategory.FieldAppID, field.TypeString, value)
+		_node.AppID = value
+	}
 	if value, ok := pcc.mutation.Name(); ok {
 		_spec.SetField(postcategory.FieldName, field.TypeString, value)
 		_node.Name = value
@@ -421,6 +439,24 @@ func (u *PostCategoryUpsert) UpdateUpdatedAt() *PostCategoryUpsert {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (u *PostCategoryUpsert) ClearUpdatedAt() *PostCategoryUpsert {
 	u.SetNull(postcategory.FieldUpdatedAt)
+	return u
+}
+
+// SetAppID sets the "app_id" field.
+func (u *PostCategoryUpsert) SetAppID(v string) *PostCategoryUpsert {
+	u.Set(postcategory.FieldAppID, v)
+	return u
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *PostCategoryUpsert) UpdateAppID() *PostCategoryUpsert {
+	u.SetExcluded(postcategory.FieldAppID)
+	return u
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *PostCategoryUpsert) ClearAppID() *PostCategoryUpsert {
+	u.SetNull(postcategory.FieldAppID)
 	return u
 }
 
@@ -655,6 +691,27 @@ func (u *PostCategoryUpsertOne) UpdateUpdatedAt() *PostCategoryUpsertOne {
 func (u *PostCategoryUpsertOne) ClearUpdatedAt() *PostCategoryUpsertOne {
 	return u.Update(func(s *PostCategoryUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *PostCategoryUpsertOne) SetAppID(v string) *PostCategoryUpsertOne {
+	return u.Update(func(s *PostCategoryUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *PostCategoryUpsertOne) UpdateAppID() *PostCategoryUpsertOne {
+	return u.Update(func(s *PostCategoryUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *PostCategoryUpsertOne) ClearAppID() *PostCategoryUpsertOne {
+	return u.Update(func(s *PostCategoryUpsert) {
+		s.ClearAppID()
 	})
 }
 
@@ -1083,6 +1140,27 @@ func (u *PostCategoryUpsertBulk) UpdateUpdatedAt() *PostCategoryUpsertBulk {
 func (u *PostCategoryUpsertBulk) ClearUpdatedAt() *PostCategoryUpsertBulk {
 	return u.Update(func(s *PostCategoryUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *PostCategoryUpsertBulk) SetAppID(v string) *PostCategoryUpsertBulk {
+	return u.Update(func(s *PostCategoryUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *PostCategoryUpsertBulk) UpdateAppID() *PostCategoryUpsertBulk {
+	return u.Update(func(s *PostCategoryUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *PostCategoryUpsertBulk) ClearAppID() *PostCategoryUpsertBulk {
+	return u.Update(func(s *PostCategoryUpsert) {
+		s.ClearAppID()
 	})
 }
 

@@ -42,6 +42,26 @@ func (pcu *PostCategoryUpdate) ClearUpdatedAt() *PostCategoryUpdate {
 	return pcu
 }
 
+// SetAppID sets the "app_id" field.
+func (pcu *PostCategoryUpdate) SetAppID(s string) *PostCategoryUpdate {
+	pcu.mutation.SetAppID(s)
+	return pcu
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (pcu *PostCategoryUpdate) SetNillableAppID(s *string) *PostCategoryUpdate {
+	if s != nil {
+		pcu.SetAppID(*s)
+	}
+	return pcu
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (pcu *PostCategoryUpdate) ClearAppID() *PostCategoryUpdate {
+	pcu.mutation.ClearAppID()
+	return pcu
+}
+
 // SetName sets the "name" field.
 func (pcu *PostCategoryUpdate) SetName(s string) *PostCategoryUpdate {
 	pcu.mutation.SetName(s)
@@ -323,6 +343,12 @@ func (pcu *PostCategoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if pcu.mutation.UpdatedAtCleared() {
 		_spec.ClearField(postcategory.FieldUpdatedAt, field.TypeTime)
 	}
+	if value, ok := pcu.mutation.AppID(); ok {
+		_spec.SetField(postcategory.FieldAppID, field.TypeString, value)
+	}
+	if pcu.mutation.AppIDCleared() {
+		_spec.ClearField(postcategory.FieldAppID, field.TypeString)
+	}
 	if value, ok := pcu.mutation.Name(); ok {
 		_spec.SetField(postcategory.FieldName, field.TypeString, value)
 	}
@@ -453,6 +479,26 @@ func (pcuo *PostCategoryUpdateOne) SetUpdatedAt(t time.Time) *PostCategoryUpdate
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (pcuo *PostCategoryUpdateOne) ClearUpdatedAt() *PostCategoryUpdateOne {
 	pcuo.mutation.ClearUpdatedAt()
+	return pcuo
+}
+
+// SetAppID sets the "app_id" field.
+func (pcuo *PostCategoryUpdateOne) SetAppID(s string) *PostCategoryUpdateOne {
+	pcuo.mutation.SetAppID(s)
+	return pcuo
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (pcuo *PostCategoryUpdateOne) SetNillableAppID(s *string) *PostCategoryUpdateOne {
+	if s != nil {
+		pcuo.SetAppID(*s)
+	}
+	return pcuo
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (pcuo *PostCategoryUpdateOne) ClearAppID() *PostCategoryUpdateOne {
+	pcuo.mutation.ClearAppID()
 	return pcuo
 }
 
@@ -766,6 +812,12 @@ func (pcuo *PostCategoryUpdateOne) sqlSave(ctx context.Context) (_node *PostCate
 	}
 	if pcuo.mutation.UpdatedAtCleared() {
 		_spec.ClearField(postcategory.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := pcuo.mutation.AppID(); ok {
+		_spec.SetField(postcategory.FieldAppID, field.TypeString, value)
+	}
+	if pcuo.mutation.AppIDCleared() {
+		_spec.ClearField(postcategory.FieldAppID, field.TypeString)
 	}
 	if value, ok := pcuo.mutation.Name(); ok {
 		_spec.SetField(postcategory.FieldName, field.TypeString, value)

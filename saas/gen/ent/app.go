@@ -4,25 +4,20 @@ package ent
 
 import (
 	"fmt"
-	"saas/gen/ent/appsetting"
+	"saas/gen/ent/app"
 	"strings"
-	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 )
 
-// AppSetting is the model entity for the AppSetting schema.
-type AppSetting struct {
+// App is the model entity for the App schema.
+type App struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID string `json:"id,omitempty"`
-	// CreatedAt holds the value of the "created_at" field.
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
-	// AppName holds the value of the "app_name" field.
-	AppName string `json:"app_name,omitempty"`
+	// Name holds the value of the "name" field.
+	Name string `json:"name,omitempty"`
 	// Copyright holds the value of the "copyright" field.
 	Copyright string `json:"copyright,omitempty"`
 	// Email holds the value of the "email" field.
@@ -59,14 +54,12 @@ type AppSetting struct {
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
-func (*AppSetting) scanValues(columns []string) ([]any, error) {
+func (*App) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case appsetting.FieldID, appsetting.FieldAppName, appsetting.FieldCopyright, appsetting.FieldEmail, appsetting.FieldAddress, appsetting.FieldSocialTw, appsetting.FieldSocialFb, appsetting.FieldSocialIn, appsetting.FieldLogoURL, appsetting.FieldSiteURL, appsetting.FieldDefaultMailConnID, appsetting.FieldMailLayoutTemplID, appsetting.FieldWsapceInviteTemplID, appsetting.FieldWsapceSuccessTemplID, appsetting.FieldAuthFpTemplID, appsetting.FieldAuthWelcomeEmailTemplID, appsetting.FieldAuthVerificationTemplID, appsetting.FieldAuthEmailVerify:
+		case app.FieldID, app.FieldName, app.FieldCopyright, app.FieldEmail, app.FieldAddress, app.FieldSocialTw, app.FieldSocialFb, app.FieldSocialIn, app.FieldLogoURL, app.FieldSiteURL, app.FieldDefaultMailConnID, app.FieldMailLayoutTemplID, app.FieldWsapceInviteTemplID, app.FieldWsapceSuccessTemplID, app.FieldAuthFpTemplID, app.FieldAuthWelcomeEmailTemplID, app.FieldAuthVerificationTemplID, app.FieldAuthEmailVerify:
 			values[i] = new(sql.NullString)
-		case appsetting.FieldCreatedAt, appsetting.FieldUpdatedAt:
-			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -75,228 +68,210 @@ func (*AppSetting) scanValues(columns []string) ([]any, error) {
 }
 
 // assignValues assigns the values that were returned from sql.Rows (after scanning)
-// to the AppSetting fields.
-func (as *AppSetting) assignValues(columns []string, values []any) error {
+// to the App fields.
+func (a *App) assignValues(columns []string, values []any) error {
 	if m, n := len(values), len(columns); m < n {
 		return fmt.Errorf("mismatch number of scan values: %d != %d", m, n)
 	}
 	for i := range columns {
 		switch columns[i] {
-		case appsetting.FieldID:
+		case app.FieldID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value.Valid {
-				as.ID = value.String
+				a.ID = value.String
 			}
-		case appsetting.FieldCreatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field created_at", values[i])
-			} else if value.Valid {
-				as.CreatedAt = value.Time
-			}
-		case appsetting.FieldUpdatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
-			} else if value.Valid {
-				as.UpdatedAt = value.Time
-			}
-		case appsetting.FieldAppName:
+		case app.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field app_name", values[i])
+				return fmt.Errorf("unexpected type %T for field name", values[i])
 			} else if value.Valid {
-				as.AppName = value.String
+				a.Name = value.String
 			}
-		case appsetting.FieldCopyright:
+		case app.FieldCopyright:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field copyright", values[i])
 			} else if value.Valid {
-				as.Copyright = value.String
+				a.Copyright = value.String
 			}
-		case appsetting.FieldEmail:
+		case app.FieldEmail:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field email", values[i])
 			} else if value.Valid {
-				as.Email = value.String
+				a.Email = value.String
 			}
-		case appsetting.FieldAddress:
+		case app.FieldAddress:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field address", values[i])
 			} else if value.Valid {
-				as.Address = value.String
+				a.Address = value.String
 			}
-		case appsetting.FieldSocialTw:
+		case app.FieldSocialTw:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field social_tw", values[i])
 			} else if value.Valid {
-				as.SocialTw = value.String
+				a.SocialTw = value.String
 			}
-		case appsetting.FieldSocialFb:
+		case app.FieldSocialFb:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field social_fb", values[i])
 			} else if value.Valid {
-				as.SocialFb = value.String
+				a.SocialFb = value.String
 			}
-		case appsetting.FieldSocialIn:
+		case app.FieldSocialIn:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field social_in", values[i])
 			} else if value.Valid {
-				as.SocialIn = value.String
+				a.SocialIn = value.String
 			}
-		case appsetting.FieldLogoURL:
+		case app.FieldLogoURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field logo_url", values[i])
 			} else if value.Valid {
-				as.LogoURL = value.String
+				a.LogoURL = value.String
 			}
-		case appsetting.FieldSiteURL:
+		case app.FieldSiteURL:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field site_url", values[i])
 			} else if value.Valid {
-				as.SiteURL = value.String
+				a.SiteURL = value.String
 			}
-		case appsetting.FieldDefaultMailConnID:
+		case app.FieldDefaultMailConnID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field default_mail_conn_id", values[i])
 			} else if value.Valid {
-				as.DefaultMailConnID = value.String
+				a.DefaultMailConnID = value.String
 			}
-		case appsetting.FieldMailLayoutTemplID:
+		case app.FieldMailLayoutTemplID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field mail_layout_templ_id", values[i])
 			} else if value.Valid {
-				as.MailLayoutTemplID = value.String
+				a.MailLayoutTemplID = value.String
 			}
-		case appsetting.FieldWsapceInviteTemplID:
+		case app.FieldWsapceInviteTemplID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field wsapce_invite_templ_id", values[i])
 			} else if value.Valid {
-				as.WsapceInviteTemplID = value.String
+				a.WsapceInviteTemplID = value.String
 			}
-		case appsetting.FieldWsapceSuccessTemplID:
+		case app.FieldWsapceSuccessTemplID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field wsapce_success_templ_id", values[i])
 			} else if value.Valid {
-				as.WsapceSuccessTemplID = value.String
+				a.WsapceSuccessTemplID = value.String
 			}
-		case appsetting.FieldAuthFpTemplID:
+		case app.FieldAuthFpTemplID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field auth_fp_templ_id", values[i])
 			} else if value.Valid {
-				as.AuthFpTemplID = value.String
+				a.AuthFpTemplID = value.String
 			}
-		case appsetting.FieldAuthWelcomeEmailTemplID:
+		case app.FieldAuthWelcomeEmailTemplID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field auth_welcome_email_templ_id", values[i])
 			} else if value.Valid {
-				as.AuthWelcomeEmailTemplID = value.String
+				a.AuthWelcomeEmailTemplID = value.String
 			}
-		case appsetting.FieldAuthVerificationTemplID:
+		case app.FieldAuthVerificationTemplID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field auth_verification_templ_id", values[i])
 			} else if value.Valid {
-				as.AuthVerificationTemplID = value.String
+				a.AuthVerificationTemplID = value.String
 			}
-		case appsetting.FieldAuthEmailVerify:
+		case app.FieldAuthEmailVerify:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field auth_email_verify", values[i])
 			} else if value.Valid {
-				as.AuthEmailVerify = value.String
+				a.AuthEmailVerify = value.String
 			}
 		default:
-			as.selectValues.Set(columns[i], values[i])
+			a.selectValues.Set(columns[i], values[i])
 		}
 	}
 	return nil
 }
 
-// Value returns the ent.Value that was dynamically selected and assigned to the AppSetting.
+// Value returns the ent.Value that was dynamically selected and assigned to the App.
 // This includes values selected through modifiers, order, etc.
-func (as *AppSetting) Value(name string) (ent.Value, error) {
-	return as.selectValues.Get(name)
+func (a *App) Value(name string) (ent.Value, error) {
+	return a.selectValues.Get(name)
 }
 
-// Update returns a builder for updating this AppSetting.
-// Note that you need to call AppSetting.Unwrap() before calling this method if this AppSetting
+// Update returns a builder for updating this App.
+// Note that you need to call App.Unwrap() before calling this method if this App
 // was returned from a transaction, and the transaction was committed or rolled back.
-func (as *AppSetting) Update() *AppSettingUpdateOne {
-	return NewAppSettingClient(as.config).UpdateOne(as)
+func (a *App) Update() *AppUpdateOne {
+	return NewAppClient(a.config).UpdateOne(a)
 }
 
-// Unwrap unwraps the AppSetting entity that was returned from a transaction after it was closed,
+// Unwrap unwraps the App entity that was returned from a transaction after it was closed,
 // so that all future queries will be executed through the driver which created the transaction.
-func (as *AppSetting) Unwrap() *AppSetting {
-	_tx, ok := as.config.driver.(*txDriver)
+func (a *App) Unwrap() *App {
+	_tx, ok := a.config.driver.(*txDriver)
 	if !ok {
-		panic("ent: AppSetting is not a transactional entity")
+		panic("ent: App is not a transactional entity")
 	}
-	as.config.driver = _tx.drv
-	return as
+	a.config.driver = _tx.drv
+	return a
 }
 
 // String implements the fmt.Stringer.
-func (as *AppSetting) String() string {
+func (a *App) String() string {
 	var builder strings.Builder
-	builder.WriteString("AppSetting(")
-	builder.WriteString(fmt.Sprintf("id=%v, ", as.ID))
-	builder.WriteString("created_at=")
-	builder.WriteString(as.CreatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("updated_at=")
-	builder.WriteString(as.UpdatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("app_name=")
-	builder.WriteString(as.AppName)
+	builder.WriteString("App(")
+	builder.WriteString(fmt.Sprintf("id=%v, ", a.ID))
+	builder.WriteString("name=")
+	builder.WriteString(a.Name)
 	builder.WriteString(", ")
 	builder.WriteString("copyright=")
-	builder.WriteString(as.Copyright)
+	builder.WriteString(a.Copyright)
 	builder.WriteString(", ")
 	builder.WriteString("email=")
-	builder.WriteString(as.Email)
+	builder.WriteString(a.Email)
 	builder.WriteString(", ")
 	builder.WriteString("address=")
-	builder.WriteString(as.Address)
+	builder.WriteString(a.Address)
 	builder.WriteString(", ")
 	builder.WriteString("social_tw=")
-	builder.WriteString(as.SocialTw)
+	builder.WriteString(a.SocialTw)
 	builder.WriteString(", ")
 	builder.WriteString("social_fb=")
-	builder.WriteString(as.SocialFb)
+	builder.WriteString(a.SocialFb)
 	builder.WriteString(", ")
 	builder.WriteString("social_in=")
-	builder.WriteString(as.SocialIn)
+	builder.WriteString(a.SocialIn)
 	builder.WriteString(", ")
 	builder.WriteString("logo_url=")
-	builder.WriteString(as.LogoURL)
+	builder.WriteString(a.LogoURL)
 	builder.WriteString(", ")
 	builder.WriteString("site_url=")
-	builder.WriteString(as.SiteURL)
+	builder.WriteString(a.SiteURL)
 	builder.WriteString(", ")
 	builder.WriteString("default_mail_conn_id=")
-	builder.WriteString(as.DefaultMailConnID)
+	builder.WriteString(a.DefaultMailConnID)
 	builder.WriteString(", ")
 	builder.WriteString("mail_layout_templ_id=")
-	builder.WriteString(as.MailLayoutTemplID)
+	builder.WriteString(a.MailLayoutTemplID)
 	builder.WriteString(", ")
 	builder.WriteString("wsapce_invite_templ_id=")
-	builder.WriteString(as.WsapceInviteTemplID)
+	builder.WriteString(a.WsapceInviteTemplID)
 	builder.WriteString(", ")
 	builder.WriteString("wsapce_success_templ_id=")
-	builder.WriteString(as.WsapceSuccessTemplID)
+	builder.WriteString(a.WsapceSuccessTemplID)
 	builder.WriteString(", ")
 	builder.WriteString("auth_fp_templ_id=")
-	builder.WriteString(as.AuthFpTemplID)
+	builder.WriteString(a.AuthFpTemplID)
 	builder.WriteString(", ")
 	builder.WriteString("auth_welcome_email_templ_id=")
-	builder.WriteString(as.AuthWelcomeEmailTemplID)
+	builder.WriteString(a.AuthWelcomeEmailTemplID)
 	builder.WriteString(", ")
 	builder.WriteString("auth_verification_templ_id=")
-	builder.WriteString(as.AuthVerificationTemplID)
+	builder.WriteString(a.AuthVerificationTemplID)
 	builder.WriteString(", ")
 	builder.WriteString("auth_email_verify=")
-	builder.WriteString(as.AuthEmailVerify)
+	builder.WriteString(a.AuthEmailVerify)
 	builder.WriteByte(')')
 	return builder.String()
 }
 
-// AppSettings is a parsable slice of AppSetting.
-type AppSettings []*AppSetting
+// Apps is a parsable slice of App.
+type Apps []*App

@@ -52,6 +52,20 @@ func (wic *WorkspaceInviteCreate) SetNillableUpdatedAt(t *time.Time) *WorkspaceI
 	return wic
 }
 
+// SetAppID sets the "app_id" field.
+func (wic *WorkspaceInviteCreate) SetAppID(s string) *WorkspaceInviteCreate {
+	wic.mutation.SetAppID(s)
+	return wic
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (wic *WorkspaceInviteCreate) SetNillableAppID(s *string) *WorkspaceInviteCreate {
+	if s != nil {
+		wic.SetAppID(*s)
+	}
+	return wic
+}
+
 // SetWorkspaceID sets the "workspace_id" field.
 func (wic *WorkspaceInviteCreate) SetWorkspaceID(s string) *WorkspaceInviteCreate {
 	wic.mutation.SetWorkspaceID(s)
@@ -208,6 +222,10 @@ func (wic *WorkspaceInviteCreate) createSpec() (*WorkspaceInvite, *sqlgraph.Crea
 		_spec.SetField(workspaceinvite.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
+	if value, ok := wic.mutation.AppID(); ok {
+		_spec.SetField(workspaceinvite.FieldAppID, field.TypeString, value)
+		_node.AppID = value
+	}
 	if value, ok := wic.mutation.Email(); ok {
 		_spec.SetField(workspaceinvite.FieldEmail, field.TypeString, value)
 		_node.Email = value
@@ -300,6 +318,24 @@ func (u *WorkspaceInviteUpsert) UpdateUpdatedAt() *WorkspaceInviteUpsert {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (u *WorkspaceInviteUpsert) ClearUpdatedAt() *WorkspaceInviteUpsert {
 	u.SetNull(workspaceinvite.FieldUpdatedAt)
+	return u
+}
+
+// SetAppID sets the "app_id" field.
+func (u *WorkspaceInviteUpsert) SetAppID(v string) *WorkspaceInviteUpsert {
+	u.Set(workspaceinvite.FieldAppID, v)
+	return u
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *WorkspaceInviteUpsert) UpdateAppID() *WorkspaceInviteUpsert {
+	u.SetExcluded(workspaceinvite.FieldAppID)
+	return u
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *WorkspaceInviteUpsert) ClearAppID() *WorkspaceInviteUpsert {
+	u.SetNull(workspaceinvite.FieldAppID)
 	return u
 }
 
@@ -426,6 +462,27 @@ func (u *WorkspaceInviteUpsertOne) UpdateUpdatedAt() *WorkspaceInviteUpsertOne {
 func (u *WorkspaceInviteUpsertOne) ClearUpdatedAt() *WorkspaceInviteUpsertOne {
 	return u.Update(func(s *WorkspaceInviteUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *WorkspaceInviteUpsertOne) SetAppID(v string) *WorkspaceInviteUpsertOne {
+	return u.Update(func(s *WorkspaceInviteUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *WorkspaceInviteUpsertOne) UpdateAppID() *WorkspaceInviteUpsertOne {
+	return u.Update(func(s *WorkspaceInviteUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *WorkspaceInviteUpsertOne) ClearAppID() *WorkspaceInviteUpsertOne {
+	return u.Update(func(s *WorkspaceInviteUpsert) {
+		s.ClearAppID()
 	})
 }
 
@@ -728,6 +785,27 @@ func (u *WorkspaceInviteUpsertBulk) UpdateUpdatedAt() *WorkspaceInviteUpsertBulk
 func (u *WorkspaceInviteUpsertBulk) ClearUpdatedAt() *WorkspaceInviteUpsertBulk {
 	return u.Update(func(s *WorkspaceInviteUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *WorkspaceInviteUpsertBulk) SetAppID(v string) *WorkspaceInviteUpsertBulk {
+	return u.Update(func(s *WorkspaceInviteUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *WorkspaceInviteUpsertBulk) UpdateAppID() *WorkspaceInviteUpsertBulk {
+	return u.Update(func(s *WorkspaceInviteUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *WorkspaceInviteUpsertBulk) ClearAppID() *WorkspaceInviteUpsertBulk {
+	return u.Update(func(s *WorkspaceInviteUpsert) {
+		s.ClearAppID()
 	})
 }
 

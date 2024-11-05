@@ -23,6 +23,8 @@ type Temp struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// AppID holds the value of the "app_id" field.
+	AppID string `json:"app_id,omitempty"`
 	// IP holds the value of the "ip" field.
 	IP string `json:"ip,omitempty"`
 	// Type holds the value of the "type" field.
@@ -41,7 +43,7 @@ func (*Temp) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case temp.FieldBody, temp.FieldMeta:
 			values[i] = new(jsontype.JSON)
-		case temp.FieldID, temp.FieldIP, temp.FieldType:
+		case temp.FieldID, temp.FieldAppID, temp.FieldIP, temp.FieldType:
 			values[i] = new(sql.NullString)
 		case temp.FieldCreatedAt, temp.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -77,6 +79,12 @@ func (t *Temp) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				t.UpdatedAt = value.Time
+			}
+		case temp.FieldAppID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field app_id", values[i])
+			} else if value.Valid {
+				t.AppID = value.String
 			}
 		case temp.FieldIP:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -147,6 +155,9 @@ func (t *Temp) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(t.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("app_id=")
+	builder.WriteString(t.AppID)
 	builder.WriteString(", ")
 	builder.WriteString("ip=")
 	builder.WriteString(t.IP)

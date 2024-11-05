@@ -21,6 +21,8 @@ type Todo struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// AppID holds the value of the "app_id" field.
+	AppID string `json:"app_id,omitempty"`
 	// Text holds the value of the "text" field.
 	Text string `json:"text,omitempty"`
 	// Status holds the value of the "status" field.
@@ -78,7 +80,7 @@ func (*Todo) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case todo.FieldPriority:
 			values[i] = new(sql.NullInt64)
-		case todo.FieldID, todo.FieldText, todo.FieldStatus:
+		case todo.FieldID, todo.FieldAppID, todo.FieldText, todo.FieldStatus:
 			values[i] = new(sql.NullString)
 		case todo.FieldCreatedAt, todo.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -116,6 +118,12 @@ func (t *Todo) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				t.UpdatedAt = value.Time
+			}
+		case todo.FieldAppID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field app_id", values[i])
+			} else if value.Valid {
+				t.AppID = value.String
 			}
 		case todo.FieldText:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -193,6 +201,9 @@ func (t *Todo) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(t.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("app_id=")
+	builder.WriteString(t.AppID)
 	builder.WriteString(", ")
 	builder.WriteString("text=")
 	builder.WriteString(t.Text)

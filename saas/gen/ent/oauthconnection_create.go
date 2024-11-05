@@ -51,6 +51,20 @@ func (occ *OauthConnectionCreate) SetNillableUpdatedAt(t *time.Time) *OauthConne
 	return occ
 }
 
+// SetAppID sets the "app_id" field.
+func (occ *OauthConnectionCreate) SetAppID(s string) *OauthConnectionCreate {
+	occ.mutation.SetAppID(s)
+	return occ
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (occ *OauthConnectionCreate) SetNillableAppID(s *string) *OauthConnectionCreate {
+	if s != nil {
+		occ.SetAppID(*s)
+	}
+	return occ
+}
+
 // SetName sets the "name" field.
 func (occ *OauthConnectionCreate) SetName(s string) *OauthConnectionCreate {
 	occ.mutation.SetName(s)
@@ -286,6 +300,10 @@ func (occ *OauthConnectionCreate) createSpec() (*OauthConnection, *sqlgraph.Crea
 		_spec.SetField(oauthconnection.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
+	if value, ok := occ.mutation.AppID(); ok {
+		_spec.SetField(oauthconnection.FieldAppID, field.TypeString, value)
+		_node.AppID = value
+	}
 	if value, ok := occ.mutation.Name(); ok {
 		_spec.SetField(oauthconnection.FieldName, field.TypeString, value)
 		_node.Name = value
@@ -389,6 +407,24 @@ func (u *OauthConnectionUpsert) UpdateUpdatedAt() *OauthConnectionUpsert {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (u *OauthConnectionUpsert) ClearUpdatedAt() *OauthConnectionUpsert {
 	u.SetNull(oauthconnection.FieldUpdatedAt)
+	return u
+}
+
+// SetAppID sets the "app_id" field.
+func (u *OauthConnectionUpsert) SetAppID(v string) *OauthConnectionUpsert {
+	u.Set(oauthconnection.FieldAppID, v)
+	return u
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *OauthConnectionUpsert) UpdateAppID() *OauthConnectionUpsert {
+	u.SetExcluded(oauthconnection.FieldAppID)
+	return u
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *OauthConnectionUpsert) ClearAppID() *OauthConnectionUpsert {
+	u.SetNull(oauthconnection.FieldAppID)
 	return u
 }
 
@@ -623,6 +659,27 @@ func (u *OauthConnectionUpsertOne) UpdateUpdatedAt() *OauthConnectionUpsertOne {
 func (u *OauthConnectionUpsertOne) ClearUpdatedAt() *OauthConnectionUpsertOne {
 	return u.Update(func(s *OauthConnectionUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *OauthConnectionUpsertOne) SetAppID(v string) *OauthConnectionUpsertOne {
+	return u.Update(func(s *OauthConnectionUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *OauthConnectionUpsertOne) UpdateAppID() *OauthConnectionUpsertOne {
+	return u.Update(func(s *OauthConnectionUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *OauthConnectionUpsertOne) ClearAppID() *OauthConnectionUpsertOne {
+	return u.Update(func(s *OauthConnectionUpsert) {
+		s.ClearAppID()
 	})
 }
 
@@ -1051,6 +1108,27 @@ func (u *OauthConnectionUpsertBulk) UpdateUpdatedAt() *OauthConnectionUpsertBulk
 func (u *OauthConnectionUpsertBulk) ClearUpdatedAt() *OauthConnectionUpsertBulk {
 	return u.Update(func(s *OauthConnectionUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *OauthConnectionUpsertBulk) SetAppID(v string) *OauthConnectionUpsertBulk {
+	return u.Update(func(s *OauthConnectionUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *OauthConnectionUpsertBulk) UpdateAppID() *OauthConnectionUpsertBulk {
+	return u.Update(func(s *OauthConnectionUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *OauthConnectionUpsertBulk) ClearAppID() *OauthConnectionUpsertBulk {
+	return u.Update(func(s *OauthConnectionUpsert) {
+		s.ClearAppID()
 	})
 }
 

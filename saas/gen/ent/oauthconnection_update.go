@@ -41,6 +41,26 @@ func (ocu *OauthConnectionUpdate) ClearUpdatedAt() *OauthConnectionUpdate {
 	return ocu
 }
 
+// SetAppID sets the "app_id" field.
+func (ocu *OauthConnectionUpdate) SetAppID(s string) *OauthConnectionUpdate {
+	ocu.mutation.SetAppID(s)
+	return ocu
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (ocu *OauthConnectionUpdate) SetNillableAppID(s *string) *OauthConnectionUpdate {
+	if s != nil {
+		ocu.SetAppID(*s)
+	}
+	return ocu
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (ocu *OauthConnectionUpdate) ClearAppID() *OauthConnectionUpdate {
+	ocu.mutation.ClearAppID()
+	return ocu
+}
+
 // SetName sets the "name" field.
 func (ocu *OauthConnectionUpdate) SetName(s string) *OauthConnectionUpdate {
 	ocu.mutation.SetName(s)
@@ -286,6 +306,12 @@ func (ocu *OauthConnectionUpdate) sqlSave(ctx context.Context) (n int, err error
 	if ocu.mutation.UpdatedAtCleared() {
 		_spec.ClearField(oauthconnection.FieldUpdatedAt, field.TypeTime)
 	}
+	if value, ok := ocu.mutation.AppID(); ok {
+		_spec.SetField(oauthconnection.FieldAppID, field.TypeString, value)
+	}
+	if ocu.mutation.AppIDCleared() {
+		_spec.ClearField(oauthconnection.FieldAppID, field.TypeString)
+	}
 	if value, ok := ocu.mutation.Name(); ok {
 		_spec.SetField(oauthconnection.FieldName, field.TypeString, value)
 	}
@@ -371,6 +397,26 @@ func (ocuo *OauthConnectionUpdateOne) SetUpdatedAt(t time.Time) *OauthConnection
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (ocuo *OauthConnectionUpdateOne) ClearUpdatedAt() *OauthConnectionUpdateOne {
 	ocuo.mutation.ClearUpdatedAt()
+	return ocuo
+}
+
+// SetAppID sets the "app_id" field.
+func (ocuo *OauthConnectionUpdateOne) SetAppID(s string) *OauthConnectionUpdateOne {
+	ocuo.mutation.SetAppID(s)
+	return ocuo
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (ocuo *OauthConnectionUpdateOne) SetNillableAppID(s *string) *OauthConnectionUpdateOne {
+	if s != nil {
+		ocuo.SetAppID(*s)
+	}
+	return ocuo
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (ocuo *OauthConnectionUpdateOne) ClearAppID() *OauthConnectionUpdateOne {
+	ocuo.mutation.ClearAppID()
 	return ocuo
 }
 
@@ -648,6 +694,12 @@ func (ocuo *OauthConnectionUpdateOne) sqlSave(ctx context.Context) (_node *Oauth
 	}
 	if ocuo.mutation.UpdatedAtCleared() {
 		_spec.ClearField(oauthconnection.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := ocuo.mutation.AppID(); ok {
+		_spec.SetField(oauthconnection.FieldAppID, field.TypeString, value)
+	}
+	if ocuo.mutation.AppIDCleared() {
+		_spec.ClearField(oauthconnection.FieldAppID, field.TypeString)
 	}
 	if value, ok := ocuo.mutation.Name(); ok {
 		_spec.SetField(oauthconnection.FieldName, field.TypeString, value)

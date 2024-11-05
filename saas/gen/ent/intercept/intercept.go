@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"saas/gen/ent"
 	"saas/gen/ent/admin"
-	"saas/gen/ent/appsetting"
+	"saas/gen/ent/app"
 	"saas/gen/ent/kache"
 	"saas/gen/ent/keyvalue"
 	"saas/gen/ent/mailconn"
@@ -115,31 +115,31 @@ func (f TraverseAdmin) Traverse(ctx context.Context, q ent.Query) error {
 	return fmt.Errorf("unexpected query type %T. expect *ent.AdminQuery", q)
 }
 
-// The AppSettingFunc type is an adapter to allow the use of ordinary function as a Querier.
-type AppSettingFunc func(context.Context, *ent.AppSettingQuery) (ent.Value, error)
+// The AppFunc type is an adapter to allow the use of ordinary function as a Querier.
+type AppFunc func(context.Context, *ent.AppQuery) (ent.Value, error)
 
 // Query calls f(ctx, q).
-func (f AppSettingFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
-	if q, ok := q.(*ent.AppSettingQuery); ok {
+func (f AppFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.AppQuery); ok {
 		return f(ctx, q)
 	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *ent.AppSettingQuery", q)
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.AppQuery", q)
 }
 
-// The TraverseAppSetting type is an adapter to allow the use of ordinary function as Traverser.
-type TraverseAppSetting func(context.Context, *ent.AppSettingQuery) error
+// The TraverseApp type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseApp func(context.Context, *ent.AppQuery) error
 
 // Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraverseAppSetting) Intercept(next ent.Querier) ent.Querier {
+func (f TraverseApp) Intercept(next ent.Querier) ent.Querier {
 	return next
 }
 
 // Traverse calls f(ctx, q).
-func (f TraverseAppSetting) Traverse(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.AppSettingQuery); ok {
+func (f TraverseApp) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AppQuery); ok {
 		return f(ctx, q)
 	}
-	return fmt.Errorf("unexpected query type %T. expect *ent.AppSettingQuery", q)
+	return fmt.Errorf("unexpected query type %T. expect *ent.AppQuery", q)
 }
 
 // The KacheFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -660,8 +660,8 @@ func NewQuery(q ent.Query) (Query, error) {
 	switch q := q.(type) {
 	case *ent.AdminQuery:
 		return &query[*ent.AdminQuery, predicate.Admin, admin.OrderOption]{typ: ent.TypeAdmin, tq: q}, nil
-	case *ent.AppSettingQuery:
-		return &query[*ent.AppSettingQuery, predicate.AppSetting, appsetting.OrderOption]{typ: ent.TypeAppSetting, tq: q}, nil
+	case *ent.AppQuery:
+		return &query[*ent.AppQuery, predicate.App, app.OrderOption]{typ: ent.TypeApp, tq: q}, nil
 	case *ent.KacheQuery:
 		return &query[*ent.KacheQuery, predicate.Kache, kache.OrderOption]{typ: ent.TypeKache, tq: q}, nil
 	case *ent.KeyvalueQuery:

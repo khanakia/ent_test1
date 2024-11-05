@@ -41,6 +41,26 @@ func (au *AdminUpdate) ClearUpdatedAt() *AdminUpdate {
 	return au
 }
 
+// SetAppID sets the "app_id" field.
+func (au *AdminUpdate) SetAppID(s string) *AdminUpdate {
+	au.mutation.SetAppID(s)
+	return au
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (au *AdminUpdate) SetNillableAppID(s *string) *AdminUpdate {
+	if s != nil {
+		au.SetAppID(*s)
+	}
+	return au
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (au *AdminUpdate) ClearAppID() *AdminUpdate {
+	au.mutation.ClearAppID()
+	return au
+}
+
 // SetEmail sets the "email" field.
 func (au *AdminUpdate) SetEmail(s string) *AdminUpdate {
 	au.mutation.SetEmail(s)
@@ -220,6 +240,12 @@ func (au *AdminUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if au.mutation.UpdatedAtCleared() {
 		_spec.ClearField(admin.FieldUpdatedAt, field.TypeTime)
 	}
+	if value, ok := au.mutation.AppID(); ok {
+		_spec.SetField(admin.FieldAppID, field.TypeString, value)
+	}
+	if au.mutation.AppIDCleared() {
+		_spec.ClearField(admin.FieldAppID, field.TypeString)
+	}
 	if value, ok := au.mutation.Email(); ok {
 		_spec.SetField(admin.FieldEmail, field.TypeString, value)
 	}
@@ -284,6 +310,26 @@ func (auo *AdminUpdateOne) SetUpdatedAt(t time.Time) *AdminUpdateOne {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (auo *AdminUpdateOne) ClearUpdatedAt() *AdminUpdateOne {
 	auo.mutation.ClearUpdatedAt()
+	return auo
+}
+
+// SetAppID sets the "app_id" field.
+func (auo *AdminUpdateOne) SetAppID(s string) *AdminUpdateOne {
+	auo.mutation.SetAppID(s)
+	return auo
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (auo *AdminUpdateOne) SetNillableAppID(s *string) *AdminUpdateOne {
+	if s != nil {
+		auo.SetAppID(*s)
+	}
+	return auo
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (auo *AdminUpdateOne) ClearAppID() *AdminUpdateOne {
+	auo.mutation.ClearAppID()
 	return auo
 }
 
@@ -495,6 +541,12 @@ func (auo *AdminUpdateOne) sqlSave(ctx context.Context) (_node *Admin, err error
 	}
 	if auo.mutation.UpdatedAtCleared() {
 		_spec.ClearField(admin.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := auo.mutation.AppID(); ok {
+		_spec.SetField(admin.FieldAppID, field.TypeString, value)
+	}
+	if auo.mutation.AppIDCleared() {
+		_spec.ClearField(admin.FieldAppID, field.TypeString)
 	}
 	if value, ok := auo.mutation.Email(); ok {
 		_spec.SetField(admin.FieldEmail, field.TypeString, value)

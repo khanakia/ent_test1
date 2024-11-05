@@ -9,8 +9,8 @@ import (
 // Admin is the predicate function for admin builders.
 type Admin func(*sql.Selector)
 
-// AppSetting is the predicate function for appsetting builders.
-type AppSetting func(*sql.Selector)
+// App is the predicate function for app builders.
+type App func(*sql.Selector)
 
 // Kache is the predicate function for kache builders.
 type Kache func(*sql.Selector)

@@ -51,6 +51,20 @@ func (tc *TemplCreate) SetNillableUpdatedAt(t *time.Time) *TemplCreate {
 	return tc
 }
 
+// SetAppID sets the "app_id" field.
+func (tc *TemplCreate) SetAppID(s string) *TemplCreate {
+	tc.mutation.SetAppID(s)
+	return tc
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (tc *TemplCreate) SetNillableAppID(s *string) *TemplCreate {
+	if s != nil {
+		tc.SetAppID(*s)
+	}
+	return tc
+}
+
 // SetName sets the "name" field.
 func (tc *TemplCreate) SetName(s string) *TemplCreate {
 	tc.mutation.SetName(s)
@@ -220,6 +234,10 @@ func (tc *TemplCreate) createSpec() (*Templ, *sqlgraph.CreateSpec) {
 		_spec.SetField(templ.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
+	if value, ok := tc.mutation.AppID(); ok {
+		_spec.SetField(templ.FieldAppID, field.TypeString, value)
+		_node.AppID = value
+	}
 	if value, ok := tc.mutation.Name(); ok {
 		_spec.SetField(templ.FieldName, field.TypeString, value)
 		_node.Name = value
@@ -303,6 +321,24 @@ func (u *TemplUpsert) UpdateUpdatedAt() *TemplUpsert {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (u *TemplUpsert) ClearUpdatedAt() *TemplUpsert {
 	u.SetNull(templ.FieldUpdatedAt)
+	return u
+}
+
+// SetAppID sets the "app_id" field.
+func (u *TemplUpsert) SetAppID(v string) *TemplUpsert {
+	u.Set(templ.FieldAppID, v)
+	return u
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *TemplUpsert) UpdateAppID() *TemplUpsert {
+	u.SetExcluded(templ.FieldAppID)
+	return u
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *TemplUpsert) ClearAppID() *TemplUpsert {
+	u.SetNull(templ.FieldAppID)
 	return u
 }
 
@@ -447,6 +483,27 @@ func (u *TemplUpsertOne) UpdateUpdatedAt() *TemplUpsertOne {
 func (u *TemplUpsertOne) ClearUpdatedAt() *TemplUpsertOne {
 	return u.Update(func(s *TemplUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *TemplUpsertOne) SetAppID(v string) *TemplUpsertOne {
+	return u.Update(func(s *TemplUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *TemplUpsertOne) UpdateAppID() *TemplUpsertOne {
+	return u.Update(func(s *TemplUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *TemplUpsertOne) ClearAppID() *TemplUpsertOne {
+	return u.Update(func(s *TemplUpsert) {
+		s.ClearAppID()
 	})
 }
 
@@ -770,6 +827,27 @@ func (u *TemplUpsertBulk) UpdateUpdatedAt() *TemplUpsertBulk {
 func (u *TemplUpsertBulk) ClearUpdatedAt() *TemplUpsertBulk {
 	return u.Update(func(s *TemplUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *TemplUpsertBulk) SetAppID(v string) *TemplUpsertBulk {
+	return u.Update(func(s *TemplUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *TemplUpsertBulk) UpdateAppID() *TemplUpsertBulk {
+	return u.Update(func(s *TemplUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *TemplUpsertBulk) ClearAppID() *TemplUpsertBulk {
+	return u.Update(func(s *TemplUpsert) {
+		s.ClearAppID()
 	})
 }
 

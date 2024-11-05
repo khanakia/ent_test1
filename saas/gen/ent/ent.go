@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"reflect"
 	"saas/gen/ent/admin"
-	"saas/gen/ent/appsetting"
+	"saas/gen/ent/app"
 	"saas/gen/ent/kache"
 	"saas/gen/ent/keyvalue"
 	"saas/gen/ent/mailconn"
@@ -94,7 +94,7 @@ func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			admin.Table:           admin.ValidColumn,
-			appsetting.Table:      appsetting.ValidColumn,
+			app.Table:             app.ValidColumn,
 			kache.Table:           kache.ValidColumn,
 			keyvalue.Table:        keyvalue.ValidColumn,
 			mailconn.Table:        mailconn.ValidColumn,

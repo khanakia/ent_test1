@@ -51,6 +51,20 @@ func (mcc *MailConnCreate) SetNillableUpdatedAt(t *time.Time) *MailConnCreate {
 	return mcc
 }
 
+// SetAppID sets the "app_id" field.
+func (mcc *MailConnCreate) SetAppID(s string) *MailConnCreate {
+	mcc.mutation.SetAppID(s)
+	return mcc
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (mcc *MailConnCreate) SetNillableAppID(s *string) *MailConnCreate {
+	if s != nil {
+		mcc.SetAppID(*s)
+	}
+	return mcc
+}
+
 // SetName sets the "name" field.
 func (mcc *MailConnCreate) SetName(s string) *MailConnCreate {
 	mcc.mutation.SetName(s)
@@ -290,6 +304,10 @@ func (mcc *MailConnCreate) createSpec() (*MailConn, *sqlgraph.CreateSpec) {
 		_spec.SetField(mailconn.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
+	if value, ok := mcc.mutation.AppID(); ok {
+		_spec.SetField(mailconn.FieldAppID, field.TypeString, value)
+		_node.AppID = value
+	}
 	if value, ok := mcc.mutation.Name(); ok {
 		_spec.SetField(mailconn.FieldName, field.TypeString, value)
 		_node.Name = value
@@ -393,6 +411,24 @@ func (u *MailConnUpsert) UpdateUpdatedAt() *MailConnUpsert {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (u *MailConnUpsert) ClearUpdatedAt() *MailConnUpsert {
 	u.SetNull(mailconn.FieldUpdatedAt)
+	return u
+}
+
+// SetAppID sets the "app_id" field.
+func (u *MailConnUpsert) SetAppID(v string) *MailConnUpsert {
+	u.Set(mailconn.FieldAppID, v)
+	return u
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *MailConnUpsert) UpdateAppID() *MailConnUpsert {
+	u.SetExcluded(mailconn.FieldAppID)
+	return u
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *MailConnUpsert) ClearAppID() *MailConnUpsert {
+	u.SetNull(mailconn.FieldAppID)
 	return u
 }
 
@@ -639,6 +675,27 @@ func (u *MailConnUpsertOne) UpdateUpdatedAt() *MailConnUpsertOne {
 func (u *MailConnUpsertOne) ClearUpdatedAt() *MailConnUpsertOne {
 	return u.Update(func(s *MailConnUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *MailConnUpsertOne) SetAppID(v string) *MailConnUpsertOne {
+	return u.Update(func(s *MailConnUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *MailConnUpsertOne) UpdateAppID() *MailConnUpsertOne {
+	return u.Update(func(s *MailConnUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *MailConnUpsertOne) ClearAppID() *MailConnUpsertOne {
+	return u.Update(func(s *MailConnUpsert) {
+		s.ClearAppID()
 	})
 }
 
@@ -1081,6 +1138,27 @@ func (u *MailConnUpsertBulk) UpdateUpdatedAt() *MailConnUpsertBulk {
 func (u *MailConnUpsertBulk) ClearUpdatedAt() *MailConnUpsertBulk {
 	return u.Update(func(s *MailConnUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *MailConnUpsertBulk) SetAppID(v string) *MailConnUpsertBulk {
+	return u.Update(func(s *MailConnUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *MailConnUpsertBulk) UpdateAppID() *MailConnUpsertBulk {
+	return u.Update(func(s *MailConnUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *MailConnUpsertBulk) ClearAppID() *MailConnUpsertBulk {
+	return u.Update(func(s *MailConnUpsert) {
+		s.ClearAppID()
 	})
 }
 

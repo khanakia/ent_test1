@@ -21,6 +21,8 @@ type Templ struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// AppID holds the value of the "app_id" field.
+	AppID string `json:"app_id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Body holds the value of the "body" field.
@@ -39,7 +41,7 @@ func (*Templ) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case templ.FieldStatus:
 			values[i] = new(sql.NullBool)
-		case templ.FieldID, templ.FieldName, templ.FieldBody, templ.FieldCompiled:
+		case templ.FieldID, templ.FieldAppID, templ.FieldName, templ.FieldBody, templ.FieldCompiled:
 			values[i] = new(sql.NullString)
 		case templ.FieldCreatedAt, templ.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -75,6 +77,12 @@ func (t *Templ) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				t.UpdatedAt = value.Time
+			}
+		case templ.FieldAppID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field app_id", values[i])
+			} else if value.Valid {
+				t.AppID = value.String
 			}
 		case templ.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -141,6 +149,9 @@ func (t *Templ) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(t.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("app_id=")
+	builder.WriteString(t.AppID)
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(t.Name)

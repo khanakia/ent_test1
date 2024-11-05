@@ -41,6 +41,26 @@ func (pu *PlanUpdate) ClearUpdatedAt() *PlanUpdate {
 	return pu
 }
 
+// SetAppID sets the "app_id" field.
+func (pu *PlanUpdate) SetAppID(s string) *PlanUpdate {
+	pu.mutation.SetAppID(s)
+	return pu
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (pu *PlanUpdate) SetNillableAppID(s *string) *PlanUpdate {
+	if s != nil {
+		pu.SetAppID(*s)
+	}
+	return pu
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (pu *PlanUpdate) ClearAppID() *PlanUpdate {
+	pu.mutation.ClearAppID()
+	return pu
+}
+
 // SetName sets the "name" field.
 func (pu *PlanUpdate) SetName(s string) *PlanUpdate {
 	pu.mutation.SetName(s)
@@ -186,6 +206,12 @@ func (pu *PlanUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if pu.mutation.UpdatedAtCleared() {
 		_spec.ClearField(plan.FieldUpdatedAt, field.TypeTime)
 	}
+	if value, ok := pu.mutation.AppID(); ok {
+		_spec.SetField(plan.FieldAppID, field.TypeString, value)
+	}
+	if pu.mutation.AppIDCleared() {
+		_spec.ClearField(plan.FieldAppID, field.TypeString)
+	}
 	if value, ok := pu.mutation.Name(); ok {
 		_spec.SetField(plan.FieldName, field.TypeString, value)
 	}
@@ -241,6 +267,26 @@ func (puo *PlanUpdateOne) SetUpdatedAt(t time.Time) *PlanUpdateOne {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (puo *PlanUpdateOne) ClearUpdatedAt() *PlanUpdateOne {
 	puo.mutation.ClearUpdatedAt()
+	return puo
+}
+
+// SetAppID sets the "app_id" field.
+func (puo *PlanUpdateOne) SetAppID(s string) *PlanUpdateOne {
+	puo.mutation.SetAppID(s)
+	return puo
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (puo *PlanUpdateOne) SetNillableAppID(s *string) *PlanUpdateOne {
+	if s != nil {
+		puo.SetAppID(*s)
+	}
+	return puo
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (puo *PlanUpdateOne) ClearAppID() *PlanUpdateOne {
+	puo.mutation.ClearAppID()
 	return puo
 }
 
@@ -418,6 +464,12 @@ func (puo *PlanUpdateOne) sqlSave(ctx context.Context) (_node *Plan, err error) 
 	}
 	if puo.mutation.UpdatedAtCleared() {
 		_spec.ClearField(plan.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := puo.mutation.AppID(); ok {
+		_spec.SetField(plan.FieldAppID, field.TypeString, value)
+	}
+	if puo.mutation.AppIDCleared() {
+		_spec.ClearField(plan.FieldAppID, field.TypeString)
 	}
 	if value, ok := puo.mutation.Name(); ok {
 		_spec.SetField(plan.FieldName, field.TypeString, value)

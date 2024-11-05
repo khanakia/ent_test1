@@ -43,6 +43,26 @@ func (psu *PostStatusUpdate) ClearUpdatedAt() *PostStatusUpdate {
 	return psu
 }
 
+// SetAppID sets the "app_id" field.
+func (psu *PostStatusUpdate) SetAppID(s string) *PostStatusUpdate {
+	psu.mutation.SetAppID(s)
+	return psu
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (psu *PostStatusUpdate) SetNillableAppID(s *string) *PostStatusUpdate {
+	if s != nil {
+		psu.SetAppID(*s)
+	}
+	return psu
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (psu *PostStatusUpdate) ClearAppID() *PostStatusUpdate {
+	psu.mutation.ClearAppID()
+	return psu
+}
+
 // SetName sets the "name" field.
 func (psu *PostStatusUpdate) SetName(s string) *PostStatusUpdate {
 	psu.mutation.SetName(s)
@@ -235,6 +255,12 @@ func (psu *PostStatusUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if psu.mutation.UpdatedAtCleared() {
 		_spec.ClearField(poststatus.FieldUpdatedAt, field.TypeTime)
 	}
+	if value, ok := psu.mutation.AppID(); ok {
+		_spec.SetField(poststatus.FieldAppID, field.TypeString, value)
+	}
+	if psu.mutation.AppIDCleared() {
+		_spec.ClearField(poststatus.FieldAppID, field.TypeString)
+	}
 	if value, ok := psu.mutation.Name(); ok {
 		_spec.SetField(poststatus.FieldName, field.TypeString, value)
 	}
@@ -358,6 +384,26 @@ func (psuo *PostStatusUpdateOne) SetUpdatedAt(t time.Time) *PostStatusUpdateOne 
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (psuo *PostStatusUpdateOne) ClearUpdatedAt() *PostStatusUpdateOne {
 	psuo.mutation.ClearUpdatedAt()
+	return psuo
+}
+
+// SetAppID sets the "app_id" field.
+func (psuo *PostStatusUpdateOne) SetAppID(s string) *PostStatusUpdateOne {
+	psuo.mutation.SetAppID(s)
+	return psuo
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (psuo *PostStatusUpdateOne) SetNillableAppID(s *string) *PostStatusUpdateOne {
+	if s != nil {
+		psuo.SetAppID(*s)
+	}
+	return psuo
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (psuo *PostStatusUpdateOne) ClearAppID() *PostStatusUpdateOne {
+	psuo.mutation.ClearAppID()
 	return psuo
 }
 
@@ -582,6 +628,12 @@ func (psuo *PostStatusUpdateOne) sqlSave(ctx context.Context) (_node *PostStatus
 	}
 	if psuo.mutation.UpdatedAtCleared() {
 		_spec.ClearField(poststatus.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := psuo.mutation.AppID(); ok {
+		_spec.SetField(poststatus.FieldAppID, field.TypeString, value)
+	}
+	if psuo.mutation.AppIDCleared() {
+		_spec.ClearField(poststatus.FieldAppID, field.TypeString)
 	}
 	if value, ok := psuo.mutation.Name(); ok {
 		_spec.SetField(poststatus.FieldName, field.TypeString, value)

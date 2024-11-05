@@ -10,6 +10,7 @@ import (
 	"saas/gen/ent"
 	"saas/pkg/appfn"
 	"saas/pkg/middleware"
+	"saas/pkg/middleware/appmiddleware"
 )
 
 // CreatePostType is the resolver for the createPostType field.
@@ -22,7 +23,10 @@ func (r *mutationResolver) CreatePostType(ctx context.Context, input ent.CreateP
 	if !appfn.IsUserSA(cuser) {
 		return nil, fmt.Errorf("unauthorized access")
 	}
-	return r.Plugin.EntDB.Client().PostType.Create().SetInput(input).Save(ctx)
+
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	return r.Plugin.EntDB.Client().PostType.Create().SetInput(input).SetAppID(app.ID).Save(ctx)
 }
 
 // UpdatePostType is the resolver for the updatePostType field.
@@ -36,7 +40,9 @@ func (r *mutationResolver) UpdatePostType(ctx context.Context, id string, input 
 		return nil, fmt.Errorf("unauthorized access")
 	}
 
-	return r.Plugin.EntDB.Client().PostType.UpdateOneID(id).SetInput(input).Save(ctx)
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	return r.Plugin.EntDB.Client().PostType.UpdateOneID(id).SetInput(input).SetAppID(app.ID).Save(ctx)
 }
 
 // CreatePostStatus is the resolver for the createPostStatus field.
@@ -49,7 +55,10 @@ func (r *mutationResolver) CreatePostStatus(ctx context.Context, input ent.Creat
 	if !appfn.IsUserSA(cuser) {
 		return nil, fmt.Errorf("unauthorized access")
 	}
-	return r.Plugin.EntDB.Client().PostStatus.Create().SetInput(input).Save(ctx)
+
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	return r.Plugin.EntDB.Client().PostStatus.Create().SetInput(input).SetAppID(app.ID).Save(ctx)
 }
 
 // UpdatePostStatus is the resolver for the updatePostStatus field.
@@ -62,7 +71,10 @@ func (r *mutationResolver) UpdatePostStatus(ctx context.Context, id string, inpu
 	if !appfn.IsUserSA(cuser) {
 		return nil, fmt.Errorf("unauthorized access")
 	}
-	return r.Plugin.EntDB.Client().PostStatus.UpdateOneID(id).SetInput(input).Save(ctx)
+
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	return r.Plugin.EntDB.Client().PostStatus.UpdateOneID(id).SetInput(input).SetAppID(app.ID).Save(ctx)
 }
 
 // CreatePostCategory is the resolver for the createPostCategory field.
@@ -75,7 +87,10 @@ func (r *mutationResolver) CreatePostCategory(ctx context.Context, input ent.Cre
 	if !appfn.IsUserSA(cuser) {
 		return nil, fmt.Errorf("unauthorized access")
 	}
-	return r.Plugin.EntDB.Client().PostCategory.Create().SetInput(input).Save(ctx)
+
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	return r.Plugin.EntDB.Client().PostCategory.Create().SetInput(input).SetAppID(app.ID).Save(ctx)
 }
 
 // UpdatePostCategory is the resolver for the updatePostCategory field.
@@ -88,7 +103,10 @@ func (r *mutationResolver) UpdatePostCategory(ctx context.Context, id string, in
 	if !appfn.IsUserSA(cuser) {
 		return nil, fmt.Errorf("unauthorized access")
 	}
-	return r.Plugin.EntDB.Client().PostCategory.UpdateOneID(id).SetInput(input).Save(ctx)
+
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	return r.Plugin.EntDB.Client().PostCategory.UpdateOneID(id).SetInput(input).SetAppID(app.ID).Save(ctx)
 }
 
 // CreatePost is the resolver for the createPost field.
@@ -101,7 +119,10 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input ent.CreatePostI
 	if !appfn.IsUserSA(cuser) {
 		return nil, fmt.Errorf("unauthorized access")
 	}
-	return r.Plugin.EntDB.Client().Post.Create().SetInput(input).Save(ctx)
+
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	return r.Plugin.EntDB.Client().Post.Create().SetInput(input).SetAppID(app.ID).Save(ctx)
 }
 
 // UpdatePost is the resolver for the updatePost field.
@@ -114,5 +135,8 @@ func (r *mutationResolver) UpdatePost(ctx context.Context, id string, input ent.
 	if !appfn.IsUserSA(cuser) {
 		return nil, fmt.Errorf("unauthorized access")
 	}
-	return r.Plugin.EntDB.Client().Post.UpdateOneID(id).SetInput(input).Save(ctx)
+
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	return r.Plugin.EntDB.Client().Post.UpdateOneID(id).SetInput(input).SetAppID(app.ID).Save(ctx)
 }

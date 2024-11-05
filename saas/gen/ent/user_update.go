@@ -44,6 +44,26 @@ func (uu *UserUpdate) ClearUpdatedAt() *UserUpdate {
 	return uu
 }
 
+// SetAppID sets the "app_id" field.
+func (uu *UserUpdate) SetAppID(s string) *UserUpdate {
+	uu.mutation.SetAppID(s)
+	return uu
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableAppID(s *string) *UserUpdate {
+	if s != nil {
+		uu.SetAppID(*s)
+	}
+	return uu
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (uu *UserUpdate) ClearAppID() *UserUpdate {
+	uu.mutation.ClearAppID()
+	return uu
+}
+
 // SetEmail sets the "email" field.
 func (uu *UserUpdate) SetEmail(s string) *UserUpdate {
 	uu.mutation.SetEmail(s)
@@ -471,6 +491,12 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if uu.mutation.UpdatedAtCleared() {
 		_spec.ClearField(user.FieldUpdatedAt, field.TypeTime)
 	}
+	if value, ok := uu.mutation.AppID(); ok {
+		_spec.SetField(user.FieldAppID, field.TypeString, value)
+	}
+	if uu.mutation.AppIDCleared() {
+		_spec.ClearField(user.FieldAppID, field.TypeString)
+	}
 	if value, ok := uu.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
 	}
@@ -733,6 +759,26 @@ func (uuo *UserUpdateOne) SetUpdatedAt(t time.Time) *UserUpdateOne {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (uuo *UserUpdateOne) ClearUpdatedAt() *UserUpdateOne {
 	uuo.mutation.ClearUpdatedAt()
+	return uuo
+}
+
+// SetAppID sets the "app_id" field.
+func (uuo *UserUpdateOne) SetAppID(s string) *UserUpdateOne {
+	uuo.mutation.SetAppID(s)
+	return uuo
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableAppID(s *string) *UserUpdateOne {
+	if s != nil {
+		uuo.SetAppID(*s)
+	}
+	return uuo
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (uuo *UserUpdateOne) ClearAppID() *UserUpdateOne {
+	uuo.mutation.ClearAppID()
 	return uuo
 }
 
@@ -1192,6 +1238,12 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 	}
 	if uuo.mutation.UpdatedAtCleared() {
 		_spec.ClearField(user.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := uuo.mutation.AppID(); ok {
+		_spec.SetField(user.FieldAppID, field.TypeString, value)
+	}
+	if uuo.mutation.AppIDCleared() {
+		_spec.ClearField(user.FieldAppID, field.TypeString)
 	}
 	if value, ok := uuo.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)

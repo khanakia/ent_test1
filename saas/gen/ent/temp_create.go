@@ -52,6 +52,20 @@ func (tc *TempCreate) SetNillableUpdatedAt(t *time.Time) *TempCreate {
 	return tc
 }
 
+// SetAppID sets the "app_id" field.
+func (tc *TempCreate) SetAppID(s string) *TempCreate {
+	tc.mutation.SetAppID(s)
+	return tc
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (tc *TempCreate) SetNillableAppID(s *string) *TempCreate {
+	if s != nil {
+		tc.SetAppID(*s)
+	}
+	return tc
+}
+
 // SetIP sets the "ip" field.
 func (tc *TempCreate) SetIP(s string) *TempCreate {
 	tc.mutation.SetIP(s)
@@ -201,6 +215,10 @@ func (tc *TempCreate) createSpec() (*Temp, *sqlgraph.CreateSpec) {
 		_spec.SetField(temp.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
+	if value, ok := tc.mutation.AppID(); ok {
+		_spec.SetField(temp.FieldAppID, field.TypeString, value)
+		_node.AppID = value
+	}
 	if value, ok := tc.mutation.IP(); ok {
 		_spec.SetField(temp.FieldIP, field.TypeString, value)
 		_node.IP = value
@@ -284,6 +302,24 @@ func (u *TempUpsert) UpdateUpdatedAt() *TempUpsert {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (u *TempUpsert) ClearUpdatedAt() *TempUpsert {
 	u.SetNull(temp.FieldUpdatedAt)
+	return u
+}
+
+// SetAppID sets the "app_id" field.
+func (u *TempUpsert) SetAppID(v string) *TempUpsert {
+	u.Set(temp.FieldAppID, v)
+	return u
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *TempUpsert) UpdateAppID() *TempUpsert {
+	u.SetExcluded(temp.FieldAppID)
+	return u
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *TempUpsert) ClearAppID() *TempUpsert {
+	u.SetNull(temp.FieldAppID)
 	return u
 }
 
@@ -428,6 +464,27 @@ func (u *TempUpsertOne) UpdateUpdatedAt() *TempUpsertOne {
 func (u *TempUpsertOne) ClearUpdatedAt() *TempUpsertOne {
 	return u.Update(func(s *TempUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *TempUpsertOne) SetAppID(v string) *TempUpsertOne {
+	return u.Update(func(s *TempUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *TempUpsertOne) UpdateAppID() *TempUpsertOne {
+	return u.Update(func(s *TempUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *TempUpsertOne) ClearAppID() *TempUpsertOne {
+	return u.Update(func(s *TempUpsert) {
+		s.ClearAppID()
 	})
 }
 
@@ -751,6 +808,27 @@ func (u *TempUpsertBulk) UpdateUpdatedAt() *TempUpsertBulk {
 func (u *TempUpsertBulk) ClearUpdatedAt() *TempUpsertBulk {
 	return u.Update(func(s *TempUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *TempUpsertBulk) SetAppID(v string) *TempUpsertBulk {
+	return u.Update(func(s *TempUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *TempUpsertBulk) UpdateAppID() *TempUpsertBulk {
+	return u.Update(func(s *TempUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *TempUpsertBulk) ClearAppID() *TempUpsertBulk {
+	return u.Update(func(s *TempUpsert) {
+		s.ClearAppID()
 	})
 }
 

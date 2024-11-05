@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"gqlsa/graph/generated"
 	"gqlsa/graph/gqlsaresolver"
-	"gqlsa/internal/gqlgin"
-	"lace/gqlgenfn"
+	"lace/gqlgin"
 	"reflect"
 	"saas/pkg/appfn"
 	"saas/pkg/middleware"
+	"saas/pkg/middleware/appmiddleware"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -47,8 +47,8 @@ func Boot(ginEngine *gin.Engine, resolver *gqlsaresolver.Resolver) {
 		PlaygroundKey:    resolver.AppConfig.Graphql.Key,
 		RouteGroupPrefix: prefix,
 		Middleware: []gin.HandlerFunc{
-			middleware.MiddlewareSilent(resolver.Plugin.EntDB.Client()),
-			gqlgenfn.GinContextToContextMiddleware(),
+			middleware.CheckAuthMiddleware(resolver.Plugin.EntDB.Client()),
+			appmiddleware.CheckAppMiddleware(resolver.Plugin.EntDB.Client()),
 		},
 	})
 	fmt.Println("boot gqlsa")

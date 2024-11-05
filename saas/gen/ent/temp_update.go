@@ -43,6 +43,26 @@ func (tu *TempUpdate) ClearUpdatedAt() *TempUpdate {
 	return tu
 }
 
+// SetAppID sets the "app_id" field.
+func (tu *TempUpdate) SetAppID(s string) *TempUpdate {
+	tu.mutation.SetAppID(s)
+	return tu
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (tu *TempUpdate) SetNillableAppID(s *string) *TempUpdate {
+	if s != nil {
+		tu.SetAppID(*s)
+	}
+	return tu
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (tu *TempUpdate) ClearAppID() *TempUpdate {
+	tu.mutation.ClearAppID()
+	return tu
+}
+
 // SetIP sets the "ip" field.
 func (tu *TempUpdate) SetIP(s string) *TempUpdate {
 	tu.mutation.SetIP(s)
@@ -184,6 +204,12 @@ func (tu *TempUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if tu.mutation.UpdatedAtCleared() {
 		_spec.ClearField(temp.FieldUpdatedAt, field.TypeTime)
 	}
+	if value, ok := tu.mutation.AppID(); ok {
+		_spec.SetField(temp.FieldAppID, field.TypeString, value)
+	}
+	if tu.mutation.AppIDCleared() {
+		_spec.ClearField(temp.FieldAppID, field.TypeString)
+	}
 	if value, ok := tu.mutation.IP(); ok {
 		_spec.SetField(temp.FieldIP, field.TypeString, value)
 	}
@@ -249,6 +275,26 @@ func (tuo *TempUpdateOne) SetUpdatedAt(t time.Time) *TempUpdateOne {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (tuo *TempUpdateOne) ClearUpdatedAt() *TempUpdateOne {
 	tuo.mutation.ClearUpdatedAt()
+	return tuo
+}
+
+// SetAppID sets the "app_id" field.
+func (tuo *TempUpdateOne) SetAppID(s string) *TempUpdateOne {
+	tuo.mutation.SetAppID(s)
+	return tuo
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (tuo *TempUpdateOne) SetNillableAppID(s *string) *TempUpdateOne {
+	if s != nil {
+		tuo.SetAppID(*s)
+	}
+	return tuo
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (tuo *TempUpdateOne) ClearAppID() *TempUpdateOne {
+	tuo.mutation.ClearAppID()
 	return tuo
 }
 
@@ -422,6 +468,12 @@ func (tuo *TempUpdateOne) sqlSave(ctx context.Context) (_node *Temp, err error) 
 	}
 	if tuo.mutation.UpdatedAtCleared() {
 		_spec.ClearField(temp.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := tuo.mutation.AppID(); ok {
+		_spec.SetField(temp.FieldAppID, field.TypeString, value)
+	}
+	if tuo.mutation.AppIDCleared() {
+		_spec.ClearField(temp.FieldAppID, field.TypeString)
 	}
 	if value, ok := tuo.mutation.IP(); ok {
 		_spec.SetField(temp.FieldIP, field.TypeString, value)

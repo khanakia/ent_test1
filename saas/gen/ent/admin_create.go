@@ -51,6 +51,20 @@ func (ac *AdminCreate) SetNillableUpdatedAt(t *time.Time) *AdminCreate {
 	return ac
 }
 
+// SetAppID sets the "app_id" field.
+func (ac *AdminCreate) SetAppID(s string) *AdminCreate {
+	ac.mutation.SetAppID(s)
+	return ac
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (ac *AdminCreate) SetNillableAppID(s *string) *AdminCreate {
+	if s != nil {
+		ac.SetAppID(*s)
+	}
+	return ac
+}
+
 // SetEmail sets the "email" field.
 func (ac *AdminCreate) SetEmail(s string) *AdminCreate {
 	ac.mutation.SetEmail(s)
@@ -243,6 +257,10 @@ func (ac *AdminCreate) createSpec() (*Admin, *sqlgraph.CreateSpec) {
 		_spec.SetField(admin.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
+	if value, ok := ac.mutation.AppID(); ok {
+		_spec.SetField(admin.FieldAppID, field.TypeString, value)
+		_node.AppID = value
+	}
 	if value, ok := ac.mutation.Email(); ok {
 		_spec.SetField(admin.FieldEmail, field.TypeString, value)
 		_node.Email = value
@@ -334,6 +352,24 @@ func (u *AdminUpsert) UpdateUpdatedAt() *AdminUpsert {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (u *AdminUpsert) ClearUpdatedAt() *AdminUpsert {
 	u.SetNull(admin.FieldUpdatedAt)
+	return u
+}
+
+// SetAppID sets the "app_id" field.
+func (u *AdminUpsert) SetAppID(v string) *AdminUpsert {
+	u.Set(admin.FieldAppID, v)
+	return u
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *AdminUpsert) UpdateAppID() *AdminUpsert {
+	u.SetExcluded(admin.FieldAppID)
+	return u
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *AdminUpsert) ClearAppID() *AdminUpsert {
+	u.SetNull(admin.FieldAppID)
 	return u
 }
 
@@ -508,6 +544,27 @@ func (u *AdminUpsertOne) UpdateUpdatedAt() *AdminUpsertOne {
 func (u *AdminUpsertOne) ClearUpdatedAt() *AdminUpsertOne {
 	return u.Update(func(s *AdminUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *AdminUpsertOne) SetAppID(v string) *AdminUpsertOne {
+	return u.Update(func(s *AdminUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *AdminUpsertOne) UpdateAppID() *AdminUpsertOne {
+	return u.Update(func(s *AdminUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *AdminUpsertOne) ClearAppID() *AdminUpsertOne {
+	return u.Update(func(s *AdminUpsert) {
+		s.ClearAppID()
 	})
 }
 
@@ -866,6 +923,27 @@ func (u *AdminUpsertBulk) UpdateUpdatedAt() *AdminUpsertBulk {
 func (u *AdminUpsertBulk) ClearUpdatedAt() *AdminUpsertBulk {
 	return u.Update(func(s *AdminUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *AdminUpsertBulk) SetAppID(v string) *AdminUpsertBulk {
+	return u.Update(func(s *AdminUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *AdminUpsertBulk) UpdateAppID() *AdminUpsertBulk {
+	return u.Update(func(s *AdminUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *AdminUpsertBulk) ClearAppID() *AdminUpsertBulk {
+	return u.Update(func(s *AdminUpsert) {
+		s.ClearAppID()
 	})
 }
 

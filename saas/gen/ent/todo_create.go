@@ -51,6 +51,20 @@ func (tc *TodoCreate) SetNillableUpdatedAt(t *time.Time) *TodoCreate {
 	return tc
 }
 
+// SetAppID sets the "app_id" field.
+func (tc *TodoCreate) SetAppID(s string) *TodoCreate {
+	tc.mutation.SetAppID(s)
+	return tc
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (tc *TodoCreate) SetNillableAppID(s *string) *TodoCreate {
+	if s != nil {
+		tc.SetAppID(*s)
+	}
+	return tc
+}
+
 // SetText sets the "text" field.
 func (tc *TodoCreate) SetText(s string) *TodoCreate {
 	tc.mutation.SetText(s)
@@ -255,6 +269,10 @@ func (tc *TodoCreate) createSpec() (*Todo, *sqlgraph.CreateSpec) {
 		_spec.SetField(todo.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
+	if value, ok := tc.mutation.AppID(); ok {
+		_spec.SetField(todo.FieldAppID, field.TypeString, value)
+		_node.AppID = value
+	}
 	if value, ok := tc.mutation.Text(); ok {
 		_spec.SetField(todo.FieldText, field.TypeString, value)
 		_node.Text = value
@@ -370,6 +388,24 @@ func (u *TodoUpsert) ClearUpdatedAt() *TodoUpsert {
 	return u
 }
 
+// SetAppID sets the "app_id" field.
+func (u *TodoUpsert) SetAppID(v string) *TodoUpsert {
+	u.Set(todo.FieldAppID, v)
+	return u
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *TodoUpsert) UpdateAppID() *TodoUpsert {
+	u.SetExcluded(todo.FieldAppID)
+	return u
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *TodoUpsert) ClearAppID() *TodoUpsert {
+	u.SetNull(todo.FieldAppID)
+	return u
+}
+
 // SetText sets the "text" field.
 func (u *TodoUpsert) SetText(v string) *TodoUpsert {
 	u.Set(todo.FieldText, v)
@@ -481,6 +517,27 @@ func (u *TodoUpsertOne) UpdateUpdatedAt() *TodoUpsertOne {
 func (u *TodoUpsertOne) ClearUpdatedAt() *TodoUpsertOne {
 	return u.Update(func(s *TodoUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *TodoUpsertOne) SetAppID(v string) *TodoUpsertOne {
+	return u.Update(func(s *TodoUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *TodoUpsertOne) UpdateAppID() *TodoUpsertOne {
+	return u.Update(func(s *TodoUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *TodoUpsertOne) ClearAppID() *TodoUpsertOne {
+	return u.Update(func(s *TodoUpsert) {
+		s.ClearAppID()
 	})
 }
 
@@ -769,6 +826,27 @@ func (u *TodoUpsertBulk) UpdateUpdatedAt() *TodoUpsertBulk {
 func (u *TodoUpsertBulk) ClearUpdatedAt() *TodoUpsertBulk {
 	return u.Update(func(s *TodoUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *TodoUpsertBulk) SetAppID(v string) *TodoUpsertBulk {
+	return u.Update(func(s *TodoUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *TodoUpsertBulk) UpdateAppID() *TodoUpsertBulk {
+	return u.Update(func(s *TodoUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *TodoUpsertBulk) ClearAppID() *TodoUpsertBulk {
+	return u.Update(func(s *TodoUpsert) {
+		s.ClearAppID()
 	})
 }
 

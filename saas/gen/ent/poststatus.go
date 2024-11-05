@@ -22,6 +22,8 @@ type PostStatus struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// AppID holds the value of the "app_id" field.
+	AppID string `json:"app_id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Slug holds the value of the "slug" field.
@@ -80,7 +82,7 @@ func (*PostStatus) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case poststatus.FieldStatus:
 			values[i] = new(sql.NullBool)
-		case poststatus.FieldID, poststatus.FieldName, poststatus.FieldSlug, poststatus.FieldPostTypeID:
+		case poststatus.FieldID, poststatus.FieldAppID, poststatus.FieldName, poststatus.FieldSlug, poststatus.FieldPostTypeID:
 			values[i] = new(sql.NullString)
 		case poststatus.FieldCreatedAt, poststatus.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -116,6 +118,12 @@ func (ps *PostStatus) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				ps.UpdatedAt = value.Time
+			}
+		case poststatus.FieldAppID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field app_id", values[i])
+			} else if value.Valid {
+				ps.AppID = value.String
 			}
 		case poststatus.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -192,6 +200,9 @@ func (ps *PostStatus) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(ps.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("app_id=")
+	builder.WriteString(ps.AppID)
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(ps.Name)

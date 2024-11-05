@@ -21,6 +21,8 @@ type OauthConnection struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// AppID holds the value of the "app_id" field.
+	AppID string `json:"app_id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Provider holds the value of the "provider" field.
@@ -49,7 +51,7 @@ func (*OauthConnection) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case oauthconnection.FieldStatus:
 			values[i] = new(sql.NullBool)
-		case oauthconnection.FieldID, oauthconnection.FieldName, oauthconnection.FieldProvider, oauthconnection.FieldClientID, oauthconnection.FieldClientSecret, oauthconnection.FieldScopes, oauthconnection.FieldRedirectURL, oauthconnection.FieldDashboardLink, oauthconnection.FieldNote:
+		case oauthconnection.FieldID, oauthconnection.FieldAppID, oauthconnection.FieldName, oauthconnection.FieldProvider, oauthconnection.FieldClientID, oauthconnection.FieldClientSecret, oauthconnection.FieldScopes, oauthconnection.FieldRedirectURL, oauthconnection.FieldDashboardLink, oauthconnection.FieldNote:
 			values[i] = new(sql.NullString)
 		case oauthconnection.FieldCreatedAt, oauthconnection.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -85,6 +87,12 @@ func (oc *OauthConnection) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				oc.UpdatedAt = value.Time
+			}
+		case oauthconnection.FieldAppID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field app_id", values[i])
+			} else if value.Valid {
+				oc.AppID = value.String
 			}
 		case oauthconnection.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -181,6 +189,9 @@ func (oc *OauthConnection) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(oc.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("app_id=")
+	builder.WriteString(oc.AppID)
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(oc.Name)

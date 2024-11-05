@@ -6,6 +6,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 )
 
 type Post struct {
@@ -47,6 +48,13 @@ func (Post) Edges() []ent.Edge {
 			Unique(),
 	}
 }
+
+func (Post) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("app_id", "slug").Unique(),
+	}
+}
+
 func (Post) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},

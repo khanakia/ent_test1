@@ -43,6 +43,26 @@ func (ptu *PostTypeUpdate) ClearUpdatedAt() *PostTypeUpdate {
 	return ptu
 }
 
+// SetAppID sets the "app_id" field.
+func (ptu *PostTypeUpdate) SetAppID(s string) *PostTypeUpdate {
+	ptu.mutation.SetAppID(s)
+	return ptu
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (ptu *PostTypeUpdate) SetNillableAppID(s *string) *PostTypeUpdate {
+	if s != nil {
+		ptu.SetAppID(*s)
+	}
+	return ptu
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (ptu *PostTypeUpdate) ClearAppID() *PostTypeUpdate {
+	ptu.mutation.ClearAppID()
+	return ptu
+}
+
 // SetName sets the "name" field.
 func (ptu *PostTypeUpdate) SetName(s string) *PostTypeUpdate {
 	ptu.mutation.SetName(s)
@@ -373,6 +393,12 @@ func (ptu *PostTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if ptu.mutation.UpdatedAtCleared() {
 		_spec.ClearField(posttype.FieldUpdatedAt, field.TypeTime)
 	}
+	if value, ok := ptu.mutation.AppID(); ok {
+		_spec.SetField(posttype.FieldAppID, field.TypeString, value)
+	}
+	if ptu.mutation.AppIDCleared() {
+		_spec.ClearField(posttype.FieldAppID, field.TypeString)
+	}
 	if value, ok := ptu.mutation.Name(); ok {
 		_spec.SetField(posttype.FieldName, field.TypeString, value)
 	}
@@ -548,6 +574,26 @@ func (ptuo *PostTypeUpdateOne) SetUpdatedAt(t time.Time) *PostTypeUpdateOne {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (ptuo *PostTypeUpdateOne) ClearUpdatedAt() *PostTypeUpdateOne {
 	ptuo.mutation.ClearUpdatedAt()
+	return ptuo
+}
+
+// SetAppID sets the "app_id" field.
+func (ptuo *PostTypeUpdateOne) SetAppID(s string) *PostTypeUpdateOne {
+	ptuo.mutation.SetAppID(s)
+	return ptuo
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (ptuo *PostTypeUpdateOne) SetNillableAppID(s *string) *PostTypeUpdateOne {
+	if s != nil {
+		ptuo.SetAppID(*s)
+	}
+	return ptuo
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (ptuo *PostTypeUpdateOne) ClearAppID() *PostTypeUpdateOne {
+	ptuo.mutation.ClearAppID()
 	return ptuo
 }
 
@@ -910,6 +956,12 @@ func (ptuo *PostTypeUpdateOne) sqlSave(ctx context.Context) (_node *PostType, er
 	}
 	if ptuo.mutation.UpdatedAtCleared() {
 		_spec.ClearField(posttype.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := ptuo.mutation.AppID(); ok {
+		_spec.SetField(posttype.FieldAppID, field.TypeString, value)
+	}
+	if ptuo.mutation.AppIDCleared() {
+		_spec.ClearField(posttype.FieldAppID, field.TypeString)
 	}
 	if value, ok := ptuo.mutation.Name(); ok {
 		_spec.SetField(posttype.FieldName, field.TypeString, value)

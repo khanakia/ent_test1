@@ -41,6 +41,26 @@ func (tu *TodoUpdate) ClearUpdatedAt() *TodoUpdate {
 	return tu
 }
 
+// SetAppID sets the "app_id" field.
+func (tu *TodoUpdate) SetAppID(s string) *TodoUpdate {
+	tu.mutation.SetAppID(s)
+	return tu
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (tu *TodoUpdate) SetNillableAppID(s *string) *TodoUpdate {
+	if s != nil {
+		tu.SetAppID(*s)
+	}
+	return tu
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (tu *TodoUpdate) ClearAppID() *TodoUpdate {
+	tu.mutation.ClearAppID()
+	return tu
+}
+
 // SetText sets the "text" field.
 func (tu *TodoUpdate) SetText(s string) *TodoUpdate {
 	tu.mutation.SetText(s)
@@ -234,6 +254,12 @@ func (tu *TodoUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if tu.mutation.UpdatedAtCleared() {
 		_spec.ClearField(todo.FieldUpdatedAt, field.TypeTime)
 	}
+	if value, ok := tu.mutation.AppID(); ok {
+		_spec.SetField(todo.FieldAppID, field.TypeString, value)
+	}
+	if tu.mutation.AppIDCleared() {
+		_spec.ClearField(todo.FieldAppID, field.TypeString)
+	}
 	if value, ok := tu.mutation.Text(); ok {
 		_spec.SetField(todo.FieldText, field.TypeString, value)
 	}
@@ -351,6 +377,26 @@ func (tuo *TodoUpdateOne) SetUpdatedAt(t time.Time) *TodoUpdateOne {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (tuo *TodoUpdateOne) ClearUpdatedAt() *TodoUpdateOne {
 	tuo.mutation.ClearUpdatedAt()
+	return tuo
+}
+
+// SetAppID sets the "app_id" field.
+func (tuo *TodoUpdateOne) SetAppID(s string) *TodoUpdateOne {
+	tuo.mutation.SetAppID(s)
+	return tuo
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (tuo *TodoUpdateOne) SetNillableAppID(s *string) *TodoUpdateOne {
+	if s != nil {
+		tuo.SetAppID(*s)
+	}
+	return tuo
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (tuo *TodoUpdateOne) ClearAppID() *TodoUpdateOne {
+	tuo.mutation.ClearAppID()
 	return tuo
 }
 
@@ -576,6 +622,12 @@ func (tuo *TodoUpdateOne) sqlSave(ctx context.Context) (_node *Todo, err error) 
 	}
 	if tuo.mutation.UpdatedAtCleared() {
 		_spec.ClearField(todo.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := tuo.mutation.AppID(); ok {
+		_spec.SetField(todo.FieldAppID, field.TypeString, value)
+	}
+	if tuo.mutation.AppIDCleared() {
+		_spec.ClearField(todo.FieldAppID, field.TypeString)
 	}
 	if value, ok := tuo.mutation.Text(); ok {
 		_spec.SetField(todo.FieldText, field.TypeString, value)

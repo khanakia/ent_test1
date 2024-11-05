@@ -21,6 +21,8 @@ type Admin struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// AppID holds the value of the "app_id" field.
+	AppID string `json:"app_id,omitempty"`
 	// Email holds the value of the "email" field.
 	Email string `json:"email,omitempty"`
 	// FirstName holds the value of the "first_name" field.
@@ -43,7 +45,7 @@ func (*Admin) scanValues(columns []string) ([]any, error) {
 		switch columns[i] {
 		case admin.FieldStatus:
 			values[i] = new(sql.NullBool)
-		case admin.FieldID, admin.FieldEmail, admin.FieldFirstName, admin.FieldLastName, admin.FieldPassword, admin.FieldSecret:
+		case admin.FieldID, admin.FieldAppID, admin.FieldEmail, admin.FieldFirstName, admin.FieldLastName, admin.FieldPassword, admin.FieldSecret:
 			values[i] = new(sql.NullString)
 		case admin.FieldCreatedAt, admin.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -79,6 +81,12 @@ func (a *Admin) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				a.UpdatedAt = value.Time
+			}
+		case admin.FieldAppID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field app_id", values[i])
+			} else if value.Valid {
+				a.AppID = value.String
 			}
 		case admin.FieldEmail:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -157,6 +165,9 @@ func (a *Admin) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(a.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("app_id=")
+	builder.WriteString(a.AppID)
 	builder.WriteString(", ")
 	builder.WriteString("email=")
 	builder.WriteString(a.Email)

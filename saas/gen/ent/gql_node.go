@@ -5,6 +5,7 @@ package ent
 import (
 	"context"
 	"fmt"
+	"saas/gen/ent/app"
 	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/post"
 	"saas/gen/ent/postcategory"
@@ -26,6 +27,11 @@ import (
 type Noder interface {
 	IsNode()
 }
+
+var appImplementors = []string{"App", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*App) IsNode() {}
 
 var oauthconnectionImplementors = []string{"OauthConnection", "Node"}
 
@@ -140,6 +146,15 @@ func (c *Client) Noder(ctx context.Context, id string, opts ...NodeOption) (_ No
 
 func (c *Client) noder(ctx context.Context, table string, id string) (Noder, error) {
 	switch table {
+	case app.Table:
+		query := c.App.Query().
+			Where(app.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, appImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
 	case oauthconnection.Table:
 		query := c.OauthConnection.Query().
 			Where(oauthconnection.ID(id))
@@ -312,6 +327,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		idmap[id] = append(idmap[id], &noders[i])
 	}
 	switch table {
+	case app.Table:
+		query := c.App.Query().
+			Where(app.IDIn(ids...))
+		query, err := query.CollectFields(ctx, appImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
 	case oauthconnection.Table:
 		query := c.OauthConnection.Query().
 			Where(oauthconnection.IDIn(ids...))

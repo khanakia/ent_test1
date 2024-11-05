@@ -22,6 +22,7 @@ import (
 	"saas/gen/ent/workspaceuser"
 	"saas/pkg/appfn"
 	"saas/pkg/middleware"
+	"saas/pkg/middleware/appmiddleware"
 	"strings"
 
 	"entgo.io/contrib/entgql"
@@ -70,6 +71,24 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []string) ([]ent.Noder, e
 	return r.Plugin.EntDB.Client().Noders(ctx, ids)
 }
 
+// Apps is the resolver for the apps field.
+func (r *queryResolver) Apps(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *ent.AppWhereInput) (*ent.AppConnection, error) {
+	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	if cuser == nil {
+		return nil, err
+	}
+
+	if !appfn.IsUserSA(cuser) {
+		return nil, fmt.Errorf("unauthorized access")
+	}
+
+	return r.Plugin.EntDB.Client().App.Query().
+		Paginate(ctx, after, first, before, last,
+			// ent.WithAppOrder(orderBy),
+			ent.WithAppFilter(where.Filter),
+		)
+}
+
 // OauthConnections is the resolver for the oauthConnections field.
 func (r *queryResolver) OauthConnections(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.OauthConnectionOrder, where *ent.OauthConnectionWhereInput) (*ent.OauthConnectionConnection, error) {
 	cuser, err := middleware.GetUserFromGqlCtx(ctx)
@@ -80,8 +99,10 @@ func (r *queryResolver) OauthConnections(ctx context.Context, after *entgql.Curs
 	if !appfn.IsUserSA(cuser) {
 		return nil, fmt.Errorf("unauthorized access")
 	}
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
 
 	return r.Plugin.EntDB.Client().OauthConnection.Query().
+		Where(oauthconnection.AppID(app.ID)).
 		Paginate(ctx, after, first, before, last,
 			ent.WithOauthConnectionOrder(orderBy),
 			ent.WithOauthConnectionFilter(where.Filter),
@@ -99,7 +120,10 @@ func (r *queryResolver) Posts(ctx context.Context, after *entgql.Cursor[string],
 		return nil, fmt.Errorf("unauthorized access")
 	}
 
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
 	return r.Plugin.EntDB.Client().Post.Query().
+		Where(post.AppID(app.ID)).
 		Paginate(ctx, after, first, before, last,
 			ent.WithPostOrder(orderBy),
 			ent.WithPostFilter(where.Filter),
@@ -117,7 +141,10 @@ func (r *queryResolver) PostCategories(ctx context.Context, after *entgql.Cursor
 		return nil, fmt.Errorf("unauthorized access")
 	}
 
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
 	return r.Plugin.EntDB.Client().PostCategory.Query().
+		Where(postcategory.AppID(app.ID)).
 		Paginate(ctx, after, first, before, last,
 			ent.WithPostCategoryOrder(orderBy),
 			ent.WithPostCategoryFilter(where.Filter),
@@ -135,7 +162,10 @@ func (r *queryResolver) PostStatuses(ctx context.Context, after *entgql.Cursor[s
 		return nil, fmt.Errorf("unauthorized access")
 	}
 
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
 	return r.Plugin.EntDB.Client().PostStatus.Query().
+		Where(poststatus.AppID(app.ID)).
 		Paginate(ctx, after, first, before, last,
 			ent.WithPostStatusOrder(orderBy),
 			ent.WithPostStatusFilter(where.Filter),
@@ -155,7 +185,10 @@ func (r *queryResolver) PostTypes(ctx context.Context, after *entgql.Cursor[stri
 
 	// time.Sleep(4 * time.Second)
 
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
 	return r.Plugin.EntDB.Client().PostType.Query().
+		Where(posttype.AppID(app.ID)).
 		Paginate(ctx, after, first, before, last,
 			ent.WithPostTypeOrder(orderBy),
 			ent.WithPostTypeFilter(where.Filter),
@@ -172,7 +205,11 @@ func (r *queryResolver) Todos(ctx context.Context, after *entgql.Cursor[string],
 	if !appfn.IsUserSA(cuser) {
 		return nil, fmt.Errorf("unauthorized access")
 	}
+
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
 	return r.Plugin.EntDB.Client().Todo.Query().
+		Where(todo.AppID(app.ID)).
 		Paginate(ctx, after, first, before, last,
 			ent.WithTodoOrder(orderBy),
 			ent.WithTodoFilter(where.Filter),
@@ -190,7 +227,10 @@ func (r *queryResolver) Users(ctx context.Context, after *entgql.Cursor[string],
 		return nil, fmt.Errorf("unauthorized access")
 	}
 
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
 	return r.Plugin.EntDB.Client().User.Query().
+		Where(user.AppID(app.ID)).
 		Paginate(ctx, after, first, before, last,
 			ent.WithUserOrder(orderBy),
 			ent.WithUserFilter(where.Filter),
@@ -208,7 +248,10 @@ func (r *queryResolver) Workspaces(ctx context.Context, after *entgql.Cursor[str
 		return nil, fmt.Errorf("unauthorized access")
 	}
 
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
 	return r.Plugin.EntDB.Client().Workspace.Query().
+		Where(workspace.AppID(app.ID)).
 		Paginate(ctx, after, first, before, last,
 			ent.WithWorkspaceOrder(orderBy),
 			ent.WithWorkspaceFilter(where.Filter),
@@ -226,7 +269,10 @@ func (r *queryResolver) WorkspaceInvites(ctx context.Context, after *entgql.Curs
 		return nil, fmt.Errorf("unauthorized access")
 	}
 
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
 	return r.Plugin.EntDB.Client().WorkspaceInvite.Query().
+		Where(workspaceinvite.AppID(app.ID)).
 		Paginate(ctx, after, first, before, last,
 			ent.WithWorkspaceInviteOrder(orderBy),
 			ent.WithWorkspaceInviteFilter(where.Filter),
@@ -244,7 +290,10 @@ func (r *queryResolver) WorkspaceUsers(ctx context.Context, after *entgql.Cursor
 		return nil, fmt.Errorf("unauthorized access")
 	}
 
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
 	return r.Plugin.EntDB.Client().WorkspaceUser.Query().
+		Where(workspaceuser.AppID(app.ID)).
 		Paginate(ctx, after, first, before, last,
 			ent.WithWorkspaceUserOrder(orderBy),
 			ent.WithWorkspaceUserFilter(where.Filter),

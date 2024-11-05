@@ -41,6 +41,26 @@ func (tu *TemplUpdate) ClearUpdatedAt() *TemplUpdate {
 	return tu
 }
 
+// SetAppID sets the "app_id" field.
+func (tu *TemplUpdate) SetAppID(s string) *TemplUpdate {
+	tu.mutation.SetAppID(s)
+	return tu
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (tu *TemplUpdate) SetNillableAppID(s *string) *TemplUpdate {
+	if s != nil {
+		tu.SetAppID(*s)
+	}
+	return tu
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (tu *TemplUpdate) ClearAppID() *TemplUpdate {
+	tu.mutation.ClearAppID()
+	return tu
+}
+
 // SetName sets the "name" field.
 func (tu *TemplUpdate) SetName(s string) *TemplUpdate {
 	tu.mutation.SetName(s)
@@ -186,6 +206,12 @@ func (tu *TemplUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if tu.mutation.UpdatedAtCleared() {
 		_spec.ClearField(templ.FieldUpdatedAt, field.TypeTime)
 	}
+	if value, ok := tu.mutation.AppID(); ok {
+		_spec.SetField(templ.FieldAppID, field.TypeString, value)
+	}
+	if tu.mutation.AppIDCleared() {
+		_spec.ClearField(templ.FieldAppID, field.TypeString)
+	}
 	if value, ok := tu.mutation.Name(); ok {
 		_spec.SetField(templ.FieldName, field.TypeString, value)
 	}
@@ -241,6 +267,26 @@ func (tuo *TemplUpdateOne) SetUpdatedAt(t time.Time) *TemplUpdateOne {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (tuo *TemplUpdateOne) ClearUpdatedAt() *TemplUpdateOne {
 	tuo.mutation.ClearUpdatedAt()
+	return tuo
+}
+
+// SetAppID sets the "app_id" field.
+func (tuo *TemplUpdateOne) SetAppID(s string) *TemplUpdateOne {
+	tuo.mutation.SetAppID(s)
+	return tuo
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (tuo *TemplUpdateOne) SetNillableAppID(s *string) *TemplUpdateOne {
+	if s != nil {
+		tuo.SetAppID(*s)
+	}
+	return tuo
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (tuo *TemplUpdateOne) ClearAppID() *TemplUpdateOne {
+	tuo.mutation.ClearAppID()
 	return tuo
 }
 
@@ -418,6 +464,12 @@ func (tuo *TemplUpdateOne) sqlSave(ctx context.Context) (_node *Templ, err error
 	}
 	if tuo.mutation.UpdatedAtCleared() {
 		_spec.ClearField(templ.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := tuo.mutation.AppID(); ok {
+		_spec.SetField(templ.FieldAppID, field.TypeString, value)
+	}
+	if tuo.mutation.AppIDCleared() {
+		_spec.ClearField(templ.FieldAppID, field.TypeString)
 	}
 	if value, ok := tuo.mutation.Name(); ok {
 		_spec.SetField(templ.FieldName, field.TypeString, value)

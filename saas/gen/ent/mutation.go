@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"lace/jsontype"
 	"saas/gen/ent/admin"
-	"saas/gen/ent/appsetting"
+	"saas/gen/ent/app"
 	"saas/gen/ent/kache"
 	"saas/gen/ent/keyvalue"
 	"saas/gen/ent/mailconn"
@@ -46,7 +46,7 @@ const (
 
 	// Node types.
 	TypeAdmin           = "Admin"
-	TypeAppSetting      = "AppSetting"
+	TypeApp             = "App"
 	TypeKache           = "Kache"
 	TypeKeyvalue        = "Keyvalue"
 	TypeMailConn        = "MailConn"
@@ -76,6 +76,7 @@ type AdminMutation struct {
 	id            *string
 	created_at    *time.Time
 	updated_at    *time.Time
+	app_id        *string
 	email         *string
 	first_name    *string
 	last_name     *string
@@ -288,6 +289,55 @@ func (m *AdminMutation) UpdatedAtCleared() bool {
 func (m *AdminMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 	delete(m.clearedFields, admin.FieldUpdatedAt)
+}
+
+// SetAppID sets the "app_id" field.
+func (m *AdminMutation) SetAppID(s string) {
+	m.app_id = &s
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *AdminMutation) AppID() (r string, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the Admin entity.
+// If the Admin object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AdminMutation) OldAppID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *AdminMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[admin.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *AdminMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[admin.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *AdminMutation) ResetAppID() {
+	m.app_id = nil
+	delete(m.clearedFields, admin.FieldAppID)
 }
 
 // SetEmail sets the "email" field.
@@ -605,12 +655,15 @@ func (m *AdminMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AdminMutation) Fields() []string {
-	fields := make([]string, 0, 8)
+	fields := make([]string, 0, 9)
 	if m.created_at != nil {
 		fields = append(fields, admin.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, admin.FieldUpdatedAt)
+	}
+	if m.app_id != nil {
+		fields = append(fields, admin.FieldAppID)
 	}
 	if m.email != nil {
 		fields = append(fields, admin.FieldEmail)
@@ -642,6 +695,8 @@ func (m *AdminMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case admin.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case admin.FieldAppID:
+		return m.AppID()
 	case admin.FieldEmail:
 		return m.Email()
 	case admin.FieldFirstName:
@@ -667,6 +722,8 @@ func (m *AdminMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldCreatedAt(ctx)
 	case admin.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case admin.FieldAppID:
+		return m.OldAppID(ctx)
 	case admin.FieldEmail:
 		return m.OldEmail(ctx)
 	case admin.FieldFirstName:
@@ -701,6 +758,13 @@ func (m *AdminMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case admin.FieldAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
 		return nil
 	case admin.FieldEmail:
 		v, ok := value.(string)
@@ -780,6 +844,9 @@ func (m *AdminMutation) ClearedFields() []string {
 	if m.FieldCleared(admin.FieldUpdatedAt) {
 		fields = append(fields, admin.FieldUpdatedAt)
 	}
+	if m.FieldCleared(admin.FieldAppID) {
+		fields = append(fields, admin.FieldAppID)
+	}
 	if m.FieldCleared(admin.FieldFirstName) {
 		fields = append(fields, admin.FieldFirstName)
 	}
@@ -815,6 +882,9 @@ func (m *AdminMutation) ClearField(name string) error {
 	case admin.FieldUpdatedAt:
 		m.ClearUpdatedAt()
 		return nil
+	case admin.FieldAppID:
+		m.ClearAppID()
+		return nil
 	case admin.FieldFirstName:
 		m.ClearFirstName()
 		return nil
@@ -843,6 +913,9 @@ func (m *AdminMutation) ResetField(name string) error {
 		return nil
 	case admin.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case admin.FieldAppID:
+		m.ResetAppID()
 		return nil
 	case admin.FieldEmail:
 		m.ResetEmail()
@@ -914,15 +987,13 @@ func (m *AdminMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown Admin edge %s", name)
 }
 
-// AppSettingMutation represents an operation that mutates the AppSetting nodes in the graph.
-type AppSettingMutation struct {
+// AppMutation represents an operation that mutates the App nodes in the graph.
+type AppMutation struct {
 	config
 	op                          Op
 	typ                         string
 	id                          *string
-	created_at                  *time.Time
-	updated_at                  *time.Time
-	app_name                    *string
+	name                        *string
 	copyright                   *string
 	email                       *string
 	address                     *string
@@ -941,21 +1012,21 @@ type AppSettingMutation struct {
 	auth_email_verify           *string
 	clearedFields               map[string]struct{}
 	done                        bool
-	oldValue                    func(context.Context) (*AppSetting, error)
-	predicates                  []predicate.AppSetting
+	oldValue                    func(context.Context) (*App, error)
+	predicates                  []predicate.App
 }
 
-var _ ent.Mutation = (*AppSettingMutation)(nil)
+var _ ent.Mutation = (*AppMutation)(nil)
 
-// appsettingOption allows management of the mutation configuration using functional options.
-type appsettingOption func(*AppSettingMutation)
+// appOption allows management of the mutation configuration using functional options.
+type appOption func(*AppMutation)
 
-// newAppSettingMutation creates new mutation for the AppSetting entity.
-func newAppSettingMutation(c config, op Op, opts ...appsettingOption) *AppSettingMutation {
-	m := &AppSettingMutation{
+// newAppMutation creates new mutation for the App entity.
+func newAppMutation(c config, op Op, opts ...appOption) *AppMutation {
+	m := &AppMutation{
 		config:        c,
 		op:            op,
-		typ:           TypeAppSetting,
+		typ:           TypeApp,
 		clearedFields: make(map[string]struct{}),
 	}
 	for _, opt := range opts {
@@ -964,20 +1035,20 @@ func newAppSettingMutation(c config, op Op, opts ...appsettingOption) *AppSettin
 	return m
 }
 
-// withAppSettingID sets the ID field of the mutation.
-func withAppSettingID(id string) appsettingOption {
-	return func(m *AppSettingMutation) {
+// withAppID sets the ID field of the mutation.
+func withAppID(id string) appOption {
+	return func(m *AppMutation) {
 		var (
 			err   error
 			once  sync.Once
-			value *AppSetting
+			value *App
 		)
-		m.oldValue = func(ctx context.Context) (*AppSetting, error) {
+		m.oldValue = func(ctx context.Context) (*App, error) {
 			once.Do(func() {
 				if m.done {
 					err = errors.New("querying old values post mutation is not allowed")
 				} else {
-					value, err = m.Client().AppSetting.Get(ctx, id)
+					value, err = m.Client().App.Get(ctx, id)
 				}
 			})
 			return value, err
@@ -986,10 +1057,10 @@ func withAppSettingID(id string) appsettingOption {
 	}
 }
 
-// withAppSetting sets the old AppSetting of the mutation.
-func withAppSetting(node *AppSetting) appsettingOption {
-	return func(m *AppSettingMutation) {
-		m.oldValue = func(context.Context) (*AppSetting, error) {
+// withApp sets the old App of the mutation.
+func withApp(node *App) appOption {
+	return func(m *AppMutation) {
+		m.oldValue = func(context.Context) (*App, error) {
 			return node, nil
 		}
 		m.id = &node.ID
@@ -998,7 +1069,7 @@ func withAppSetting(node *AppSetting) appsettingOption {
 
 // Client returns a new `ent.Client` from the mutation. If the mutation was
 // executed in a transaction (ent.Tx), a transactional client is returned.
-func (m AppSettingMutation) Client() *Client {
+func (m AppMutation) Client() *Client {
 	client := &Client{config: m.config}
 	client.init()
 	return client
@@ -1006,7 +1077,7 @@ func (m AppSettingMutation) Client() *Client {
 
 // Tx returns an `ent.Tx` for mutations that were executed in transactions;
 // it returns an error otherwise.
-func (m AppSettingMutation) Tx() (*Tx, error) {
+func (m AppMutation) Tx() (*Tx, error) {
 	if _, ok := m.driver.(*txDriver); !ok {
 		return nil, errors.New("ent: mutation is not running in a transaction")
 	}
@@ -1016,14 +1087,14 @@ func (m AppSettingMutation) Tx() (*Tx, error) {
 }
 
 // SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of AppSetting entities.
-func (m *AppSettingMutation) SetID(id string) {
+// operation is only accepted on creation of App entities.
+func (m *AppMutation) SetID(id string) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *AppSettingMutation) ID() (id string, exists bool) {
+func (m *AppMutation) ID() (id string, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -1034,7 +1105,7 @@ func (m *AppSettingMutation) ID() (id string, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *AppSettingMutation) IDs(ctx context.Context) ([]string, error) {
+func (m *AppMutation) IDs(ctx context.Context) ([]string, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
@@ -1043,166 +1114,68 @@ func (m *AppSettingMutation) IDs(ctx context.Context) ([]string, error) {
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().AppSetting.Query().Where(m.predicates...).IDs(ctx)
+		return m.Client().App.Query().Where(m.predicates...).IDs(ctx)
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (m *AppSettingMutation) SetCreatedAt(t time.Time) {
-	m.created_at = &t
+// SetName sets the "name" field.
+func (m *AppMutation) SetName(s string) {
+	m.name = &s
 }
 
-// CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *AppSettingMutation) CreatedAt() (r time.Time, exists bool) {
-	v := m.created_at
+// Name returns the value of the "name" field in the mutation.
+func (m *AppMutation) Name() (r string, exists bool) {
+	v := m.name
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldCreatedAt returns the old "created_at" field's value of the AppSetting entity.
-// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// OldName returns the old "name" field's value of the App entity.
+// If the App object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppSettingMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+func (m *AppMutation) OldName(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+		return v, errors.New("OldName requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
 	}
-	return oldValue.CreatedAt, nil
+	return oldValue.Name, nil
 }
 
-// ClearCreatedAt clears the value of the "created_at" field.
-func (m *AppSettingMutation) ClearCreatedAt() {
-	m.created_at = nil
-	m.clearedFields[appsetting.FieldCreatedAt] = struct{}{}
+// ClearName clears the value of the "name" field.
+func (m *AppMutation) ClearName() {
+	m.name = nil
+	m.clearedFields[app.FieldName] = struct{}{}
 }
 
-// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
-func (m *AppSettingMutation) CreatedAtCleared() bool {
-	_, ok := m.clearedFields[appsetting.FieldCreatedAt]
+// NameCleared returns if the "name" field was cleared in this mutation.
+func (m *AppMutation) NameCleared() bool {
+	_, ok := m.clearedFields[app.FieldName]
 	return ok
 }
 
-// ResetCreatedAt resets all changes to the "created_at" field.
-func (m *AppSettingMutation) ResetCreatedAt() {
-	m.created_at = nil
-	delete(m.clearedFields, appsetting.FieldCreatedAt)
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (m *AppSettingMutation) SetUpdatedAt(t time.Time) {
-	m.updated_at = &t
-}
-
-// UpdatedAt returns the value of the "updated_at" field in the mutation.
-func (m *AppSettingMutation) UpdatedAt() (r time.Time, exists bool) {
-	v := m.updated_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdatedAt returns the old "updated_at" field's value of the AppSetting entity.
-// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppSettingMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
-	}
-	return oldValue.UpdatedAt, nil
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (m *AppSettingMutation) ClearUpdatedAt() {
-	m.updated_at = nil
-	m.clearedFields[appsetting.FieldUpdatedAt] = struct{}{}
-}
-
-// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
-func (m *AppSettingMutation) UpdatedAtCleared() bool {
-	_, ok := m.clearedFields[appsetting.FieldUpdatedAt]
-	return ok
-}
-
-// ResetUpdatedAt resets all changes to the "updated_at" field.
-func (m *AppSettingMutation) ResetUpdatedAt() {
-	m.updated_at = nil
-	delete(m.clearedFields, appsetting.FieldUpdatedAt)
-}
-
-// SetAppName sets the "app_name" field.
-func (m *AppSettingMutation) SetAppName(s string) {
-	m.app_name = &s
-}
-
-// AppName returns the value of the "app_name" field in the mutation.
-func (m *AppSettingMutation) AppName() (r string, exists bool) {
-	v := m.app_name
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldAppName returns the old "app_name" field's value of the AppSetting entity.
-// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppSettingMutation) OldAppName(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldAppName is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldAppName requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAppName: %w", err)
-	}
-	return oldValue.AppName, nil
-}
-
-// ClearAppName clears the value of the "app_name" field.
-func (m *AppSettingMutation) ClearAppName() {
-	m.app_name = nil
-	m.clearedFields[appsetting.FieldAppName] = struct{}{}
-}
-
-// AppNameCleared returns if the "app_name" field was cleared in this mutation.
-func (m *AppSettingMutation) AppNameCleared() bool {
-	_, ok := m.clearedFields[appsetting.FieldAppName]
-	return ok
-}
-
-// ResetAppName resets all changes to the "app_name" field.
-func (m *AppSettingMutation) ResetAppName() {
-	m.app_name = nil
-	delete(m.clearedFields, appsetting.FieldAppName)
+// ResetName resets all changes to the "name" field.
+func (m *AppMutation) ResetName() {
+	m.name = nil
+	delete(m.clearedFields, app.FieldName)
 }
 
 // SetCopyright sets the "copyright" field.
-func (m *AppSettingMutation) SetCopyright(s string) {
+func (m *AppMutation) SetCopyright(s string) {
 	m.copyright = &s
 }
 
 // Copyright returns the value of the "copyright" field in the mutation.
-func (m *AppSettingMutation) Copyright() (r string, exists bool) {
+func (m *AppMutation) Copyright() (r string, exists bool) {
 	v := m.copyright
 	if v == nil {
 		return
@@ -1210,10 +1183,10 @@ func (m *AppSettingMutation) Copyright() (r string, exists bool) {
 	return *v, true
 }
 
-// OldCopyright returns the old "copyright" field's value of the AppSetting entity.
-// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// OldCopyright returns the old "copyright" field's value of the App entity.
+// If the App object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppSettingMutation) OldCopyright(ctx context.Context) (v string, err error) {
+func (m *AppMutation) OldCopyright(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCopyright is only allowed on UpdateOne operations")
 	}
@@ -1228,30 +1201,30 @@ func (m *AppSettingMutation) OldCopyright(ctx context.Context) (v string, err er
 }
 
 // ClearCopyright clears the value of the "copyright" field.
-func (m *AppSettingMutation) ClearCopyright() {
+func (m *AppMutation) ClearCopyright() {
 	m.copyright = nil
-	m.clearedFields[appsetting.FieldCopyright] = struct{}{}
+	m.clearedFields[app.FieldCopyright] = struct{}{}
 }
 
 // CopyrightCleared returns if the "copyright" field was cleared in this mutation.
-func (m *AppSettingMutation) CopyrightCleared() bool {
-	_, ok := m.clearedFields[appsetting.FieldCopyright]
+func (m *AppMutation) CopyrightCleared() bool {
+	_, ok := m.clearedFields[app.FieldCopyright]
 	return ok
 }
 
 // ResetCopyright resets all changes to the "copyright" field.
-func (m *AppSettingMutation) ResetCopyright() {
+func (m *AppMutation) ResetCopyright() {
 	m.copyright = nil
-	delete(m.clearedFields, appsetting.FieldCopyright)
+	delete(m.clearedFields, app.FieldCopyright)
 }
 
 // SetEmail sets the "email" field.
-func (m *AppSettingMutation) SetEmail(s string) {
+func (m *AppMutation) SetEmail(s string) {
 	m.email = &s
 }
 
 // Email returns the value of the "email" field in the mutation.
-func (m *AppSettingMutation) Email() (r string, exists bool) {
+func (m *AppMutation) Email() (r string, exists bool) {
 	v := m.email
 	if v == nil {
 		return
@@ -1259,10 +1232,10 @@ func (m *AppSettingMutation) Email() (r string, exists bool) {
 	return *v, true
 }
 
-// OldEmail returns the old "email" field's value of the AppSetting entity.
-// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// OldEmail returns the old "email" field's value of the App entity.
+// If the App object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppSettingMutation) OldEmail(ctx context.Context) (v string, err error) {
+func (m *AppMutation) OldEmail(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldEmail is only allowed on UpdateOne operations")
 	}
@@ -1277,30 +1250,30 @@ func (m *AppSettingMutation) OldEmail(ctx context.Context) (v string, err error)
 }
 
 // ClearEmail clears the value of the "email" field.
-func (m *AppSettingMutation) ClearEmail() {
+func (m *AppMutation) ClearEmail() {
 	m.email = nil
-	m.clearedFields[appsetting.FieldEmail] = struct{}{}
+	m.clearedFields[app.FieldEmail] = struct{}{}
 }
 
 // EmailCleared returns if the "email" field was cleared in this mutation.
-func (m *AppSettingMutation) EmailCleared() bool {
-	_, ok := m.clearedFields[appsetting.FieldEmail]
+func (m *AppMutation) EmailCleared() bool {
+	_, ok := m.clearedFields[app.FieldEmail]
 	return ok
 }
 
 // ResetEmail resets all changes to the "email" field.
-func (m *AppSettingMutation) ResetEmail() {
+func (m *AppMutation) ResetEmail() {
 	m.email = nil
-	delete(m.clearedFields, appsetting.FieldEmail)
+	delete(m.clearedFields, app.FieldEmail)
 }
 
 // SetAddress sets the "address" field.
-func (m *AppSettingMutation) SetAddress(s string) {
+func (m *AppMutation) SetAddress(s string) {
 	m.address = &s
 }
 
 // Address returns the value of the "address" field in the mutation.
-func (m *AppSettingMutation) Address() (r string, exists bool) {
+func (m *AppMutation) Address() (r string, exists bool) {
 	v := m.address
 	if v == nil {
 		return
@@ -1308,10 +1281,10 @@ func (m *AppSettingMutation) Address() (r string, exists bool) {
 	return *v, true
 }
 
-// OldAddress returns the old "address" field's value of the AppSetting entity.
-// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// OldAddress returns the old "address" field's value of the App entity.
+// If the App object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppSettingMutation) OldAddress(ctx context.Context) (v string, err error) {
+func (m *AppMutation) OldAddress(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldAddress is only allowed on UpdateOne operations")
 	}
@@ -1326,30 +1299,30 @@ func (m *AppSettingMutation) OldAddress(ctx context.Context) (v string, err erro
 }
 
 // ClearAddress clears the value of the "address" field.
-func (m *AppSettingMutation) ClearAddress() {
+func (m *AppMutation) ClearAddress() {
 	m.address = nil
-	m.clearedFields[appsetting.FieldAddress] = struct{}{}
+	m.clearedFields[app.FieldAddress] = struct{}{}
 }
 
 // AddressCleared returns if the "address" field was cleared in this mutation.
-func (m *AppSettingMutation) AddressCleared() bool {
-	_, ok := m.clearedFields[appsetting.FieldAddress]
+func (m *AppMutation) AddressCleared() bool {
+	_, ok := m.clearedFields[app.FieldAddress]
 	return ok
 }
 
 // ResetAddress resets all changes to the "address" field.
-func (m *AppSettingMutation) ResetAddress() {
+func (m *AppMutation) ResetAddress() {
 	m.address = nil
-	delete(m.clearedFields, appsetting.FieldAddress)
+	delete(m.clearedFields, app.FieldAddress)
 }
 
 // SetSocialTw sets the "social_tw" field.
-func (m *AppSettingMutation) SetSocialTw(s string) {
+func (m *AppMutation) SetSocialTw(s string) {
 	m.social_tw = &s
 }
 
 // SocialTw returns the value of the "social_tw" field in the mutation.
-func (m *AppSettingMutation) SocialTw() (r string, exists bool) {
+func (m *AppMutation) SocialTw() (r string, exists bool) {
 	v := m.social_tw
 	if v == nil {
 		return
@@ -1357,10 +1330,10 @@ func (m *AppSettingMutation) SocialTw() (r string, exists bool) {
 	return *v, true
 }
 
-// OldSocialTw returns the old "social_tw" field's value of the AppSetting entity.
-// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// OldSocialTw returns the old "social_tw" field's value of the App entity.
+// If the App object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppSettingMutation) OldSocialTw(ctx context.Context) (v string, err error) {
+func (m *AppMutation) OldSocialTw(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldSocialTw is only allowed on UpdateOne operations")
 	}
@@ -1375,30 +1348,30 @@ func (m *AppSettingMutation) OldSocialTw(ctx context.Context) (v string, err err
 }
 
 // ClearSocialTw clears the value of the "social_tw" field.
-func (m *AppSettingMutation) ClearSocialTw() {
+func (m *AppMutation) ClearSocialTw() {
 	m.social_tw = nil
-	m.clearedFields[appsetting.FieldSocialTw] = struct{}{}
+	m.clearedFields[app.FieldSocialTw] = struct{}{}
 }
 
 // SocialTwCleared returns if the "social_tw" field was cleared in this mutation.
-func (m *AppSettingMutation) SocialTwCleared() bool {
-	_, ok := m.clearedFields[appsetting.FieldSocialTw]
+func (m *AppMutation) SocialTwCleared() bool {
+	_, ok := m.clearedFields[app.FieldSocialTw]
 	return ok
 }
 
 // ResetSocialTw resets all changes to the "social_tw" field.
-func (m *AppSettingMutation) ResetSocialTw() {
+func (m *AppMutation) ResetSocialTw() {
 	m.social_tw = nil
-	delete(m.clearedFields, appsetting.FieldSocialTw)
+	delete(m.clearedFields, app.FieldSocialTw)
 }
 
 // SetSocialFb sets the "social_fb" field.
-func (m *AppSettingMutation) SetSocialFb(s string) {
+func (m *AppMutation) SetSocialFb(s string) {
 	m.social_fb = &s
 }
 
 // SocialFb returns the value of the "social_fb" field in the mutation.
-func (m *AppSettingMutation) SocialFb() (r string, exists bool) {
+func (m *AppMutation) SocialFb() (r string, exists bool) {
 	v := m.social_fb
 	if v == nil {
 		return
@@ -1406,10 +1379,10 @@ func (m *AppSettingMutation) SocialFb() (r string, exists bool) {
 	return *v, true
 }
 
-// OldSocialFb returns the old "social_fb" field's value of the AppSetting entity.
-// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// OldSocialFb returns the old "social_fb" field's value of the App entity.
+// If the App object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppSettingMutation) OldSocialFb(ctx context.Context) (v string, err error) {
+func (m *AppMutation) OldSocialFb(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldSocialFb is only allowed on UpdateOne operations")
 	}
@@ -1424,30 +1397,30 @@ func (m *AppSettingMutation) OldSocialFb(ctx context.Context) (v string, err err
 }
 
 // ClearSocialFb clears the value of the "social_fb" field.
-func (m *AppSettingMutation) ClearSocialFb() {
+func (m *AppMutation) ClearSocialFb() {
 	m.social_fb = nil
-	m.clearedFields[appsetting.FieldSocialFb] = struct{}{}
+	m.clearedFields[app.FieldSocialFb] = struct{}{}
 }
 
 // SocialFbCleared returns if the "social_fb" field was cleared in this mutation.
-func (m *AppSettingMutation) SocialFbCleared() bool {
-	_, ok := m.clearedFields[appsetting.FieldSocialFb]
+func (m *AppMutation) SocialFbCleared() bool {
+	_, ok := m.clearedFields[app.FieldSocialFb]
 	return ok
 }
 
 // ResetSocialFb resets all changes to the "social_fb" field.
-func (m *AppSettingMutation) ResetSocialFb() {
+func (m *AppMutation) ResetSocialFb() {
 	m.social_fb = nil
-	delete(m.clearedFields, appsetting.FieldSocialFb)
+	delete(m.clearedFields, app.FieldSocialFb)
 }
 
 // SetSocialIn sets the "social_in" field.
-func (m *AppSettingMutation) SetSocialIn(s string) {
+func (m *AppMutation) SetSocialIn(s string) {
 	m.social_in = &s
 }
 
 // SocialIn returns the value of the "social_in" field in the mutation.
-func (m *AppSettingMutation) SocialIn() (r string, exists bool) {
+func (m *AppMutation) SocialIn() (r string, exists bool) {
 	v := m.social_in
 	if v == nil {
 		return
@@ -1455,10 +1428,10 @@ func (m *AppSettingMutation) SocialIn() (r string, exists bool) {
 	return *v, true
 }
 
-// OldSocialIn returns the old "social_in" field's value of the AppSetting entity.
-// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// OldSocialIn returns the old "social_in" field's value of the App entity.
+// If the App object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppSettingMutation) OldSocialIn(ctx context.Context) (v string, err error) {
+func (m *AppMutation) OldSocialIn(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldSocialIn is only allowed on UpdateOne operations")
 	}
@@ -1473,30 +1446,30 @@ func (m *AppSettingMutation) OldSocialIn(ctx context.Context) (v string, err err
 }
 
 // ClearSocialIn clears the value of the "social_in" field.
-func (m *AppSettingMutation) ClearSocialIn() {
+func (m *AppMutation) ClearSocialIn() {
 	m.social_in = nil
-	m.clearedFields[appsetting.FieldSocialIn] = struct{}{}
+	m.clearedFields[app.FieldSocialIn] = struct{}{}
 }
 
 // SocialInCleared returns if the "social_in" field was cleared in this mutation.
-func (m *AppSettingMutation) SocialInCleared() bool {
-	_, ok := m.clearedFields[appsetting.FieldSocialIn]
+func (m *AppMutation) SocialInCleared() bool {
+	_, ok := m.clearedFields[app.FieldSocialIn]
 	return ok
 }
 
 // ResetSocialIn resets all changes to the "social_in" field.
-func (m *AppSettingMutation) ResetSocialIn() {
+func (m *AppMutation) ResetSocialIn() {
 	m.social_in = nil
-	delete(m.clearedFields, appsetting.FieldSocialIn)
+	delete(m.clearedFields, app.FieldSocialIn)
 }
 
 // SetLogoURL sets the "logo_url" field.
-func (m *AppSettingMutation) SetLogoURL(s string) {
+func (m *AppMutation) SetLogoURL(s string) {
 	m.logo_url = &s
 }
 
 // LogoURL returns the value of the "logo_url" field in the mutation.
-func (m *AppSettingMutation) LogoURL() (r string, exists bool) {
+func (m *AppMutation) LogoURL() (r string, exists bool) {
 	v := m.logo_url
 	if v == nil {
 		return
@@ -1504,10 +1477,10 @@ func (m *AppSettingMutation) LogoURL() (r string, exists bool) {
 	return *v, true
 }
 
-// OldLogoURL returns the old "logo_url" field's value of the AppSetting entity.
-// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// OldLogoURL returns the old "logo_url" field's value of the App entity.
+// If the App object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppSettingMutation) OldLogoURL(ctx context.Context) (v string, err error) {
+func (m *AppMutation) OldLogoURL(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldLogoURL is only allowed on UpdateOne operations")
 	}
@@ -1522,30 +1495,30 @@ func (m *AppSettingMutation) OldLogoURL(ctx context.Context) (v string, err erro
 }
 
 // ClearLogoURL clears the value of the "logo_url" field.
-func (m *AppSettingMutation) ClearLogoURL() {
+func (m *AppMutation) ClearLogoURL() {
 	m.logo_url = nil
-	m.clearedFields[appsetting.FieldLogoURL] = struct{}{}
+	m.clearedFields[app.FieldLogoURL] = struct{}{}
 }
 
 // LogoURLCleared returns if the "logo_url" field was cleared in this mutation.
-func (m *AppSettingMutation) LogoURLCleared() bool {
-	_, ok := m.clearedFields[appsetting.FieldLogoURL]
+func (m *AppMutation) LogoURLCleared() bool {
+	_, ok := m.clearedFields[app.FieldLogoURL]
 	return ok
 }
 
 // ResetLogoURL resets all changes to the "logo_url" field.
-func (m *AppSettingMutation) ResetLogoURL() {
+func (m *AppMutation) ResetLogoURL() {
 	m.logo_url = nil
-	delete(m.clearedFields, appsetting.FieldLogoURL)
+	delete(m.clearedFields, app.FieldLogoURL)
 }
 
 // SetSiteURL sets the "site_url" field.
-func (m *AppSettingMutation) SetSiteURL(s string) {
+func (m *AppMutation) SetSiteURL(s string) {
 	m.site_url = &s
 }
 
 // SiteURL returns the value of the "site_url" field in the mutation.
-func (m *AppSettingMutation) SiteURL() (r string, exists bool) {
+func (m *AppMutation) SiteURL() (r string, exists bool) {
 	v := m.site_url
 	if v == nil {
 		return
@@ -1553,10 +1526,10 @@ func (m *AppSettingMutation) SiteURL() (r string, exists bool) {
 	return *v, true
 }
 
-// OldSiteURL returns the old "site_url" field's value of the AppSetting entity.
-// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// OldSiteURL returns the old "site_url" field's value of the App entity.
+// If the App object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppSettingMutation) OldSiteURL(ctx context.Context) (v string, err error) {
+func (m *AppMutation) OldSiteURL(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldSiteURL is only allowed on UpdateOne operations")
 	}
@@ -1571,30 +1544,30 @@ func (m *AppSettingMutation) OldSiteURL(ctx context.Context) (v string, err erro
 }
 
 // ClearSiteURL clears the value of the "site_url" field.
-func (m *AppSettingMutation) ClearSiteURL() {
+func (m *AppMutation) ClearSiteURL() {
 	m.site_url = nil
-	m.clearedFields[appsetting.FieldSiteURL] = struct{}{}
+	m.clearedFields[app.FieldSiteURL] = struct{}{}
 }
 
 // SiteURLCleared returns if the "site_url" field was cleared in this mutation.
-func (m *AppSettingMutation) SiteURLCleared() bool {
-	_, ok := m.clearedFields[appsetting.FieldSiteURL]
+func (m *AppMutation) SiteURLCleared() bool {
+	_, ok := m.clearedFields[app.FieldSiteURL]
 	return ok
 }
 
 // ResetSiteURL resets all changes to the "site_url" field.
-func (m *AppSettingMutation) ResetSiteURL() {
+func (m *AppMutation) ResetSiteURL() {
 	m.site_url = nil
-	delete(m.clearedFields, appsetting.FieldSiteURL)
+	delete(m.clearedFields, app.FieldSiteURL)
 }
 
 // SetDefaultMailConnID sets the "default_mail_conn_id" field.
-func (m *AppSettingMutation) SetDefaultMailConnID(s string) {
+func (m *AppMutation) SetDefaultMailConnID(s string) {
 	m.default_mail_conn_id = &s
 }
 
 // DefaultMailConnID returns the value of the "default_mail_conn_id" field in the mutation.
-func (m *AppSettingMutation) DefaultMailConnID() (r string, exists bool) {
+func (m *AppMutation) DefaultMailConnID() (r string, exists bool) {
 	v := m.default_mail_conn_id
 	if v == nil {
 		return
@@ -1602,10 +1575,10 @@ func (m *AppSettingMutation) DefaultMailConnID() (r string, exists bool) {
 	return *v, true
 }
 
-// OldDefaultMailConnID returns the old "default_mail_conn_id" field's value of the AppSetting entity.
-// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// OldDefaultMailConnID returns the old "default_mail_conn_id" field's value of the App entity.
+// If the App object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppSettingMutation) OldDefaultMailConnID(ctx context.Context) (v string, err error) {
+func (m *AppMutation) OldDefaultMailConnID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldDefaultMailConnID is only allowed on UpdateOne operations")
 	}
@@ -1620,30 +1593,30 @@ func (m *AppSettingMutation) OldDefaultMailConnID(ctx context.Context) (v string
 }
 
 // ClearDefaultMailConnID clears the value of the "default_mail_conn_id" field.
-func (m *AppSettingMutation) ClearDefaultMailConnID() {
+func (m *AppMutation) ClearDefaultMailConnID() {
 	m.default_mail_conn_id = nil
-	m.clearedFields[appsetting.FieldDefaultMailConnID] = struct{}{}
+	m.clearedFields[app.FieldDefaultMailConnID] = struct{}{}
 }
 
 // DefaultMailConnIDCleared returns if the "default_mail_conn_id" field was cleared in this mutation.
-func (m *AppSettingMutation) DefaultMailConnIDCleared() bool {
-	_, ok := m.clearedFields[appsetting.FieldDefaultMailConnID]
+func (m *AppMutation) DefaultMailConnIDCleared() bool {
+	_, ok := m.clearedFields[app.FieldDefaultMailConnID]
 	return ok
 }
 
 // ResetDefaultMailConnID resets all changes to the "default_mail_conn_id" field.
-func (m *AppSettingMutation) ResetDefaultMailConnID() {
+func (m *AppMutation) ResetDefaultMailConnID() {
 	m.default_mail_conn_id = nil
-	delete(m.clearedFields, appsetting.FieldDefaultMailConnID)
+	delete(m.clearedFields, app.FieldDefaultMailConnID)
 }
 
 // SetMailLayoutTemplID sets the "mail_layout_templ_id" field.
-func (m *AppSettingMutation) SetMailLayoutTemplID(s string) {
+func (m *AppMutation) SetMailLayoutTemplID(s string) {
 	m.mail_layout_templ_id = &s
 }
 
 // MailLayoutTemplID returns the value of the "mail_layout_templ_id" field in the mutation.
-func (m *AppSettingMutation) MailLayoutTemplID() (r string, exists bool) {
+func (m *AppMutation) MailLayoutTemplID() (r string, exists bool) {
 	v := m.mail_layout_templ_id
 	if v == nil {
 		return
@@ -1651,10 +1624,10 @@ func (m *AppSettingMutation) MailLayoutTemplID() (r string, exists bool) {
 	return *v, true
 }
 
-// OldMailLayoutTemplID returns the old "mail_layout_templ_id" field's value of the AppSetting entity.
-// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// OldMailLayoutTemplID returns the old "mail_layout_templ_id" field's value of the App entity.
+// If the App object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppSettingMutation) OldMailLayoutTemplID(ctx context.Context) (v string, err error) {
+func (m *AppMutation) OldMailLayoutTemplID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldMailLayoutTemplID is only allowed on UpdateOne operations")
 	}
@@ -1669,30 +1642,30 @@ func (m *AppSettingMutation) OldMailLayoutTemplID(ctx context.Context) (v string
 }
 
 // ClearMailLayoutTemplID clears the value of the "mail_layout_templ_id" field.
-func (m *AppSettingMutation) ClearMailLayoutTemplID() {
+func (m *AppMutation) ClearMailLayoutTemplID() {
 	m.mail_layout_templ_id = nil
-	m.clearedFields[appsetting.FieldMailLayoutTemplID] = struct{}{}
+	m.clearedFields[app.FieldMailLayoutTemplID] = struct{}{}
 }
 
 // MailLayoutTemplIDCleared returns if the "mail_layout_templ_id" field was cleared in this mutation.
-func (m *AppSettingMutation) MailLayoutTemplIDCleared() bool {
-	_, ok := m.clearedFields[appsetting.FieldMailLayoutTemplID]
+func (m *AppMutation) MailLayoutTemplIDCleared() bool {
+	_, ok := m.clearedFields[app.FieldMailLayoutTemplID]
 	return ok
 }
 
 // ResetMailLayoutTemplID resets all changes to the "mail_layout_templ_id" field.
-func (m *AppSettingMutation) ResetMailLayoutTemplID() {
+func (m *AppMutation) ResetMailLayoutTemplID() {
 	m.mail_layout_templ_id = nil
-	delete(m.clearedFields, appsetting.FieldMailLayoutTemplID)
+	delete(m.clearedFields, app.FieldMailLayoutTemplID)
 }
 
 // SetWsapceInviteTemplID sets the "wsapce_invite_templ_id" field.
-func (m *AppSettingMutation) SetWsapceInviteTemplID(s string) {
+func (m *AppMutation) SetWsapceInviteTemplID(s string) {
 	m.wsapce_invite_templ_id = &s
 }
 
 // WsapceInviteTemplID returns the value of the "wsapce_invite_templ_id" field in the mutation.
-func (m *AppSettingMutation) WsapceInviteTemplID() (r string, exists bool) {
+func (m *AppMutation) WsapceInviteTemplID() (r string, exists bool) {
 	v := m.wsapce_invite_templ_id
 	if v == nil {
 		return
@@ -1700,10 +1673,10 @@ func (m *AppSettingMutation) WsapceInviteTemplID() (r string, exists bool) {
 	return *v, true
 }
 
-// OldWsapceInviteTemplID returns the old "wsapce_invite_templ_id" field's value of the AppSetting entity.
-// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// OldWsapceInviteTemplID returns the old "wsapce_invite_templ_id" field's value of the App entity.
+// If the App object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppSettingMutation) OldWsapceInviteTemplID(ctx context.Context) (v string, err error) {
+func (m *AppMutation) OldWsapceInviteTemplID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldWsapceInviteTemplID is only allowed on UpdateOne operations")
 	}
@@ -1718,30 +1691,30 @@ func (m *AppSettingMutation) OldWsapceInviteTemplID(ctx context.Context) (v stri
 }
 
 // ClearWsapceInviteTemplID clears the value of the "wsapce_invite_templ_id" field.
-func (m *AppSettingMutation) ClearWsapceInviteTemplID() {
+func (m *AppMutation) ClearWsapceInviteTemplID() {
 	m.wsapce_invite_templ_id = nil
-	m.clearedFields[appsetting.FieldWsapceInviteTemplID] = struct{}{}
+	m.clearedFields[app.FieldWsapceInviteTemplID] = struct{}{}
 }
 
 // WsapceInviteTemplIDCleared returns if the "wsapce_invite_templ_id" field was cleared in this mutation.
-func (m *AppSettingMutation) WsapceInviteTemplIDCleared() bool {
-	_, ok := m.clearedFields[appsetting.FieldWsapceInviteTemplID]
+func (m *AppMutation) WsapceInviteTemplIDCleared() bool {
+	_, ok := m.clearedFields[app.FieldWsapceInviteTemplID]
 	return ok
 }
 
 // ResetWsapceInviteTemplID resets all changes to the "wsapce_invite_templ_id" field.
-func (m *AppSettingMutation) ResetWsapceInviteTemplID() {
+func (m *AppMutation) ResetWsapceInviteTemplID() {
 	m.wsapce_invite_templ_id = nil
-	delete(m.clearedFields, appsetting.FieldWsapceInviteTemplID)
+	delete(m.clearedFields, app.FieldWsapceInviteTemplID)
 }
 
 // SetWsapceSuccessTemplID sets the "wsapce_success_templ_id" field.
-func (m *AppSettingMutation) SetWsapceSuccessTemplID(s string) {
+func (m *AppMutation) SetWsapceSuccessTemplID(s string) {
 	m.wsapce_success_templ_id = &s
 }
 
 // WsapceSuccessTemplID returns the value of the "wsapce_success_templ_id" field in the mutation.
-func (m *AppSettingMutation) WsapceSuccessTemplID() (r string, exists bool) {
+func (m *AppMutation) WsapceSuccessTemplID() (r string, exists bool) {
 	v := m.wsapce_success_templ_id
 	if v == nil {
 		return
@@ -1749,10 +1722,10 @@ func (m *AppSettingMutation) WsapceSuccessTemplID() (r string, exists bool) {
 	return *v, true
 }
 
-// OldWsapceSuccessTemplID returns the old "wsapce_success_templ_id" field's value of the AppSetting entity.
-// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// OldWsapceSuccessTemplID returns the old "wsapce_success_templ_id" field's value of the App entity.
+// If the App object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppSettingMutation) OldWsapceSuccessTemplID(ctx context.Context) (v string, err error) {
+func (m *AppMutation) OldWsapceSuccessTemplID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldWsapceSuccessTemplID is only allowed on UpdateOne operations")
 	}
@@ -1767,30 +1740,30 @@ func (m *AppSettingMutation) OldWsapceSuccessTemplID(ctx context.Context) (v str
 }
 
 // ClearWsapceSuccessTemplID clears the value of the "wsapce_success_templ_id" field.
-func (m *AppSettingMutation) ClearWsapceSuccessTemplID() {
+func (m *AppMutation) ClearWsapceSuccessTemplID() {
 	m.wsapce_success_templ_id = nil
-	m.clearedFields[appsetting.FieldWsapceSuccessTemplID] = struct{}{}
+	m.clearedFields[app.FieldWsapceSuccessTemplID] = struct{}{}
 }
 
 // WsapceSuccessTemplIDCleared returns if the "wsapce_success_templ_id" field was cleared in this mutation.
-func (m *AppSettingMutation) WsapceSuccessTemplIDCleared() bool {
-	_, ok := m.clearedFields[appsetting.FieldWsapceSuccessTemplID]
+func (m *AppMutation) WsapceSuccessTemplIDCleared() bool {
+	_, ok := m.clearedFields[app.FieldWsapceSuccessTemplID]
 	return ok
 }
 
 // ResetWsapceSuccessTemplID resets all changes to the "wsapce_success_templ_id" field.
-func (m *AppSettingMutation) ResetWsapceSuccessTemplID() {
+func (m *AppMutation) ResetWsapceSuccessTemplID() {
 	m.wsapce_success_templ_id = nil
-	delete(m.clearedFields, appsetting.FieldWsapceSuccessTemplID)
+	delete(m.clearedFields, app.FieldWsapceSuccessTemplID)
 }
 
 // SetAuthFpTemplID sets the "auth_fp_templ_id" field.
-func (m *AppSettingMutation) SetAuthFpTemplID(s string) {
+func (m *AppMutation) SetAuthFpTemplID(s string) {
 	m.auth_fp_templ_id = &s
 }
 
 // AuthFpTemplID returns the value of the "auth_fp_templ_id" field in the mutation.
-func (m *AppSettingMutation) AuthFpTemplID() (r string, exists bool) {
+func (m *AppMutation) AuthFpTemplID() (r string, exists bool) {
 	v := m.auth_fp_templ_id
 	if v == nil {
 		return
@@ -1798,10 +1771,10 @@ func (m *AppSettingMutation) AuthFpTemplID() (r string, exists bool) {
 	return *v, true
 }
 
-// OldAuthFpTemplID returns the old "auth_fp_templ_id" field's value of the AppSetting entity.
-// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// OldAuthFpTemplID returns the old "auth_fp_templ_id" field's value of the App entity.
+// If the App object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppSettingMutation) OldAuthFpTemplID(ctx context.Context) (v string, err error) {
+func (m *AppMutation) OldAuthFpTemplID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldAuthFpTemplID is only allowed on UpdateOne operations")
 	}
@@ -1816,30 +1789,30 @@ func (m *AppSettingMutation) OldAuthFpTemplID(ctx context.Context) (v string, er
 }
 
 // ClearAuthFpTemplID clears the value of the "auth_fp_templ_id" field.
-func (m *AppSettingMutation) ClearAuthFpTemplID() {
+func (m *AppMutation) ClearAuthFpTemplID() {
 	m.auth_fp_templ_id = nil
-	m.clearedFields[appsetting.FieldAuthFpTemplID] = struct{}{}
+	m.clearedFields[app.FieldAuthFpTemplID] = struct{}{}
 }
 
 // AuthFpTemplIDCleared returns if the "auth_fp_templ_id" field was cleared in this mutation.
-func (m *AppSettingMutation) AuthFpTemplIDCleared() bool {
-	_, ok := m.clearedFields[appsetting.FieldAuthFpTemplID]
+func (m *AppMutation) AuthFpTemplIDCleared() bool {
+	_, ok := m.clearedFields[app.FieldAuthFpTemplID]
 	return ok
 }
 
 // ResetAuthFpTemplID resets all changes to the "auth_fp_templ_id" field.
-func (m *AppSettingMutation) ResetAuthFpTemplID() {
+func (m *AppMutation) ResetAuthFpTemplID() {
 	m.auth_fp_templ_id = nil
-	delete(m.clearedFields, appsetting.FieldAuthFpTemplID)
+	delete(m.clearedFields, app.FieldAuthFpTemplID)
 }
 
 // SetAuthWelcomeEmailTemplID sets the "auth_welcome_email_templ_id" field.
-func (m *AppSettingMutation) SetAuthWelcomeEmailTemplID(s string) {
+func (m *AppMutation) SetAuthWelcomeEmailTemplID(s string) {
 	m.auth_welcome_email_templ_id = &s
 }
 
 // AuthWelcomeEmailTemplID returns the value of the "auth_welcome_email_templ_id" field in the mutation.
-func (m *AppSettingMutation) AuthWelcomeEmailTemplID() (r string, exists bool) {
+func (m *AppMutation) AuthWelcomeEmailTemplID() (r string, exists bool) {
 	v := m.auth_welcome_email_templ_id
 	if v == nil {
 		return
@@ -1847,10 +1820,10 @@ func (m *AppSettingMutation) AuthWelcomeEmailTemplID() (r string, exists bool) {
 	return *v, true
 }
 
-// OldAuthWelcomeEmailTemplID returns the old "auth_welcome_email_templ_id" field's value of the AppSetting entity.
-// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// OldAuthWelcomeEmailTemplID returns the old "auth_welcome_email_templ_id" field's value of the App entity.
+// If the App object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppSettingMutation) OldAuthWelcomeEmailTemplID(ctx context.Context) (v string, err error) {
+func (m *AppMutation) OldAuthWelcomeEmailTemplID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldAuthWelcomeEmailTemplID is only allowed on UpdateOne operations")
 	}
@@ -1865,30 +1838,30 @@ func (m *AppSettingMutation) OldAuthWelcomeEmailTemplID(ctx context.Context) (v 
 }
 
 // ClearAuthWelcomeEmailTemplID clears the value of the "auth_welcome_email_templ_id" field.
-func (m *AppSettingMutation) ClearAuthWelcomeEmailTemplID() {
+func (m *AppMutation) ClearAuthWelcomeEmailTemplID() {
 	m.auth_welcome_email_templ_id = nil
-	m.clearedFields[appsetting.FieldAuthWelcomeEmailTemplID] = struct{}{}
+	m.clearedFields[app.FieldAuthWelcomeEmailTemplID] = struct{}{}
 }
 
 // AuthWelcomeEmailTemplIDCleared returns if the "auth_welcome_email_templ_id" field was cleared in this mutation.
-func (m *AppSettingMutation) AuthWelcomeEmailTemplIDCleared() bool {
-	_, ok := m.clearedFields[appsetting.FieldAuthWelcomeEmailTemplID]
+func (m *AppMutation) AuthWelcomeEmailTemplIDCleared() bool {
+	_, ok := m.clearedFields[app.FieldAuthWelcomeEmailTemplID]
 	return ok
 }
 
 // ResetAuthWelcomeEmailTemplID resets all changes to the "auth_welcome_email_templ_id" field.
-func (m *AppSettingMutation) ResetAuthWelcomeEmailTemplID() {
+func (m *AppMutation) ResetAuthWelcomeEmailTemplID() {
 	m.auth_welcome_email_templ_id = nil
-	delete(m.clearedFields, appsetting.FieldAuthWelcomeEmailTemplID)
+	delete(m.clearedFields, app.FieldAuthWelcomeEmailTemplID)
 }
 
 // SetAuthVerificationTemplID sets the "auth_verification_templ_id" field.
-func (m *AppSettingMutation) SetAuthVerificationTemplID(s string) {
+func (m *AppMutation) SetAuthVerificationTemplID(s string) {
 	m.auth_verification_templ_id = &s
 }
 
 // AuthVerificationTemplID returns the value of the "auth_verification_templ_id" field in the mutation.
-func (m *AppSettingMutation) AuthVerificationTemplID() (r string, exists bool) {
+func (m *AppMutation) AuthVerificationTemplID() (r string, exists bool) {
 	v := m.auth_verification_templ_id
 	if v == nil {
 		return
@@ -1896,10 +1869,10 @@ func (m *AppSettingMutation) AuthVerificationTemplID() (r string, exists bool) {
 	return *v, true
 }
 
-// OldAuthVerificationTemplID returns the old "auth_verification_templ_id" field's value of the AppSetting entity.
-// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// OldAuthVerificationTemplID returns the old "auth_verification_templ_id" field's value of the App entity.
+// If the App object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppSettingMutation) OldAuthVerificationTemplID(ctx context.Context) (v string, err error) {
+func (m *AppMutation) OldAuthVerificationTemplID(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldAuthVerificationTemplID is only allowed on UpdateOne operations")
 	}
@@ -1914,30 +1887,30 @@ func (m *AppSettingMutation) OldAuthVerificationTemplID(ctx context.Context) (v 
 }
 
 // ClearAuthVerificationTemplID clears the value of the "auth_verification_templ_id" field.
-func (m *AppSettingMutation) ClearAuthVerificationTemplID() {
+func (m *AppMutation) ClearAuthVerificationTemplID() {
 	m.auth_verification_templ_id = nil
-	m.clearedFields[appsetting.FieldAuthVerificationTemplID] = struct{}{}
+	m.clearedFields[app.FieldAuthVerificationTemplID] = struct{}{}
 }
 
 // AuthVerificationTemplIDCleared returns if the "auth_verification_templ_id" field was cleared in this mutation.
-func (m *AppSettingMutation) AuthVerificationTemplIDCleared() bool {
-	_, ok := m.clearedFields[appsetting.FieldAuthVerificationTemplID]
+func (m *AppMutation) AuthVerificationTemplIDCleared() bool {
+	_, ok := m.clearedFields[app.FieldAuthVerificationTemplID]
 	return ok
 }
 
 // ResetAuthVerificationTemplID resets all changes to the "auth_verification_templ_id" field.
-func (m *AppSettingMutation) ResetAuthVerificationTemplID() {
+func (m *AppMutation) ResetAuthVerificationTemplID() {
 	m.auth_verification_templ_id = nil
-	delete(m.clearedFields, appsetting.FieldAuthVerificationTemplID)
+	delete(m.clearedFields, app.FieldAuthVerificationTemplID)
 }
 
 // SetAuthEmailVerify sets the "auth_email_verify" field.
-func (m *AppSettingMutation) SetAuthEmailVerify(s string) {
+func (m *AppMutation) SetAuthEmailVerify(s string) {
 	m.auth_email_verify = &s
 }
 
 // AuthEmailVerify returns the value of the "auth_email_verify" field in the mutation.
-func (m *AppSettingMutation) AuthEmailVerify() (r string, exists bool) {
+func (m *AppMutation) AuthEmailVerify() (r string, exists bool) {
 	v := m.auth_email_verify
 	if v == nil {
 		return
@@ -1945,10 +1918,10 @@ func (m *AppSettingMutation) AuthEmailVerify() (r string, exists bool) {
 	return *v, true
 }
 
-// OldAuthEmailVerify returns the old "auth_email_verify" field's value of the AppSetting entity.
-// If the AppSetting object wasn't provided to the builder, the object is fetched from the database.
+// OldAuthEmailVerify returns the old "auth_email_verify" field's value of the App entity.
+// If the App object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppSettingMutation) OldAuthEmailVerify(ctx context.Context) (v string, err error) {
+func (m *AppMutation) OldAuthEmailVerify(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldAuthEmailVerify is only allowed on UpdateOne operations")
 	}
@@ -1963,32 +1936,32 @@ func (m *AppSettingMutation) OldAuthEmailVerify(ctx context.Context) (v string, 
 }
 
 // ClearAuthEmailVerify clears the value of the "auth_email_verify" field.
-func (m *AppSettingMutation) ClearAuthEmailVerify() {
+func (m *AppMutation) ClearAuthEmailVerify() {
 	m.auth_email_verify = nil
-	m.clearedFields[appsetting.FieldAuthEmailVerify] = struct{}{}
+	m.clearedFields[app.FieldAuthEmailVerify] = struct{}{}
 }
 
 // AuthEmailVerifyCleared returns if the "auth_email_verify" field was cleared in this mutation.
-func (m *AppSettingMutation) AuthEmailVerifyCleared() bool {
-	_, ok := m.clearedFields[appsetting.FieldAuthEmailVerify]
+func (m *AppMutation) AuthEmailVerifyCleared() bool {
+	_, ok := m.clearedFields[app.FieldAuthEmailVerify]
 	return ok
 }
 
 // ResetAuthEmailVerify resets all changes to the "auth_email_verify" field.
-func (m *AppSettingMutation) ResetAuthEmailVerify() {
+func (m *AppMutation) ResetAuthEmailVerify() {
 	m.auth_email_verify = nil
-	delete(m.clearedFields, appsetting.FieldAuthEmailVerify)
+	delete(m.clearedFields, app.FieldAuthEmailVerify)
 }
 
-// Where appends a list predicates to the AppSettingMutation builder.
-func (m *AppSettingMutation) Where(ps ...predicate.AppSetting) {
+// Where appends a list predicates to the AppMutation builder.
+func (m *AppMutation) Where(ps ...predicate.App) {
 	m.predicates = append(m.predicates, ps...)
 }
 
-// WhereP appends storage-level predicates to the AppSettingMutation builder. Using this method,
+// WhereP appends storage-level predicates to the AppMutation builder. Using this method,
 // users can use type-assertion to append predicates that do not depend on any generated package.
-func (m *AppSettingMutation) WhereP(ps ...func(*sql.Selector)) {
-	p := make([]predicate.AppSetting, len(ps))
+func (m *AppMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.App, len(ps))
 	for i := range ps {
 		p[i] = ps[i]
 	}
@@ -1996,81 +1969,75 @@ func (m *AppSettingMutation) WhereP(ps ...func(*sql.Selector)) {
 }
 
 // Op returns the operation name.
-func (m *AppSettingMutation) Op() Op {
+func (m *AppMutation) Op() Op {
 	return m.op
 }
 
 // SetOp allows setting the mutation operation.
-func (m *AppSettingMutation) SetOp(op Op) {
+func (m *AppMutation) SetOp(op Op) {
 	m.op = op
 }
 
-// Type returns the node type of this mutation (AppSetting).
-func (m *AppSettingMutation) Type() string {
+// Type returns the node type of this mutation (App).
+func (m *AppMutation) Type() string {
 	return m.typ
 }
 
 // Fields returns all fields that were changed during this mutation. Note that in
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
-func (m *AppSettingMutation) Fields() []string {
-	fields := make([]string, 0, 19)
-	if m.created_at != nil {
-		fields = append(fields, appsetting.FieldCreatedAt)
-	}
-	if m.updated_at != nil {
-		fields = append(fields, appsetting.FieldUpdatedAt)
-	}
-	if m.app_name != nil {
-		fields = append(fields, appsetting.FieldAppName)
+func (m *AppMutation) Fields() []string {
+	fields := make([]string, 0, 17)
+	if m.name != nil {
+		fields = append(fields, app.FieldName)
 	}
 	if m.copyright != nil {
-		fields = append(fields, appsetting.FieldCopyright)
+		fields = append(fields, app.FieldCopyright)
 	}
 	if m.email != nil {
-		fields = append(fields, appsetting.FieldEmail)
+		fields = append(fields, app.FieldEmail)
 	}
 	if m.address != nil {
-		fields = append(fields, appsetting.FieldAddress)
+		fields = append(fields, app.FieldAddress)
 	}
 	if m.social_tw != nil {
-		fields = append(fields, appsetting.FieldSocialTw)
+		fields = append(fields, app.FieldSocialTw)
 	}
 	if m.social_fb != nil {
-		fields = append(fields, appsetting.FieldSocialFb)
+		fields = append(fields, app.FieldSocialFb)
 	}
 	if m.social_in != nil {
-		fields = append(fields, appsetting.FieldSocialIn)
+		fields = append(fields, app.FieldSocialIn)
 	}
 	if m.logo_url != nil {
-		fields = append(fields, appsetting.FieldLogoURL)
+		fields = append(fields, app.FieldLogoURL)
 	}
 	if m.site_url != nil {
-		fields = append(fields, appsetting.FieldSiteURL)
+		fields = append(fields, app.FieldSiteURL)
 	}
 	if m.default_mail_conn_id != nil {
-		fields = append(fields, appsetting.FieldDefaultMailConnID)
+		fields = append(fields, app.FieldDefaultMailConnID)
 	}
 	if m.mail_layout_templ_id != nil {
-		fields = append(fields, appsetting.FieldMailLayoutTemplID)
+		fields = append(fields, app.FieldMailLayoutTemplID)
 	}
 	if m.wsapce_invite_templ_id != nil {
-		fields = append(fields, appsetting.FieldWsapceInviteTemplID)
+		fields = append(fields, app.FieldWsapceInviteTemplID)
 	}
 	if m.wsapce_success_templ_id != nil {
-		fields = append(fields, appsetting.FieldWsapceSuccessTemplID)
+		fields = append(fields, app.FieldWsapceSuccessTemplID)
 	}
 	if m.auth_fp_templ_id != nil {
-		fields = append(fields, appsetting.FieldAuthFpTemplID)
+		fields = append(fields, app.FieldAuthFpTemplID)
 	}
 	if m.auth_welcome_email_templ_id != nil {
-		fields = append(fields, appsetting.FieldAuthWelcomeEmailTemplID)
+		fields = append(fields, app.FieldAuthWelcomeEmailTemplID)
 	}
 	if m.auth_verification_templ_id != nil {
-		fields = append(fields, appsetting.FieldAuthVerificationTemplID)
+		fields = append(fields, app.FieldAuthVerificationTemplID)
 	}
 	if m.auth_email_verify != nil {
-		fields = append(fields, appsetting.FieldAuthEmailVerify)
+		fields = append(fields, app.FieldAuthEmailVerify)
 	}
 	return fields
 }
@@ -2078,45 +2045,41 @@ func (m *AppSettingMutation) Fields() []string {
 // Field returns the value of a field with the given name. The second boolean
 // return value indicates that this field was not set, or was not defined in the
 // schema.
-func (m *AppSettingMutation) Field(name string) (ent.Value, bool) {
+func (m *AppMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case appsetting.FieldCreatedAt:
-		return m.CreatedAt()
-	case appsetting.FieldUpdatedAt:
-		return m.UpdatedAt()
-	case appsetting.FieldAppName:
-		return m.AppName()
-	case appsetting.FieldCopyright:
+	case app.FieldName:
+		return m.Name()
+	case app.FieldCopyright:
 		return m.Copyright()
-	case appsetting.FieldEmail:
+	case app.FieldEmail:
 		return m.Email()
-	case appsetting.FieldAddress:
+	case app.FieldAddress:
 		return m.Address()
-	case appsetting.FieldSocialTw:
+	case app.FieldSocialTw:
 		return m.SocialTw()
-	case appsetting.FieldSocialFb:
+	case app.FieldSocialFb:
 		return m.SocialFb()
-	case appsetting.FieldSocialIn:
+	case app.FieldSocialIn:
 		return m.SocialIn()
-	case appsetting.FieldLogoURL:
+	case app.FieldLogoURL:
 		return m.LogoURL()
-	case appsetting.FieldSiteURL:
+	case app.FieldSiteURL:
 		return m.SiteURL()
-	case appsetting.FieldDefaultMailConnID:
+	case app.FieldDefaultMailConnID:
 		return m.DefaultMailConnID()
-	case appsetting.FieldMailLayoutTemplID:
+	case app.FieldMailLayoutTemplID:
 		return m.MailLayoutTemplID()
-	case appsetting.FieldWsapceInviteTemplID:
+	case app.FieldWsapceInviteTemplID:
 		return m.WsapceInviteTemplID()
-	case appsetting.FieldWsapceSuccessTemplID:
+	case app.FieldWsapceSuccessTemplID:
 		return m.WsapceSuccessTemplID()
-	case appsetting.FieldAuthFpTemplID:
+	case app.FieldAuthFpTemplID:
 		return m.AuthFpTemplID()
-	case appsetting.FieldAuthWelcomeEmailTemplID:
+	case app.FieldAuthWelcomeEmailTemplID:
 		return m.AuthWelcomeEmailTemplID()
-	case appsetting.FieldAuthVerificationTemplID:
+	case app.FieldAuthVerificationTemplID:
 		return m.AuthVerificationTemplID()
-	case appsetting.FieldAuthEmailVerify:
+	case app.FieldAuthEmailVerify:
 		return m.AuthEmailVerify()
 	}
 	return nil, false
@@ -2125,182 +2088,164 @@ func (m *AppSettingMutation) Field(name string) (ent.Value, bool) {
 // OldField returns the old value of the field from the database. An error is
 // returned if the mutation operation is not UpdateOne, or the query to the
 // database failed.
-func (m *AppSettingMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+func (m *AppMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case appsetting.FieldCreatedAt:
-		return m.OldCreatedAt(ctx)
-	case appsetting.FieldUpdatedAt:
-		return m.OldUpdatedAt(ctx)
-	case appsetting.FieldAppName:
-		return m.OldAppName(ctx)
-	case appsetting.FieldCopyright:
+	case app.FieldName:
+		return m.OldName(ctx)
+	case app.FieldCopyright:
 		return m.OldCopyright(ctx)
-	case appsetting.FieldEmail:
+	case app.FieldEmail:
 		return m.OldEmail(ctx)
-	case appsetting.FieldAddress:
+	case app.FieldAddress:
 		return m.OldAddress(ctx)
-	case appsetting.FieldSocialTw:
+	case app.FieldSocialTw:
 		return m.OldSocialTw(ctx)
-	case appsetting.FieldSocialFb:
+	case app.FieldSocialFb:
 		return m.OldSocialFb(ctx)
-	case appsetting.FieldSocialIn:
+	case app.FieldSocialIn:
 		return m.OldSocialIn(ctx)
-	case appsetting.FieldLogoURL:
+	case app.FieldLogoURL:
 		return m.OldLogoURL(ctx)
-	case appsetting.FieldSiteURL:
+	case app.FieldSiteURL:
 		return m.OldSiteURL(ctx)
-	case appsetting.FieldDefaultMailConnID:
+	case app.FieldDefaultMailConnID:
 		return m.OldDefaultMailConnID(ctx)
-	case appsetting.FieldMailLayoutTemplID:
+	case app.FieldMailLayoutTemplID:
 		return m.OldMailLayoutTemplID(ctx)
-	case appsetting.FieldWsapceInviteTemplID:
+	case app.FieldWsapceInviteTemplID:
 		return m.OldWsapceInviteTemplID(ctx)
-	case appsetting.FieldWsapceSuccessTemplID:
+	case app.FieldWsapceSuccessTemplID:
 		return m.OldWsapceSuccessTemplID(ctx)
-	case appsetting.FieldAuthFpTemplID:
+	case app.FieldAuthFpTemplID:
 		return m.OldAuthFpTemplID(ctx)
-	case appsetting.FieldAuthWelcomeEmailTemplID:
+	case app.FieldAuthWelcomeEmailTemplID:
 		return m.OldAuthWelcomeEmailTemplID(ctx)
-	case appsetting.FieldAuthVerificationTemplID:
+	case app.FieldAuthVerificationTemplID:
 		return m.OldAuthVerificationTemplID(ctx)
-	case appsetting.FieldAuthEmailVerify:
+	case app.FieldAuthEmailVerify:
 		return m.OldAuthEmailVerify(ctx)
 	}
-	return nil, fmt.Errorf("unknown AppSetting field %s", name)
+	return nil, fmt.Errorf("unknown App field %s", name)
 }
 
 // SetField sets the value of a field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *AppSettingMutation) SetField(name string, value ent.Value) error {
+func (m *AppMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case appsetting.FieldCreatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreatedAt(v)
-		return nil
-	case appsetting.FieldUpdatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdatedAt(v)
-		return nil
-	case appsetting.FieldAppName:
+	case app.FieldName:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetAppName(v)
+		m.SetName(v)
 		return nil
-	case appsetting.FieldCopyright:
+	case app.FieldCopyright:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCopyright(v)
 		return nil
-	case appsetting.FieldEmail:
+	case app.FieldEmail:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetEmail(v)
 		return nil
-	case appsetting.FieldAddress:
+	case app.FieldAddress:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAddress(v)
 		return nil
-	case appsetting.FieldSocialTw:
+	case app.FieldSocialTw:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSocialTw(v)
 		return nil
-	case appsetting.FieldSocialFb:
+	case app.FieldSocialFb:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSocialFb(v)
 		return nil
-	case appsetting.FieldSocialIn:
+	case app.FieldSocialIn:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSocialIn(v)
 		return nil
-	case appsetting.FieldLogoURL:
+	case app.FieldLogoURL:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetLogoURL(v)
 		return nil
-	case appsetting.FieldSiteURL:
+	case app.FieldSiteURL:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSiteURL(v)
 		return nil
-	case appsetting.FieldDefaultMailConnID:
+	case app.FieldDefaultMailConnID:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetDefaultMailConnID(v)
 		return nil
-	case appsetting.FieldMailLayoutTemplID:
+	case app.FieldMailLayoutTemplID:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetMailLayoutTemplID(v)
 		return nil
-	case appsetting.FieldWsapceInviteTemplID:
+	case app.FieldWsapceInviteTemplID:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetWsapceInviteTemplID(v)
 		return nil
-	case appsetting.FieldWsapceSuccessTemplID:
+	case app.FieldWsapceSuccessTemplID:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetWsapceSuccessTemplID(v)
 		return nil
-	case appsetting.FieldAuthFpTemplID:
+	case app.FieldAuthFpTemplID:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAuthFpTemplID(v)
 		return nil
-	case appsetting.FieldAuthWelcomeEmailTemplID:
+	case app.FieldAuthWelcomeEmailTemplID:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAuthWelcomeEmailTemplID(v)
 		return nil
-	case appsetting.FieldAuthVerificationTemplID:
+	case app.FieldAuthVerificationTemplID:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAuthVerificationTemplID(v)
 		return nil
-	case appsetting.FieldAuthEmailVerify:
+	case app.FieldAuthEmailVerify:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
@@ -2308,278 +2253,260 @@ func (m *AppSettingMutation) SetField(name string, value ent.Value) error {
 		m.SetAuthEmailVerify(v)
 		return nil
 	}
-	return fmt.Errorf("unknown AppSetting field %s", name)
+	return fmt.Errorf("unknown App field %s", name)
 }
 
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
-func (m *AppSettingMutation) AddedFields() []string {
+func (m *AppMutation) AddedFields() []string {
 	return nil
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
-func (m *AppSettingMutation) AddedField(name string) (ent.Value, bool) {
+func (m *AppMutation) AddedField(name string) (ent.Value, bool) {
 	return nil, false
 }
 
 // AddField adds the value to the field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *AppSettingMutation) AddField(name string, value ent.Value) error {
+func (m *AppMutation) AddField(name string, value ent.Value) error {
 	switch name {
 	}
-	return fmt.Errorf("unknown AppSetting numeric field %s", name)
+	return fmt.Errorf("unknown App numeric field %s", name)
 }
 
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
-func (m *AppSettingMutation) ClearedFields() []string {
+func (m *AppMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(appsetting.FieldCreatedAt) {
-		fields = append(fields, appsetting.FieldCreatedAt)
+	if m.FieldCleared(app.FieldName) {
+		fields = append(fields, app.FieldName)
 	}
-	if m.FieldCleared(appsetting.FieldUpdatedAt) {
-		fields = append(fields, appsetting.FieldUpdatedAt)
+	if m.FieldCleared(app.FieldCopyright) {
+		fields = append(fields, app.FieldCopyright)
 	}
-	if m.FieldCleared(appsetting.FieldAppName) {
-		fields = append(fields, appsetting.FieldAppName)
+	if m.FieldCleared(app.FieldEmail) {
+		fields = append(fields, app.FieldEmail)
 	}
-	if m.FieldCleared(appsetting.FieldCopyright) {
-		fields = append(fields, appsetting.FieldCopyright)
+	if m.FieldCleared(app.FieldAddress) {
+		fields = append(fields, app.FieldAddress)
 	}
-	if m.FieldCleared(appsetting.FieldEmail) {
-		fields = append(fields, appsetting.FieldEmail)
+	if m.FieldCleared(app.FieldSocialTw) {
+		fields = append(fields, app.FieldSocialTw)
 	}
-	if m.FieldCleared(appsetting.FieldAddress) {
-		fields = append(fields, appsetting.FieldAddress)
+	if m.FieldCleared(app.FieldSocialFb) {
+		fields = append(fields, app.FieldSocialFb)
 	}
-	if m.FieldCleared(appsetting.FieldSocialTw) {
-		fields = append(fields, appsetting.FieldSocialTw)
+	if m.FieldCleared(app.FieldSocialIn) {
+		fields = append(fields, app.FieldSocialIn)
 	}
-	if m.FieldCleared(appsetting.FieldSocialFb) {
-		fields = append(fields, appsetting.FieldSocialFb)
+	if m.FieldCleared(app.FieldLogoURL) {
+		fields = append(fields, app.FieldLogoURL)
 	}
-	if m.FieldCleared(appsetting.FieldSocialIn) {
-		fields = append(fields, appsetting.FieldSocialIn)
+	if m.FieldCleared(app.FieldSiteURL) {
+		fields = append(fields, app.FieldSiteURL)
 	}
-	if m.FieldCleared(appsetting.FieldLogoURL) {
-		fields = append(fields, appsetting.FieldLogoURL)
+	if m.FieldCleared(app.FieldDefaultMailConnID) {
+		fields = append(fields, app.FieldDefaultMailConnID)
 	}
-	if m.FieldCleared(appsetting.FieldSiteURL) {
-		fields = append(fields, appsetting.FieldSiteURL)
+	if m.FieldCleared(app.FieldMailLayoutTemplID) {
+		fields = append(fields, app.FieldMailLayoutTemplID)
 	}
-	if m.FieldCleared(appsetting.FieldDefaultMailConnID) {
-		fields = append(fields, appsetting.FieldDefaultMailConnID)
+	if m.FieldCleared(app.FieldWsapceInviteTemplID) {
+		fields = append(fields, app.FieldWsapceInviteTemplID)
 	}
-	if m.FieldCleared(appsetting.FieldMailLayoutTemplID) {
-		fields = append(fields, appsetting.FieldMailLayoutTemplID)
+	if m.FieldCleared(app.FieldWsapceSuccessTemplID) {
+		fields = append(fields, app.FieldWsapceSuccessTemplID)
 	}
-	if m.FieldCleared(appsetting.FieldWsapceInviteTemplID) {
-		fields = append(fields, appsetting.FieldWsapceInviteTemplID)
+	if m.FieldCleared(app.FieldAuthFpTemplID) {
+		fields = append(fields, app.FieldAuthFpTemplID)
 	}
-	if m.FieldCleared(appsetting.FieldWsapceSuccessTemplID) {
-		fields = append(fields, appsetting.FieldWsapceSuccessTemplID)
+	if m.FieldCleared(app.FieldAuthWelcomeEmailTemplID) {
+		fields = append(fields, app.FieldAuthWelcomeEmailTemplID)
 	}
-	if m.FieldCleared(appsetting.FieldAuthFpTemplID) {
-		fields = append(fields, appsetting.FieldAuthFpTemplID)
+	if m.FieldCleared(app.FieldAuthVerificationTemplID) {
+		fields = append(fields, app.FieldAuthVerificationTemplID)
 	}
-	if m.FieldCleared(appsetting.FieldAuthWelcomeEmailTemplID) {
-		fields = append(fields, appsetting.FieldAuthWelcomeEmailTemplID)
-	}
-	if m.FieldCleared(appsetting.FieldAuthVerificationTemplID) {
-		fields = append(fields, appsetting.FieldAuthVerificationTemplID)
-	}
-	if m.FieldCleared(appsetting.FieldAuthEmailVerify) {
-		fields = append(fields, appsetting.FieldAuthEmailVerify)
+	if m.FieldCleared(app.FieldAuthEmailVerify) {
+		fields = append(fields, app.FieldAuthEmailVerify)
 	}
 	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
 // cleared in this mutation.
-func (m *AppSettingMutation) FieldCleared(name string) bool {
+func (m *AppMutation) FieldCleared(name string) bool {
 	_, ok := m.clearedFields[name]
 	return ok
 }
 
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
-func (m *AppSettingMutation) ClearField(name string) error {
+func (m *AppMutation) ClearField(name string) error {
 	switch name {
-	case appsetting.FieldCreatedAt:
-		m.ClearCreatedAt()
+	case app.FieldName:
+		m.ClearName()
 		return nil
-	case appsetting.FieldUpdatedAt:
-		m.ClearUpdatedAt()
-		return nil
-	case appsetting.FieldAppName:
-		m.ClearAppName()
-		return nil
-	case appsetting.FieldCopyright:
+	case app.FieldCopyright:
 		m.ClearCopyright()
 		return nil
-	case appsetting.FieldEmail:
+	case app.FieldEmail:
 		m.ClearEmail()
 		return nil
-	case appsetting.FieldAddress:
+	case app.FieldAddress:
 		m.ClearAddress()
 		return nil
-	case appsetting.FieldSocialTw:
+	case app.FieldSocialTw:
 		m.ClearSocialTw()
 		return nil
-	case appsetting.FieldSocialFb:
+	case app.FieldSocialFb:
 		m.ClearSocialFb()
 		return nil
-	case appsetting.FieldSocialIn:
+	case app.FieldSocialIn:
 		m.ClearSocialIn()
 		return nil
-	case appsetting.FieldLogoURL:
+	case app.FieldLogoURL:
 		m.ClearLogoURL()
 		return nil
-	case appsetting.FieldSiteURL:
+	case app.FieldSiteURL:
 		m.ClearSiteURL()
 		return nil
-	case appsetting.FieldDefaultMailConnID:
+	case app.FieldDefaultMailConnID:
 		m.ClearDefaultMailConnID()
 		return nil
-	case appsetting.FieldMailLayoutTemplID:
+	case app.FieldMailLayoutTemplID:
 		m.ClearMailLayoutTemplID()
 		return nil
-	case appsetting.FieldWsapceInviteTemplID:
+	case app.FieldWsapceInviteTemplID:
 		m.ClearWsapceInviteTemplID()
 		return nil
-	case appsetting.FieldWsapceSuccessTemplID:
+	case app.FieldWsapceSuccessTemplID:
 		m.ClearWsapceSuccessTemplID()
 		return nil
-	case appsetting.FieldAuthFpTemplID:
+	case app.FieldAuthFpTemplID:
 		m.ClearAuthFpTemplID()
 		return nil
-	case appsetting.FieldAuthWelcomeEmailTemplID:
+	case app.FieldAuthWelcomeEmailTemplID:
 		m.ClearAuthWelcomeEmailTemplID()
 		return nil
-	case appsetting.FieldAuthVerificationTemplID:
+	case app.FieldAuthVerificationTemplID:
 		m.ClearAuthVerificationTemplID()
 		return nil
-	case appsetting.FieldAuthEmailVerify:
+	case app.FieldAuthEmailVerify:
 		m.ClearAuthEmailVerify()
 		return nil
 	}
-	return fmt.Errorf("unknown AppSetting nullable field %s", name)
+	return fmt.Errorf("unknown App nullable field %s", name)
 }
 
 // ResetField resets all changes in the mutation for the field with the given name.
 // It returns an error if the field is not defined in the schema.
-func (m *AppSettingMutation) ResetField(name string) error {
+func (m *AppMutation) ResetField(name string) error {
 	switch name {
-	case appsetting.FieldCreatedAt:
-		m.ResetCreatedAt()
+	case app.FieldName:
+		m.ResetName()
 		return nil
-	case appsetting.FieldUpdatedAt:
-		m.ResetUpdatedAt()
-		return nil
-	case appsetting.FieldAppName:
-		m.ResetAppName()
-		return nil
-	case appsetting.FieldCopyright:
+	case app.FieldCopyright:
 		m.ResetCopyright()
 		return nil
-	case appsetting.FieldEmail:
+	case app.FieldEmail:
 		m.ResetEmail()
 		return nil
-	case appsetting.FieldAddress:
+	case app.FieldAddress:
 		m.ResetAddress()
 		return nil
-	case appsetting.FieldSocialTw:
+	case app.FieldSocialTw:
 		m.ResetSocialTw()
 		return nil
-	case appsetting.FieldSocialFb:
+	case app.FieldSocialFb:
 		m.ResetSocialFb()
 		return nil
-	case appsetting.FieldSocialIn:
+	case app.FieldSocialIn:
 		m.ResetSocialIn()
 		return nil
-	case appsetting.FieldLogoURL:
+	case app.FieldLogoURL:
 		m.ResetLogoURL()
 		return nil
-	case appsetting.FieldSiteURL:
+	case app.FieldSiteURL:
 		m.ResetSiteURL()
 		return nil
-	case appsetting.FieldDefaultMailConnID:
+	case app.FieldDefaultMailConnID:
 		m.ResetDefaultMailConnID()
 		return nil
-	case appsetting.FieldMailLayoutTemplID:
+	case app.FieldMailLayoutTemplID:
 		m.ResetMailLayoutTemplID()
 		return nil
-	case appsetting.FieldWsapceInviteTemplID:
+	case app.FieldWsapceInviteTemplID:
 		m.ResetWsapceInviteTemplID()
 		return nil
-	case appsetting.FieldWsapceSuccessTemplID:
+	case app.FieldWsapceSuccessTemplID:
 		m.ResetWsapceSuccessTemplID()
 		return nil
-	case appsetting.FieldAuthFpTemplID:
+	case app.FieldAuthFpTemplID:
 		m.ResetAuthFpTemplID()
 		return nil
-	case appsetting.FieldAuthWelcomeEmailTemplID:
+	case app.FieldAuthWelcomeEmailTemplID:
 		m.ResetAuthWelcomeEmailTemplID()
 		return nil
-	case appsetting.FieldAuthVerificationTemplID:
+	case app.FieldAuthVerificationTemplID:
 		m.ResetAuthVerificationTemplID()
 		return nil
-	case appsetting.FieldAuthEmailVerify:
+	case app.FieldAuthEmailVerify:
 		m.ResetAuthEmailVerify()
 		return nil
 	}
-	return fmt.Errorf("unknown AppSetting field %s", name)
+	return fmt.Errorf("unknown App field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
-func (m *AppSettingMutation) AddedEdges() []string {
+func (m *AppMutation) AddedEdges() []string {
 	edges := make([]string, 0, 0)
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
-func (m *AppSettingMutation) AddedIDs(name string) []ent.Value {
+func (m *AppMutation) AddedIDs(name string) []ent.Value {
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
-func (m *AppSettingMutation) RemovedEdges() []string {
+func (m *AppMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 0)
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
-func (m *AppSettingMutation) RemovedIDs(name string) []ent.Value {
+func (m *AppMutation) RemovedIDs(name string) []ent.Value {
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *AppSettingMutation) ClearedEdges() []string {
+func (m *AppMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 0)
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
-func (m *AppSettingMutation) EdgeCleared(name string) bool {
+func (m *AppMutation) EdgeCleared(name string) bool {
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
-func (m *AppSettingMutation) ClearEdge(name string) error {
-	return fmt.Errorf("unknown AppSetting unique edge %s", name)
+func (m *AppMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown App unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
-func (m *AppSettingMutation) ResetEdge(name string) error {
-	return fmt.Errorf("unknown AppSetting edge %s", name)
+func (m *AppMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown App edge %s", name)
 }
 
 // KacheMutation represents an operation that mutates the Kache nodes in the graph.
@@ -3608,6 +3535,7 @@ type MailConnMutation struct {
 	id            *string
 	created_at    *time.Time
 	updated_at    *time.Time
+	app_id        *string
 	name          *string
 	host          *string
 	port          *int
@@ -3825,6 +3753,55 @@ func (m *MailConnMutation) UpdatedAtCleared() bool {
 func (m *MailConnMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 	delete(m.clearedFields, mailconn.FieldUpdatedAt)
+}
+
+// SetAppID sets the "app_id" field.
+func (m *MailConnMutation) SetAppID(s string) {
+	m.app_id = &s
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *MailConnMutation) AppID() (r string, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the MailConn entity.
+// If the MailConn object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MailConnMutation) OldAppID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *MailConnMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[mailconn.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *MailConnMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[mailconn.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *MailConnMutation) ResetAppID() {
+	m.app_id = nil
+	delete(m.clearedFields, mailconn.FieldAppID)
 }
 
 // SetName sets the "name" field.
@@ -4344,12 +4321,15 @@ func (m *MailConnMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MailConnMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, mailconn.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, mailconn.FieldUpdatedAt)
+	}
+	if m.app_id != nil {
+		fields = append(fields, mailconn.FieldAppID)
 	}
 	if m.name != nil {
 		fields = append(fields, mailconn.FieldName)
@@ -4390,6 +4370,8 @@ func (m *MailConnMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case mailconn.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case mailconn.FieldAppID:
+		return m.AppID()
 	case mailconn.FieldName:
 		return m.Name()
 	case mailconn.FieldHost:
@@ -4421,6 +4403,8 @@ func (m *MailConnMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldCreatedAt(ctx)
 	case mailconn.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case mailconn.FieldAppID:
+		return m.OldAppID(ctx)
 	case mailconn.FieldName:
 		return m.OldName(ctx)
 	case mailconn.FieldHost:
@@ -4461,6 +4445,13 @@ func (m *MailConnMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case mailconn.FieldAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
 		return nil
 	case mailconn.FieldName:
 		v, ok := value.(string)
@@ -4588,6 +4579,9 @@ func (m *MailConnMutation) ClearedFields() []string {
 	if m.FieldCleared(mailconn.FieldUpdatedAt) {
 		fields = append(fields, mailconn.FieldUpdatedAt)
 	}
+	if m.FieldCleared(mailconn.FieldAppID) {
+		fields = append(fields, mailconn.FieldAppID)
+	}
 	if m.FieldCleared(mailconn.FieldName) {
 		fields = append(fields, mailconn.FieldName)
 	}
@@ -4635,6 +4629,9 @@ func (m *MailConnMutation) ClearField(name string) error {
 	case mailconn.FieldUpdatedAt:
 		m.ClearUpdatedAt()
 		return nil
+	case mailconn.FieldAppID:
+		m.ClearAppID()
+		return nil
 	case mailconn.FieldName:
 		m.ClearName()
 		return nil
@@ -4675,6 +4672,9 @@ func (m *MailConnMutation) ResetField(name string) error {
 		return nil
 	case mailconn.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case mailconn.FieldAppID:
+		m.ResetAppID()
 		return nil
 	case mailconn.FieldName:
 		m.ResetName()
@@ -4763,6 +4763,7 @@ type MediaMutation struct {
 	id                *string
 	created_at        *time.Time
 	updated_at        *time.Time
+	app_id            *string
 	disk              *string
 	directory         *string
 	name              *string
@@ -4987,6 +4988,55 @@ func (m *MediaMutation) UpdatedAtCleared() bool {
 func (m *MediaMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 	delete(m.clearedFields, media.FieldUpdatedAt)
+}
+
+// SetAppID sets the "app_id" field.
+func (m *MediaMutation) SetAppID(s string) {
+	m.app_id = &s
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *MediaMutation) AppID() (r string, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the Media entity.
+// If the Media object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *MediaMutation) OldAppID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *MediaMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[media.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *MediaMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[media.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *MediaMutation) ResetAppID() {
+	m.app_id = nil
+	delete(m.clearedFields, media.FieldAppID)
 }
 
 // SetDisk sets the "disk" field.
@@ -5864,12 +5914,15 @@ func (m *MediaMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *MediaMutation) Fields() []string {
-	fields := make([]string, 0, 19)
+	fields := make([]string, 0, 20)
 	if m.created_at != nil {
 		fields = append(fields, media.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, media.FieldUpdatedAt)
+	}
+	if m.app_id != nil {
+		fields = append(fields, media.FieldAppID)
 	}
 	if m.disk != nil {
 		fields = append(fields, media.FieldDisk)
@@ -5934,6 +5987,8 @@ func (m *MediaMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case media.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case media.FieldAppID:
+		return m.AppID()
 	case media.FieldDisk:
 		return m.Disk()
 	case media.FieldDirectory:
@@ -5981,6 +6036,8 @@ func (m *MediaMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldCreatedAt(ctx)
 	case media.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case media.FieldAppID:
+		return m.OldAppID(ctx)
 	case media.FieldDisk:
 		return m.OldDisk(ctx)
 	case media.FieldDirectory:
@@ -6037,6 +6094,13 @@ func (m *MediaMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case media.FieldAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
 		return nil
 	case media.FieldDisk:
 		v, ok := value.(string)
@@ -6208,6 +6272,9 @@ func (m *MediaMutation) ClearedFields() []string {
 	if m.FieldCleared(media.FieldUpdatedAt) {
 		fields = append(fields, media.FieldUpdatedAt)
 	}
+	if m.FieldCleared(media.FieldAppID) {
+		fields = append(fields, media.FieldAppID)
+	}
 	if m.FieldCleared(media.FieldDisk) {
 		fields = append(fields, media.FieldDisk)
 	}
@@ -6276,6 +6343,9 @@ func (m *MediaMutation) ClearField(name string) error {
 	case media.FieldUpdatedAt:
 		m.ClearUpdatedAt()
 		return nil
+	case media.FieldAppID:
+		m.ClearAppID()
+		return nil
 	case media.FieldDisk:
 		m.ClearDisk()
 		return nil
@@ -6337,6 +6407,9 @@ func (m *MediaMutation) ResetField(name string) error {
 		return nil
 	case media.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case media.FieldAppID:
+		m.ResetAppID()
 		return nil
 	case media.FieldDisk:
 		m.ResetDisk()
@@ -6449,6 +6522,7 @@ type OauthConnectionMutation struct {
 	id             *string
 	created_at     *time.Time
 	updated_at     *time.Time
+	app_id         *string
 	name           *string
 	provider       *string
 	client_id      *string
@@ -6664,6 +6738,55 @@ func (m *OauthConnectionMutation) UpdatedAtCleared() bool {
 func (m *OauthConnectionMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 	delete(m.clearedFields, oauthconnection.FieldUpdatedAt)
+}
+
+// SetAppID sets the "app_id" field.
+func (m *OauthConnectionMutation) SetAppID(s string) {
+	m.app_id = &s
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *OauthConnectionMutation) AppID() (r string, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the OauthConnection entity.
+// If the OauthConnection object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *OauthConnectionMutation) OldAppID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *OauthConnectionMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[oauthconnection.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *OauthConnectionMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[oauthconnection.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *OauthConnectionMutation) ResetAppID() {
+	m.app_id = nil
+	delete(m.clearedFields, oauthconnection.FieldAppID)
 }
 
 // SetName sets the "name" field.
@@ -7141,12 +7264,15 @@ func (m *OauthConnectionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *OauthConnectionMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, oauthconnection.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, oauthconnection.FieldUpdatedAt)
+	}
+	if m.app_id != nil {
+		fields = append(fields, oauthconnection.FieldAppID)
 	}
 	if m.name != nil {
 		fields = append(fields, oauthconnection.FieldName)
@@ -7187,6 +7313,8 @@ func (m *OauthConnectionMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case oauthconnection.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case oauthconnection.FieldAppID:
+		return m.AppID()
 	case oauthconnection.FieldName:
 		return m.Name()
 	case oauthconnection.FieldProvider:
@@ -7218,6 +7346,8 @@ func (m *OauthConnectionMutation) OldField(ctx context.Context, name string) (en
 		return m.OldCreatedAt(ctx)
 	case oauthconnection.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case oauthconnection.FieldAppID:
+		return m.OldAppID(ctx)
 	case oauthconnection.FieldName:
 		return m.OldName(ctx)
 	case oauthconnection.FieldProvider:
@@ -7258,6 +7388,13 @@ func (m *OauthConnectionMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case oauthconnection.FieldAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
 		return nil
 	case oauthconnection.FieldName:
 		v, ok := value.(string)
@@ -7358,6 +7495,9 @@ func (m *OauthConnectionMutation) ClearedFields() []string {
 	if m.FieldCleared(oauthconnection.FieldUpdatedAt) {
 		fields = append(fields, oauthconnection.FieldUpdatedAt)
 	}
+	if m.FieldCleared(oauthconnection.FieldAppID) {
+		fields = append(fields, oauthconnection.FieldAppID)
+	}
 	if m.FieldCleared(oauthconnection.FieldName) {
 		fields = append(fields, oauthconnection.FieldName)
 	}
@@ -7405,6 +7545,9 @@ func (m *OauthConnectionMutation) ClearField(name string) error {
 	case oauthconnection.FieldUpdatedAt:
 		m.ClearUpdatedAt()
 		return nil
+	case oauthconnection.FieldAppID:
+		m.ClearAppID()
+		return nil
 	case oauthconnection.FieldName:
 		m.ClearName()
 		return nil
@@ -7445,6 +7588,9 @@ func (m *OauthConnectionMutation) ResetField(name string) error {
 		return nil
 	case oauthconnection.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case oauthconnection.FieldAppID:
+		m.ResetAppID()
 		return nil
 	case oauthconnection.FieldName:
 		m.ResetName()
@@ -7533,6 +7679,7 @@ type PlanMutation struct {
 	id            *string
 	created_at    *time.Time
 	updated_at    *time.Time
+	app_id        *string
 	name          *string
 	excerpt       *string
 	description   *string
@@ -7743,6 +7890,55 @@ func (m *PlanMutation) UpdatedAtCleared() bool {
 func (m *PlanMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 	delete(m.clearedFields, plan.FieldUpdatedAt)
+}
+
+// SetAppID sets the "app_id" field.
+func (m *PlanMutation) SetAppID(s string) {
+	m.app_id = &s
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *PlanMutation) AppID() (r string, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the Plan entity.
+// If the Plan object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PlanMutation) OldAppID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *PlanMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[plan.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *PlanMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[plan.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *PlanMutation) ResetAppID() {
+	m.app_id = nil
+	delete(m.clearedFields, plan.FieldAppID)
 }
 
 // SetName sets the "name" field.
@@ -7975,12 +8171,15 @@ func (m *PlanMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PlanMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.created_at != nil {
 		fields = append(fields, plan.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, plan.FieldUpdatedAt)
+	}
+	if m.app_id != nil {
+		fields = append(fields, plan.FieldAppID)
 	}
 	if m.name != nil {
 		fields = append(fields, plan.FieldName)
@@ -8006,6 +8205,8 @@ func (m *PlanMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case plan.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case plan.FieldAppID:
+		return m.AppID()
 	case plan.FieldName:
 		return m.Name()
 	case plan.FieldExcerpt:
@@ -8027,6 +8228,8 @@ func (m *PlanMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldCreatedAt(ctx)
 	case plan.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case plan.FieldAppID:
+		return m.OldAppID(ctx)
 	case plan.FieldName:
 		return m.OldName(ctx)
 	case plan.FieldExcerpt:
@@ -8057,6 +8260,13 @@ func (m *PlanMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case plan.FieldAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
 		return nil
 	case plan.FieldName:
 		v, ok := value.(string)
@@ -8122,6 +8332,9 @@ func (m *PlanMutation) ClearedFields() []string {
 	if m.FieldCleared(plan.FieldUpdatedAt) {
 		fields = append(fields, plan.FieldUpdatedAt)
 	}
+	if m.FieldCleared(plan.FieldAppID) {
+		fields = append(fields, plan.FieldAppID)
+	}
 	if m.FieldCleared(plan.FieldName) {
 		fields = append(fields, plan.FieldName)
 	}
@@ -8154,6 +8367,9 @@ func (m *PlanMutation) ClearField(name string) error {
 	case plan.FieldUpdatedAt:
 		m.ClearUpdatedAt()
 		return nil
+	case plan.FieldAppID:
+		m.ClearAppID()
+		return nil
 	case plan.FieldName:
 		m.ClearName()
 		return nil
@@ -8179,6 +8395,9 @@ func (m *PlanMutation) ResetField(name string) error {
 		return nil
 	case plan.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case plan.FieldAppID:
+		m.ResetAppID()
 		return nil
 	case plan.FieldName:
 		m.ResetName()
@@ -8252,6 +8471,7 @@ type PostMutation struct {
 	id                      *string
 	created_at              *time.Time
 	updated_at              *time.Time
+	app_id                  *string
 	name                    *string
 	slug                    *string
 	headline                *string
@@ -8473,6 +8693,55 @@ func (m *PostMutation) UpdatedAtCleared() bool {
 func (m *PostMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 	delete(m.clearedFields, post.FieldUpdatedAt)
+}
+
+// SetAppID sets the "app_id" field.
+func (m *PostMutation) SetAppID(s string) {
+	m.app_id = &s
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *PostMutation) AppID() (r string, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the Post entity.
+// If the Post object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostMutation) OldAppID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *PostMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[post.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *PostMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[post.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *PostMutation) ResetAppID() {
+	m.app_id = nil
+	delete(m.clearedFields, post.FieldAppID)
 }
 
 // SetName sets the "name" field.
@@ -9178,12 +9447,15 @@ func (m *PostMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PostMutation) Fields() []string {
-	fields := make([]string, 0, 14)
+	fields := make([]string, 0, 15)
 	if m.created_at != nil {
 		fields = append(fields, post.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, post.FieldUpdatedAt)
+	}
+	if m.app_id != nil {
+		fields = append(fields, post.FieldAppID)
 	}
 	if m.name != nil {
 		fields = append(fields, post.FieldName)
@@ -9233,6 +9505,8 @@ func (m *PostMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case post.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case post.FieldAppID:
+		return m.AppID()
 	case post.FieldName:
 		return m.Name()
 	case post.FieldSlug:
@@ -9270,6 +9544,8 @@ func (m *PostMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldCreatedAt(ctx)
 	case post.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case post.FieldAppID:
+		return m.OldAppID(ctx)
 	case post.FieldName:
 		return m.OldName(ctx)
 	case post.FieldSlug:
@@ -9316,6 +9592,13 @@ func (m *PostMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case post.FieldAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
 		return nil
 	case post.FieldName:
 		v, ok := value.(string)
@@ -9437,6 +9720,9 @@ func (m *PostMutation) ClearedFields() []string {
 	if m.FieldCleared(post.FieldUpdatedAt) {
 		fields = append(fields, post.FieldUpdatedAt)
 	}
+	if m.FieldCleared(post.FieldAppID) {
+		fields = append(fields, post.FieldAppID)
+	}
 	if m.FieldCleared(post.FieldName) {
 		fields = append(fields, post.FieldName)
 	}
@@ -9493,6 +9779,9 @@ func (m *PostMutation) ClearField(name string) error {
 	case post.FieldUpdatedAt:
 		m.ClearUpdatedAt()
 		return nil
+	case post.FieldAppID:
+		m.ClearAppID()
+		return nil
 	case post.FieldName:
 		m.ClearName()
 		return nil
@@ -9542,6 +9831,9 @@ func (m *PostMutation) ResetField(name string) error {
 		return nil
 	case post.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case post.FieldAppID:
+		m.ResetAppID()
 		return nil
 	case post.FieldName:
 		m.ResetName()
@@ -9701,6 +9993,7 @@ type PostCategoryMutation struct {
 	id                 *string
 	created_at         *time.Time
 	updated_at         *time.Time
+	app_id             *string
 	name               *string
 	slug               *string
 	status             *string
@@ -9919,6 +10212,55 @@ func (m *PostCategoryMutation) UpdatedAtCleared() bool {
 func (m *PostCategoryMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 	delete(m.clearedFields, postcategory.FieldUpdatedAt)
+}
+
+// SetAppID sets the "app_id" field.
+func (m *PostCategoryMutation) SetAppID(s string) {
+	m.app_id = &s
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *PostCategoryMutation) AppID() (r string, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the PostCategory entity.
+// If the PostCategory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostCategoryMutation) OldAppID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *PostCategoryMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[postcategory.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *PostCategoryMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[postcategory.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *PostCategoryMutation) ResetAppID() {
+	m.app_id = nil
+	delete(m.clearedFields, postcategory.FieldAppID)
 }
 
 // SetName sets the "name" field.
@@ -10450,12 +10792,15 @@ func (m *PostCategoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PostCategoryMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, postcategory.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, postcategory.FieldUpdatedAt)
+	}
+	if m.app_id != nil {
+		fields = append(fields, postcategory.FieldAppID)
 	}
 	if m.name != nil {
 		fields = append(fields, postcategory.FieldName)
@@ -10496,6 +10841,8 @@ func (m *PostCategoryMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case postcategory.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case postcategory.FieldAppID:
+		return m.AppID()
 	case postcategory.FieldName:
 		return m.Name()
 	case postcategory.FieldSlug:
@@ -10527,6 +10874,8 @@ func (m *PostCategoryMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldCreatedAt(ctx)
 	case postcategory.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case postcategory.FieldAppID:
+		return m.OldAppID(ctx)
 	case postcategory.FieldName:
 		return m.OldName(ctx)
 	case postcategory.FieldSlug:
@@ -10567,6 +10916,13 @@ func (m *PostCategoryMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case postcategory.FieldAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
 		return nil
 	case postcategory.FieldName:
 		v, ok := value.(string)
@@ -10667,6 +11023,9 @@ func (m *PostCategoryMutation) ClearedFields() []string {
 	if m.FieldCleared(postcategory.FieldUpdatedAt) {
 		fields = append(fields, postcategory.FieldUpdatedAt)
 	}
+	if m.FieldCleared(postcategory.FieldAppID) {
+		fields = append(fields, postcategory.FieldAppID)
+	}
 	if m.FieldCleared(postcategory.FieldName) {
 		fields = append(fields, postcategory.FieldName)
 	}
@@ -10714,6 +11073,9 @@ func (m *PostCategoryMutation) ClearField(name string) error {
 	case postcategory.FieldUpdatedAt:
 		m.ClearUpdatedAt()
 		return nil
+	case postcategory.FieldAppID:
+		m.ClearAppID()
+		return nil
 	case postcategory.FieldName:
 		m.ClearName()
 		return nil
@@ -10754,6 +11116,9 @@ func (m *PostCategoryMutation) ResetField(name string) error {
 		return nil
 	case postcategory.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case postcategory.FieldAppID:
+		m.ResetAppID()
 		return nil
 	case postcategory.FieldName:
 		m.ResetName()
@@ -10878,6 +11243,7 @@ type PostStatusMutation struct {
 	id               *string
 	created_at       *time.Time
 	updated_at       *time.Time
+	app_id           *string
 	name             *string
 	slug             *string
 	status           *bool
@@ -11092,6 +11458,55 @@ func (m *PostStatusMutation) UpdatedAtCleared() bool {
 func (m *PostStatusMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 	delete(m.clearedFields, poststatus.FieldUpdatedAt)
+}
+
+// SetAppID sets the "app_id" field.
+func (m *PostStatusMutation) SetAppID(s string) {
+	m.app_id = &s
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *PostStatusMutation) AppID() (r string, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the PostStatus entity.
+// If the PostStatus object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostStatusMutation) OldAppID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *PostStatusMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[poststatus.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *PostStatusMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[poststatus.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *PostStatusMutation) ResetAppID() {
+	m.app_id = nil
+	delete(m.clearedFields, poststatus.FieldAppID)
 }
 
 // SetName sets the "name" field.
@@ -11405,12 +11820,15 @@ func (m *PostStatusMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PostStatusMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.created_at != nil {
 		fields = append(fields, poststatus.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, poststatus.FieldUpdatedAt)
+	}
+	if m.app_id != nil {
+		fields = append(fields, poststatus.FieldAppID)
 	}
 	if m.name != nil {
 		fields = append(fields, poststatus.FieldName)
@@ -11436,6 +11854,8 @@ func (m *PostStatusMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case poststatus.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case poststatus.FieldAppID:
+		return m.AppID()
 	case poststatus.FieldName:
 		return m.Name()
 	case poststatus.FieldSlug:
@@ -11457,6 +11877,8 @@ func (m *PostStatusMutation) OldField(ctx context.Context, name string) (ent.Val
 		return m.OldCreatedAt(ctx)
 	case poststatus.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case poststatus.FieldAppID:
+		return m.OldAppID(ctx)
 	case poststatus.FieldName:
 		return m.OldName(ctx)
 	case poststatus.FieldSlug:
@@ -11487,6 +11909,13 @@ func (m *PostStatusMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case poststatus.FieldAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
 		return nil
 	case poststatus.FieldName:
 		v, ok := value.(string)
@@ -11552,6 +11981,9 @@ func (m *PostStatusMutation) ClearedFields() []string {
 	if m.FieldCleared(poststatus.FieldUpdatedAt) {
 		fields = append(fields, poststatus.FieldUpdatedAt)
 	}
+	if m.FieldCleared(poststatus.FieldAppID) {
+		fields = append(fields, poststatus.FieldAppID)
+	}
 	if m.FieldCleared(poststatus.FieldName) {
 		fields = append(fields, poststatus.FieldName)
 	}
@@ -11584,6 +12016,9 @@ func (m *PostStatusMutation) ClearField(name string) error {
 	case poststatus.FieldUpdatedAt:
 		m.ClearUpdatedAt()
 		return nil
+	case poststatus.FieldAppID:
+		m.ClearAppID()
+		return nil
 	case poststatus.FieldName:
 		m.ClearName()
 		return nil
@@ -11609,6 +12044,9 @@ func (m *PostStatusMutation) ResetField(name string) error {
 		return nil
 	case poststatus.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case poststatus.FieldAppID:
+		m.ResetAppID()
 		return nil
 	case poststatus.FieldName:
 		m.ResetName()
@@ -11736,6 +12174,7 @@ type PostTagMutation struct {
 	id                 *string
 	created_at         *time.Time
 	updated_at         *time.Time
+	app_id             *string
 	name               *string
 	slug               *string
 	status             *string
@@ -11951,6 +12390,55 @@ func (m *PostTagMutation) UpdatedAtCleared() bool {
 func (m *PostTagMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 	delete(m.clearedFields, posttag.FieldUpdatedAt)
+}
+
+// SetAppID sets the "app_id" field.
+func (m *PostTagMutation) SetAppID(s string) {
+	m.app_id = &s
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *PostTagMutation) AppID() (r string, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the PostTag entity.
+// If the PostTag object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostTagMutation) OldAppID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *PostTagMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[posttag.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *PostTagMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[posttag.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *PostTagMutation) ResetAppID() {
+	m.app_id = nil
+	delete(m.clearedFields, posttag.FieldAppID)
 }
 
 // SetName sets the "name" field.
@@ -12428,12 +12916,15 @@ func (m *PostTagMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PostTagMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, posttag.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, posttag.FieldUpdatedAt)
+	}
+	if m.app_id != nil {
+		fields = append(fields, posttag.FieldAppID)
 	}
 	if m.name != nil {
 		fields = append(fields, posttag.FieldName)
@@ -12474,6 +12965,8 @@ func (m *PostTagMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case posttag.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case posttag.FieldAppID:
+		return m.AppID()
 	case posttag.FieldName:
 		return m.Name()
 	case posttag.FieldSlug:
@@ -12505,6 +12998,8 @@ func (m *PostTagMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldCreatedAt(ctx)
 	case posttag.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case posttag.FieldAppID:
+		return m.OldAppID(ctx)
 	case posttag.FieldName:
 		return m.OldName(ctx)
 	case posttag.FieldSlug:
@@ -12545,6 +13040,13 @@ func (m *PostTagMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case posttag.FieldAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
 		return nil
 	case posttag.FieldName:
 		v, ok := value.(string)
@@ -12645,6 +13147,9 @@ func (m *PostTagMutation) ClearedFields() []string {
 	if m.FieldCleared(posttag.FieldUpdatedAt) {
 		fields = append(fields, posttag.FieldUpdatedAt)
 	}
+	if m.FieldCleared(posttag.FieldAppID) {
+		fields = append(fields, posttag.FieldAppID)
+	}
 	if m.FieldCleared(posttag.FieldName) {
 		fields = append(fields, posttag.FieldName)
 	}
@@ -12692,6 +13197,9 @@ func (m *PostTagMutation) ClearField(name string) error {
 	case posttag.FieldUpdatedAt:
 		m.ClearUpdatedAt()
 		return nil
+	case posttag.FieldAppID:
+		m.ClearAppID()
+		return nil
 	case posttag.FieldName:
 		m.ClearName()
 		return nil
@@ -12732,6 +13240,9 @@ func (m *PostTagMutation) ResetField(name string) error {
 		return nil
 	case posttag.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case posttag.FieldAppID:
+		m.ResetAppID()
 		return nil
 	case posttag.FieldName:
 		m.ResetName()
@@ -12820,6 +13331,7 @@ type PostTypeMutation struct {
 	id                   *string
 	created_at           *time.Time
 	updated_at           *time.Time
+	app_id               *string
 	name                 *string
 	slug                 *string
 	status               *string
@@ -13041,6 +13553,55 @@ func (m *PostTypeMutation) UpdatedAtCleared() bool {
 func (m *PostTypeMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 	delete(m.clearedFields, posttype.FieldUpdatedAt)
+}
+
+// SetAppID sets the "app_id" field.
+func (m *PostTypeMutation) SetAppID(s string) {
+	m.app_id = &s
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *PostTypeMutation) AppID() (r string, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the PostType entity.
+// If the PostType object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostTypeMutation) OldAppID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *PostTypeMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[posttype.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *PostTypeMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[posttype.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *PostTypeMutation) ResetAppID() {
+	m.app_id = nil
+	delete(m.clearedFields, posttype.FieldAppID)
 }
 
 // SetName sets the "name" field.
@@ -13626,12 +14187,15 @@ func (m *PostTypeMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PostTypeMutation) Fields() []string {
-	fields := make([]string, 0, 11)
+	fields := make([]string, 0, 12)
 	if m.created_at != nil {
 		fields = append(fields, posttype.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, posttype.FieldUpdatedAt)
+	}
+	if m.app_id != nil {
+		fields = append(fields, posttype.FieldAppID)
 	}
 	if m.name != nil {
 		fields = append(fields, posttype.FieldName)
@@ -13672,6 +14236,8 @@ func (m *PostTypeMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case posttype.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case posttype.FieldAppID:
+		return m.AppID()
 	case posttype.FieldName:
 		return m.Name()
 	case posttype.FieldSlug:
@@ -13703,6 +14269,8 @@ func (m *PostTypeMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldCreatedAt(ctx)
 	case posttype.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case posttype.FieldAppID:
+		return m.OldAppID(ctx)
 	case posttype.FieldName:
 		return m.OldName(ctx)
 	case posttype.FieldSlug:
@@ -13743,6 +14311,13 @@ func (m *PostTypeMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case posttype.FieldAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
 		return nil
 	case posttype.FieldName:
 		v, ok := value.(string)
@@ -13843,6 +14418,9 @@ func (m *PostTypeMutation) ClearedFields() []string {
 	if m.FieldCleared(posttype.FieldUpdatedAt) {
 		fields = append(fields, posttype.FieldUpdatedAt)
 	}
+	if m.FieldCleared(posttype.FieldAppID) {
+		fields = append(fields, posttype.FieldAppID)
+	}
 	if m.FieldCleared(posttype.FieldName) {
 		fields = append(fields, posttype.FieldName)
 	}
@@ -13890,6 +14468,9 @@ func (m *PostTypeMutation) ClearField(name string) error {
 	case posttype.FieldUpdatedAt:
 		m.ClearUpdatedAt()
 		return nil
+	case posttype.FieldAppID:
+		m.ClearAppID()
+		return nil
 	case posttype.FieldName:
 		m.ClearName()
 		return nil
@@ -13930,6 +14511,9 @@ func (m *PostTypeMutation) ResetField(name string) error {
 		return nil
 	case posttype.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case posttype.FieldAppID:
+		m.ResetAppID()
 		return nil
 	case posttype.FieldName:
 		m.ResetName()
@@ -14926,6 +15510,7 @@ type TempMutation struct {
 	id            *string
 	created_at    *time.Time
 	updated_at    *time.Time
+	app_id        *string
 	ip            *string
 	_type         *string
 	body          *jsontype.JSON
@@ -15138,6 +15723,55 @@ func (m *TempMutation) UpdatedAtCleared() bool {
 func (m *TempMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 	delete(m.clearedFields, temp.FieldUpdatedAt)
+}
+
+// SetAppID sets the "app_id" field.
+func (m *TempMutation) SetAppID(s string) {
+	m.app_id = &s
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *TempMutation) AppID() (r string, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the Temp entity.
+// If the Temp object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TempMutation) OldAppID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *TempMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[temp.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *TempMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[temp.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *TempMutation) ResetAppID() {
+	m.app_id = nil
+	delete(m.clearedFields, temp.FieldAppID)
 }
 
 // SetIP sets the "ip" field.
@@ -15402,12 +16036,15 @@ func (m *TempMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TempMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.created_at != nil {
 		fields = append(fields, temp.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, temp.FieldUpdatedAt)
+	}
+	if m.app_id != nil {
+		fields = append(fields, temp.FieldAppID)
 	}
 	if m.ip != nil {
 		fields = append(fields, temp.FieldIP)
@@ -15433,6 +16070,8 @@ func (m *TempMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case temp.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case temp.FieldAppID:
+		return m.AppID()
 	case temp.FieldIP:
 		return m.IP()
 	case temp.FieldType:
@@ -15454,6 +16093,8 @@ func (m *TempMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldCreatedAt(ctx)
 	case temp.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case temp.FieldAppID:
+		return m.OldAppID(ctx)
 	case temp.FieldIP:
 		return m.OldIP(ctx)
 	case temp.FieldType:
@@ -15484,6 +16125,13 @@ func (m *TempMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case temp.FieldAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
 		return nil
 	case temp.FieldIP:
 		v, ok := value.(string)
@@ -15549,6 +16197,9 @@ func (m *TempMutation) ClearedFields() []string {
 	if m.FieldCleared(temp.FieldUpdatedAt) {
 		fields = append(fields, temp.FieldUpdatedAt)
 	}
+	if m.FieldCleared(temp.FieldAppID) {
+		fields = append(fields, temp.FieldAppID)
+	}
 	if m.FieldCleared(temp.FieldIP) {
 		fields = append(fields, temp.FieldIP)
 	}
@@ -15581,6 +16232,9 @@ func (m *TempMutation) ClearField(name string) error {
 	case temp.FieldUpdatedAt:
 		m.ClearUpdatedAt()
 		return nil
+	case temp.FieldAppID:
+		m.ClearAppID()
+		return nil
 	case temp.FieldIP:
 		m.ClearIP()
 		return nil
@@ -15606,6 +16260,9 @@ func (m *TempMutation) ResetField(name string) error {
 		return nil
 	case temp.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case temp.FieldAppID:
+		m.ResetAppID()
 		return nil
 	case temp.FieldIP:
 		m.ResetIP()
@@ -15679,6 +16336,7 @@ type TemplMutation struct {
 	id            *string
 	created_at    *time.Time
 	updated_at    *time.Time
+	app_id        *string
 	name          *string
 	body          *string
 	compiled      *string
@@ -15889,6 +16547,55 @@ func (m *TemplMutation) UpdatedAtCleared() bool {
 func (m *TemplMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 	delete(m.clearedFields, templ.FieldUpdatedAt)
+}
+
+// SetAppID sets the "app_id" field.
+func (m *TemplMutation) SetAppID(s string) {
+	m.app_id = &s
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *TemplMutation) AppID() (r string, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the Templ entity.
+// If the Templ object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TemplMutation) OldAppID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *TemplMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[templ.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *TemplMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[templ.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *TemplMutation) ResetAppID() {
+	m.app_id = nil
+	delete(m.clearedFields, templ.FieldAppID)
 }
 
 // SetName sets the "name" field.
@@ -16121,12 +16828,15 @@ func (m *TemplMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TemplMutation) Fields() []string {
-	fields := make([]string, 0, 6)
+	fields := make([]string, 0, 7)
 	if m.created_at != nil {
 		fields = append(fields, templ.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, templ.FieldUpdatedAt)
+	}
+	if m.app_id != nil {
+		fields = append(fields, templ.FieldAppID)
 	}
 	if m.name != nil {
 		fields = append(fields, templ.FieldName)
@@ -16152,6 +16862,8 @@ func (m *TemplMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case templ.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case templ.FieldAppID:
+		return m.AppID()
 	case templ.FieldName:
 		return m.Name()
 	case templ.FieldBody:
@@ -16173,6 +16885,8 @@ func (m *TemplMutation) OldField(ctx context.Context, name string) (ent.Value, e
 		return m.OldCreatedAt(ctx)
 	case templ.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case templ.FieldAppID:
+		return m.OldAppID(ctx)
 	case templ.FieldName:
 		return m.OldName(ctx)
 	case templ.FieldBody:
@@ -16203,6 +16917,13 @@ func (m *TemplMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case templ.FieldAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
 		return nil
 	case templ.FieldName:
 		v, ok := value.(string)
@@ -16268,6 +16989,9 @@ func (m *TemplMutation) ClearedFields() []string {
 	if m.FieldCleared(templ.FieldUpdatedAt) {
 		fields = append(fields, templ.FieldUpdatedAt)
 	}
+	if m.FieldCleared(templ.FieldAppID) {
+		fields = append(fields, templ.FieldAppID)
+	}
 	if m.FieldCleared(templ.FieldName) {
 		fields = append(fields, templ.FieldName)
 	}
@@ -16300,6 +17024,9 @@ func (m *TemplMutation) ClearField(name string) error {
 	case templ.FieldUpdatedAt:
 		m.ClearUpdatedAt()
 		return nil
+	case templ.FieldAppID:
+		m.ClearAppID()
+		return nil
 	case templ.FieldName:
 		m.ClearName()
 		return nil
@@ -16325,6 +17052,9 @@ func (m *TemplMutation) ResetField(name string) error {
 		return nil
 	case templ.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case templ.FieldAppID:
+		m.ResetAppID()
 		return nil
 	case templ.FieldName:
 		m.ResetName()
@@ -16398,6 +17128,7 @@ type TodoMutation struct {
 	id              *string
 	created_at      *time.Time
 	updated_at      *time.Time
+	app_id          *string
 	text            *string
 	status          *todo.Status
 	priority        *int
@@ -16613,6 +17344,55 @@ func (m *TodoMutation) UpdatedAtCleared() bool {
 func (m *TodoMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 	delete(m.clearedFields, todo.FieldUpdatedAt)
+}
+
+// SetAppID sets the "app_id" field.
+func (m *TodoMutation) SetAppID(s string) {
+	m.app_id = &s
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *TodoMutation) AppID() (r string, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the Todo entity.
+// If the Todo object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *TodoMutation) OldAppID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *TodoMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[todo.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *TodoMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[todo.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *TodoMutation) ResetAppID() {
+	m.app_id = nil
+	delete(m.clearedFields, todo.FieldAppID)
 }
 
 // SetText sets the "text" field.
@@ -16870,12 +17650,15 @@ func (m *TodoMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *TodoMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m.created_at != nil {
 		fields = append(fields, todo.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, todo.FieldUpdatedAt)
+	}
+	if m.app_id != nil {
+		fields = append(fields, todo.FieldAppID)
 	}
 	if m.text != nil {
 		fields = append(fields, todo.FieldText)
@@ -16898,6 +17681,8 @@ func (m *TodoMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case todo.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case todo.FieldAppID:
+		return m.AppID()
 	case todo.FieldText:
 		return m.Text()
 	case todo.FieldStatus:
@@ -16917,6 +17702,8 @@ func (m *TodoMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldCreatedAt(ctx)
 	case todo.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case todo.FieldAppID:
+		return m.OldAppID(ctx)
 	case todo.FieldText:
 		return m.OldText(ctx)
 	case todo.FieldStatus:
@@ -16945,6 +17732,13 @@ func (m *TodoMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case todo.FieldAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
 		return nil
 	case todo.FieldText:
 		v, ok := value.(string)
@@ -17018,6 +17812,9 @@ func (m *TodoMutation) ClearedFields() []string {
 	if m.FieldCleared(todo.FieldUpdatedAt) {
 		fields = append(fields, todo.FieldUpdatedAt)
 	}
+	if m.FieldCleared(todo.FieldAppID) {
+		fields = append(fields, todo.FieldAppID)
+	}
 	return fields
 }
 
@@ -17038,6 +17835,9 @@ func (m *TodoMutation) ClearField(name string) error {
 	case todo.FieldUpdatedAt:
 		m.ClearUpdatedAt()
 		return nil
+	case todo.FieldAppID:
+		m.ClearAppID()
+		return nil
 	}
 	return fmt.Errorf("unknown Todo nullable field %s", name)
 }
@@ -17051,6 +17851,9 @@ func (m *TodoMutation) ResetField(name string) error {
 		return nil
 	case todo.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case todo.FieldAppID:
+		m.ResetAppID()
 		return nil
 	case todo.FieldText:
 		m.ResetText()
@@ -17175,6 +17978,7 @@ type UserMutation struct {
 	id                     *string
 	created_at             *time.Time
 	updated_at             *time.Time
+	app_id                 *string
 	email                  *string
 	phone                  *string
 	first_name             *string
@@ -17403,6 +18207,55 @@ func (m *UserMutation) UpdatedAtCleared() bool {
 func (m *UserMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 	delete(m.clearedFields, user.FieldUpdatedAt)
+}
+
+// SetAppID sets the "app_id" field.
+func (m *UserMutation) SetAppID(s string) {
+	m.app_id = &s
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *UserMutation) AppID() (r string, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the User entity.
+// If the User object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *UserMutation) OldAppID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *UserMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[user.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *UserMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[user.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *UserMutation) ResetAppID() {
+	m.app_id = nil
+	delete(m.clearedFields, user.FieldAppID)
 }
 
 // SetEmail sets the "email" field.
@@ -18225,12 +19078,15 @@ func (m *UserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *UserMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_at != nil {
 		fields = append(fields, user.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, user.FieldUpdatedAt)
+	}
+	if m.app_id != nil {
+		fields = append(fields, user.FieldAppID)
 	}
 	if m.email != nil {
 		fields = append(fields, user.FieldEmail)
@@ -18283,6 +19139,8 @@ func (m *UserMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case user.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case user.FieldAppID:
+		return m.AppID()
 	case user.FieldEmail:
 		return m.Email()
 	case user.FieldPhone:
@@ -18322,6 +19180,8 @@ func (m *UserMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldCreatedAt(ctx)
 	case user.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case user.FieldAppID:
+		return m.OldAppID(ctx)
 	case user.FieldEmail:
 		return m.OldEmail(ctx)
 	case user.FieldPhone:
@@ -18370,6 +19230,13 @@ func (m *UserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case user.FieldAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
 		return nil
 	case user.FieldEmail:
 		v, ok := value.(string)
@@ -18498,6 +19365,9 @@ func (m *UserMutation) ClearedFields() []string {
 	if m.FieldCleared(user.FieldUpdatedAt) {
 		fields = append(fields, user.FieldUpdatedAt)
 	}
+	if m.FieldCleared(user.FieldAppID) {
+		fields = append(fields, user.FieldAppID)
+	}
 	if m.FieldCleared(user.FieldPhone) {
 		fields = append(fields, user.FieldPhone)
 	}
@@ -18554,6 +19424,9 @@ func (m *UserMutation) ClearField(name string) error {
 	case user.FieldUpdatedAt:
 		m.ClearUpdatedAt()
 		return nil
+	case user.FieldAppID:
+		m.ClearAppID()
+		return nil
 	case user.FieldPhone:
 		m.ClearPhone()
 		return nil
@@ -18603,6 +19476,9 @@ func (m *UserMutation) ResetField(name string) error {
 		return nil
 	case user.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case user.FieldAppID:
+		m.ResetAppID()
 		return nil
 	case user.FieldEmail:
 		m.ResetEmail()
@@ -18791,6 +19667,7 @@ type WorkspaceMutation struct {
 	id                       *string
 	created_at               *time.Time
 	updated_at               *time.Time
+	app_id                   *string
 	name                     *string
 	is_personal              *bool
 	user_id                  *string
@@ -19009,6 +19886,55 @@ func (m *WorkspaceMutation) UpdatedAtCleared() bool {
 func (m *WorkspaceMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 	delete(m.clearedFields, workspace.FieldUpdatedAt)
+}
+
+// SetAppID sets the "app_id" field.
+func (m *WorkspaceMutation) SetAppID(s string) {
+	m.app_id = &s
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *WorkspaceMutation) AppID() (r string, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the Workspace entity.
+// If the Workspace object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WorkspaceMutation) OldAppID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *WorkspaceMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[workspace.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *WorkspaceMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[workspace.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *WorkspaceMutation) ResetAppID() {
+	m.app_id = nil
+	delete(m.clearedFields, workspace.FieldAppID)
 }
 
 // SetName sets the "name" field.
@@ -19354,12 +20280,15 @@ func (m *WorkspaceMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *WorkspaceMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m.created_at != nil {
 		fields = append(fields, workspace.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, workspace.FieldUpdatedAt)
+	}
+	if m.app_id != nil {
+		fields = append(fields, workspace.FieldAppID)
 	}
 	if m.name != nil {
 		fields = append(fields, workspace.FieldName)
@@ -19382,6 +20311,8 @@ func (m *WorkspaceMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case workspace.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case workspace.FieldAppID:
+		return m.AppID()
 	case workspace.FieldName:
 		return m.Name()
 	case workspace.FieldIsPersonal:
@@ -19401,6 +20332,8 @@ func (m *WorkspaceMutation) OldField(ctx context.Context, name string) (ent.Valu
 		return m.OldCreatedAt(ctx)
 	case workspace.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case workspace.FieldAppID:
+		return m.OldAppID(ctx)
 	case workspace.FieldName:
 		return m.OldName(ctx)
 	case workspace.FieldIsPersonal:
@@ -19429,6 +20362,13 @@ func (m *WorkspaceMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case workspace.FieldAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
 		return nil
 	case workspace.FieldName:
 		v, ok := value.(string)
@@ -19487,6 +20427,9 @@ func (m *WorkspaceMutation) ClearedFields() []string {
 	if m.FieldCleared(workspace.FieldUpdatedAt) {
 		fields = append(fields, workspace.FieldUpdatedAt)
 	}
+	if m.FieldCleared(workspace.FieldAppID) {
+		fields = append(fields, workspace.FieldAppID)
+	}
 	if m.FieldCleared(workspace.FieldName) {
 		fields = append(fields, workspace.FieldName)
 	}
@@ -19516,6 +20459,9 @@ func (m *WorkspaceMutation) ClearField(name string) error {
 	case workspace.FieldUpdatedAt:
 		m.ClearUpdatedAt()
 		return nil
+	case workspace.FieldAppID:
+		m.ClearAppID()
+		return nil
 	case workspace.FieldName:
 		m.ClearName()
 		return nil
@@ -19538,6 +20484,9 @@ func (m *WorkspaceMutation) ResetField(name string) error {
 		return nil
 	case workspace.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case workspace.FieldAppID:
+		m.ResetAppID()
 		return nil
 	case workspace.FieldName:
 		m.ResetName()
@@ -19696,6 +20645,7 @@ type WorkspaceInviteMutation struct {
 	id               *string
 	created_at       *time.Time
 	updated_at       *time.Time
+	app_id           *string
 	email            *string
 	role             *string
 	clearedFields    map[string]struct{}
@@ -19908,6 +20858,55 @@ func (m *WorkspaceInviteMutation) ResetUpdatedAt() {
 	delete(m.clearedFields, workspaceinvite.FieldUpdatedAt)
 }
 
+// SetAppID sets the "app_id" field.
+func (m *WorkspaceInviteMutation) SetAppID(s string) {
+	m.app_id = &s
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *WorkspaceInviteMutation) AppID() (r string, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the WorkspaceInvite entity.
+// If the WorkspaceInvite object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WorkspaceInviteMutation) OldAppID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *WorkspaceInviteMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[workspaceinvite.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *WorkspaceInviteMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[workspaceinvite.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *WorkspaceInviteMutation) ResetAppID() {
+	m.app_id = nil
+	delete(m.clearedFields, workspaceinvite.FieldAppID)
+}
+
 // SetWorkspaceID sets the "workspace_id" field.
 func (m *WorkspaceInviteMutation) SetWorkspaceID(s string) {
 	m.workspace = &s
@@ -20116,12 +21115,15 @@ func (m *WorkspaceInviteMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *WorkspaceInviteMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m.created_at != nil {
 		fields = append(fields, workspaceinvite.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, workspaceinvite.FieldUpdatedAt)
+	}
+	if m.app_id != nil {
+		fields = append(fields, workspaceinvite.FieldAppID)
 	}
 	if m.workspace != nil {
 		fields = append(fields, workspaceinvite.FieldWorkspaceID)
@@ -20144,6 +21146,8 @@ func (m *WorkspaceInviteMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case workspaceinvite.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case workspaceinvite.FieldAppID:
+		return m.AppID()
 	case workspaceinvite.FieldWorkspaceID:
 		return m.WorkspaceID()
 	case workspaceinvite.FieldEmail:
@@ -20163,6 +21167,8 @@ func (m *WorkspaceInviteMutation) OldField(ctx context.Context, name string) (en
 		return m.OldCreatedAt(ctx)
 	case workspaceinvite.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case workspaceinvite.FieldAppID:
+		return m.OldAppID(ctx)
 	case workspaceinvite.FieldWorkspaceID:
 		return m.OldWorkspaceID(ctx)
 	case workspaceinvite.FieldEmail:
@@ -20191,6 +21197,13 @@ func (m *WorkspaceInviteMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case workspaceinvite.FieldAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
 		return nil
 	case workspaceinvite.FieldWorkspaceID:
 		v, ok := value.(string)
@@ -20249,6 +21262,9 @@ func (m *WorkspaceInviteMutation) ClearedFields() []string {
 	if m.FieldCleared(workspaceinvite.FieldUpdatedAt) {
 		fields = append(fields, workspaceinvite.FieldUpdatedAt)
 	}
+	if m.FieldCleared(workspaceinvite.FieldAppID) {
+		fields = append(fields, workspaceinvite.FieldAppID)
+	}
 	if m.FieldCleared(workspaceinvite.FieldWorkspaceID) {
 		fields = append(fields, workspaceinvite.FieldWorkspaceID)
 	}
@@ -20278,6 +21294,9 @@ func (m *WorkspaceInviteMutation) ClearField(name string) error {
 	case workspaceinvite.FieldUpdatedAt:
 		m.ClearUpdatedAt()
 		return nil
+	case workspaceinvite.FieldAppID:
+		m.ClearAppID()
+		return nil
 	case workspaceinvite.FieldWorkspaceID:
 		m.ClearWorkspaceID()
 		return nil
@@ -20300,6 +21319,9 @@ func (m *WorkspaceInviteMutation) ResetField(name string) error {
 		return nil
 	case workspaceinvite.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case workspaceinvite.FieldAppID:
+		m.ResetAppID()
 		return nil
 	case workspaceinvite.FieldWorkspaceID:
 		m.ResetWorkspaceID()
@@ -20396,6 +21418,7 @@ type WorkspaceUserMutation struct {
 	id               *string
 	created_at       *time.Time
 	updated_at       *time.Time
+	app_id           *string
 	role             *string
 	clearedFields    map[string]struct{}
 	user             *string
@@ -20609,6 +21632,55 @@ func (m *WorkspaceUserMutation) ResetUpdatedAt() {
 	delete(m.clearedFields, workspaceuser.FieldUpdatedAt)
 }
 
+// SetAppID sets the "app_id" field.
+func (m *WorkspaceUserMutation) SetAppID(s string) {
+	m.app_id = &s
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *WorkspaceUserMutation) AppID() (r string, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the WorkspaceUser entity.
+// If the WorkspaceUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *WorkspaceUserMutation) OldAppID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *WorkspaceUserMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[workspaceuser.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *WorkspaceUserMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[workspaceuser.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *WorkspaceUserMutation) ResetAppID() {
+	m.app_id = nil
+	delete(m.clearedFields, workspaceuser.FieldAppID)
+}
+
 // SetWorkspaceID sets the "workspace_id" field.
 func (m *WorkspaceUserMutation) SetWorkspaceID(s string) {
 	m.workspace = &s
@@ -20818,12 +21890,15 @@ func (m *WorkspaceUserMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *WorkspaceUserMutation) Fields() []string {
-	fields := make([]string, 0, 5)
+	fields := make([]string, 0, 6)
 	if m.created_at != nil {
 		fields = append(fields, workspaceuser.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, workspaceuser.FieldUpdatedAt)
+	}
+	if m.app_id != nil {
+		fields = append(fields, workspaceuser.FieldAppID)
 	}
 	if m.workspace != nil {
 		fields = append(fields, workspaceuser.FieldWorkspaceID)
@@ -20846,6 +21921,8 @@ func (m *WorkspaceUserMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case workspaceuser.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case workspaceuser.FieldAppID:
+		return m.AppID()
 	case workspaceuser.FieldWorkspaceID:
 		return m.WorkspaceID()
 	case workspaceuser.FieldUserID:
@@ -20865,6 +21942,8 @@ func (m *WorkspaceUserMutation) OldField(ctx context.Context, name string) (ent.
 		return m.OldCreatedAt(ctx)
 	case workspaceuser.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case workspaceuser.FieldAppID:
+		return m.OldAppID(ctx)
 	case workspaceuser.FieldWorkspaceID:
 		return m.OldWorkspaceID(ctx)
 	case workspaceuser.FieldUserID:
@@ -20893,6 +21972,13 @@ func (m *WorkspaceUserMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case workspaceuser.FieldAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
 		return nil
 	case workspaceuser.FieldWorkspaceID:
 		v, ok := value.(string)
@@ -20951,6 +22037,9 @@ func (m *WorkspaceUserMutation) ClearedFields() []string {
 	if m.FieldCleared(workspaceuser.FieldUpdatedAt) {
 		fields = append(fields, workspaceuser.FieldUpdatedAt)
 	}
+	if m.FieldCleared(workspaceuser.FieldAppID) {
+		fields = append(fields, workspaceuser.FieldAppID)
+	}
 	if m.FieldCleared(workspaceuser.FieldRole) {
 		fields = append(fields, workspaceuser.FieldRole)
 	}
@@ -20974,6 +22063,9 @@ func (m *WorkspaceUserMutation) ClearField(name string) error {
 	case workspaceuser.FieldUpdatedAt:
 		m.ClearUpdatedAt()
 		return nil
+	case workspaceuser.FieldAppID:
+		m.ClearAppID()
+		return nil
 	case workspaceuser.FieldRole:
 		m.ClearRole()
 		return nil
@@ -20990,6 +22082,9 @@ func (m *WorkspaceUserMutation) ResetField(name string) error {
 		return nil
 	case workspaceuser.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case workspaceuser.FieldAppID:
+		m.ResetAppID()
 		return nil
 	case workspaceuser.FieldWorkspaceID:
 		m.ResetWorkspaceID()

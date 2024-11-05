@@ -41,6 +41,26 @@ func (mu *MediaUpdate) ClearUpdatedAt() *MediaUpdate {
 	return mu
 }
 
+// SetAppID sets the "app_id" field.
+func (mu *MediaUpdate) SetAppID(s string) *MediaUpdate {
+	mu.mutation.SetAppID(s)
+	return mu
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (mu *MediaUpdate) SetNillableAppID(s *string) *MediaUpdate {
+	if s != nil {
+		mu.SetAppID(*s)
+	}
+	return mu
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (mu *MediaUpdate) ClearAppID() *MediaUpdate {
+	mu.mutation.ClearAppID()
+	return mu
+}
+
 // SetDisk sets the "disk" field.
 func (mu *MediaUpdate) SetDisk(s string) *MediaUpdate {
 	mu.mutation.SetDisk(s)
@@ -447,6 +467,12 @@ func (mu *MediaUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if mu.mutation.UpdatedAtCleared() {
 		_spec.ClearField(media.FieldUpdatedAt, field.TypeTime)
 	}
+	if value, ok := mu.mutation.AppID(); ok {
+		_spec.SetField(media.FieldAppID, field.TypeString, value)
+	}
+	if mu.mutation.AppIDCleared() {
+		_spec.ClearField(media.FieldAppID, field.TypeString)
+	}
 	if value, ok := mu.mutation.Disk(); ok {
 		_spec.SetField(media.FieldDisk, field.TypeString, value)
 	}
@@ -580,6 +606,26 @@ func (muo *MediaUpdateOne) SetUpdatedAt(t time.Time) *MediaUpdateOne {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (muo *MediaUpdateOne) ClearUpdatedAt() *MediaUpdateOne {
 	muo.mutation.ClearUpdatedAt()
+	return muo
+}
+
+// SetAppID sets the "app_id" field.
+func (muo *MediaUpdateOne) SetAppID(s string) *MediaUpdateOne {
+	muo.mutation.SetAppID(s)
+	return muo
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (muo *MediaUpdateOne) SetNillableAppID(s *string) *MediaUpdateOne {
+	if s != nil {
+		muo.SetAppID(*s)
+	}
+	return muo
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (muo *MediaUpdateOne) ClearAppID() *MediaUpdateOne {
+	muo.mutation.ClearAppID()
 	return muo
 }
 
@@ -1018,6 +1064,12 @@ func (muo *MediaUpdateOne) sqlSave(ctx context.Context) (_node *Media, err error
 	}
 	if muo.mutation.UpdatedAtCleared() {
 		_spec.ClearField(media.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := muo.mutation.AppID(); ok {
+		_spec.SetField(media.FieldAppID, field.TypeString, value)
+	}
+	if muo.mutation.AppIDCleared() {
+		_spec.ClearField(media.FieldAppID, field.TypeString)
 	}
 	if value, ok := muo.mutation.Disk(); ok {
 		_spec.SetField(media.FieldDisk, field.TypeString, value)

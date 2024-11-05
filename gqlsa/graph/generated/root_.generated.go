@@ -43,6 +43,38 @@ type DirectiveRoot struct {
 }
 
 type ComplexityRoot struct {
+	App struct {
+		Address                 func(childComplexity int) int
+		AuthEmailVerify         func(childComplexity int) int
+		AuthFpTemplID           func(childComplexity int) int
+		AuthVerificationTemplID func(childComplexity int) int
+		AuthWelcomeEmailTemplID func(childComplexity int) int
+		Copyright               func(childComplexity int) int
+		DefaultMailConnID       func(childComplexity int) int
+		Email                   func(childComplexity int) int
+		ID                      func(childComplexity int) int
+		LogoURL                 func(childComplexity int) int
+		MailLayoutTemplID       func(childComplexity int) int
+		Name                    func(childComplexity int) int
+		SiteURL                 func(childComplexity int) int
+		SocialFb                func(childComplexity int) int
+		SocialIn                func(childComplexity int) int
+		SocialTw                func(childComplexity int) int
+		WsapceInviteTemplID     func(childComplexity int) int
+		WsapceSuccessTemplID    func(childComplexity int) int
+	}
+
+	AppConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	AppEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	Mutation struct {
 		CreateOauthConnection func(childComplexity int, input ent.CreateOauthConnectionInput) int
 		CreatePost            func(childComplexity int, input ent.CreatePostInput) int
@@ -218,6 +250,7 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
+		Apps             func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *ent.AppWhereInput) int
 		Node             func(childComplexity int, id string) int
 		Nodes            func(childComplexity int, ids []string) int
 		OauthConnections func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.OauthConnectionOrder, where *ent.OauthConnectionWhereInput) int
@@ -374,6 +407,167 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	ec := executionContext{nil, e, 0, 0, nil}
 	_ = ec
 	switch typeName + "." + field {
+
+	case "App.address":
+		if e.complexity.App.Address == nil {
+			break
+		}
+
+		return e.complexity.App.Address(childComplexity), true
+
+	case "App.authEmailVerify":
+		if e.complexity.App.AuthEmailVerify == nil {
+			break
+		}
+
+		return e.complexity.App.AuthEmailVerify(childComplexity), true
+
+	case "App.authFpTemplID":
+		if e.complexity.App.AuthFpTemplID == nil {
+			break
+		}
+
+		return e.complexity.App.AuthFpTemplID(childComplexity), true
+
+	case "App.authVerificationTemplID":
+		if e.complexity.App.AuthVerificationTemplID == nil {
+			break
+		}
+
+		return e.complexity.App.AuthVerificationTemplID(childComplexity), true
+
+	case "App.authWelcomeEmailTemplID":
+		if e.complexity.App.AuthWelcomeEmailTemplID == nil {
+			break
+		}
+
+		return e.complexity.App.AuthWelcomeEmailTemplID(childComplexity), true
+
+	case "App.copyright":
+		if e.complexity.App.Copyright == nil {
+			break
+		}
+
+		return e.complexity.App.Copyright(childComplexity), true
+
+	case "App.defaultMailConnID":
+		if e.complexity.App.DefaultMailConnID == nil {
+			break
+		}
+
+		return e.complexity.App.DefaultMailConnID(childComplexity), true
+
+	case "App.email":
+		if e.complexity.App.Email == nil {
+			break
+		}
+
+		return e.complexity.App.Email(childComplexity), true
+
+	case "App.id":
+		if e.complexity.App.ID == nil {
+			break
+		}
+
+		return e.complexity.App.ID(childComplexity), true
+
+	case "App.logoURL":
+		if e.complexity.App.LogoURL == nil {
+			break
+		}
+
+		return e.complexity.App.LogoURL(childComplexity), true
+
+	case "App.mailLayoutTemplID":
+		if e.complexity.App.MailLayoutTemplID == nil {
+			break
+		}
+
+		return e.complexity.App.MailLayoutTemplID(childComplexity), true
+
+	case "App.name":
+		if e.complexity.App.Name == nil {
+			break
+		}
+
+		return e.complexity.App.Name(childComplexity), true
+
+	case "App.siteURL":
+		if e.complexity.App.SiteURL == nil {
+			break
+		}
+
+		return e.complexity.App.SiteURL(childComplexity), true
+
+	case "App.socialFb":
+		if e.complexity.App.SocialFb == nil {
+			break
+		}
+
+		return e.complexity.App.SocialFb(childComplexity), true
+
+	case "App.socialIn":
+		if e.complexity.App.SocialIn == nil {
+			break
+		}
+
+		return e.complexity.App.SocialIn(childComplexity), true
+
+	case "App.socialTw":
+		if e.complexity.App.SocialTw == nil {
+			break
+		}
+
+		return e.complexity.App.SocialTw(childComplexity), true
+
+	case "App.wsapceInviteTemplID":
+		if e.complexity.App.WsapceInviteTemplID == nil {
+			break
+		}
+
+		return e.complexity.App.WsapceInviteTemplID(childComplexity), true
+
+	case "App.wsapceSuccessTemplID":
+		if e.complexity.App.WsapceSuccessTemplID == nil {
+			break
+		}
+
+		return e.complexity.App.WsapceSuccessTemplID(childComplexity), true
+
+	case "AppConnection.edges":
+		if e.complexity.AppConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.AppConnection.Edges(childComplexity), true
+
+	case "AppConnection.pageInfo":
+		if e.complexity.AppConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.AppConnection.PageInfo(childComplexity), true
+
+	case "AppConnection.totalCount":
+		if e.complexity.AppConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.AppConnection.TotalCount(childComplexity), true
+
+	case "AppEdge.cursor":
+		if e.complexity.AppEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.AppEdge.Cursor(childComplexity), true
+
+	case "AppEdge.node":
+		if e.complexity.AppEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.AppEdge.Node(childComplexity), true
 
 	case "Mutation.createOauthConnection":
 		if e.complexity.Mutation.CreateOauthConnection == nil {
@@ -1275,6 +1469,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PostTypeEdge.Node(childComplexity), true
 
+	case "Query.apps":
+		if e.complexity.Query.Apps == nil {
+			break
+		}
+
+		args, err := ec.field_Query_apps_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Apps(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*ent.AppWhereInput)), true
+
 	case "Query.node":
 		if e.complexity.Query.Node == nil {
 			break
@@ -1952,6 +2158,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputAppWhereInput,
+		ec.unmarshalInputCreateAppInput,
 		ec.unmarshalInputCreateOauthConnectionInput,
 		ec.unmarshalInputCreatePostCategoryInput,
 		ec.unmarshalInputCreatePostInput,
@@ -1976,6 +2184,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputPostWhereInput,
 		ec.unmarshalInputTodoOrder,
 		ec.unmarshalInputTodoWhereInput,
+		ec.unmarshalInputUpdateAppInput,
 		ec.unmarshalInputUpdateOauthConnectionInput,
 		ec.unmarshalInputUpdatePostCategoryInput,
 		ec.unmarshalInputUpdatePostInput,
@@ -2105,6 +2314,407 @@ var sources = []*ast.Source{
 `, BuiltIn: false},
 	{Name: "../ent.graphql", Input: `directive @goField(forceResolver: Boolean, name: String, omittable: Boolean) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 directive @goModel(model: String, models: [String!], forceGenerate: Boolean) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
+type App implements Node {
+  id: ID!
+  name: String
+  copyright: String
+  email: String
+  address: String
+  socialTw: String
+  socialFb: String
+  socialIn: String
+  logoURL: String
+  siteURL: String
+  defaultMailConnID: String
+  mailLayoutTemplID: String
+  wsapceInviteTemplID: String
+  wsapceSuccessTemplID: String
+  authFpTemplID: String
+  authWelcomeEmailTemplID: String
+  authVerificationTemplID: String
+  authEmailVerify: String
+}
+"""
+A connection to a list of items.
+"""
+type AppConnection {
+  """
+  A list of edges.
+  """
+  edges: [AppEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type AppEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: App
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+AppWhereInput is used for filtering App objects.
+Input was generated by ent.
+"""
+input AppWhereInput {
+  not: AppWhereInput
+  and: [AppWhereInput!]
+  or: [AppWhereInput!]
+  """
+  id field predicates
+  """
+  id: ID
+  idNEQ: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+  idGT: ID
+  idGTE: ID
+  idLT: ID
+  idLTE: ID
+  idEqualFold: ID
+  idContainsFold: ID
+  """
+  name field predicates
+  """
+  name: String
+  nameNEQ: String
+  nameIn: [String!]
+  nameNotIn: [String!]
+  nameGT: String
+  nameGTE: String
+  nameLT: String
+  nameLTE: String
+  nameContains: String
+  nameHasPrefix: String
+  nameHasSuffix: String
+  nameIsNil: Boolean
+  nameNotNil: Boolean
+  nameEqualFold: String
+  nameContainsFold: String
+  """
+  copyright field predicates
+  """
+  copyright: String
+  copyrightNEQ: String
+  copyrightIn: [String!]
+  copyrightNotIn: [String!]
+  copyrightGT: String
+  copyrightGTE: String
+  copyrightLT: String
+  copyrightLTE: String
+  copyrightContains: String
+  copyrightHasPrefix: String
+  copyrightHasSuffix: String
+  copyrightIsNil: Boolean
+  copyrightNotNil: Boolean
+  copyrightEqualFold: String
+  copyrightContainsFold: String
+  """
+  email field predicates
+  """
+  email: String
+  emailNEQ: String
+  emailIn: [String!]
+  emailNotIn: [String!]
+  emailGT: String
+  emailGTE: String
+  emailLT: String
+  emailLTE: String
+  emailContains: String
+  emailHasPrefix: String
+  emailHasSuffix: String
+  emailIsNil: Boolean
+  emailNotNil: Boolean
+  emailEqualFold: String
+  emailContainsFold: String
+  """
+  address field predicates
+  """
+  address: String
+  addressNEQ: String
+  addressIn: [String!]
+  addressNotIn: [String!]
+  addressGT: String
+  addressGTE: String
+  addressLT: String
+  addressLTE: String
+  addressContains: String
+  addressHasPrefix: String
+  addressHasSuffix: String
+  addressIsNil: Boolean
+  addressNotNil: Boolean
+  addressEqualFold: String
+  addressContainsFold: String
+  """
+  social_tw field predicates
+  """
+  socialTw: String
+  socialTwNEQ: String
+  socialTwIn: [String!]
+  socialTwNotIn: [String!]
+  socialTwGT: String
+  socialTwGTE: String
+  socialTwLT: String
+  socialTwLTE: String
+  socialTwContains: String
+  socialTwHasPrefix: String
+  socialTwHasSuffix: String
+  socialTwIsNil: Boolean
+  socialTwNotNil: Boolean
+  socialTwEqualFold: String
+  socialTwContainsFold: String
+  """
+  social_fb field predicates
+  """
+  socialFb: String
+  socialFbNEQ: String
+  socialFbIn: [String!]
+  socialFbNotIn: [String!]
+  socialFbGT: String
+  socialFbGTE: String
+  socialFbLT: String
+  socialFbLTE: String
+  socialFbContains: String
+  socialFbHasPrefix: String
+  socialFbHasSuffix: String
+  socialFbIsNil: Boolean
+  socialFbNotNil: Boolean
+  socialFbEqualFold: String
+  socialFbContainsFold: String
+  """
+  social_in field predicates
+  """
+  socialIn: String
+  socialInNEQ: String
+  socialInIn: [String!]
+  socialInNotIn: [String!]
+  socialInGT: String
+  socialInGTE: String
+  socialInLT: String
+  socialInLTE: String
+  socialInContains: String
+  socialInHasPrefix: String
+  socialInHasSuffix: String
+  socialInIsNil: Boolean
+  socialInNotNil: Boolean
+  socialInEqualFold: String
+  socialInContainsFold: String
+  """
+  logo_url field predicates
+  """
+  logoURL: String
+  logoURLNEQ: String
+  logoURLIn: [String!]
+  logoURLNotIn: [String!]
+  logoURLGT: String
+  logoURLGTE: String
+  logoURLLT: String
+  logoURLLTE: String
+  logoURLContains: String
+  logoURLHasPrefix: String
+  logoURLHasSuffix: String
+  logoURLIsNil: Boolean
+  logoURLNotNil: Boolean
+  logoURLEqualFold: String
+  logoURLContainsFold: String
+  """
+  site_url field predicates
+  """
+  siteURL: String
+  siteURLNEQ: String
+  siteURLIn: [String!]
+  siteURLNotIn: [String!]
+  siteURLGT: String
+  siteURLGTE: String
+  siteURLLT: String
+  siteURLLTE: String
+  siteURLContains: String
+  siteURLHasPrefix: String
+  siteURLHasSuffix: String
+  siteURLIsNil: Boolean
+  siteURLNotNil: Boolean
+  siteURLEqualFold: String
+  siteURLContainsFold: String
+  """
+  default_mail_conn_id field predicates
+  """
+  defaultMailConnID: String
+  defaultMailConnIDNEQ: String
+  defaultMailConnIDIn: [String!]
+  defaultMailConnIDNotIn: [String!]
+  defaultMailConnIDGT: String
+  defaultMailConnIDGTE: String
+  defaultMailConnIDLT: String
+  defaultMailConnIDLTE: String
+  defaultMailConnIDContains: String
+  defaultMailConnIDHasPrefix: String
+  defaultMailConnIDHasSuffix: String
+  defaultMailConnIDIsNil: Boolean
+  defaultMailConnIDNotNil: Boolean
+  defaultMailConnIDEqualFold: String
+  defaultMailConnIDContainsFold: String
+  """
+  mail_layout_templ_id field predicates
+  """
+  mailLayoutTemplID: String
+  mailLayoutTemplIDNEQ: String
+  mailLayoutTemplIDIn: [String!]
+  mailLayoutTemplIDNotIn: [String!]
+  mailLayoutTemplIDGT: String
+  mailLayoutTemplIDGTE: String
+  mailLayoutTemplIDLT: String
+  mailLayoutTemplIDLTE: String
+  mailLayoutTemplIDContains: String
+  mailLayoutTemplIDHasPrefix: String
+  mailLayoutTemplIDHasSuffix: String
+  mailLayoutTemplIDIsNil: Boolean
+  mailLayoutTemplIDNotNil: Boolean
+  mailLayoutTemplIDEqualFold: String
+  mailLayoutTemplIDContainsFold: String
+  """
+  wsapce_invite_templ_id field predicates
+  """
+  wsapceInviteTemplID: String
+  wsapceInviteTemplIDNEQ: String
+  wsapceInviteTemplIDIn: [String!]
+  wsapceInviteTemplIDNotIn: [String!]
+  wsapceInviteTemplIDGT: String
+  wsapceInviteTemplIDGTE: String
+  wsapceInviteTemplIDLT: String
+  wsapceInviteTemplIDLTE: String
+  wsapceInviteTemplIDContains: String
+  wsapceInviteTemplIDHasPrefix: String
+  wsapceInviteTemplIDHasSuffix: String
+  wsapceInviteTemplIDIsNil: Boolean
+  wsapceInviteTemplIDNotNil: Boolean
+  wsapceInviteTemplIDEqualFold: String
+  wsapceInviteTemplIDContainsFold: String
+  """
+  wsapce_success_templ_id field predicates
+  """
+  wsapceSuccessTemplID: String
+  wsapceSuccessTemplIDNEQ: String
+  wsapceSuccessTemplIDIn: [String!]
+  wsapceSuccessTemplIDNotIn: [String!]
+  wsapceSuccessTemplIDGT: String
+  wsapceSuccessTemplIDGTE: String
+  wsapceSuccessTemplIDLT: String
+  wsapceSuccessTemplIDLTE: String
+  wsapceSuccessTemplIDContains: String
+  wsapceSuccessTemplIDHasPrefix: String
+  wsapceSuccessTemplIDHasSuffix: String
+  wsapceSuccessTemplIDIsNil: Boolean
+  wsapceSuccessTemplIDNotNil: Boolean
+  wsapceSuccessTemplIDEqualFold: String
+  wsapceSuccessTemplIDContainsFold: String
+  """
+  auth_fp_templ_id field predicates
+  """
+  authFpTemplID: String
+  authFpTemplIDNEQ: String
+  authFpTemplIDIn: [String!]
+  authFpTemplIDNotIn: [String!]
+  authFpTemplIDGT: String
+  authFpTemplIDGTE: String
+  authFpTemplIDLT: String
+  authFpTemplIDLTE: String
+  authFpTemplIDContains: String
+  authFpTemplIDHasPrefix: String
+  authFpTemplIDHasSuffix: String
+  authFpTemplIDIsNil: Boolean
+  authFpTemplIDNotNil: Boolean
+  authFpTemplIDEqualFold: String
+  authFpTemplIDContainsFold: String
+  """
+  auth_welcome_email_templ_id field predicates
+  """
+  authWelcomeEmailTemplID: String
+  authWelcomeEmailTemplIDNEQ: String
+  authWelcomeEmailTemplIDIn: [String!]
+  authWelcomeEmailTemplIDNotIn: [String!]
+  authWelcomeEmailTemplIDGT: String
+  authWelcomeEmailTemplIDGTE: String
+  authWelcomeEmailTemplIDLT: String
+  authWelcomeEmailTemplIDLTE: String
+  authWelcomeEmailTemplIDContains: String
+  authWelcomeEmailTemplIDHasPrefix: String
+  authWelcomeEmailTemplIDHasSuffix: String
+  authWelcomeEmailTemplIDIsNil: Boolean
+  authWelcomeEmailTemplIDNotNil: Boolean
+  authWelcomeEmailTemplIDEqualFold: String
+  authWelcomeEmailTemplIDContainsFold: String
+  """
+  auth_verification_templ_id field predicates
+  """
+  authVerificationTemplID: String
+  authVerificationTemplIDNEQ: String
+  authVerificationTemplIDIn: [String!]
+  authVerificationTemplIDNotIn: [String!]
+  authVerificationTemplIDGT: String
+  authVerificationTemplIDGTE: String
+  authVerificationTemplIDLT: String
+  authVerificationTemplIDLTE: String
+  authVerificationTemplIDContains: String
+  authVerificationTemplIDHasPrefix: String
+  authVerificationTemplIDHasSuffix: String
+  authVerificationTemplIDIsNil: Boolean
+  authVerificationTemplIDNotNil: Boolean
+  authVerificationTemplIDEqualFold: String
+  authVerificationTemplIDContainsFold: String
+  """
+  auth_email_verify field predicates
+  """
+  authEmailVerify: String
+  authEmailVerifyNEQ: String
+  authEmailVerifyIn: [String!]
+  authEmailVerifyNotIn: [String!]
+  authEmailVerifyGT: String
+  authEmailVerifyGTE: String
+  authEmailVerifyLT: String
+  authEmailVerifyLTE: String
+  authEmailVerifyContains: String
+  authEmailVerifyHasPrefix: String
+  authEmailVerifyHasSuffix: String
+  authEmailVerifyIsNil: Boolean
+  authEmailVerifyNotNil: Boolean
+  authEmailVerifyEqualFold: String
+  authEmailVerifyContainsFold: String
+}
+"""
+CreateAppInput is used for create App object.
+Input was generated by ent.
+"""
+input CreateAppInput {
+  name: String
+  copyright: String
+  email: String
+  address: String
+  socialTw: String
+  socialFb: String
+  socialIn: String
+  logoURL: String
+  siteURL: String
+  defaultMailConnID: String
+  mailLayoutTemplID: String
+  wsapceInviteTemplID: String
+  wsapceSuccessTemplID: String
+  authFpTemplID: String
+  authWelcomeEmailTemplID: String
+  authVerificationTemplID: String
+  authEmailVerify: String
+}
 """
 CreateOauthConnectionInput is used for create OauthConnection object.
 Input was generated by ent.
@@ -3930,6 +4540,32 @@ type Query {
     """
     ids: [ID!]!
   ): [Node]! @canAdmin
+  apps(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Filtering options for Apps returned from the connection.
+    """
+    where: AppWhereInput
+  ): AppConnection! @canAdmin
   oauthConnections(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -4401,6 +5037,46 @@ input TodoWhereInput {
   """
   hasParent: Boolean
   hasParentWith: [TodoWhereInput!]
+}
+"""
+UpdateAppInput is used for update App object.
+Input was generated by ent.
+"""
+input UpdateAppInput {
+  name: String
+  clearName: Boolean
+  copyright: String
+  clearCopyright: Boolean
+  email: String
+  clearEmail: Boolean
+  address: String
+  clearAddress: Boolean
+  socialTw: String
+  clearSocialTw: Boolean
+  socialFb: String
+  clearSocialFb: Boolean
+  socialIn: String
+  clearSocialIn: Boolean
+  logoURL: String
+  clearLogoURL: Boolean
+  siteURL: String
+  clearSiteURL: Boolean
+  defaultMailConnID: String
+  clearDefaultMailConnID: Boolean
+  mailLayoutTemplID: String
+  clearMailLayoutTemplID: Boolean
+  wsapceInviteTemplID: String
+  clearWsapceInviteTemplID: Boolean
+  wsapceSuccessTemplID: String
+  clearWsapceSuccessTemplID: Boolean
+  authFpTemplID: String
+  clearAuthFpTemplID: Boolean
+  authWelcomeEmailTemplID: String
+  clearAuthWelcomeEmailTemplID: Boolean
+  authVerificationTemplID: String
+  clearAuthVerificationTemplID: Boolean
+  authEmailVerify: String
+  clearAuthEmailVerify: Boolean
 }
 """
 UpdateOauthConnectionInput is used for update OauthConnection object.

@@ -24,6 +24,8 @@ type Post struct {
 	CreatedAt time.Time `json:"created_at,omitempty"`
 	// UpdatedAt holds the value of the "updated_at" field.
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// AppID holds the value of the "app_id" field.
+	AppID string `json:"app_id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Slug holds the value of the "slug" field.
@@ -113,7 +115,7 @@ func (*Post) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case post.FieldID, post.FieldName, post.FieldSlug, post.FieldPostStatusID, post.FieldPostTypeID, post.FieldPrimaryCategoryID, post.FieldHeadline, post.FieldExcerpt, post.FieldContent, post.FieldMetaTitle, post.FieldMetaDescr, post.FieldMetaCanonicalURL, post.FieldMetaRobots:
+		case post.FieldID, post.FieldAppID, post.FieldName, post.FieldSlug, post.FieldPostStatusID, post.FieldPostTypeID, post.FieldPrimaryCategoryID, post.FieldHeadline, post.FieldExcerpt, post.FieldContent, post.FieldMetaTitle, post.FieldMetaDescr, post.FieldMetaCanonicalURL, post.FieldMetaRobots:
 			values[i] = new(sql.NullString)
 		case post.FieldCreatedAt, post.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -149,6 +151,12 @@ func (po *Post) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
 			} else if value.Valid {
 				po.UpdatedAt = value.Time
+			}
+		case post.FieldAppID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field app_id", values[i])
+			} else if value.Valid {
+				po.AppID = value.String
 			}
 		case post.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -278,6 +286,9 @@ func (po *Post) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("updated_at=")
 	builder.WriteString(po.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("app_id=")
+	builder.WriteString(po.AppID)
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(po.Name)

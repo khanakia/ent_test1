@@ -54,6 +54,20 @@ func (uc *UserCreate) SetNillableUpdatedAt(t *time.Time) *UserCreate {
 	return uc
 }
 
+// SetAppID sets the "app_id" field.
+func (uc *UserCreate) SetAppID(s string) *UserCreate {
+	uc.mutation.SetAppID(s)
+	return uc
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (uc *UserCreate) SetNillableAppID(s *string) *UserCreate {
+	if s != nil {
+		uc.SetAppID(*s)
+	}
+	return uc
+}
+
 // SetEmail sets the "email" field.
 func (uc *UserCreate) SetEmail(s string) *UserCreate {
 	uc.mutation.SetEmail(s)
@@ -397,6 +411,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_spec.SetField(user.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
+	if value, ok := uc.mutation.AppID(); ok {
+		_spec.SetField(user.FieldAppID, field.TypeString, value)
+		_node.AppID = value
+	}
 	if value, ok := uc.mutation.Email(); ok {
 		_spec.SetField(user.FieldEmail, field.TypeString, value)
 		_node.Email = value
@@ -571,6 +589,24 @@ func (u *UserUpsert) UpdateUpdatedAt() *UserUpsert {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (u *UserUpsert) ClearUpdatedAt() *UserUpsert {
 	u.SetNull(user.FieldUpdatedAt)
+	return u
+}
+
+// SetAppID sets the "app_id" field.
+func (u *UserUpsert) SetAppID(v string) *UserUpsert {
+	u.Set(user.FieldAppID, v)
+	return u
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *UserUpsert) UpdateAppID() *UserUpsert {
+	u.SetExcluded(user.FieldAppID)
+	return u
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *UserUpsert) ClearAppID() *UserUpsert {
+	u.SetNull(user.FieldAppID)
 	return u
 }
 
@@ -871,6 +907,27 @@ func (u *UserUpsertOne) UpdateUpdatedAt() *UserUpsertOne {
 func (u *UserUpsertOne) ClearUpdatedAt() *UserUpsertOne {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *UserUpsertOne) SetAppID(v string) *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *UserUpsertOne) UpdateAppID() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *UserUpsertOne) ClearAppID() *UserUpsertOne {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearAppID()
 	})
 }
 
@@ -1376,6 +1433,27 @@ func (u *UserUpsertBulk) UpdateUpdatedAt() *UserUpsertBulk {
 func (u *UserUpsertBulk) ClearUpdatedAt() *UserUpsertBulk {
 	return u.Update(func(s *UserUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *UserUpsertBulk) SetAppID(v string) *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *UserUpsertBulk) UpdateAppID() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *UserUpsertBulk) ClearAppID() *UserUpsertBulk {
+	return u.Update(func(s *UserUpsert) {
+		s.ClearAppID()
 	})
 }
 

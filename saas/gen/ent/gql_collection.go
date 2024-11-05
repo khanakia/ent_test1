@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"saas/gen/ent/app"
 	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/post"
 	"saas/gen/ent/postcategory"
@@ -19,6 +20,153 @@ import (
 	"entgo.io/contrib/entgql"
 	"github.com/99designs/gqlgen/graphql"
 )
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (a *AppQuery) CollectFields(ctx context.Context, satisfies ...string) (*AppQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return a, nil
+	}
+	if err := a.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return a, nil
+}
+
+func (a *AppQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(app.Columns))
+		selectedFields = []string{app.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "name":
+			if _, ok := fieldSeen[app.FieldName]; !ok {
+				selectedFields = append(selectedFields, app.FieldName)
+				fieldSeen[app.FieldName] = struct{}{}
+			}
+		case "copyright":
+			if _, ok := fieldSeen[app.FieldCopyright]; !ok {
+				selectedFields = append(selectedFields, app.FieldCopyright)
+				fieldSeen[app.FieldCopyright] = struct{}{}
+			}
+		case "email":
+			if _, ok := fieldSeen[app.FieldEmail]; !ok {
+				selectedFields = append(selectedFields, app.FieldEmail)
+				fieldSeen[app.FieldEmail] = struct{}{}
+			}
+		case "address":
+			if _, ok := fieldSeen[app.FieldAddress]; !ok {
+				selectedFields = append(selectedFields, app.FieldAddress)
+				fieldSeen[app.FieldAddress] = struct{}{}
+			}
+		case "socialTw":
+			if _, ok := fieldSeen[app.FieldSocialTw]; !ok {
+				selectedFields = append(selectedFields, app.FieldSocialTw)
+				fieldSeen[app.FieldSocialTw] = struct{}{}
+			}
+		case "socialFb":
+			if _, ok := fieldSeen[app.FieldSocialFb]; !ok {
+				selectedFields = append(selectedFields, app.FieldSocialFb)
+				fieldSeen[app.FieldSocialFb] = struct{}{}
+			}
+		case "socialIn":
+			if _, ok := fieldSeen[app.FieldSocialIn]; !ok {
+				selectedFields = append(selectedFields, app.FieldSocialIn)
+				fieldSeen[app.FieldSocialIn] = struct{}{}
+			}
+		case "logoURL":
+			if _, ok := fieldSeen[app.FieldLogoURL]; !ok {
+				selectedFields = append(selectedFields, app.FieldLogoURL)
+				fieldSeen[app.FieldLogoURL] = struct{}{}
+			}
+		case "siteURL":
+			if _, ok := fieldSeen[app.FieldSiteURL]; !ok {
+				selectedFields = append(selectedFields, app.FieldSiteURL)
+				fieldSeen[app.FieldSiteURL] = struct{}{}
+			}
+		case "defaultMailConnID":
+			if _, ok := fieldSeen[app.FieldDefaultMailConnID]; !ok {
+				selectedFields = append(selectedFields, app.FieldDefaultMailConnID)
+				fieldSeen[app.FieldDefaultMailConnID] = struct{}{}
+			}
+		case "mailLayoutTemplID":
+			if _, ok := fieldSeen[app.FieldMailLayoutTemplID]; !ok {
+				selectedFields = append(selectedFields, app.FieldMailLayoutTemplID)
+				fieldSeen[app.FieldMailLayoutTemplID] = struct{}{}
+			}
+		case "wsapceInviteTemplID":
+			if _, ok := fieldSeen[app.FieldWsapceInviteTemplID]; !ok {
+				selectedFields = append(selectedFields, app.FieldWsapceInviteTemplID)
+				fieldSeen[app.FieldWsapceInviteTemplID] = struct{}{}
+			}
+		case "wsapceSuccessTemplID":
+			if _, ok := fieldSeen[app.FieldWsapceSuccessTemplID]; !ok {
+				selectedFields = append(selectedFields, app.FieldWsapceSuccessTemplID)
+				fieldSeen[app.FieldWsapceSuccessTemplID] = struct{}{}
+			}
+		case "authFpTemplID":
+			if _, ok := fieldSeen[app.FieldAuthFpTemplID]; !ok {
+				selectedFields = append(selectedFields, app.FieldAuthFpTemplID)
+				fieldSeen[app.FieldAuthFpTemplID] = struct{}{}
+			}
+		case "authWelcomeEmailTemplID":
+			if _, ok := fieldSeen[app.FieldAuthWelcomeEmailTemplID]; !ok {
+				selectedFields = append(selectedFields, app.FieldAuthWelcomeEmailTemplID)
+				fieldSeen[app.FieldAuthWelcomeEmailTemplID] = struct{}{}
+			}
+		case "authVerificationTemplID":
+			if _, ok := fieldSeen[app.FieldAuthVerificationTemplID]; !ok {
+				selectedFields = append(selectedFields, app.FieldAuthVerificationTemplID)
+				fieldSeen[app.FieldAuthVerificationTemplID] = struct{}{}
+			}
+		case "authEmailVerify":
+			if _, ok := fieldSeen[app.FieldAuthEmailVerify]; !ok {
+				selectedFields = append(selectedFields, app.FieldAuthEmailVerify)
+				fieldSeen[app.FieldAuthEmailVerify] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		a.Select(selectedFields...)
+	}
+	return nil
+}
+
+type appPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []AppPaginateOption
+}
+
+func newAppPaginateArgs(rv map[string]any) *appPaginateArgs {
+	args := &appPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*AppWhereInput); ok {
+		args.opts = append(args.opts, WithAppFilter(v.Filter))
+	}
+	return args
+}
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (oc *OauthConnectionQuery) CollectFields(ctx context.Context, satisfies ...string) (*OauthConnectionQuery, error) {

@@ -51,6 +51,20 @@ func (pc *PlanCreate) SetNillableUpdatedAt(t *time.Time) *PlanCreate {
 	return pc
 }
 
+// SetAppID sets the "app_id" field.
+func (pc *PlanCreate) SetAppID(s string) *PlanCreate {
+	pc.mutation.SetAppID(s)
+	return pc
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (pc *PlanCreate) SetNillableAppID(s *string) *PlanCreate {
+	if s != nil {
+		pc.SetAppID(*s)
+	}
+	return pc
+}
+
 // SetName sets the "name" field.
 func (pc *PlanCreate) SetName(s string) *PlanCreate {
 	pc.mutation.SetName(s)
@@ -220,6 +234,10 @@ func (pc *PlanCreate) createSpec() (*Plan, *sqlgraph.CreateSpec) {
 		_spec.SetField(plan.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
+	if value, ok := pc.mutation.AppID(); ok {
+		_spec.SetField(plan.FieldAppID, field.TypeString, value)
+		_node.AppID = value
+	}
 	if value, ok := pc.mutation.Name(); ok {
 		_spec.SetField(plan.FieldName, field.TypeString, value)
 		_node.Name = value
@@ -303,6 +321,24 @@ func (u *PlanUpsert) UpdateUpdatedAt() *PlanUpsert {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (u *PlanUpsert) ClearUpdatedAt() *PlanUpsert {
 	u.SetNull(plan.FieldUpdatedAt)
+	return u
+}
+
+// SetAppID sets the "app_id" field.
+func (u *PlanUpsert) SetAppID(v string) *PlanUpsert {
+	u.Set(plan.FieldAppID, v)
+	return u
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *PlanUpsert) UpdateAppID() *PlanUpsert {
+	u.SetExcluded(plan.FieldAppID)
+	return u
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *PlanUpsert) ClearAppID() *PlanUpsert {
+	u.SetNull(plan.FieldAppID)
 	return u
 }
 
@@ -447,6 +483,27 @@ func (u *PlanUpsertOne) UpdateUpdatedAt() *PlanUpsertOne {
 func (u *PlanUpsertOne) ClearUpdatedAt() *PlanUpsertOne {
 	return u.Update(func(s *PlanUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *PlanUpsertOne) SetAppID(v string) *PlanUpsertOne {
+	return u.Update(func(s *PlanUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *PlanUpsertOne) UpdateAppID() *PlanUpsertOne {
+	return u.Update(func(s *PlanUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *PlanUpsertOne) ClearAppID() *PlanUpsertOne {
+	return u.Update(func(s *PlanUpsert) {
+		s.ClearAppID()
 	})
 }
 
@@ -770,6 +827,27 @@ func (u *PlanUpsertBulk) UpdateUpdatedAt() *PlanUpsertBulk {
 func (u *PlanUpsertBulk) ClearUpdatedAt() *PlanUpsertBulk {
 	return u.Update(func(s *PlanUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *PlanUpsertBulk) SetAppID(v string) *PlanUpsertBulk {
+	return u.Update(func(s *PlanUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *PlanUpsertBulk) UpdateAppID() *PlanUpsertBulk {
+	return u.Update(func(s *PlanUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *PlanUpsertBulk) ClearAppID() *PlanUpsertBulk {
+	return u.Update(func(s *PlanUpsert) {
+		s.ClearAppID()
 	})
 }
 
