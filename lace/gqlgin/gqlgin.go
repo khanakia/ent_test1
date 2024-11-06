@@ -98,8 +98,8 @@ func New(config Config) Gql {
 		gqlgenfn.GinContextToContextMiddleware(),
 		gqlgenfn.PlaygroundAccessMiddleware(config.PlaygroundKey),
 		gqlgin.instrospectionMiddleware(config.GqlServer),
-		gqlgin.serverHttpHandler(config.GqlServer),
 	}
+	introspectionHandlers = append(introspectionHandlers, config.Middleware...)
 
 	rg.POST("/query_playground", introspectionHandlers...)
 

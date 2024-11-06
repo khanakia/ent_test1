@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"saas/pkg/constants"
 
 	_ "github.com/lib/pq"
 	"github.com/vektah/gqlparser/v2/ast"
@@ -29,7 +30,7 @@ func main() {
 				if f == nil {
 					return fmt.Errorf("missing query field %q", name)
 				}
-				f.Directives = append(f.Directives, &ast.Directive{Name: "canAdmin"})
+				f.Directives = append(f.Directives, &ast.Directive{Name: constants.DirectiveCanApp})
 			}
 			return nil
 		}),

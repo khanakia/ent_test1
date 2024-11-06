@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"saas/pkg/constants"
+
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
@@ -19,7 +21,7 @@ func (MailConn) Fields() []ent.Field {
 		field.String("host").Optional(),
 		field.Int("port").Optional(),
 		field.String("username").Optional(),
-		field.String("password").Sensitive().Optional(),
+		field.String("password").Optional(),
 		field.Int("encryption").Optional(), // 0=none, 2=tls | 3=ssltls | 4=starttls
 		field.String("from_name").Optional(),
 		field.String("from_email").Optional(),
@@ -40,6 +42,10 @@ func (MailConn) Mixin() []ent.Mixin {
 
 func (MailConn) Annotations() []schema.Annotation {
 	return []schema.Annotation{
-		entgql.Skip(entgql.SkipAll),
+		// entgql.Skip(entgql.SkipAll),
+		entgql.RelayConnection(),
+		entgql.QueryField().Directives(entgql.Directive{Name: constants.DirectiveCanAdmin}),
+		entgql.MultiOrder(),
+		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 	}
 }

@@ -9,5 +9,6 @@
     "gen": true,
     "apigql/graph/generated": true,
     "apigql/graph/model": true
-  } 
+  },
+  "search.useIgnoreFiles": true
 }

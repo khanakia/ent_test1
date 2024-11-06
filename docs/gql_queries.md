@@ -1,3 +1,9 @@
+```
+{
+  "token":"umt9e0ka6gynwx3rm7r1y0fd8dknp2fu5",
+  "x-app": "a1"
+}
+```
 
 ```gql
 mutation {

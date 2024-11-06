@@ -21,7 +21,7 @@ func setDirectives(c *generated.Config) {
 	c.Directives.CanAdmin = func(ctx context.Context, obj interface{}, next graphql.Resolver) (interface{}, error) {
 		cuser, _ := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 		if cuser == nil {
-			return nil, fmt.Errorf("access denied")
+			return nil, fmt.Errorf("user not found")
 		}
 
 		if !cuser.Status {

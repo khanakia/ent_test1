@@ -9,12 +9,11 @@ import (
 	"gqlsa/graph/model"
 	"lace/util"
 	"saas/pkg/adminauth/adminauthfn"
-	"saas/pkg/auth/authfn"
 )
 
 // AdminAuthLogin is the resolver for the adminAuthLogin field.
 func (r *mutationResolver) AdminAuthLogin(ctx context.Context, input model.LoginInput) (*model.LoginResponse, error) {
-	user, session, err := adminauthfn.Login(authfn.LoginParams{
+	user, session, err := adminauthfn.Login(adminauthfn.LoginParams{
 		Email:    input.Email,
 		Password: input.Password,
 	}, true, r.Plugin.EntDB.Client())

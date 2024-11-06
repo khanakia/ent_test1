@@ -8,14 +8,17 @@ import (
 	"context"
 	"fmt"
 	"gqlsa/graph/generated"
+	"reflect"
 	"saas/gen/ent"
 	"saas/gen/ent/app"
+	"saas/gen/ent/mailconn"
 	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/post"
 	"saas/gen/ent/postcategory"
 	"saas/gen/ent/poststatus"
 	"saas/gen/ent/posttag"
 	"saas/gen/ent/posttype"
+	"saas/gen/ent/templ"
 	"saas/gen/ent/todo"
 	"saas/gen/ent/user"
 	"saas/gen/ent/workspace"
@@ -26,6 +29,8 @@ import (
 	"strings"
 
 	"entgo.io/contrib/entgql"
+	"github.com/99designs/gqlgen/graphql"
+	"github.com/vektah/gqlparser/v2/ast"
 )
 
 // Node is the resolver for the node field.
@@ -60,10 +65,43 @@ func (r *queryResolver) Node(ctx context.Context, id string) (ent.Noder, error) 
 		table = workspaceinvite.Table
 	case "WorkspaceUser":
 		table = workspaceuser.Table
+	case "MailConn":
+		table = mailconn.Table
+	case "Templ":
+		table = templ.Table
 	}
 
-	return r.Plugin.EntDB.Client().Noder(ctx, idtail[1], ent.WithFixedNodeType(table))
-	// return r.Plugin.EntDB.Client().Noder(ctx, id, ent.WithFixedNodeType(todo.Table))
+	// there is no way i could send the sql.Where query to Noder and also noder only use the asked field to select query selectFields
+	// below so i had to find a hack and now i always inject appID as query field so Noder function sends the sql query and apend select id, app_id from table
+	// and then we use reflect to extract the AppID from the Noder struct and validate that if user is authorized to access the record
+	fc := graphql.GetFieldContext(ctx)
+	selSet1 := fc.Field.SelectionSet[1]
+	switch sel := selSet1.(type) {
+	case *ast.InlineFragment:
+		newSelections := append(sel.SelectionSet, &ast.Field{
+			Alias:      "appID",
+			Name:       "appID",
+			Arguments:  nil,
+			Directives: nil,
+		})
+
+		sel.SelectionSet = newSelections
+	}
+
+	noder, err := r.Plugin.EntDB.Client().Noder(ctx, idtail[1], ent.WithFixedNodeType(table))
+
+	nodev := reflect.ValueOf(noder)
+
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+	appID := reflect.Indirect(nodev).FieldByName("AppID").String()
+
+	if appID != app.ID {
+		return nil, fmt.Errorf("access denied app")
+	}
+
+	fmt.Println(reflect.Indirect(nodev).FieldByName("AppID"))
+
+	return noder, err
 }
 
 // Nodes is the resolver for the nodes field.
@@ -72,7 +110,7 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []string) ([]ent.Noder, e
 }
 
 // Apps is the resolver for the apps field.
-func (r *queryResolver) Apps(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *ent.AppWhereInput) (*ent.AppConnection, error) {
+func (r *queryResolver) Apps(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.AppOrder, where *ent.AppWhereInput) (*ent.AppConnection, error) {
 	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 	if cuser == nil {
 		return nil, err
@@ -83,6 +121,22 @@ func (r *queryResolver) Apps(ctx context.Context, after *entgql.Cursor[string], 
 		Paginate(ctx, after, first, before, last,
 			// ent.WithAppOrder(orderBy),
 			ent.WithAppFilter(where.Filter),
+		)
+}
+
+// MailConns is the resolver for the mailConns field.
+func (r *queryResolver) MailConns(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.MailConnOrder, where *ent.MailConnWhereInput) (*ent.MailConnConnection, error) {
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
+	if cuser == nil {
+		return nil, err
+	}
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	return r.Plugin.EntDB.Client().MailConn.Query().
+		Where(mailconn.AppID(app.ID)).
+		Paginate(ctx, after, first, before, last,
+			ent.WithMailConnOrder(orderBy),
+			ent.WithMailConnFilter(where.Filter),
 		)
 }
 
@@ -169,6 +223,22 @@ func (r *queryResolver) PostTypes(ctx context.Context, after *entgql.Cursor[stri
 		Paginate(ctx, after, first, before, last,
 			ent.WithPostTypeOrder(orderBy),
 			ent.WithPostTypeFilter(where.Filter),
+		)
+}
+
+// Templs is the resolver for the templs field.
+func (r *queryResolver) Templs(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.TemplOrder, where *ent.TemplWhereInput) (*ent.TemplConnection, error) {
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
+	if cuser == nil {
+		return nil, err
+	}
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	return r.Plugin.EntDB.Client().Templ.Query().
+		Where(templ.AppID(app.ID)).
+		Paginate(ctx, after, first, before, last,
+			ent.WithTemplOrder(orderBy),
+			ent.WithTemplFilter(where.Filter),
 		)
 }
 

@@ -13,15 +13,22 @@ type App implements Node {
   socialIn: String
   logoURL: String
   siteURL: String
-  defaultMailConnID: String
-  mailLayoutTemplID: String
-  wsapceInviteTemplID: String
-  wsapceSuccessTemplID: String
-  authFpTemplID: String
-  authWelcomeEmailTemplID: String
-  authVerificationTemplID: String
+  defaultMailConnID: ID
+  mailLayoutTemplID: ID
+  wsapceInviteTemplID: ID
+  wsapceSuccessTemplID: ID
+  authFpTemplID: ID
+  authWelcomeEmailTemplID: ID
+  authVerificationTemplID: ID
   authEmailVerify: String
   adminUserID: String
+  defaultMailConn: MailConn
+  mailLayoutTempl: Templ
+  wsapceInviteTempl: Templ
+  wsapceSuccessTempl: Templ
+  authFpTempl: Templ
+  authWelcomeEmailTempl: Templ
+  authVerificationTempl: Templ
 }
 """
 A connection to a list of items.
@@ -284,129 +291,129 @@ input AppWhereInput {
   """
   default_mail_conn_id field predicates
   """
-  defaultMailConnID: String
-  defaultMailConnIDNEQ: String
-  defaultMailConnIDIn: [String!]
-  defaultMailConnIDNotIn: [String!]
-  defaultMailConnIDGT: String
-  defaultMailConnIDGTE: String
-  defaultMailConnIDLT: String
-  defaultMailConnIDLTE: String
-  defaultMailConnIDContains: String
-  defaultMailConnIDHasPrefix: String
-  defaultMailConnIDHasSuffix: String
+  defaultMailConnID: ID
+  defaultMailConnIDNEQ: ID
+  defaultMailConnIDIn: [ID!]
+  defaultMailConnIDNotIn: [ID!]
+  defaultMailConnIDGT: ID
+  defaultMailConnIDGTE: ID
+  defaultMailConnIDLT: ID
+  defaultMailConnIDLTE: ID
+  defaultMailConnIDContains: ID
+  defaultMailConnIDHasPrefix: ID
+  defaultMailConnIDHasSuffix: ID
   defaultMailConnIDIsNil: Boolean
   defaultMailConnIDNotNil: Boolean
-  defaultMailConnIDEqualFold: String
-  defaultMailConnIDContainsFold: String
+  defaultMailConnIDEqualFold: ID
+  defaultMailConnIDContainsFold: ID
   """
   mail_layout_templ_id field predicates
   """
-  mailLayoutTemplID: String
-  mailLayoutTemplIDNEQ: String
-  mailLayoutTemplIDIn: [String!]
-  mailLayoutTemplIDNotIn: [String!]
-  mailLayoutTemplIDGT: String
-  mailLayoutTemplIDGTE: String
-  mailLayoutTemplIDLT: String
-  mailLayoutTemplIDLTE: String
-  mailLayoutTemplIDContains: String
-  mailLayoutTemplIDHasPrefix: String
-  mailLayoutTemplIDHasSuffix: String
+  mailLayoutTemplID: ID
+  mailLayoutTemplIDNEQ: ID
+  mailLayoutTemplIDIn: [ID!]
+  mailLayoutTemplIDNotIn: [ID!]
+  mailLayoutTemplIDGT: ID
+  mailLayoutTemplIDGTE: ID
+  mailLayoutTemplIDLT: ID
+  mailLayoutTemplIDLTE: ID
+  mailLayoutTemplIDContains: ID
+  mailLayoutTemplIDHasPrefix: ID
+  mailLayoutTemplIDHasSuffix: ID
   mailLayoutTemplIDIsNil: Boolean
   mailLayoutTemplIDNotNil: Boolean
-  mailLayoutTemplIDEqualFold: String
-  mailLayoutTemplIDContainsFold: String
+  mailLayoutTemplIDEqualFold: ID
+  mailLayoutTemplIDContainsFold: ID
   """
   wsapce_invite_templ_id field predicates
   """
-  wsapceInviteTemplID: String
-  wsapceInviteTemplIDNEQ: String
-  wsapceInviteTemplIDIn: [String!]
-  wsapceInviteTemplIDNotIn: [String!]
-  wsapceInviteTemplIDGT: String
-  wsapceInviteTemplIDGTE: String
-  wsapceInviteTemplIDLT: String
-  wsapceInviteTemplIDLTE: String
-  wsapceInviteTemplIDContains: String
-  wsapceInviteTemplIDHasPrefix: String
-  wsapceInviteTemplIDHasSuffix: String
+  wsapceInviteTemplID: ID
+  wsapceInviteTemplIDNEQ: ID
+  wsapceInviteTemplIDIn: [ID!]
+  wsapceInviteTemplIDNotIn: [ID!]
+  wsapceInviteTemplIDGT: ID
+  wsapceInviteTemplIDGTE: ID
+  wsapceInviteTemplIDLT: ID
+  wsapceInviteTemplIDLTE: ID
+  wsapceInviteTemplIDContains: ID
+  wsapceInviteTemplIDHasPrefix: ID
+  wsapceInviteTemplIDHasSuffix: ID
   wsapceInviteTemplIDIsNil: Boolean
   wsapceInviteTemplIDNotNil: Boolean
-  wsapceInviteTemplIDEqualFold: String
-  wsapceInviteTemplIDContainsFold: String
+  wsapceInviteTemplIDEqualFold: ID
+  wsapceInviteTemplIDContainsFold: ID
   """
   wsapce_success_templ_id field predicates
   """
-  wsapceSuccessTemplID: String
-  wsapceSuccessTemplIDNEQ: String
-  wsapceSuccessTemplIDIn: [String!]
-  wsapceSuccessTemplIDNotIn: [String!]
-  wsapceSuccessTemplIDGT: String
-  wsapceSuccessTemplIDGTE: String
-  wsapceSuccessTemplIDLT: String
-  wsapceSuccessTemplIDLTE: String
-  wsapceSuccessTemplIDContains: String
-  wsapceSuccessTemplIDHasPrefix: String
-  wsapceSuccessTemplIDHasSuffix: String
+  wsapceSuccessTemplID: ID
+  wsapceSuccessTemplIDNEQ: ID
+  wsapceSuccessTemplIDIn: [ID!]
+  wsapceSuccessTemplIDNotIn: [ID!]
+  wsapceSuccessTemplIDGT: ID
+  wsapceSuccessTemplIDGTE: ID
+  wsapceSuccessTemplIDLT: ID
+  wsapceSuccessTemplIDLTE: ID
+  wsapceSuccessTemplIDContains: ID
+  wsapceSuccessTemplIDHasPrefix: ID
+  wsapceSuccessTemplIDHasSuffix: ID
   wsapceSuccessTemplIDIsNil: Boolean
   wsapceSuccessTemplIDNotNil: Boolean
-  wsapceSuccessTemplIDEqualFold: String
-  wsapceSuccessTemplIDContainsFold: String
+  wsapceSuccessTemplIDEqualFold: ID
+  wsapceSuccessTemplIDContainsFold: ID
   """
   auth_fp_templ_id field predicates
   """
-  authFpTemplID: String
-  authFpTemplIDNEQ: String
-  authFpTemplIDIn: [String!]
-  authFpTemplIDNotIn: [String!]
-  authFpTemplIDGT: String
-  authFpTemplIDGTE: String
-  authFpTemplIDLT: String
-  authFpTemplIDLTE: String
-  authFpTemplIDContains: String
-  authFpTemplIDHasPrefix: String
-  authFpTemplIDHasSuffix: String
+  authFpTemplID: ID
+  authFpTemplIDNEQ: ID
+  authFpTemplIDIn: [ID!]
+  authFpTemplIDNotIn: [ID!]
+  authFpTemplIDGT: ID
+  authFpTemplIDGTE: ID
+  authFpTemplIDLT: ID
+  authFpTemplIDLTE: ID
+  authFpTemplIDContains: ID
+  authFpTemplIDHasPrefix: ID
+  authFpTemplIDHasSuffix: ID
   authFpTemplIDIsNil: Boolean
   authFpTemplIDNotNil: Boolean
-  authFpTemplIDEqualFold: String
-  authFpTemplIDContainsFold: String
+  authFpTemplIDEqualFold: ID
+  authFpTemplIDContainsFold: ID
   """
   auth_welcome_email_templ_id field predicates
   """
-  authWelcomeEmailTemplID: String
-  authWelcomeEmailTemplIDNEQ: String
-  authWelcomeEmailTemplIDIn: [String!]
-  authWelcomeEmailTemplIDNotIn: [String!]
-  authWelcomeEmailTemplIDGT: String
-  authWelcomeEmailTemplIDGTE: String
-  authWelcomeEmailTemplIDLT: String
-  authWelcomeEmailTemplIDLTE: String
-  authWelcomeEmailTemplIDContains: String
-  authWelcomeEmailTemplIDHasPrefix: String
-  authWelcomeEmailTemplIDHasSuffix: String
+  authWelcomeEmailTemplID: ID
+  authWelcomeEmailTemplIDNEQ: ID
+  authWelcomeEmailTemplIDIn: [ID!]
+  authWelcomeEmailTemplIDNotIn: [ID!]
+  authWelcomeEmailTemplIDGT: ID
+  authWelcomeEmailTemplIDGTE: ID
+  authWelcomeEmailTemplIDLT: ID
+  authWelcomeEmailTemplIDLTE: ID
+  authWelcomeEmailTemplIDContains: ID
+  authWelcomeEmailTemplIDHasPrefix: ID
+  authWelcomeEmailTemplIDHasSuffix: ID
   authWelcomeEmailTemplIDIsNil: Boolean
   authWelcomeEmailTemplIDNotNil: Boolean
-  authWelcomeEmailTemplIDEqualFold: String
-  authWelcomeEmailTemplIDContainsFold: String
+  authWelcomeEmailTemplIDEqualFold: ID
+  authWelcomeEmailTemplIDContainsFold: ID
   """
   auth_verification_templ_id field predicates
   """
-  authVerificationTemplID: String
-  authVerificationTemplIDNEQ: String
-  authVerificationTemplIDIn: [String!]
-  authVerificationTemplIDNotIn: [String!]
-  authVerificationTemplIDGT: String
-  authVerificationTemplIDGTE: String
-  authVerificationTemplIDLT: String
-  authVerificationTemplIDLTE: String
-  authVerificationTemplIDContains: String
-  authVerificationTemplIDHasPrefix: String
-  authVerificationTemplIDHasSuffix: String
+  authVerificationTemplID: ID
+  authVerificationTemplIDNEQ: ID
+  authVerificationTemplIDIn: [ID!]
+  authVerificationTemplIDNotIn: [ID!]
+  authVerificationTemplIDGT: ID
+  authVerificationTemplIDGTE: ID
+  authVerificationTemplIDLT: ID
+  authVerificationTemplIDLTE: ID
+  authVerificationTemplIDContains: ID
+  authVerificationTemplIDHasPrefix: ID
+  authVerificationTemplIDHasSuffix: ID
   authVerificationTemplIDIsNil: Boolean
   authVerificationTemplIDNotNil: Boolean
-  authVerificationTemplIDEqualFold: String
-  authVerificationTemplIDContainsFold: String
+  authVerificationTemplIDEqualFold: ID
+  authVerificationTemplIDContainsFold: ID
   """
   auth_email_verify field predicates
   """
@@ -443,6 +450,41 @@ input AppWhereInput {
   adminUserIDNotNil: Boolean
   adminUserIDEqualFold: String
   adminUserIDContainsFold: String
+  """
+  default_mail_conn edge predicates
+  """
+  hasDefaultMailConn: Boolean
+  hasDefaultMailConnWith: [MailConnWhereInput!]
+  """
+  mail_layout_templ edge predicates
+  """
+  hasMailLayoutTempl: Boolean
+  hasMailLayoutTemplWith: [TemplWhereInput!]
+  """
+  wsapce_invite_templ edge predicates
+  """
+  hasWsapceInviteTempl: Boolean
+  hasWsapceInviteTemplWith: [TemplWhereInput!]
+  """
+  wsapce_success_templ edge predicates
+  """
+  hasWsapceSuccessTempl: Boolean
+  hasWsapceSuccessTemplWith: [TemplWhereInput!]
+  """
+  auth_fp_templ edge predicates
+  """
+  hasAuthFpTempl: Boolean
+  hasAuthFpTemplWith: [TemplWhereInput!]
+  """
+  auth_welcome_email_templ edge predicates
+  """
+  hasAuthWelcomeEmailTempl: Boolean
+  hasAuthWelcomeEmailTemplWith: [TemplWhereInput!]
+  """
+  auth_verification_templ edge predicates
+  """
+  hasAuthVerificationTempl: Boolean
+  hasAuthVerificationTemplWith: [TemplWhereInput!]
 }
 """
 CreateAppInput is used for create App object.
@@ -460,15 +502,32 @@ input CreateAppInput {
   socialIn: String
   logoURL: String
   siteURL: String
-  defaultMailConnID: String
-  mailLayoutTemplID: String
-  wsapceInviteTemplID: String
-  wsapceSuccessTemplID: String
-  authFpTemplID: String
-  authWelcomeEmailTemplID: String
-  authVerificationTemplID: String
   authEmailVerify: String
   adminUserID: String
+  defaultMailConnID: ID
+  mailLayoutTemplID: ID
+  wsapceInviteTemplID: ID
+  wsapceSuccessTemplID: ID
+  authFpTemplID: ID
+  authWelcomeEmailTemplID: ID
+  authVerificationTemplID: ID
+}
+"""
+CreateMailConnInput is used for create MailConn object.
+Input was generated by ent.
+"""
+input CreateMailConnInput {
+  createdAt: Time
+  updatedAt: Time
+  name: String
+  host: String
+  port: Int
+  username: String
+  password: String
+  encryption: Int
+  fromName: String
+  fromEmail: String
+  status: Boolean
 }
 """
 CreateOauthConnectionInput is used for create OauthConnection object.
@@ -555,6 +614,18 @@ input CreatePostTypeInput {
   metaRobots: String
 }
 """
+CreateTemplInput is used for create Templ object.
+Input was generated by ent.
+"""
+input CreateTemplInput {
+  createdAt: Time
+  updatedAt: Time
+  name: String
+  body: String
+  compiled: String
+  status: Boolean
+}
+"""
 CreateTodoInput is used for create Todo object.
 Input was generated by ent.
 """
@@ -630,6 +701,277 @@ Define a Relay Cursor type:
 https://relay.dev/graphql/connections.htm#sec-Cursor
 """
 scalar Cursor
+type MailConn implements Node {
+  id: ID!
+  createdAt: Time
+  updatedAt: Time
+  appID: String
+  name: String
+  host: String
+  port: Int
+  username: String
+  password: String
+  encryption: Int
+  fromName: String
+  fromEmail: String
+  status: Boolean
+}
+"""
+A connection to a list of items.
+"""
+type MailConnConnection {
+  """
+  A list of edges.
+  """
+  edges: [MailConnEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type MailConnEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: MailConn
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+Ordering options for MailConn connections
+"""
+input MailConnOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection! = ASC
+  """
+  The field by which to order MailConns.
+  """
+  field: MailConnOrderField!
+}
+"""
+Properties by which MailConn connections can be ordered.
+"""
+enum MailConnOrderField {
+  CREATED_AT
+}
+"""
+MailConnWhereInput is used for filtering MailConn objects.
+Input was generated by ent.
+"""
+input MailConnWhereInput {
+  not: MailConnWhereInput
+  and: [MailConnWhereInput!]
+  or: [MailConnWhereInput!]
+  """
+  id field predicates
+  """
+  id: ID
+  idNEQ: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+  idGT: ID
+  idGTE: ID
+  idLT: ID
+  idLTE: ID
+  idEqualFold: ID
+  idContainsFold: ID
+  """
+  created_at field predicates
+  """
+  createdAt: Time
+  createdAtNEQ: Time
+  createdAtIn: [Time!]
+  createdAtNotIn: [Time!]
+  createdAtGT: Time
+  createdAtGTE: Time
+  createdAtLT: Time
+  createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
+  """
+  updated_at field predicates
+  """
+  updatedAt: Time
+  updatedAtNEQ: Time
+  updatedAtIn: [Time!]
+  updatedAtNotIn: [Time!]
+  updatedAtGT: Time
+  updatedAtGTE: Time
+  updatedAtLT: Time
+  updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
+  """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
+  """
+  name field predicates
+  """
+  name: String
+  nameNEQ: String
+  nameIn: [String!]
+  nameNotIn: [String!]
+  nameGT: String
+  nameGTE: String
+  nameLT: String
+  nameLTE: String
+  nameContains: String
+  nameHasPrefix: String
+  nameHasSuffix: String
+  nameIsNil: Boolean
+  nameNotNil: Boolean
+  nameEqualFold: String
+  nameContainsFold: String
+  """
+  host field predicates
+  """
+  host: String
+  hostNEQ: String
+  hostIn: [String!]
+  hostNotIn: [String!]
+  hostGT: String
+  hostGTE: String
+  hostLT: String
+  hostLTE: String
+  hostContains: String
+  hostHasPrefix: String
+  hostHasSuffix: String
+  hostIsNil: Boolean
+  hostNotNil: Boolean
+  hostEqualFold: String
+  hostContainsFold: String
+  """
+  port field predicates
+  """
+  port: Int
+  portNEQ: Int
+  portIn: [Int!]
+  portNotIn: [Int!]
+  portGT: Int
+  portGTE: Int
+  portLT: Int
+  portLTE: Int
+  portIsNil: Boolean
+  portNotNil: Boolean
+  """
+  username field predicates
+  """
+  username: String
+  usernameNEQ: String
+  usernameIn: [String!]
+  usernameNotIn: [String!]
+  usernameGT: String
+  usernameGTE: String
+  usernameLT: String
+  usernameLTE: String
+  usernameContains: String
+  usernameHasPrefix: String
+  usernameHasSuffix: String
+  usernameIsNil: Boolean
+  usernameNotNil: Boolean
+  usernameEqualFold: String
+  usernameContainsFold: String
+  """
+  password field predicates
+  """
+  password: String
+  passwordNEQ: String
+  passwordIn: [String!]
+  passwordNotIn: [String!]
+  passwordGT: String
+  passwordGTE: String
+  passwordLT: String
+  passwordLTE: String
+  passwordContains: String
+  passwordHasPrefix: String
+  passwordHasSuffix: String
+  passwordIsNil: Boolean
+  passwordNotNil: Boolean
+  passwordEqualFold: String
+  passwordContainsFold: String
+  """
+  encryption field predicates
+  """
+  encryption: Int
+  encryptionNEQ: Int
+  encryptionIn: [Int!]
+  encryptionNotIn: [Int!]
+  encryptionGT: Int
+  encryptionGTE: Int
+  encryptionLT: Int
+  encryptionLTE: Int
+  encryptionIsNil: Boolean
+  encryptionNotNil: Boolean
+  """
+  from_name field predicates
+  """
+  fromName: String
+  fromNameNEQ: String
+  fromNameIn: [String!]
+  fromNameNotIn: [String!]
+  fromNameGT: String
+  fromNameGTE: String
+  fromNameLT: String
+  fromNameLTE: String
+  fromNameContains: String
+  fromNameHasPrefix: String
+  fromNameHasSuffix: String
+  fromNameIsNil: Boolean
+  fromNameNotNil: Boolean
+  fromNameEqualFold: String
+  fromNameContainsFold: String
+  """
+  from_email field predicates
+  """
+  fromEmail: String
+  fromEmailNEQ: String
+  fromEmailIn: [String!]
+  fromEmailNotIn: [String!]
+  fromEmailGT: String
+  fromEmailGTE: String
+  fromEmailLT: String
+  fromEmailLTE: String
+  fromEmailContains: String
+  fromEmailHasPrefix: String
+  fromEmailHasSuffix: String
+  fromEmailIsNil: Boolean
+  fromEmailNotNil: Boolean
+  fromEmailEqualFold: String
+  fromEmailContainsFold: String
+  """
+  status field predicates
+  """
+  status: Boolean
+  statusNEQ: Boolean
+  statusIsNil: Boolean
+  statusNotNil: Boolean
+}
 """
 An object with an ID.
 Follows the [Relay Global Object Identification Specification](https://relay.dev/graphql/objectidentification.htm)
@@ -644,6 +986,7 @@ type OauthConnection implements Node {
   id: ID!
   createdAt: Time
   updatedAt: Time
+  appID: String
   name: String
   provider: String
   clientID: String
@@ -750,6 +1093,24 @@ input OauthConnectionWhereInput {
   updatedAtLTE: Time
   updatedAtIsNil: Boolean
   updatedAtNotNil: Boolean
+  """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
   """
   name field predicates
   """
@@ -941,6 +1302,7 @@ type Post implements Node {
   id: ID!
   createdAt: Time
   updatedAt: Time
+  appID: String
   name: String
   slug: String
   postStatusID: ID
@@ -961,6 +1323,7 @@ type PostCategory implements Node {
   id: ID!
   createdAt: Time
   updatedAt: Time
+  appID: String
   name: String
   slug: String
   status: String
@@ -1068,6 +1431,24 @@ input PostCategoryWhereInput {
   updatedAtLTE: Time
   updatedAtIsNil: Boolean
   updatedAtNotNil: Boolean
+  """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
   """
   name field predicates
   """
@@ -1289,6 +1670,7 @@ type PostStatus implements Node {
   id: ID!
   createdAt: Time
   updatedAt: Time
+  appID: String
   name: String
   slug: String
   status: Boolean
@@ -1396,6 +1778,24 @@ input PostStatusWhereInput {
   updatedAtIsNil: Boolean
   updatedAtNotNil: Boolean
   """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
+  """
   name field predicates
   """
   name: String
@@ -1471,6 +1871,7 @@ type PostTag implements Node {
   id: ID!
   createdAt: Time
   updatedAt: Time
+  appID: String
   name: String
   slug: String
   status: String
@@ -1547,6 +1948,24 @@ input PostTagWhereInput {
   updatedAtLTE: Time
   updatedAtIsNil: Boolean
   updatedAtNotNil: Boolean
+  """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
   """
   name field predicates
   """
@@ -1714,6 +2133,7 @@ type PostType implements Node {
   id: ID!
   createdAt: Time
   updatedAt: Time
+  appID: String
   name: String
   slug: String
   status: String
@@ -1824,6 +2244,24 @@ input PostTypeWhereInput {
   updatedAtLTE: Time
   updatedAtIsNil: Boolean
   updatedAtNotNil: Boolean
+  """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
   """
   name field predicates
   """
@@ -2044,6 +2482,24 @@ input PostWhereInput {
   updatedAtLTE: Time
   updatedAtIsNil: Boolean
   updatedAtNotNil: Boolean
+  """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
   """
   name field predicates
   """
@@ -2285,7 +2741,7 @@ type Query {
     ID of the object.
     """
     id: ID!
-  ): Node @canAdmin
+  ): Node @canApp
   """
   Lookup nodes by a list of IDs.
   """
@@ -2294,7 +2750,7 @@ type Query {
     The list of node IDs.
     """
     ids: [ID!]!
-  ): [Node]! @canAdmin
+  ): [Node]! @canApp
   apps(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -2326,6 +2782,37 @@ type Query {
     """
     where: AppWhereInput
   ): AppConnection! @canAdmin
+  mailConns(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for MailConns returned from the connection.
+    """
+    orderBy: [MailConnOrder!]
+
+    """
+    Filtering options for MailConns returned from the connection.
+    """
+    where: MailConnWhereInput
+  ): MailConnConnection! @canAdmin
   oauthConnections(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -2481,6 +2968,37 @@ type Query {
     """
     where: PostTypeWhereInput
   ): PostTypeConnection! @canApp
+  templs(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for Templs returned from the connection.
+    """
+    orderBy: [TemplOrder!]
+
+    """
+    Filtering options for Templs returned from the connection.
+    """
+    where: TemplWhereInput
+  ): TemplConnection! @canAdmin
   todos(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -2637,10 +3155,197 @@ type Query {
     where: WorkspaceUserWhereInput
   ): WorkspaceUserConnection! @canApp
 }
+type Templ implements Node {
+  id: ID!
+  createdAt: Time
+  updatedAt: Time
+  appID: String
+  name: String
+  body: String
+  compiled: String
+  status: Boolean
+}
+"""
+A connection to a list of items.
+"""
+type TemplConnection {
+  """
+  A list of edges.
+  """
+  edges: [TemplEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type TemplEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Templ
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+Ordering options for Templ connections
+"""
+input TemplOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection! = ASC
+  """
+  The field by which to order Templs.
+  """
+  field: TemplOrderField!
+}
+"""
+Properties by which Templ connections can be ordered.
+"""
+enum TemplOrderField {
+  CREATED_AT
+}
+"""
+TemplWhereInput is used for filtering Templ objects.
+Input was generated by ent.
+"""
+input TemplWhereInput {
+  not: TemplWhereInput
+  and: [TemplWhereInput!]
+  or: [TemplWhereInput!]
+  """
+  id field predicates
+  """
+  id: ID
+  idNEQ: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+  idGT: ID
+  idGTE: ID
+  idLT: ID
+  idLTE: ID
+  idEqualFold: ID
+  idContainsFold: ID
+  """
+  created_at field predicates
+  """
+  createdAt: Time
+  createdAtNEQ: Time
+  createdAtIn: [Time!]
+  createdAtNotIn: [Time!]
+  createdAtGT: Time
+  createdAtGTE: Time
+  createdAtLT: Time
+  createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
+  """
+  updated_at field predicates
+  """
+  updatedAt: Time
+  updatedAtNEQ: Time
+  updatedAtIn: [Time!]
+  updatedAtNotIn: [Time!]
+  updatedAtGT: Time
+  updatedAtGTE: Time
+  updatedAtLT: Time
+  updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
+  """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
+  """
+  name field predicates
+  """
+  name: String
+  nameNEQ: String
+  nameIn: [String!]
+  nameNotIn: [String!]
+  nameGT: String
+  nameGTE: String
+  nameLT: String
+  nameLTE: String
+  nameContains: String
+  nameHasPrefix: String
+  nameHasSuffix: String
+  nameIsNil: Boolean
+  nameNotNil: Boolean
+  nameEqualFold: String
+  nameContainsFold: String
+  """
+  body field predicates
+  """
+  body: String
+  bodyNEQ: String
+  bodyIn: [String!]
+  bodyNotIn: [String!]
+  bodyGT: String
+  bodyGTE: String
+  bodyLT: String
+  bodyLTE: String
+  bodyContains: String
+  bodyHasPrefix: String
+  bodyHasSuffix: String
+  bodyIsNil: Boolean
+  bodyNotNil: Boolean
+  bodyEqualFold: String
+  bodyContainsFold: String
+  """
+  compiled field predicates
+  """
+  compiled: String
+  compiledNEQ: String
+  compiledIn: [String!]
+  compiledNotIn: [String!]
+  compiledGT: String
+  compiledGTE: String
+  compiledLT: String
+  compiledLTE: String
+  compiledContains: String
+  compiledHasPrefix: String
+  compiledHasSuffix: String
+  compiledIsNil: Boolean
+  compiledNotNil: Boolean
+  compiledEqualFold: String
+  compiledContainsFold: String
+  """
+  status field predicates
+  """
+  status: Boolean
+  statusNEQ: Boolean
+  statusIsNil: Boolean
+  statusNotNil: Boolean
+}
 type Todo implements Node {
   id: ID!
   createdAt: Time
   updatedAt: Time
+  appID: String
   text: String!
   status: TodoStatus!
   priority: Int!
@@ -2754,6 +3459,24 @@ input TodoWhereInput {
   updatedAtIsNil: Boolean
   updatedAtNotNil: Boolean
   """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
+  """
   text field predicates
   """
   text: String
@@ -2823,24 +3546,52 @@ input UpdateAppInput {
   clearLogoURL: Boolean
   siteURL: String
   clearSiteURL: Boolean
-  defaultMailConnID: String
-  clearDefaultMailConnID: Boolean
-  mailLayoutTemplID: String
-  clearMailLayoutTemplID: Boolean
-  wsapceInviteTemplID: String
-  clearWsapceInviteTemplID: Boolean
-  wsapceSuccessTemplID: String
-  clearWsapceSuccessTemplID: Boolean
-  authFpTemplID: String
-  clearAuthFpTemplID: Boolean
-  authWelcomeEmailTemplID: String
-  clearAuthWelcomeEmailTemplID: Boolean
-  authVerificationTemplID: String
-  clearAuthVerificationTemplID: Boolean
   authEmailVerify: String
   clearAuthEmailVerify: Boolean
   adminUserID: String
   clearAdminUserID: Boolean
+  defaultMailConnID: ID
+  clearDefaultMailConn: Boolean
+  mailLayoutTemplID: ID
+  clearMailLayoutTempl: Boolean
+  wsapceInviteTemplID: ID
+  clearWsapceInviteTempl: Boolean
+  wsapceSuccessTemplID: ID
+  clearWsapceSuccessTempl: Boolean
+  authFpTemplID: ID
+  clearAuthFpTempl: Boolean
+  authWelcomeEmailTemplID: ID
+  clearAuthWelcomeEmailTempl: Boolean
+  authVerificationTemplID: ID
+  clearAuthVerificationTempl: Boolean
+}
+"""
+UpdateMailConnInput is used for update MailConn object.
+Input was generated by ent.
+"""
+input UpdateMailConnInput {
+  updatedAt: Time
+  clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
+  name: String
+  clearName: Boolean
+  host: String
+  clearHost: Boolean
+  port: Int
+  clearPort: Boolean
+  username: String
+  clearUsername: Boolean
+  password: String
+  clearPassword: Boolean
+  encryption: Int
+  clearEncryption: Boolean
+  fromName: String
+  clearFromName: Boolean
+  fromEmail: String
+  clearFromEmail: Boolean
+  status: Boolean
+  clearStatus: Boolean
 }
 """
 UpdateOauthConnectionInput is used for update OauthConnection object.
@@ -2849,6 +3600,8 @@ Input was generated by ent.
 input UpdateOauthConnectionInput {
   updatedAt: Time
   clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
   name: String
   clearName: Boolean
   provider: String
@@ -2875,6 +3628,8 @@ Input was generated by ent.
 input UpdatePostCategoryInput {
   updatedAt: Time
   clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
   name: String
   clearName: Boolean
   slug: String
@@ -2904,6 +3659,8 @@ Input was generated by ent.
 input UpdatePostInput {
   updatedAt: Time
   clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
   name: String
   clearName: Boolean
   slug: String
@@ -2936,6 +3693,8 @@ Input was generated by ent.
 input UpdatePostStatusInput {
   updatedAt: Time
   clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
   name: String
   clearName: Boolean
   slug: String
@@ -2952,6 +3711,8 @@ Input was generated by ent.
 input UpdatePostTypeInput {
   updatedAt: Time
   clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
   name: String
   clearName: Boolean
   slug: String
@@ -2972,12 +3733,32 @@ input UpdatePostTypeInput {
   clearMetaRobots: Boolean
 }
 """
+UpdateTemplInput is used for update Templ object.
+Input was generated by ent.
+"""
+input UpdateTemplInput {
+  updatedAt: Time
+  clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
+  name: String
+  clearName: Boolean
+  body: String
+  clearBody: Boolean
+  compiled: String
+  clearCompiled: Boolean
+  status: Boolean
+  clearStatus: Boolean
+}
+"""
 UpdateTodoInput is used for update Todo object.
 Input was generated by ent.
 """
 input UpdateTodoInput {
   updatedAt: Time
   clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
   text: String
   status: TodoStatus
   priority: Int
@@ -2994,6 +3775,8 @@ Input was generated by ent.
 input UpdateUserInput {
   updatedAt: Time
   clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
   email: String
   phone: String
   clearPhone: Boolean
@@ -3033,6 +3816,8 @@ Input was generated by ent.
 input UpdateWorkspaceInput {
   updatedAt: Time
   clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
   name: String
   clearName: Boolean
   isPersonal: Boolean
@@ -3053,6 +3838,8 @@ Input was generated by ent.
 input UpdateWorkspaceInviteInput {
   updatedAt: Time
   clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
   email: String
   clearEmail: Boolean
   role: String
@@ -3067,6 +3854,8 @@ Input was generated by ent.
 input UpdateWorkspaceUserInput {
   updatedAt: Time
   clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
   role: String
   clearRole: Boolean
   userID: ID
@@ -3076,6 +3865,7 @@ type User implements Node {
   id: ID!
   createdAt: Time
   updatedAt: Time
+  appID: String
   email: String!
   phone: String
   firstName: String
@@ -3189,6 +3979,24 @@ input UserWhereInput {
   updatedAtLTE: Time
   updatedAtIsNil: Boolean
   updatedAtNotNil: Boolean
+  """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
   """
   email field predicates
   """
@@ -3367,6 +4175,7 @@ type Workspace implements Node {
   id: ID!
   createdAt: Time
   updatedAt: Time
+  appID: String
   name: String
   isPersonal: Boolean
   userID: String
@@ -3408,6 +4217,7 @@ type WorkspaceInvite implements Node {
   id: ID!
   createdAt: Time
   updatedAt: Time
+  appID: String
   workspaceID: ID
   email: String
   role: String
@@ -3510,6 +4320,24 @@ input WorkspaceInviteWhereInput {
   updatedAtIsNil: Boolean
   updatedAtNotNil: Boolean
   """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
+  """
   workspace_id field predicates
   """
   workspaceID: ID
@@ -3593,6 +4421,7 @@ type WorkspaceUser implements Node {
   id: ID!
   createdAt: Time
   updatedAt: Time
+  appID: String
   workspaceID: ID!
   userID: ID!
   role: String
@@ -3698,6 +4527,24 @@ input WorkspaceUserWhereInput {
   updatedAtIsNil: Boolean
   updatedAtNotNil: Boolean
   """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
+  """
   role field predicates
   """
   role: String
@@ -3763,6 +4610,24 @@ input WorkspaceWhereInput {
   updatedAtLTE: Time
   updatedAtIsNil: Boolean
   updatedAtNotNil: Boolean
+  """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
   """
   name field predicates
   """

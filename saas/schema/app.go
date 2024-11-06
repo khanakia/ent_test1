@@ -6,6 +6,7 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
 
@@ -43,7 +44,30 @@ func (App) Fields() []ent.Field {
 }
 
 func (App) Edges() []ent.Edge {
-	return nil
+	return []ent.Edge{
+		edge.To("default_mail_conn", MailConn.Type).
+			Field("default_mail_conn_id").
+			Unique(),
+		edge.To("mail_layout_templ", Templ.Type).
+			Field("mail_layout_templ_id").
+			Unique(),
+		edge.To("wsapce_invite_templ", Templ.Type).
+			Field("wsapce_invite_templ_id").
+			Unique(),
+		edge.To("wsapce_success_templ", Templ.Type).
+			Field("wsapce_success_templ_id").
+			Unique(),
+		edge.To("auth_fp_templ", Templ.Type).
+			Field("auth_fp_templ_id").
+			Unique(),
+		edge.To("auth_welcome_email_templ", Templ.Type).
+			Field("auth_welcome_email_templ_id").
+			Unique(),
+		edge.To("auth_verification_templ", Templ.Type).
+			Field("auth_verification_templ_id").
+			Unique(),
+	}
+
 }
 
 func (App) Mixin() []ent.Mixin {

@@ -8,6 +8,8 @@ import (
 	"saas/gen/ent/adminuser"
 	"saas/pkg/auth/authfn"
 	"strings"
+
+	"github.com/cohesivestack/valgo"
 )
 
 func FindByEmail(email string, client *ent.Client) (*ent.AdminUser, error) {
@@ -26,8 +28,35 @@ func FindByEmail(email string, client *ent.Client) (*ent.AdminUser, error) {
 	return user, nil
 }
 
-func Login(params authfn.LoginParams, matchPass bool, client *ent.Client) (*ent.AdminUser, *ent.Session, error) {
-	err := authfn.LoginValidate(params, matchPass)
+type LoginParams struct {
+	Email     string
+	Password  string
+	IP        string
+	UserAgent string
+	Payload   string
+	// ExpiresAt time.Time
+}
+
+func LoginValidate(params LoginParams, matchPass bool) error {
+	val := valgo.Is(
+		valgo.String(params.Email, "email").Not().Blank().OfLengthBetween(4, 20),
+	)
+
+	if matchPass {
+		val.Is(
+			valgo.String(params.Password, "password").Not().Blank().OfLengthBetween(4, 20),
+		)
+	}
+
+	if !val.Valid() {
+		return val.Error()
+	}
+
+	return nil
+}
+
+func Login(params LoginParams, matchPass bool, client *ent.Client) (*ent.AdminUser, *ent.Session, error) {
+	err := LoginValidate(params, matchPass)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -50,6 +79,7 @@ func Login(params authfn.LoginParams, matchPass bool, client *ent.Client) (*ent.
 	}
 
 	session, err := authfn.CreateSession(authfn.CreateSessionParams{
+		AppID:     "admin",
 		UserID:    user.ID,
 		IP:        params.IP,
 		UserAgent: params.UserAgent,

@@ -17,7 +17,7 @@ func (cls BaseApp) Fields() []ent.Field {
 	return []ent.Field{
 
 		field.String("app_id").Optional().Annotations(
-			entgql.Skip(),
+			entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationCreateInput),
 		),
 	}
 }

@@ -7,7 +7,10 @@ package gqlsaresolver
 import (
 	"context"
 	"saas/gen/ent"
+	"saas/gen/ent/mailconn"
+	"saas/gen/ent/templ"
 	"saas/pkg/middleware/adminauthmiddleware"
+	"saas/pkg/middleware/appmiddleware"
 )
 
 // CreateOauthConnection is the resolver for the createOauthConnection field.
@@ -17,7 +20,9 @@ func (r *mutationResolver) CreateOauthConnection(ctx context.Context, input ent.
 		return nil, err
 	}
 
-	return r.Plugin.EntDB.Client().OauthConnection.Create().SetInput(input).Save(ctx)
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	return r.Plugin.EntDB.Client().OauthConnection.Create().SetInput(input).SetAppID(app.ID).Save(ctx)
 }
 
 // UpdateOauthConnection is the resolver for the updateOauthConnection field.
@@ -28,4 +33,52 @@ func (r *mutationResolver) UpdateOauthConnection(ctx context.Context, id string,
 	}
 
 	return r.Plugin.EntDB.Client().OauthConnection.UpdateOneID(id).SetInput(input).Save(ctx)
+}
+
+// CreateMailConn is the resolver for the createMailConn field.
+func (r *mutationResolver) CreateMailConn(ctx context.Context, input ent.CreateMailConnInput) (*ent.MailConn, error) {
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
+	if cuser == nil {
+		return nil, err
+	}
+
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	return r.Plugin.EntDB.Client().MailConn.Create().SetInput(input).SetAppID(app.ID).Save(ctx)
+}
+
+// UpdateMailConn is the resolver for the updateMailConn field.
+func (r *mutationResolver) UpdateMailConn(ctx context.Context, id string, input ent.UpdateMailConnInput) (*ent.MailConn, error) {
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
+	if cuser == nil {
+		return nil, err
+	}
+
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	return r.Plugin.EntDB.Client().MailConn.UpdateOneID(id).SetInput(input).Where(mailconn.AppID(app.ID)).Save(ctx)
+}
+
+// CreateTempl is the resolver for the createTempl field.
+func (r *mutationResolver) CreateTempl(ctx context.Context, input ent.CreateTemplInput) (*ent.Templ, error) {
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
+	if cuser == nil {
+		return nil, err
+	}
+
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	return r.Plugin.EntDB.Client().Templ.Create().SetInput(input).SetAppID(app.ID).Save(ctx)
+}
+
+// UpdateTempl is the resolver for the updateTempl field.
+func (r *mutationResolver) UpdateTempl(ctx context.Context, id string, input ent.UpdateTemplInput) (*ent.Templ, error) {
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
+	if cuser == nil {
+		return nil, err
+	}
+
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	return r.Plugin.EntDB.Client().Templ.UpdateOneID(id).SetInput(input).Where(templ.AppID(app.ID)).Save(ctx)
 }
