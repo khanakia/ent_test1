@@ -615,6 +615,118 @@ func (c *AppClient) GetX(ctx context.Context, id string) *App {
 	return obj
 }
 
+// QueryDefaultMailConn queries the default_mail_conn edge of a App.
+func (c *AppClient) QueryDefaultMailConn(a *App) *MailConnQuery {
+	query := (&MailConnClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(app.Table, app.FieldID, id),
+			sqlgraph.To(mailconn.Table, mailconn.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, app.DefaultMailConnTable, app.DefaultMailConnColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryMailLayoutTempl queries the mail_layout_templ edge of a App.
+func (c *AppClient) QueryMailLayoutTempl(a *App) *TemplQuery {
+	query := (&TemplClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(app.Table, app.FieldID, id),
+			sqlgraph.To(templ.Table, templ.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, app.MailLayoutTemplTable, app.MailLayoutTemplColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryWsapceInviteTempl queries the wsapce_invite_templ edge of a App.
+func (c *AppClient) QueryWsapceInviteTempl(a *App) *TemplQuery {
+	query := (&TemplClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(app.Table, app.FieldID, id),
+			sqlgraph.To(templ.Table, templ.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, app.WsapceInviteTemplTable, app.WsapceInviteTemplColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryWsapceSuccessTempl queries the wsapce_success_templ edge of a App.
+func (c *AppClient) QueryWsapceSuccessTempl(a *App) *TemplQuery {
+	query := (&TemplClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(app.Table, app.FieldID, id),
+			sqlgraph.To(templ.Table, templ.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, app.WsapceSuccessTemplTable, app.WsapceSuccessTemplColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAuthFpTempl queries the auth_fp_templ edge of a App.
+func (c *AppClient) QueryAuthFpTempl(a *App) *TemplQuery {
+	query := (&TemplClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(app.Table, app.FieldID, id),
+			sqlgraph.To(templ.Table, templ.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, app.AuthFpTemplTable, app.AuthFpTemplColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAuthWelcomeEmailTempl queries the auth_welcome_email_templ edge of a App.
+func (c *AppClient) QueryAuthWelcomeEmailTempl(a *App) *TemplQuery {
+	query := (&TemplClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(app.Table, app.FieldID, id),
+			sqlgraph.To(templ.Table, templ.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, app.AuthWelcomeEmailTemplTable, app.AuthWelcomeEmailTemplColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAuthVerificationTempl queries the auth_verification_templ edge of a App.
+func (c *AppClient) QueryAuthVerificationTempl(a *App) *TemplQuery {
+	query := (&TemplClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(app.Table, app.FieldID, id),
+			sqlgraph.To(templ.Table, templ.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, app.AuthVerificationTemplTable, app.AuthVerificationTemplColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *AppClient) Hooks() []Hook {
 	return c.hooks.App

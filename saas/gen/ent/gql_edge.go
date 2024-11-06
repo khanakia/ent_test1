@@ -8,6 +8,62 @@ import (
 	"github.com/99designs/gqlgen/graphql"
 )
 
+func (a *App) DefaultMailConn(ctx context.Context) (*MailConn, error) {
+	result, err := a.Edges.DefaultMailConnOrErr()
+	if IsNotLoaded(err) {
+		result, err = a.QueryDefaultMailConn().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (a *App) MailLayoutTempl(ctx context.Context) (*Templ, error) {
+	result, err := a.Edges.MailLayoutTemplOrErr()
+	if IsNotLoaded(err) {
+		result, err = a.QueryMailLayoutTempl().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (a *App) WsapceInviteTempl(ctx context.Context) (*Templ, error) {
+	result, err := a.Edges.WsapceInviteTemplOrErr()
+	if IsNotLoaded(err) {
+		result, err = a.QueryWsapceInviteTempl().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (a *App) WsapceSuccessTempl(ctx context.Context) (*Templ, error) {
+	result, err := a.Edges.WsapceSuccessTemplOrErr()
+	if IsNotLoaded(err) {
+		result, err = a.QueryWsapceSuccessTempl().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (a *App) AuthFpTempl(ctx context.Context) (*Templ, error) {
+	result, err := a.Edges.AuthFpTemplOrErr()
+	if IsNotLoaded(err) {
+		result, err = a.QueryAuthFpTempl().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (a *App) AuthWelcomeEmailTempl(ctx context.Context) (*Templ, error) {
+	result, err := a.Edges.AuthWelcomeEmailTemplOrErr()
+	if IsNotLoaded(err) {
+		result, err = a.QueryAuthWelcomeEmailTempl().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (a *App) AuthVerificationTempl(ctx context.Context) (*Templ, error) {
+	result, err := a.Edges.AuthVerificationTemplOrErr()
+	if IsNotLoaded(err) {
+		result, err = a.QueryAuthVerificationTempl().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
 func (po *Post) PostStatus(ctx context.Context) (*PostStatus, error) {
 	result, err := po.Edges.PostStatusOrErr()
 	if IsNotLoaded(err) {

@@ -46,21 +46,65 @@ var (
 		{Name: "social_in", Type: field.TypeString, Nullable: true},
 		{Name: "logo_url", Type: field.TypeString, Nullable: true},
 		{Name: "site_url", Type: field.TypeString, Nullable: true},
-		{Name: "default_mail_conn_id", Type: field.TypeString, Nullable: true},
-		{Name: "mail_layout_templ_id", Type: field.TypeString, Nullable: true, Size: 2147483647},
-		{Name: "wsapce_invite_templ_id", Type: field.TypeString, Nullable: true, Size: 2147483647},
-		{Name: "wsapce_success_templ_id", Type: field.TypeString, Nullable: true, Size: 2147483647},
-		{Name: "auth_fp_templ_id", Type: field.TypeString, Nullable: true, Size: 2147483647},
-		{Name: "auth_welcome_email_templ_id", Type: field.TypeString, Nullable: true, Size: 2147483647},
-		{Name: "auth_verification_templ_id", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "auth_email_verify", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "admin_user_id", Type: field.TypeString, Nullable: true},
+		{Name: "default_mail_conn_id", Type: field.TypeString, Nullable: true},
+		{Name: "mail_layout_templ_id", Type: field.TypeString, Nullable: true},
+		{Name: "wsapce_invite_templ_id", Type: field.TypeString, Nullable: true},
+		{Name: "wsapce_success_templ_id", Type: field.TypeString, Nullable: true},
+		{Name: "auth_fp_templ_id", Type: field.TypeString, Nullable: true},
+		{Name: "auth_welcome_email_templ_id", Type: field.TypeString, Nullable: true},
+		{Name: "auth_verification_templ_id", Type: field.TypeString, Nullable: true},
 	}
 	// AppsTable holds the schema information for the "apps" table.
 	AppsTable = &schema.Table{
 		Name:       "apps",
 		Columns:    AppsColumns,
 		PrimaryKey: []*schema.Column{AppsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "apps_mail_conns_default_mail_conn",
+				Columns:    []*schema.Column{AppsColumns[14]},
+				RefColumns: []*schema.Column{MailConnsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "apps_templs_mail_layout_templ",
+				Columns:    []*schema.Column{AppsColumns[15]},
+				RefColumns: []*schema.Column{TemplsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "apps_templs_wsapce_invite_templ",
+				Columns:    []*schema.Column{AppsColumns[16]},
+				RefColumns: []*schema.Column{TemplsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "apps_templs_wsapce_success_templ",
+				Columns:    []*schema.Column{AppsColumns[17]},
+				RefColumns: []*schema.Column{TemplsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "apps_templs_auth_fp_templ",
+				Columns:    []*schema.Column{AppsColumns[18]},
+				RefColumns: []*schema.Column{TemplsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "apps_templs_auth_welcome_email_templ",
+				Columns:    []*schema.Column{AppsColumns[19]},
+				RefColumns: []*schema.Column{TemplsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "apps_templs_auth_verification_templ",
+				Columns:    []*schema.Column{AppsColumns[20]},
+				RefColumns: []*schema.Column{TemplsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 	}
 	// KachesColumns holds the columns for the "kaches" table.
 	KachesColumns = []*schema.Column{
@@ -563,6 +607,13 @@ var (
 )
 
 func init() {
+	AppsTable.ForeignKeys[0].RefTable = MailConnsTable
+	AppsTable.ForeignKeys[1].RefTable = TemplsTable
+	AppsTable.ForeignKeys[2].RefTable = TemplsTable
+	AppsTable.ForeignKeys[3].RefTable = TemplsTable
+	AppsTable.ForeignKeys[4].RefTable = TemplsTable
+	AppsTable.ForeignKeys[5].RefTable = TemplsTable
+	AppsTable.ForeignKeys[6].RefTable = TemplsTable
 	PostsTable.ForeignKeys[0].RefTable = PostCategoriesTable
 	PostsTable.ForeignKeys[1].RefTable = PostStatusTable
 	PostsTable.ForeignKeys[2].RefTable = PostTypesTable

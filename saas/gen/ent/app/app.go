@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -53,8 +54,71 @@ const (
 	FieldAuthEmailVerify = "auth_email_verify"
 	// FieldAdminUserID holds the string denoting the admin_user_id field in the database.
 	FieldAdminUserID = "admin_user_id"
+	// EdgeDefaultMailConn holds the string denoting the default_mail_conn edge name in mutations.
+	EdgeDefaultMailConn = "default_mail_conn"
+	// EdgeMailLayoutTempl holds the string denoting the mail_layout_templ edge name in mutations.
+	EdgeMailLayoutTempl = "mail_layout_templ"
+	// EdgeWsapceInviteTempl holds the string denoting the wsapce_invite_templ edge name in mutations.
+	EdgeWsapceInviteTempl = "wsapce_invite_templ"
+	// EdgeWsapceSuccessTempl holds the string denoting the wsapce_success_templ edge name in mutations.
+	EdgeWsapceSuccessTempl = "wsapce_success_templ"
+	// EdgeAuthFpTempl holds the string denoting the auth_fp_templ edge name in mutations.
+	EdgeAuthFpTempl = "auth_fp_templ"
+	// EdgeAuthWelcomeEmailTempl holds the string denoting the auth_welcome_email_templ edge name in mutations.
+	EdgeAuthWelcomeEmailTempl = "auth_welcome_email_templ"
+	// EdgeAuthVerificationTempl holds the string denoting the auth_verification_templ edge name in mutations.
+	EdgeAuthVerificationTempl = "auth_verification_templ"
 	// Table holds the table name of the app in the database.
 	Table = "apps"
+	// DefaultMailConnTable is the table that holds the default_mail_conn relation/edge.
+	DefaultMailConnTable = "apps"
+	// DefaultMailConnInverseTable is the table name for the MailConn entity.
+	// It exists in this package in order to avoid circular dependency with the "mailconn" package.
+	DefaultMailConnInverseTable = "mail_conns"
+	// DefaultMailConnColumn is the table column denoting the default_mail_conn relation/edge.
+	DefaultMailConnColumn = "default_mail_conn_id"
+	// MailLayoutTemplTable is the table that holds the mail_layout_templ relation/edge.
+	MailLayoutTemplTable = "apps"
+	// MailLayoutTemplInverseTable is the table name for the Templ entity.
+	// It exists in this package in order to avoid circular dependency with the "templ" package.
+	MailLayoutTemplInverseTable = "templs"
+	// MailLayoutTemplColumn is the table column denoting the mail_layout_templ relation/edge.
+	MailLayoutTemplColumn = "mail_layout_templ_id"
+	// WsapceInviteTemplTable is the table that holds the wsapce_invite_templ relation/edge.
+	WsapceInviteTemplTable = "apps"
+	// WsapceInviteTemplInverseTable is the table name for the Templ entity.
+	// It exists in this package in order to avoid circular dependency with the "templ" package.
+	WsapceInviteTemplInverseTable = "templs"
+	// WsapceInviteTemplColumn is the table column denoting the wsapce_invite_templ relation/edge.
+	WsapceInviteTemplColumn = "wsapce_invite_templ_id"
+	// WsapceSuccessTemplTable is the table that holds the wsapce_success_templ relation/edge.
+	WsapceSuccessTemplTable = "apps"
+	// WsapceSuccessTemplInverseTable is the table name for the Templ entity.
+	// It exists in this package in order to avoid circular dependency with the "templ" package.
+	WsapceSuccessTemplInverseTable = "templs"
+	// WsapceSuccessTemplColumn is the table column denoting the wsapce_success_templ relation/edge.
+	WsapceSuccessTemplColumn = "wsapce_success_templ_id"
+	// AuthFpTemplTable is the table that holds the auth_fp_templ relation/edge.
+	AuthFpTemplTable = "apps"
+	// AuthFpTemplInverseTable is the table name for the Templ entity.
+	// It exists in this package in order to avoid circular dependency with the "templ" package.
+	AuthFpTemplInverseTable = "templs"
+	// AuthFpTemplColumn is the table column denoting the auth_fp_templ relation/edge.
+	AuthFpTemplColumn = "auth_fp_templ_id"
+	// AuthWelcomeEmailTemplTable is the table that holds the auth_welcome_email_templ relation/edge.
+	AuthWelcomeEmailTemplTable = "apps"
+	// AuthWelcomeEmailTemplInverseTable is the table name for the Templ entity.
+	// It exists in this package in order to avoid circular dependency with the "templ" package.
+	AuthWelcomeEmailTemplInverseTable = "templs"
+	// AuthWelcomeEmailTemplColumn is the table column denoting the auth_welcome_email_templ relation/edge.
+	AuthWelcomeEmailTemplColumn = "auth_welcome_email_templ_id"
+	// AuthVerificationTemplTable is the table that holds the auth_verification_templ relation/edge.
+	AuthVerificationTemplTable = "apps"
+	// AuthVerificationTemplInverseTable is the table name for the Templ entity.
+	// It exists in this package in order to avoid circular dependency with the "templ" package.
+	AuthVerificationTemplInverseTable = "templs"
+	// AuthVerificationTemplColumn is the table column denoting the auth_verification_templ relation/edge.
+	AuthVerificationTemplColumn = "auth_verification_templ_id"
 )
 
 // Columns holds all SQL columns for app fields.
@@ -209,4 +273,102 @@ func ByAuthEmailVerify(opts ...sql.OrderTermOption) OrderOption {
 // ByAdminUserID orders the results by the admin_user_id field.
 func ByAdminUserID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAdminUserID, opts...).ToFunc()
+}
+
+// ByDefaultMailConnField orders the results by default_mail_conn field.
+func ByDefaultMailConnField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newDefaultMailConnStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByMailLayoutTemplField orders the results by mail_layout_templ field.
+func ByMailLayoutTemplField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMailLayoutTemplStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByWsapceInviteTemplField orders the results by wsapce_invite_templ field.
+func ByWsapceInviteTemplField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newWsapceInviteTemplStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByWsapceSuccessTemplField orders the results by wsapce_success_templ field.
+func ByWsapceSuccessTemplField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newWsapceSuccessTemplStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByAuthFpTemplField orders the results by auth_fp_templ field.
+func ByAuthFpTemplField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAuthFpTemplStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByAuthWelcomeEmailTemplField orders the results by auth_welcome_email_templ field.
+func ByAuthWelcomeEmailTemplField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAuthWelcomeEmailTemplStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByAuthVerificationTemplField orders the results by auth_verification_templ field.
+func ByAuthVerificationTemplField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAuthVerificationTemplStep(), sql.OrderByField(field, opts...))
+	}
+}
+func newDefaultMailConnStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(DefaultMailConnInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, DefaultMailConnTable, DefaultMailConnColumn),
+	)
+}
+func newMailLayoutTemplStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MailLayoutTemplInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, MailLayoutTemplTable, MailLayoutTemplColumn),
+	)
+}
+func newWsapceInviteTemplStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(WsapceInviteTemplInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, WsapceInviteTemplTable, WsapceInviteTemplColumn),
+	)
+}
+func newWsapceSuccessTemplStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(WsapceSuccessTemplInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, WsapceSuccessTemplTable, WsapceSuccessTemplColumn),
+	)
+}
+func newAuthFpTemplStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AuthFpTemplInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, AuthFpTemplTable, AuthFpTemplColumn),
+	)
+}
+func newAuthWelcomeEmailTemplStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AuthWelcomeEmailTemplInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, AuthWelcomeEmailTemplTable, AuthWelcomeEmailTemplColumn),
+	)
+}
+func newAuthVerificationTemplStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AuthVerificationTemplInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2O, false, AuthVerificationTemplTable, AuthVerificationTemplColumn),
+	)
 }

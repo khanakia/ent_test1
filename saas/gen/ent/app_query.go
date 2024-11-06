@@ -7,7 +7,9 @@ import (
 	"fmt"
 	"math"
 	"saas/gen/ent/app"
+	"saas/gen/ent/mailconn"
 	"saas/gen/ent/predicate"
+	"saas/gen/ent/templ"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -17,12 +19,19 @@ import (
 // AppQuery is the builder for querying App entities.
 type AppQuery struct {
 	config
-	ctx        *QueryContext
-	order      []app.OrderOption
-	inters     []Interceptor
-	predicates []predicate.App
-	loadTotal  []func(context.Context, []*App) error
-	modifiers  []func(*sql.Selector)
+	ctx                       *QueryContext
+	order                     []app.OrderOption
+	inters                    []Interceptor
+	predicates                []predicate.App
+	withDefaultMailConn       *MailConnQuery
+	withMailLayoutTempl       *TemplQuery
+	withWsapceInviteTempl     *TemplQuery
+	withWsapceSuccessTempl    *TemplQuery
+	withAuthFpTempl           *TemplQuery
+	withAuthWelcomeEmailTempl *TemplQuery
+	withAuthVerificationTempl *TemplQuery
+	loadTotal                 []func(context.Context, []*App) error
+	modifiers                 []func(*sql.Selector)
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -57,6 +66,160 @@ func (aq *AppQuery) Unique(unique bool) *AppQuery {
 func (aq *AppQuery) Order(o ...app.OrderOption) *AppQuery {
 	aq.order = append(aq.order, o...)
 	return aq
+}
+
+// QueryDefaultMailConn chains the current query on the "default_mail_conn" edge.
+func (aq *AppQuery) QueryDefaultMailConn() *MailConnQuery {
+	query := (&MailConnClient{config: aq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := aq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := aq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(app.Table, app.FieldID, selector),
+			sqlgraph.To(mailconn.Table, mailconn.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, app.DefaultMailConnTable, app.DefaultMailConnColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryMailLayoutTempl chains the current query on the "mail_layout_templ" edge.
+func (aq *AppQuery) QueryMailLayoutTempl() *TemplQuery {
+	query := (&TemplClient{config: aq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := aq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := aq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(app.Table, app.FieldID, selector),
+			sqlgraph.To(templ.Table, templ.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, app.MailLayoutTemplTable, app.MailLayoutTemplColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryWsapceInviteTempl chains the current query on the "wsapce_invite_templ" edge.
+func (aq *AppQuery) QueryWsapceInviteTempl() *TemplQuery {
+	query := (&TemplClient{config: aq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := aq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := aq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(app.Table, app.FieldID, selector),
+			sqlgraph.To(templ.Table, templ.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, app.WsapceInviteTemplTable, app.WsapceInviteTemplColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryWsapceSuccessTempl chains the current query on the "wsapce_success_templ" edge.
+func (aq *AppQuery) QueryWsapceSuccessTempl() *TemplQuery {
+	query := (&TemplClient{config: aq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := aq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := aq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(app.Table, app.FieldID, selector),
+			sqlgraph.To(templ.Table, templ.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, app.WsapceSuccessTemplTable, app.WsapceSuccessTemplColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryAuthFpTempl chains the current query on the "auth_fp_templ" edge.
+func (aq *AppQuery) QueryAuthFpTempl() *TemplQuery {
+	query := (&TemplClient{config: aq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := aq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := aq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(app.Table, app.FieldID, selector),
+			sqlgraph.To(templ.Table, templ.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, app.AuthFpTemplTable, app.AuthFpTemplColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryAuthWelcomeEmailTempl chains the current query on the "auth_welcome_email_templ" edge.
+func (aq *AppQuery) QueryAuthWelcomeEmailTempl() *TemplQuery {
+	query := (&TemplClient{config: aq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := aq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := aq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(app.Table, app.FieldID, selector),
+			sqlgraph.To(templ.Table, templ.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, app.AuthWelcomeEmailTemplTable, app.AuthWelcomeEmailTemplColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryAuthVerificationTempl chains the current query on the "auth_verification_templ" edge.
+func (aq *AppQuery) QueryAuthVerificationTempl() *TemplQuery {
+	query := (&TemplClient{config: aq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := aq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := aq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(app.Table, app.FieldID, selector),
+			sqlgraph.To(templ.Table, templ.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, app.AuthVerificationTemplTable, app.AuthVerificationTemplColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(aq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first App entity from the query.
@@ -246,15 +409,99 @@ func (aq *AppQuery) Clone() *AppQuery {
 		return nil
 	}
 	return &AppQuery{
-		config:     aq.config,
-		ctx:        aq.ctx.Clone(),
-		order:      append([]app.OrderOption{}, aq.order...),
-		inters:     append([]Interceptor{}, aq.inters...),
-		predicates: append([]predicate.App{}, aq.predicates...),
+		config:                    aq.config,
+		ctx:                       aq.ctx.Clone(),
+		order:                     append([]app.OrderOption{}, aq.order...),
+		inters:                    append([]Interceptor{}, aq.inters...),
+		predicates:                append([]predicate.App{}, aq.predicates...),
+		withDefaultMailConn:       aq.withDefaultMailConn.Clone(),
+		withMailLayoutTempl:       aq.withMailLayoutTempl.Clone(),
+		withWsapceInviteTempl:     aq.withWsapceInviteTempl.Clone(),
+		withWsapceSuccessTempl:    aq.withWsapceSuccessTempl.Clone(),
+		withAuthFpTempl:           aq.withAuthFpTempl.Clone(),
+		withAuthWelcomeEmailTempl: aq.withAuthWelcomeEmailTempl.Clone(),
+		withAuthVerificationTempl: aq.withAuthVerificationTempl.Clone(),
 		// clone intermediate query.
 		sql:  aq.sql.Clone(),
 		path: aq.path,
 	}
+}
+
+// WithDefaultMailConn tells the query-builder to eager-load the nodes that are connected to
+// the "default_mail_conn" edge. The optional arguments are used to configure the query builder of the edge.
+func (aq *AppQuery) WithDefaultMailConn(opts ...func(*MailConnQuery)) *AppQuery {
+	query := (&MailConnClient{config: aq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	aq.withDefaultMailConn = query
+	return aq
+}
+
+// WithMailLayoutTempl tells the query-builder to eager-load the nodes that are connected to
+// the "mail_layout_templ" edge. The optional arguments are used to configure the query builder of the edge.
+func (aq *AppQuery) WithMailLayoutTempl(opts ...func(*TemplQuery)) *AppQuery {
+	query := (&TemplClient{config: aq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	aq.withMailLayoutTempl = query
+	return aq
+}
+
+// WithWsapceInviteTempl tells the query-builder to eager-load the nodes that are connected to
+// the "wsapce_invite_templ" edge. The optional arguments are used to configure the query builder of the edge.
+func (aq *AppQuery) WithWsapceInviteTempl(opts ...func(*TemplQuery)) *AppQuery {
+	query := (&TemplClient{config: aq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	aq.withWsapceInviteTempl = query
+	return aq
+}
+
+// WithWsapceSuccessTempl tells the query-builder to eager-load the nodes that are connected to
+// the "wsapce_success_templ" edge. The optional arguments are used to configure the query builder of the edge.
+func (aq *AppQuery) WithWsapceSuccessTempl(opts ...func(*TemplQuery)) *AppQuery {
+	query := (&TemplClient{config: aq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	aq.withWsapceSuccessTempl = query
+	return aq
+}
+
+// WithAuthFpTempl tells the query-builder to eager-load the nodes that are connected to
+// the "auth_fp_templ" edge. The optional arguments are used to configure the query builder of the edge.
+func (aq *AppQuery) WithAuthFpTempl(opts ...func(*TemplQuery)) *AppQuery {
+	query := (&TemplClient{config: aq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	aq.withAuthFpTempl = query
+	return aq
+}
+
+// WithAuthWelcomeEmailTempl tells the query-builder to eager-load the nodes that are connected to
+// the "auth_welcome_email_templ" edge. The optional arguments are used to configure the query builder of the edge.
+func (aq *AppQuery) WithAuthWelcomeEmailTempl(opts ...func(*TemplQuery)) *AppQuery {
+	query := (&TemplClient{config: aq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	aq.withAuthWelcomeEmailTempl = query
+	return aq
+}
+
+// WithAuthVerificationTempl tells the query-builder to eager-load the nodes that are connected to
+// the "auth_verification_templ" edge. The optional arguments are used to configure the query builder of the edge.
+func (aq *AppQuery) WithAuthVerificationTempl(opts ...func(*TemplQuery)) *AppQuery {
+	query := (&TemplClient{config: aq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	aq.withAuthVerificationTempl = query
+	return aq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -333,8 +580,17 @@ func (aq *AppQuery) prepareQuery(ctx context.Context) error {
 
 func (aq *AppQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*App, error) {
 	var (
-		nodes = []*App{}
-		_spec = aq.querySpec()
+		nodes       = []*App{}
+		_spec       = aq.querySpec()
+		loadedTypes = [7]bool{
+			aq.withDefaultMailConn != nil,
+			aq.withMailLayoutTempl != nil,
+			aq.withWsapceInviteTempl != nil,
+			aq.withWsapceSuccessTempl != nil,
+			aq.withAuthFpTempl != nil,
+			aq.withAuthWelcomeEmailTempl != nil,
+			aq.withAuthVerificationTempl != nil,
+		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*App).scanValues(nil, columns)
@@ -342,6 +598,7 @@ func (aq *AppQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*App, err
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &App{config: aq.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	if len(aq.modifiers) > 0 {
@@ -356,12 +613,258 @@ func (aq *AppQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*App, err
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := aq.withDefaultMailConn; query != nil {
+		if err := aq.loadDefaultMailConn(ctx, query, nodes, nil,
+			func(n *App, e *MailConn) { n.Edges.DefaultMailConn = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := aq.withMailLayoutTempl; query != nil {
+		if err := aq.loadMailLayoutTempl(ctx, query, nodes, nil,
+			func(n *App, e *Templ) { n.Edges.MailLayoutTempl = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := aq.withWsapceInviteTempl; query != nil {
+		if err := aq.loadWsapceInviteTempl(ctx, query, nodes, nil,
+			func(n *App, e *Templ) { n.Edges.WsapceInviteTempl = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := aq.withWsapceSuccessTempl; query != nil {
+		if err := aq.loadWsapceSuccessTempl(ctx, query, nodes, nil,
+			func(n *App, e *Templ) { n.Edges.WsapceSuccessTempl = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := aq.withAuthFpTempl; query != nil {
+		if err := aq.loadAuthFpTempl(ctx, query, nodes, nil,
+			func(n *App, e *Templ) { n.Edges.AuthFpTempl = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := aq.withAuthWelcomeEmailTempl; query != nil {
+		if err := aq.loadAuthWelcomeEmailTempl(ctx, query, nodes, nil,
+			func(n *App, e *Templ) { n.Edges.AuthWelcomeEmailTempl = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := aq.withAuthVerificationTempl; query != nil {
+		if err := aq.loadAuthVerificationTempl(ctx, query, nodes, nil,
+			func(n *App, e *Templ) { n.Edges.AuthVerificationTempl = e }); err != nil {
+			return nil, err
+		}
+	}
 	for i := range aq.loadTotal {
 		if err := aq.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
+}
+
+func (aq *AppQuery) loadDefaultMailConn(ctx context.Context, query *MailConnQuery, nodes []*App, init func(*App), assign func(*App, *MailConn)) error {
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*App)
+	for i := range nodes {
+		fk := nodes[i].DefaultMailConnID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(mailconn.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "default_mail_conn_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (aq *AppQuery) loadMailLayoutTempl(ctx context.Context, query *TemplQuery, nodes []*App, init func(*App), assign func(*App, *Templ)) error {
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*App)
+	for i := range nodes {
+		fk := nodes[i].MailLayoutTemplID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(templ.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "mail_layout_templ_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (aq *AppQuery) loadWsapceInviteTempl(ctx context.Context, query *TemplQuery, nodes []*App, init func(*App), assign func(*App, *Templ)) error {
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*App)
+	for i := range nodes {
+		fk := nodes[i].WsapceInviteTemplID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(templ.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "wsapce_invite_templ_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (aq *AppQuery) loadWsapceSuccessTempl(ctx context.Context, query *TemplQuery, nodes []*App, init func(*App), assign func(*App, *Templ)) error {
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*App)
+	for i := range nodes {
+		fk := nodes[i].WsapceSuccessTemplID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(templ.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "wsapce_success_templ_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (aq *AppQuery) loadAuthFpTempl(ctx context.Context, query *TemplQuery, nodes []*App, init func(*App), assign func(*App, *Templ)) error {
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*App)
+	for i := range nodes {
+		fk := nodes[i].AuthFpTemplID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(templ.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "auth_fp_templ_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (aq *AppQuery) loadAuthWelcomeEmailTempl(ctx context.Context, query *TemplQuery, nodes []*App, init func(*App), assign func(*App, *Templ)) error {
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*App)
+	for i := range nodes {
+		fk := nodes[i].AuthWelcomeEmailTemplID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(templ.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "auth_welcome_email_templ_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (aq *AppQuery) loadAuthVerificationTempl(ctx context.Context, query *TemplQuery, nodes []*App, init func(*App), assign func(*App, *Templ)) error {
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*App)
+	for i := range nodes {
+		fk := nodes[i].AuthVerificationTemplID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(templ.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "auth_verification_templ_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
 }
 
 func (aq *AppQuery) sqlCount(ctx context.Context) (int, error) {
@@ -391,6 +894,27 @@ func (aq *AppQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != app.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if aq.withDefaultMailConn != nil {
+			_spec.Node.AddColumnOnce(app.FieldDefaultMailConnID)
+		}
+		if aq.withMailLayoutTempl != nil {
+			_spec.Node.AddColumnOnce(app.FieldMailLayoutTemplID)
+		}
+		if aq.withWsapceInviteTempl != nil {
+			_spec.Node.AddColumnOnce(app.FieldWsapceInviteTemplID)
+		}
+		if aq.withWsapceSuccessTempl != nil {
+			_spec.Node.AddColumnOnce(app.FieldWsapceSuccessTemplID)
+		}
+		if aq.withAuthFpTempl != nil {
+			_spec.Node.AddColumnOnce(app.FieldAuthFpTemplID)
+		}
+		if aq.withAuthWelcomeEmailTempl != nil {
+			_spec.Node.AddColumnOnce(app.FieldAuthWelcomeEmailTemplID)
+		}
+		if aq.withAuthVerificationTempl != nil {
+			_spec.Node.AddColumnOnce(app.FieldAuthVerificationTemplID)
 		}
 	}
 	if ps := aq.predicates; len(ps) > 0 {

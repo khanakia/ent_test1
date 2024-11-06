@@ -1355,33 +1355,40 @@ func (m *AdminUserMutation) ResetEdge(name string) error {
 // AppMutation represents an operation that mutates the App nodes in the graph.
 type AppMutation struct {
 	config
-	op                          Op
-	typ                         string
-	id                          *string
-	created_at                  *time.Time
-	updated_at                  *time.Time
-	name                        *string
-	copyright                   *string
-	email                       *string
-	address                     *string
-	social_tw                   *string
-	social_fb                   *string
-	social_in                   *string
-	logo_url                    *string
-	site_url                    *string
-	default_mail_conn_id        *string
-	mail_layout_templ_id        *string
-	wsapce_invite_templ_id      *string
-	wsapce_success_templ_id     *string
-	auth_fp_templ_id            *string
-	auth_welcome_email_templ_id *string
-	auth_verification_templ_id  *string
-	auth_email_verify           *string
-	admin_user_id               *string
-	clearedFields               map[string]struct{}
-	done                        bool
-	oldValue                    func(context.Context) (*App, error)
-	predicates                  []predicate.App
+	op                              Op
+	typ                             string
+	id                              *string
+	created_at                      *time.Time
+	updated_at                      *time.Time
+	name                            *string
+	copyright                       *string
+	email                           *string
+	address                         *string
+	social_tw                       *string
+	social_fb                       *string
+	social_in                       *string
+	logo_url                        *string
+	site_url                        *string
+	auth_email_verify               *string
+	admin_user_id                   *string
+	clearedFields                   map[string]struct{}
+	default_mail_conn               *string
+	cleareddefault_mail_conn        bool
+	mail_layout_templ               *string
+	clearedmail_layout_templ        bool
+	wsapce_invite_templ             *string
+	clearedwsapce_invite_templ      bool
+	wsapce_success_templ            *string
+	clearedwsapce_success_templ     bool
+	auth_fp_templ                   *string
+	clearedauth_fp_templ            bool
+	auth_welcome_email_templ        *string
+	clearedauth_welcome_email_templ bool
+	auth_verification_templ         *string
+	clearedauth_verification_templ  bool
+	done                            bool
+	oldValue                        func(context.Context) (*App, error)
+	predicates                      []predicate.App
 }
 
 var _ ent.Mutation = (*AppMutation)(nil)
@@ -2029,12 +2036,12 @@ func (m *AppMutation) ResetSiteURL() {
 
 // SetDefaultMailConnID sets the "default_mail_conn_id" field.
 func (m *AppMutation) SetDefaultMailConnID(s string) {
-	m.default_mail_conn_id = &s
+	m.default_mail_conn = &s
 }
 
 // DefaultMailConnID returns the value of the "default_mail_conn_id" field in the mutation.
 func (m *AppMutation) DefaultMailConnID() (r string, exists bool) {
-	v := m.default_mail_conn_id
+	v := m.default_mail_conn
 	if v == nil {
 		return
 	}
@@ -2060,7 +2067,7 @@ func (m *AppMutation) OldDefaultMailConnID(ctx context.Context) (v string, err e
 
 // ClearDefaultMailConnID clears the value of the "default_mail_conn_id" field.
 func (m *AppMutation) ClearDefaultMailConnID() {
-	m.default_mail_conn_id = nil
+	m.default_mail_conn = nil
 	m.clearedFields[app.FieldDefaultMailConnID] = struct{}{}
 }
 
@@ -2072,18 +2079,18 @@ func (m *AppMutation) DefaultMailConnIDCleared() bool {
 
 // ResetDefaultMailConnID resets all changes to the "default_mail_conn_id" field.
 func (m *AppMutation) ResetDefaultMailConnID() {
-	m.default_mail_conn_id = nil
+	m.default_mail_conn = nil
 	delete(m.clearedFields, app.FieldDefaultMailConnID)
 }
 
 // SetMailLayoutTemplID sets the "mail_layout_templ_id" field.
 func (m *AppMutation) SetMailLayoutTemplID(s string) {
-	m.mail_layout_templ_id = &s
+	m.mail_layout_templ = &s
 }
 
 // MailLayoutTemplID returns the value of the "mail_layout_templ_id" field in the mutation.
 func (m *AppMutation) MailLayoutTemplID() (r string, exists bool) {
-	v := m.mail_layout_templ_id
+	v := m.mail_layout_templ
 	if v == nil {
 		return
 	}
@@ -2109,7 +2116,7 @@ func (m *AppMutation) OldMailLayoutTemplID(ctx context.Context) (v string, err e
 
 // ClearMailLayoutTemplID clears the value of the "mail_layout_templ_id" field.
 func (m *AppMutation) ClearMailLayoutTemplID() {
-	m.mail_layout_templ_id = nil
+	m.mail_layout_templ = nil
 	m.clearedFields[app.FieldMailLayoutTemplID] = struct{}{}
 }
 
@@ -2121,18 +2128,18 @@ func (m *AppMutation) MailLayoutTemplIDCleared() bool {
 
 // ResetMailLayoutTemplID resets all changes to the "mail_layout_templ_id" field.
 func (m *AppMutation) ResetMailLayoutTemplID() {
-	m.mail_layout_templ_id = nil
+	m.mail_layout_templ = nil
 	delete(m.clearedFields, app.FieldMailLayoutTemplID)
 }
 
 // SetWsapceInviteTemplID sets the "wsapce_invite_templ_id" field.
 func (m *AppMutation) SetWsapceInviteTemplID(s string) {
-	m.wsapce_invite_templ_id = &s
+	m.wsapce_invite_templ = &s
 }
 
 // WsapceInviteTemplID returns the value of the "wsapce_invite_templ_id" field in the mutation.
 func (m *AppMutation) WsapceInviteTemplID() (r string, exists bool) {
-	v := m.wsapce_invite_templ_id
+	v := m.wsapce_invite_templ
 	if v == nil {
 		return
 	}
@@ -2158,7 +2165,7 @@ func (m *AppMutation) OldWsapceInviteTemplID(ctx context.Context) (v string, err
 
 // ClearWsapceInviteTemplID clears the value of the "wsapce_invite_templ_id" field.
 func (m *AppMutation) ClearWsapceInviteTemplID() {
-	m.wsapce_invite_templ_id = nil
+	m.wsapce_invite_templ = nil
 	m.clearedFields[app.FieldWsapceInviteTemplID] = struct{}{}
 }
 
@@ -2170,18 +2177,18 @@ func (m *AppMutation) WsapceInviteTemplIDCleared() bool {
 
 // ResetWsapceInviteTemplID resets all changes to the "wsapce_invite_templ_id" field.
 func (m *AppMutation) ResetWsapceInviteTemplID() {
-	m.wsapce_invite_templ_id = nil
+	m.wsapce_invite_templ = nil
 	delete(m.clearedFields, app.FieldWsapceInviteTemplID)
 }
 
 // SetWsapceSuccessTemplID sets the "wsapce_success_templ_id" field.
 func (m *AppMutation) SetWsapceSuccessTemplID(s string) {
-	m.wsapce_success_templ_id = &s
+	m.wsapce_success_templ = &s
 }
 
 // WsapceSuccessTemplID returns the value of the "wsapce_success_templ_id" field in the mutation.
 func (m *AppMutation) WsapceSuccessTemplID() (r string, exists bool) {
-	v := m.wsapce_success_templ_id
+	v := m.wsapce_success_templ
 	if v == nil {
 		return
 	}
@@ -2207,7 +2214,7 @@ func (m *AppMutation) OldWsapceSuccessTemplID(ctx context.Context) (v string, er
 
 // ClearWsapceSuccessTemplID clears the value of the "wsapce_success_templ_id" field.
 func (m *AppMutation) ClearWsapceSuccessTemplID() {
-	m.wsapce_success_templ_id = nil
+	m.wsapce_success_templ = nil
 	m.clearedFields[app.FieldWsapceSuccessTemplID] = struct{}{}
 }
 
@@ -2219,18 +2226,18 @@ func (m *AppMutation) WsapceSuccessTemplIDCleared() bool {
 
 // ResetWsapceSuccessTemplID resets all changes to the "wsapce_success_templ_id" field.
 func (m *AppMutation) ResetWsapceSuccessTemplID() {
-	m.wsapce_success_templ_id = nil
+	m.wsapce_success_templ = nil
 	delete(m.clearedFields, app.FieldWsapceSuccessTemplID)
 }
 
 // SetAuthFpTemplID sets the "auth_fp_templ_id" field.
 func (m *AppMutation) SetAuthFpTemplID(s string) {
-	m.auth_fp_templ_id = &s
+	m.auth_fp_templ = &s
 }
 
 // AuthFpTemplID returns the value of the "auth_fp_templ_id" field in the mutation.
 func (m *AppMutation) AuthFpTemplID() (r string, exists bool) {
-	v := m.auth_fp_templ_id
+	v := m.auth_fp_templ
 	if v == nil {
 		return
 	}
@@ -2256,7 +2263,7 @@ func (m *AppMutation) OldAuthFpTemplID(ctx context.Context) (v string, err error
 
 // ClearAuthFpTemplID clears the value of the "auth_fp_templ_id" field.
 func (m *AppMutation) ClearAuthFpTemplID() {
-	m.auth_fp_templ_id = nil
+	m.auth_fp_templ = nil
 	m.clearedFields[app.FieldAuthFpTemplID] = struct{}{}
 }
 
@@ -2268,18 +2275,18 @@ func (m *AppMutation) AuthFpTemplIDCleared() bool {
 
 // ResetAuthFpTemplID resets all changes to the "auth_fp_templ_id" field.
 func (m *AppMutation) ResetAuthFpTemplID() {
-	m.auth_fp_templ_id = nil
+	m.auth_fp_templ = nil
 	delete(m.clearedFields, app.FieldAuthFpTemplID)
 }
 
 // SetAuthWelcomeEmailTemplID sets the "auth_welcome_email_templ_id" field.
 func (m *AppMutation) SetAuthWelcomeEmailTemplID(s string) {
-	m.auth_welcome_email_templ_id = &s
+	m.auth_welcome_email_templ = &s
 }
 
 // AuthWelcomeEmailTemplID returns the value of the "auth_welcome_email_templ_id" field in the mutation.
 func (m *AppMutation) AuthWelcomeEmailTemplID() (r string, exists bool) {
-	v := m.auth_welcome_email_templ_id
+	v := m.auth_welcome_email_templ
 	if v == nil {
 		return
 	}
@@ -2305,7 +2312,7 @@ func (m *AppMutation) OldAuthWelcomeEmailTemplID(ctx context.Context) (v string,
 
 // ClearAuthWelcomeEmailTemplID clears the value of the "auth_welcome_email_templ_id" field.
 func (m *AppMutation) ClearAuthWelcomeEmailTemplID() {
-	m.auth_welcome_email_templ_id = nil
+	m.auth_welcome_email_templ = nil
 	m.clearedFields[app.FieldAuthWelcomeEmailTemplID] = struct{}{}
 }
 
@@ -2317,18 +2324,18 @@ func (m *AppMutation) AuthWelcomeEmailTemplIDCleared() bool {
 
 // ResetAuthWelcomeEmailTemplID resets all changes to the "auth_welcome_email_templ_id" field.
 func (m *AppMutation) ResetAuthWelcomeEmailTemplID() {
-	m.auth_welcome_email_templ_id = nil
+	m.auth_welcome_email_templ = nil
 	delete(m.clearedFields, app.FieldAuthWelcomeEmailTemplID)
 }
 
 // SetAuthVerificationTemplID sets the "auth_verification_templ_id" field.
 func (m *AppMutation) SetAuthVerificationTemplID(s string) {
-	m.auth_verification_templ_id = &s
+	m.auth_verification_templ = &s
 }
 
 // AuthVerificationTemplID returns the value of the "auth_verification_templ_id" field in the mutation.
 func (m *AppMutation) AuthVerificationTemplID() (r string, exists bool) {
-	v := m.auth_verification_templ_id
+	v := m.auth_verification_templ
 	if v == nil {
 		return
 	}
@@ -2354,7 +2361,7 @@ func (m *AppMutation) OldAuthVerificationTemplID(ctx context.Context) (v string,
 
 // ClearAuthVerificationTemplID clears the value of the "auth_verification_templ_id" field.
 func (m *AppMutation) ClearAuthVerificationTemplID() {
-	m.auth_verification_templ_id = nil
+	m.auth_verification_templ = nil
 	m.clearedFields[app.FieldAuthVerificationTemplID] = struct{}{}
 }
 
@@ -2366,7 +2373,7 @@ func (m *AppMutation) AuthVerificationTemplIDCleared() bool {
 
 // ResetAuthVerificationTemplID resets all changes to the "auth_verification_templ_id" field.
 func (m *AppMutation) ResetAuthVerificationTemplID() {
-	m.auth_verification_templ_id = nil
+	m.auth_verification_templ = nil
 	delete(m.clearedFields, app.FieldAuthVerificationTemplID)
 }
 
@@ -2468,6 +2475,195 @@ func (m *AppMutation) ResetAdminUserID() {
 	delete(m.clearedFields, app.FieldAdminUserID)
 }
 
+// ClearDefaultMailConn clears the "default_mail_conn" edge to the MailConn entity.
+func (m *AppMutation) ClearDefaultMailConn() {
+	m.cleareddefault_mail_conn = true
+	m.clearedFields[app.FieldDefaultMailConnID] = struct{}{}
+}
+
+// DefaultMailConnCleared reports if the "default_mail_conn" edge to the MailConn entity was cleared.
+func (m *AppMutation) DefaultMailConnCleared() bool {
+	return m.DefaultMailConnIDCleared() || m.cleareddefault_mail_conn
+}
+
+// DefaultMailConnIDs returns the "default_mail_conn" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// DefaultMailConnID instead. It exists only for internal usage by the builders.
+func (m *AppMutation) DefaultMailConnIDs() (ids []string) {
+	if id := m.default_mail_conn; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetDefaultMailConn resets all changes to the "default_mail_conn" edge.
+func (m *AppMutation) ResetDefaultMailConn() {
+	m.default_mail_conn = nil
+	m.cleareddefault_mail_conn = false
+}
+
+// ClearMailLayoutTempl clears the "mail_layout_templ" edge to the Templ entity.
+func (m *AppMutation) ClearMailLayoutTempl() {
+	m.clearedmail_layout_templ = true
+	m.clearedFields[app.FieldMailLayoutTemplID] = struct{}{}
+}
+
+// MailLayoutTemplCleared reports if the "mail_layout_templ" edge to the Templ entity was cleared.
+func (m *AppMutation) MailLayoutTemplCleared() bool {
+	return m.MailLayoutTemplIDCleared() || m.clearedmail_layout_templ
+}
+
+// MailLayoutTemplIDs returns the "mail_layout_templ" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// MailLayoutTemplID instead. It exists only for internal usage by the builders.
+func (m *AppMutation) MailLayoutTemplIDs() (ids []string) {
+	if id := m.mail_layout_templ; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetMailLayoutTempl resets all changes to the "mail_layout_templ" edge.
+func (m *AppMutation) ResetMailLayoutTempl() {
+	m.mail_layout_templ = nil
+	m.clearedmail_layout_templ = false
+}
+
+// ClearWsapceInviteTempl clears the "wsapce_invite_templ" edge to the Templ entity.
+func (m *AppMutation) ClearWsapceInviteTempl() {
+	m.clearedwsapce_invite_templ = true
+	m.clearedFields[app.FieldWsapceInviteTemplID] = struct{}{}
+}
+
+// WsapceInviteTemplCleared reports if the "wsapce_invite_templ" edge to the Templ entity was cleared.
+func (m *AppMutation) WsapceInviteTemplCleared() bool {
+	return m.WsapceInviteTemplIDCleared() || m.clearedwsapce_invite_templ
+}
+
+// WsapceInviteTemplIDs returns the "wsapce_invite_templ" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// WsapceInviteTemplID instead. It exists only for internal usage by the builders.
+func (m *AppMutation) WsapceInviteTemplIDs() (ids []string) {
+	if id := m.wsapce_invite_templ; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetWsapceInviteTempl resets all changes to the "wsapce_invite_templ" edge.
+func (m *AppMutation) ResetWsapceInviteTempl() {
+	m.wsapce_invite_templ = nil
+	m.clearedwsapce_invite_templ = false
+}
+
+// ClearWsapceSuccessTempl clears the "wsapce_success_templ" edge to the Templ entity.
+func (m *AppMutation) ClearWsapceSuccessTempl() {
+	m.clearedwsapce_success_templ = true
+	m.clearedFields[app.FieldWsapceSuccessTemplID] = struct{}{}
+}
+
+// WsapceSuccessTemplCleared reports if the "wsapce_success_templ" edge to the Templ entity was cleared.
+func (m *AppMutation) WsapceSuccessTemplCleared() bool {
+	return m.WsapceSuccessTemplIDCleared() || m.clearedwsapce_success_templ
+}
+
+// WsapceSuccessTemplIDs returns the "wsapce_success_templ" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// WsapceSuccessTemplID instead. It exists only for internal usage by the builders.
+func (m *AppMutation) WsapceSuccessTemplIDs() (ids []string) {
+	if id := m.wsapce_success_templ; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetWsapceSuccessTempl resets all changes to the "wsapce_success_templ" edge.
+func (m *AppMutation) ResetWsapceSuccessTempl() {
+	m.wsapce_success_templ = nil
+	m.clearedwsapce_success_templ = false
+}
+
+// ClearAuthFpTempl clears the "auth_fp_templ" edge to the Templ entity.
+func (m *AppMutation) ClearAuthFpTempl() {
+	m.clearedauth_fp_templ = true
+	m.clearedFields[app.FieldAuthFpTemplID] = struct{}{}
+}
+
+// AuthFpTemplCleared reports if the "auth_fp_templ" edge to the Templ entity was cleared.
+func (m *AppMutation) AuthFpTemplCleared() bool {
+	return m.AuthFpTemplIDCleared() || m.clearedauth_fp_templ
+}
+
+// AuthFpTemplIDs returns the "auth_fp_templ" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// AuthFpTemplID instead. It exists only for internal usage by the builders.
+func (m *AppMutation) AuthFpTemplIDs() (ids []string) {
+	if id := m.auth_fp_templ; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetAuthFpTempl resets all changes to the "auth_fp_templ" edge.
+func (m *AppMutation) ResetAuthFpTempl() {
+	m.auth_fp_templ = nil
+	m.clearedauth_fp_templ = false
+}
+
+// ClearAuthWelcomeEmailTempl clears the "auth_welcome_email_templ" edge to the Templ entity.
+func (m *AppMutation) ClearAuthWelcomeEmailTempl() {
+	m.clearedauth_welcome_email_templ = true
+	m.clearedFields[app.FieldAuthWelcomeEmailTemplID] = struct{}{}
+}
+
+// AuthWelcomeEmailTemplCleared reports if the "auth_welcome_email_templ" edge to the Templ entity was cleared.
+func (m *AppMutation) AuthWelcomeEmailTemplCleared() bool {
+	return m.AuthWelcomeEmailTemplIDCleared() || m.clearedauth_welcome_email_templ
+}
+
+// AuthWelcomeEmailTemplIDs returns the "auth_welcome_email_templ" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// AuthWelcomeEmailTemplID instead. It exists only for internal usage by the builders.
+func (m *AppMutation) AuthWelcomeEmailTemplIDs() (ids []string) {
+	if id := m.auth_welcome_email_templ; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetAuthWelcomeEmailTempl resets all changes to the "auth_welcome_email_templ" edge.
+func (m *AppMutation) ResetAuthWelcomeEmailTempl() {
+	m.auth_welcome_email_templ = nil
+	m.clearedauth_welcome_email_templ = false
+}
+
+// ClearAuthVerificationTempl clears the "auth_verification_templ" edge to the Templ entity.
+func (m *AppMutation) ClearAuthVerificationTempl() {
+	m.clearedauth_verification_templ = true
+	m.clearedFields[app.FieldAuthVerificationTemplID] = struct{}{}
+}
+
+// AuthVerificationTemplCleared reports if the "auth_verification_templ" edge to the Templ entity was cleared.
+func (m *AppMutation) AuthVerificationTemplCleared() bool {
+	return m.AuthVerificationTemplIDCleared() || m.clearedauth_verification_templ
+}
+
+// AuthVerificationTemplIDs returns the "auth_verification_templ" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// AuthVerificationTemplID instead. It exists only for internal usage by the builders.
+func (m *AppMutation) AuthVerificationTemplIDs() (ids []string) {
+	if id := m.auth_verification_templ; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetAuthVerificationTempl resets all changes to the "auth_verification_templ" edge.
+func (m *AppMutation) ResetAuthVerificationTempl() {
+	m.auth_verification_templ = nil
+	m.clearedauth_verification_templ = false
+}
+
 // Where appends a list predicates to the AppMutation builder.
 func (m *AppMutation) Where(ps ...predicate.App) {
 	m.predicates = append(m.predicates, ps...)
@@ -2536,25 +2732,25 @@ func (m *AppMutation) Fields() []string {
 	if m.site_url != nil {
 		fields = append(fields, app.FieldSiteURL)
 	}
-	if m.default_mail_conn_id != nil {
+	if m.default_mail_conn != nil {
 		fields = append(fields, app.FieldDefaultMailConnID)
 	}
-	if m.mail_layout_templ_id != nil {
+	if m.mail_layout_templ != nil {
 		fields = append(fields, app.FieldMailLayoutTemplID)
 	}
-	if m.wsapce_invite_templ_id != nil {
+	if m.wsapce_invite_templ != nil {
 		fields = append(fields, app.FieldWsapceInviteTemplID)
 	}
-	if m.wsapce_success_templ_id != nil {
+	if m.wsapce_success_templ != nil {
 		fields = append(fields, app.FieldWsapceSuccessTemplID)
 	}
-	if m.auth_fp_templ_id != nil {
+	if m.auth_fp_templ != nil {
 		fields = append(fields, app.FieldAuthFpTemplID)
 	}
-	if m.auth_welcome_email_templ_id != nil {
+	if m.auth_welcome_email_templ != nil {
 		fields = append(fields, app.FieldAuthWelcomeEmailTemplID)
 	}
-	if m.auth_verification_templ_id != nil {
+	if m.auth_verification_templ != nil {
 		fields = append(fields, app.FieldAuthVerificationTemplID)
 	}
 	if m.auth_email_verify != nil {
@@ -3047,19 +3243,70 @@ func (m *AppMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *AppMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 7)
+	if m.default_mail_conn != nil {
+		edges = append(edges, app.EdgeDefaultMailConn)
+	}
+	if m.mail_layout_templ != nil {
+		edges = append(edges, app.EdgeMailLayoutTempl)
+	}
+	if m.wsapce_invite_templ != nil {
+		edges = append(edges, app.EdgeWsapceInviteTempl)
+	}
+	if m.wsapce_success_templ != nil {
+		edges = append(edges, app.EdgeWsapceSuccessTempl)
+	}
+	if m.auth_fp_templ != nil {
+		edges = append(edges, app.EdgeAuthFpTempl)
+	}
+	if m.auth_welcome_email_templ != nil {
+		edges = append(edges, app.EdgeAuthWelcomeEmailTempl)
+	}
+	if m.auth_verification_templ != nil {
+		edges = append(edges, app.EdgeAuthVerificationTempl)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *AppMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case app.EdgeDefaultMailConn:
+		if id := m.default_mail_conn; id != nil {
+			return []ent.Value{*id}
+		}
+	case app.EdgeMailLayoutTempl:
+		if id := m.mail_layout_templ; id != nil {
+			return []ent.Value{*id}
+		}
+	case app.EdgeWsapceInviteTempl:
+		if id := m.wsapce_invite_templ; id != nil {
+			return []ent.Value{*id}
+		}
+	case app.EdgeWsapceSuccessTempl:
+		if id := m.wsapce_success_templ; id != nil {
+			return []ent.Value{*id}
+		}
+	case app.EdgeAuthFpTempl:
+		if id := m.auth_fp_templ; id != nil {
+			return []ent.Value{*id}
+		}
+	case app.EdgeAuthWelcomeEmailTempl:
+		if id := m.auth_welcome_email_templ; id != nil {
+			return []ent.Value{*id}
+		}
+	case app.EdgeAuthVerificationTempl:
+		if id := m.auth_verification_templ; id != nil {
+			return []ent.Value{*id}
+		}
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *AppMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 7)
 	return edges
 }
 
@@ -3071,25 +3318,108 @@ func (m *AppMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *AppMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 7)
+	if m.cleareddefault_mail_conn {
+		edges = append(edges, app.EdgeDefaultMailConn)
+	}
+	if m.clearedmail_layout_templ {
+		edges = append(edges, app.EdgeMailLayoutTempl)
+	}
+	if m.clearedwsapce_invite_templ {
+		edges = append(edges, app.EdgeWsapceInviteTempl)
+	}
+	if m.clearedwsapce_success_templ {
+		edges = append(edges, app.EdgeWsapceSuccessTempl)
+	}
+	if m.clearedauth_fp_templ {
+		edges = append(edges, app.EdgeAuthFpTempl)
+	}
+	if m.clearedauth_welcome_email_templ {
+		edges = append(edges, app.EdgeAuthWelcomeEmailTempl)
+	}
+	if m.clearedauth_verification_templ {
+		edges = append(edges, app.EdgeAuthVerificationTempl)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *AppMutation) EdgeCleared(name string) bool {
+	switch name {
+	case app.EdgeDefaultMailConn:
+		return m.cleareddefault_mail_conn
+	case app.EdgeMailLayoutTempl:
+		return m.clearedmail_layout_templ
+	case app.EdgeWsapceInviteTempl:
+		return m.clearedwsapce_invite_templ
+	case app.EdgeWsapceSuccessTempl:
+		return m.clearedwsapce_success_templ
+	case app.EdgeAuthFpTempl:
+		return m.clearedauth_fp_templ
+	case app.EdgeAuthWelcomeEmailTempl:
+		return m.clearedauth_welcome_email_templ
+	case app.EdgeAuthVerificationTempl:
+		return m.clearedauth_verification_templ
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *AppMutation) ClearEdge(name string) error {
+	switch name {
+	case app.EdgeDefaultMailConn:
+		m.ClearDefaultMailConn()
+		return nil
+	case app.EdgeMailLayoutTempl:
+		m.ClearMailLayoutTempl()
+		return nil
+	case app.EdgeWsapceInviteTempl:
+		m.ClearWsapceInviteTempl()
+		return nil
+	case app.EdgeWsapceSuccessTempl:
+		m.ClearWsapceSuccessTempl()
+		return nil
+	case app.EdgeAuthFpTempl:
+		m.ClearAuthFpTempl()
+		return nil
+	case app.EdgeAuthWelcomeEmailTempl:
+		m.ClearAuthWelcomeEmailTempl()
+		return nil
+	case app.EdgeAuthVerificationTempl:
+		m.ClearAuthVerificationTempl()
+		return nil
+	}
 	return fmt.Errorf("unknown App unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *AppMutation) ResetEdge(name string) error {
+	switch name {
+	case app.EdgeDefaultMailConn:
+		m.ResetDefaultMailConn()
+		return nil
+	case app.EdgeMailLayoutTempl:
+		m.ResetMailLayoutTempl()
+		return nil
+	case app.EdgeWsapceInviteTempl:
+		m.ResetWsapceInviteTempl()
+		return nil
+	case app.EdgeWsapceSuccessTempl:
+		m.ResetWsapceSuccessTempl()
+		return nil
+	case app.EdgeAuthFpTempl:
+		m.ResetAuthFpTempl()
+		return nil
+	case app.EdgeAuthWelcomeEmailTempl:
+		m.ResetAuthWelcomeEmailTempl()
+		return nil
+	case app.EdgeAuthVerificationTempl:
+		m.ResetAuthVerificationTempl()
+		return nil
+	}
 	return fmt.Errorf("unknown App edge %s", name)
 }
 

@@ -6,12 +6,14 @@ import (
 	"context"
 	"fmt"
 	"saas/gen/ent/app"
+	"saas/gen/ent/mailconn"
 	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/post"
 	"saas/gen/ent/postcategory"
 	"saas/gen/ent/poststatus"
 	"saas/gen/ent/posttag"
 	"saas/gen/ent/posttype"
+	"saas/gen/ent/templ"
 	"saas/gen/ent/todo"
 	"saas/gen/ent/user"
 	"saas/gen/ent/workspace"
@@ -32,6 +34,11 @@ var appImplementors = []string{"App", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
 func (*App) IsNode() {}
+
+var mailconnImplementors = []string{"MailConn", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*MailConn) IsNode() {}
 
 var oauthconnectionImplementors = []string{"OauthConnection", "Node"}
 
@@ -62,6 +69,11 @@ var posttypeImplementors = []string{"PostType", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
 func (*PostType) IsNode() {}
+
+var templImplementors = []string{"Templ", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*Templ) IsNode() {}
 
 var todoImplementors = []string{"Todo", "Node"}
 
@@ -155,6 +167,15 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			}
 		}
 		return query.Only(ctx)
+	case mailconn.Table:
+		query := c.MailConn.Query().
+			Where(mailconn.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, mailconnImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
 	case oauthconnection.Table:
 		query := c.OauthConnection.Query().
 			Where(oauthconnection.ID(id))
@@ -205,6 +226,15 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			Where(posttype.ID(id))
 		if fc := graphql.GetFieldContext(ctx); fc != nil {
 			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, posttypeImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case templ.Table:
+		query := c.Templ.Query().
+			Where(templ.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, templImplementors...); err != nil {
 				return nil, err
 			}
 		}
@@ -343,6 +373,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 				*noder = node
 			}
 		}
+	case mailconn.Table:
+		query := c.MailConn.Query().
+			Where(mailconn.IDIn(ids...))
+		query, err := query.CollectFields(ctx, mailconnImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
 	case oauthconnection.Table:
 		query := c.OauthConnection.Query().
 			Where(oauthconnection.IDIn(ids...))
@@ -427,6 +473,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		query := c.PostType.Query().
 			Where(posttype.IDIn(ids...))
 		query, err := query.CollectFields(ctx, posttypeImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case templ.Table:
+		query := c.Templ.Query().
+			Where(templ.IDIn(ids...))
+		query, err := query.CollectFields(ctx, templImplementors...)
 		if err != nil {
 			return nil, err
 		}

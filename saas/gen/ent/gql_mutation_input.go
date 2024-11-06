@@ -20,6 +20,8 @@ type CreateAppInput struct {
 	SocialIn                *string
 	LogoURL                 *string
 	SiteURL                 *string
+	AuthEmailVerify         *string
+	AdminUserID             *string
 	DefaultMailConnID       *string
 	MailLayoutTemplID       *string
 	WsapceInviteTemplID     *string
@@ -27,8 +29,6 @@ type CreateAppInput struct {
 	AuthFpTemplID           *string
 	AuthWelcomeEmailTemplID *string
 	AuthVerificationTemplID *string
-	AuthEmailVerify         *string
-	AdminUserID             *string
 }
 
 // Mutate applies the CreateAppInput on the AppMutation builder.
@@ -66,6 +66,12 @@ func (i *CreateAppInput) Mutate(m *AppMutation) {
 	if v := i.SiteURL; v != nil {
 		m.SetSiteURL(*v)
 	}
+	if v := i.AuthEmailVerify; v != nil {
+		m.SetAuthEmailVerify(*v)
+	}
+	if v := i.AdminUserID; v != nil {
+		m.SetAdminUserID(*v)
+	}
 	if v := i.DefaultMailConnID; v != nil {
 		m.SetDefaultMailConnID(*v)
 	}
@@ -87,12 +93,6 @@ func (i *CreateAppInput) Mutate(m *AppMutation) {
 	if v := i.AuthVerificationTemplID; v != nil {
 		m.SetAuthVerificationTemplID(*v)
 	}
-	if v := i.AuthEmailVerify; v != nil {
-		m.SetAuthEmailVerify(*v)
-	}
-	if v := i.AdminUserID; v != nil {
-		m.SetAdminUserID(*v)
-	}
 }
 
 // SetInput applies the change-set in the CreateAppInput on the AppCreate builder.
@@ -103,44 +103,44 @@ func (c *AppCreate) SetInput(i CreateAppInput) *AppCreate {
 
 // UpdateAppInput represents a mutation input for updating apps.
 type UpdateAppInput struct {
-	ClearUpdatedAt               bool
-	UpdatedAt                    *time.Time
-	ClearName                    bool
-	Name                         *string
-	ClearCopyright               bool
-	Copyright                    *string
-	ClearEmail                   bool
-	Email                        *string
-	ClearAddress                 bool
-	Address                      *string
-	ClearSocialTw                bool
-	SocialTw                     *string
-	ClearSocialFb                bool
-	SocialFb                     *string
-	ClearSocialIn                bool
-	SocialIn                     *string
-	ClearLogoURL                 bool
-	LogoURL                      *string
-	ClearSiteURL                 bool
-	SiteURL                      *string
-	ClearDefaultMailConnID       bool
-	DefaultMailConnID            *string
-	ClearMailLayoutTemplID       bool
-	MailLayoutTemplID            *string
-	ClearWsapceInviteTemplID     bool
-	WsapceInviteTemplID          *string
-	ClearWsapceSuccessTemplID    bool
-	WsapceSuccessTemplID         *string
-	ClearAuthFpTemplID           bool
-	AuthFpTemplID                *string
-	ClearAuthWelcomeEmailTemplID bool
-	AuthWelcomeEmailTemplID      *string
-	ClearAuthVerificationTemplID bool
-	AuthVerificationTemplID      *string
-	ClearAuthEmailVerify         bool
-	AuthEmailVerify              *string
-	ClearAdminUserID             bool
-	AdminUserID                  *string
+	ClearUpdatedAt             bool
+	UpdatedAt                  *time.Time
+	ClearName                  bool
+	Name                       *string
+	ClearCopyright             bool
+	Copyright                  *string
+	ClearEmail                 bool
+	Email                      *string
+	ClearAddress               bool
+	Address                    *string
+	ClearSocialTw              bool
+	SocialTw                   *string
+	ClearSocialFb              bool
+	SocialFb                   *string
+	ClearSocialIn              bool
+	SocialIn                   *string
+	ClearLogoURL               bool
+	LogoURL                    *string
+	ClearSiteURL               bool
+	SiteURL                    *string
+	ClearAuthEmailVerify       bool
+	AuthEmailVerify            *string
+	ClearAdminUserID           bool
+	AdminUserID                *string
+	ClearDefaultMailConn       bool
+	DefaultMailConnID          *string
+	ClearMailLayoutTempl       bool
+	MailLayoutTemplID          *string
+	ClearWsapceInviteTempl     bool
+	WsapceInviteTemplID        *string
+	ClearWsapceSuccessTempl    bool
+	WsapceSuccessTemplID       *string
+	ClearAuthFpTempl           bool
+	AuthFpTemplID              *string
+	ClearAuthWelcomeEmailTempl bool
+	AuthWelcomeEmailTemplID    *string
+	ClearAuthVerificationTempl bool
+	AuthVerificationTemplID    *string
 }
 
 // Mutate applies the UpdateAppInput on the AppMutation builder.
@@ -205,48 +205,6 @@ func (i *UpdateAppInput) Mutate(m *AppMutation) {
 	if v := i.SiteURL; v != nil {
 		m.SetSiteURL(*v)
 	}
-	if i.ClearDefaultMailConnID {
-		m.ClearDefaultMailConnID()
-	}
-	if v := i.DefaultMailConnID; v != nil {
-		m.SetDefaultMailConnID(*v)
-	}
-	if i.ClearMailLayoutTemplID {
-		m.ClearMailLayoutTemplID()
-	}
-	if v := i.MailLayoutTemplID; v != nil {
-		m.SetMailLayoutTemplID(*v)
-	}
-	if i.ClearWsapceInviteTemplID {
-		m.ClearWsapceInviteTemplID()
-	}
-	if v := i.WsapceInviteTemplID; v != nil {
-		m.SetWsapceInviteTemplID(*v)
-	}
-	if i.ClearWsapceSuccessTemplID {
-		m.ClearWsapceSuccessTemplID()
-	}
-	if v := i.WsapceSuccessTemplID; v != nil {
-		m.SetWsapceSuccessTemplID(*v)
-	}
-	if i.ClearAuthFpTemplID {
-		m.ClearAuthFpTemplID()
-	}
-	if v := i.AuthFpTemplID; v != nil {
-		m.SetAuthFpTemplID(*v)
-	}
-	if i.ClearAuthWelcomeEmailTemplID {
-		m.ClearAuthWelcomeEmailTemplID()
-	}
-	if v := i.AuthWelcomeEmailTemplID; v != nil {
-		m.SetAuthWelcomeEmailTemplID(*v)
-	}
-	if i.ClearAuthVerificationTemplID {
-		m.ClearAuthVerificationTemplID()
-	}
-	if v := i.AuthVerificationTemplID; v != nil {
-		m.SetAuthVerificationTemplID(*v)
-	}
 	if i.ClearAuthEmailVerify {
 		m.ClearAuthEmailVerify()
 	}
@@ -259,6 +217,48 @@ func (i *UpdateAppInput) Mutate(m *AppMutation) {
 	if v := i.AdminUserID; v != nil {
 		m.SetAdminUserID(*v)
 	}
+	if i.ClearDefaultMailConn {
+		m.ClearDefaultMailConn()
+	}
+	if v := i.DefaultMailConnID; v != nil {
+		m.SetDefaultMailConnID(*v)
+	}
+	if i.ClearMailLayoutTempl {
+		m.ClearMailLayoutTempl()
+	}
+	if v := i.MailLayoutTemplID; v != nil {
+		m.SetMailLayoutTemplID(*v)
+	}
+	if i.ClearWsapceInviteTempl {
+		m.ClearWsapceInviteTempl()
+	}
+	if v := i.WsapceInviteTemplID; v != nil {
+		m.SetWsapceInviteTemplID(*v)
+	}
+	if i.ClearWsapceSuccessTempl {
+		m.ClearWsapceSuccessTempl()
+	}
+	if v := i.WsapceSuccessTemplID; v != nil {
+		m.SetWsapceSuccessTemplID(*v)
+	}
+	if i.ClearAuthFpTempl {
+		m.ClearAuthFpTempl()
+	}
+	if v := i.AuthFpTemplID; v != nil {
+		m.SetAuthFpTemplID(*v)
+	}
+	if i.ClearAuthWelcomeEmailTempl {
+		m.ClearAuthWelcomeEmailTempl()
+	}
+	if v := i.AuthWelcomeEmailTemplID; v != nil {
+		m.SetAuthWelcomeEmailTemplID(*v)
+	}
+	if i.ClearAuthVerificationTempl {
+		m.ClearAuthVerificationTempl()
+	}
+	if v := i.AuthVerificationTemplID; v != nil {
+		m.SetAuthVerificationTemplID(*v)
+	}
 }
 
 // SetInput applies the change-set in the UpdateAppInput on the AppUpdate builder.
@@ -269,6 +269,172 @@ func (c *AppUpdate) SetInput(i UpdateAppInput) *AppUpdate {
 
 // SetInput applies the change-set in the UpdateAppInput on the AppUpdateOne builder.
 func (c *AppUpdateOne) SetInput(i UpdateAppInput) *AppUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreateMailConnInput represents a mutation input for creating mailconns.
+type CreateMailConnInput struct {
+	CreatedAt  *time.Time
+	UpdatedAt  *time.Time
+	Name       *string
+	Host       *string
+	Port       *int
+	Username   *string
+	Password   *string
+	Encryption *int
+	FromName   *string
+	FromEmail  *string
+	Status     *bool
+}
+
+// Mutate applies the CreateMailConnInput on the MailConnMutation builder.
+func (i *CreateMailConnInput) Mutate(m *MailConnMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if v := i.Host; v != nil {
+		m.SetHost(*v)
+	}
+	if v := i.Port; v != nil {
+		m.SetPort(*v)
+	}
+	if v := i.Username; v != nil {
+		m.SetUsername(*v)
+	}
+	if v := i.Password; v != nil {
+		m.SetPassword(*v)
+	}
+	if v := i.Encryption; v != nil {
+		m.SetEncryption(*v)
+	}
+	if v := i.FromName; v != nil {
+		m.SetFromName(*v)
+	}
+	if v := i.FromEmail; v != nil {
+		m.SetFromEmail(*v)
+	}
+	if v := i.Status; v != nil {
+		m.SetStatus(*v)
+	}
+}
+
+// SetInput applies the change-set in the CreateMailConnInput on the MailConnCreate builder.
+func (c *MailConnCreate) SetInput(i CreateMailConnInput) *MailConnCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateMailConnInput represents a mutation input for updating mailconns.
+type UpdateMailConnInput struct {
+	ClearUpdatedAt  bool
+	UpdatedAt       *time.Time
+	ClearAppID      bool
+	AppID           *string
+	ClearName       bool
+	Name            *string
+	ClearHost       bool
+	Host            *string
+	ClearPort       bool
+	Port            *int
+	ClearUsername   bool
+	Username        *string
+	ClearPassword   bool
+	Password        *string
+	ClearEncryption bool
+	Encryption      *int
+	ClearFromName   bool
+	FromName        *string
+	ClearFromEmail  bool
+	FromEmail       *string
+	ClearStatus     bool
+	Status          *bool
+}
+
+// Mutate applies the UpdateMailConnInput on the MailConnMutation builder.
+func (i *UpdateMailConnInput) Mutate(m *MailConnMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearAppID {
+		m.ClearAppID()
+	}
+	if v := i.AppID; v != nil {
+		m.SetAppID(*v)
+	}
+	if i.ClearName {
+		m.ClearName()
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if i.ClearHost {
+		m.ClearHost()
+	}
+	if v := i.Host; v != nil {
+		m.SetHost(*v)
+	}
+	if i.ClearPort {
+		m.ClearPort()
+	}
+	if v := i.Port; v != nil {
+		m.SetPort(*v)
+	}
+	if i.ClearUsername {
+		m.ClearUsername()
+	}
+	if v := i.Username; v != nil {
+		m.SetUsername(*v)
+	}
+	if i.ClearPassword {
+		m.ClearPassword()
+	}
+	if v := i.Password; v != nil {
+		m.SetPassword(*v)
+	}
+	if i.ClearEncryption {
+		m.ClearEncryption()
+	}
+	if v := i.Encryption; v != nil {
+		m.SetEncryption(*v)
+	}
+	if i.ClearFromName {
+		m.ClearFromName()
+	}
+	if v := i.FromName; v != nil {
+		m.SetFromName(*v)
+	}
+	if i.ClearFromEmail {
+		m.ClearFromEmail()
+	}
+	if v := i.FromEmail; v != nil {
+		m.SetFromEmail(*v)
+	}
+	if i.ClearStatus {
+		m.ClearStatus()
+	}
+	if v := i.Status; v != nil {
+		m.SetStatus(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateMailConnInput on the MailConnUpdate builder.
+func (c *MailConnUpdate) SetInput(i UpdateMailConnInput) *MailConnUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateMailConnInput on the MailConnUpdateOne builder.
+func (c *MailConnUpdateOne) SetInput(i UpdateMailConnInput) *MailConnUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }
@@ -335,6 +501,8 @@ func (c *OauthConnectionCreate) SetInput(i CreateOauthConnectionInput) *OauthCon
 type UpdateOauthConnectionInput struct {
 	ClearUpdatedAt     bool
 	UpdatedAt          *time.Time
+	ClearAppID         bool
+	AppID              *string
 	ClearName          bool
 	Name               *string
 	ClearProvider      bool
@@ -362,6 +530,12 @@ func (i *UpdateOauthConnectionInput) Mutate(m *OauthConnectionMutation) {
 	}
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
+	}
+	if i.ClearAppID {
+		m.ClearAppID()
+	}
+	if v := i.AppID; v != nil {
+		m.SetAppID(*v)
 	}
 	if i.ClearName {
 		m.ClearName()
@@ -505,6 +679,8 @@ func (c *PostCreate) SetInput(i CreatePostInput) *PostCreate {
 type UpdatePostInput struct {
 	ClearUpdatedAt        bool
 	UpdatedAt             *time.Time
+	ClearAppID            bool
+	AppID                 *string
 	ClearName             bool
 	Name                  *string
 	ClearSlug             bool
@@ -538,6 +714,12 @@ func (i *UpdatePostInput) Mutate(m *PostMutation) {
 	}
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
+	}
+	if i.ClearAppID {
+		m.ClearAppID()
+	}
+	if v := i.AppID; v != nil {
+		m.SetAppID(*v)
 	}
 	if i.ClearName {
 		m.ClearName()
@@ -691,6 +873,8 @@ func (c *PostCategoryCreate) SetInput(i CreatePostCategoryInput) *PostCategoryCr
 type UpdatePostCategoryInput struct {
 	ClearUpdatedAt        bool
 	UpdatedAt             *time.Time
+	ClearAppID            bool
+	AppID                 *string
 	ClearName             bool
 	Name                  *string
 	ClearSlug             bool
@@ -721,6 +905,12 @@ func (i *UpdatePostCategoryInput) Mutate(m *PostCategoryMutation) {
 	}
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
+	}
+	if i.ClearAppID {
+		m.ClearAppID()
+	}
+	if v := i.AppID; v != nil {
+		m.SetAppID(*v)
 	}
 	if i.ClearName {
 		m.ClearName()
@@ -841,6 +1031,8 @@ func (c *PostStatusCreate) SetInput(i CreatePostStatusInput) *PostStatusCreate {
 type UpdatePostStatusInput struct {
 	ClearUpdatedAt bool
 	UpdatedAt      *time.Time
+	ClearAppID     bool
+	AppID          *string
 	ClearName      bool
 	Name           *string
 	ClearSlug      bool
@@ -858,6 +1050,12 @@ func (i *UpdatePostStatusInput) Mutate(m *PostStatusMutation) {
 	}
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
+	}
+	if i.ClearAppID {
+		m.ClearAppID()
+	}
+	if v := i.AppID; v != nil {
+		m.SetAppID(*v)
 	}
 	if i.ClearName {
 		m.ClearName()
@@ -959,6 +1157,8 @@ func (c *PostTypeCreate) SetInput(i CreatePostTypeInput) *PostTypeCreate {
 type UpdatePostTypeInput struct {
 	ClearUpdatedAt        bool
 	UpdatedAt             *time.Time
+	ClearAppID            bool
+	AppID                 *string
 	ClearName             bool
 	Name                  *string
 	ClearSlug             bool
@@ -986,6 +1186,12 @@ func (i *UpdatePostTypeInput) Mutate(m *PostTypeMutation) {
 	}
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
+	}
+	if i.ClearAppID {
+		m.ClearAppID()
+	}
+	if v := i.AppID; v != nil {
+		m.SetAppID(*v)
 	}
 	if i.ClearName {
 		m.ClearName()
@@ -1055,6 +1261,112 @@ func (c *PostTypeUpdateOne) SetInput(i UpdatePostTypeInput) *PostTypeUpdateOne {
 	return c
 }
 
+// CreateTemplInput represents a mutation input for creating templs.
+type CreateTemplInput struct {
+	CreatedAt *time.Time
+	UpdatedAt *time.Time
+	Name      *string
+	Body      *string
+	Compiled  *string
+	Status    *bool
+}
+
+// Mutate applies the CreateTemplInput on the TemplMutation builder.
+func (i *CreateTemplInput) Mutate(m *TemplMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if v := i.Body; v != nil {
+		m.SetBody(*v)
+	}
+	if v := i.Compiled; v != nil {
+		m.SetCompiled(*v)
+	}
+	if v := i.Status; v != nil {
+		m.SetStatus(*v)
+	}
+}
+
+// SetInput applies the change-set in the CreateTemplInput on the TemplCreate builder.
+func (c *TemplCreate) SetInput(i CreateTemplInput) *TemplCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdateTemplInput represents a mutation input for updating templs.
+type UpdateTemplInput struct {
+	ClearUpdatedAt bool
+	UpdatedAt      *time.Time
+	ClearAppID     bool
+	AppID          *string
+	ClearName      bool
+	Name           *string
+	ClearBody      bool
+	Body           *string
+	ClearCompiled  bool
+	Compiled       *string
+	ClearStatus    bool
+	Status         *bool
+}
+
+// Mutate applies the UpdateTemplInput on the TemplMutation builder.
+func (i *UpdateTemplInput) Mutate(m *TemplMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearAppID {
+		m.ClearAppID()
+	}
+	if v := i.AppID; v != nil {
+		m.SetAppID(*v)
+	}
+	if i.ClearName {
+		m.ClearName()
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if i.ClearBody {
+		m.ClearBody()
+	}
+	if v := i.Body; v != nil {
+		m.SetBody(*v)
+	}
+	if i.ClearCompiled {
+		m.ClearCompiled()
+	}
+	if v := i.Compiled; v != nil {
+		m.SetCompiled(*v)
+	}
+	if i.ClearStatus {
+		m.ClearStatus()
+	}
+	if v := i.Status; v != nil {
+		m.SetStatus(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdateTemplInput on the TemplUpdate builder.
+func (c *TemplUpdate) SetInput(i UpdateTemplInput) *TemplUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdateTemplInput on the TemplUpdateOne builder.
+func (c *TemplUpdateOne) SetInput(i UpdateTemplInput) *TemplUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreateTodoInput represents a mutation input for creating todos.
 type CreateTodoInput struct {
 	CreatedAt *time.Time
@@ -1099,6 +1411,8 @@ func (c *TodoCreate) SetInput(i CreateTodoInput) *TodoCreate {
 type UpdateTodoInput struct {
 	ClearUpdatedAt bool
 	UpdatedAt      *time.Time
+	ClearAppID     bool
+	AppID          *string
 	Text           *string
 	Status         *todo.Status
 	Priority       *int
@@ -1116,6 +1430,12 @@ func (i *UpdateTodoInput) Mutate(m *TodoMutation) {
 	}
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
+	}
+	if i.ClearAppID {
+		m.ClearAppID()
+	}
+	if v := i.AppID; v != nil {
+		m.SetAppID(*v)
 	}
 	if v := i.Text; v != nil {
 		m.SetText(*v)
@@ -1239,6 +1559,8 @@ func (c *UserCreate) SetInput(i CreateUserInput) *UserCreate {
 type UpdateUserInput struct {
 	ClearUpdatedAt        bool
 	UpdatedAt             *time.Time
+	ClearAppID            bool
+	AppID                 *string
 	Email                 *string
 	ClearPhone            bool
 	Phone                 *string
@@ -1279,6 +1601,12 @@ func (i *UpdateUserInput) Mutate(m *UserMutation) {
 	}
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
+	}
+	if i.ClearAppID {
+		m.ClearAppID()
+	}
+	if v := i.AppID; v != nil {
+		m.SetAppID(*v)
 	}
 	if v := i.Email; v != nil {
 		m.SetEmail(*v)
@@ -1433,6 +1761,8 @@ func (c *WorkspaceCreate) SetInput(i CreateWorkspaceInput) *WorkspaceCreate {
 type UpdateWorkspaceInput struct {
 	ClearUpdatedAt           bool
 	UpdatedAt                *time.Time
+	ClearAppID               bool
+	AppID                    *string
 	ClearName                bool
 	Name                     *string
 	ClearIsPersonal          bool
@@ -1454,6 +1784,12 @@ func (i *UpdateWorkspaceInput) Mutate(m *WorkspaceMutation) {
 	}
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
+	}
+	if i.ClearAppID {
+		m.ClearAppID()
+	}
+	if v := i.AppID; v != nil {
+		m.SetAppID(*v)
 	}
 	if i.ClearName {
 		m.ClearName()
@@ -1543,6 +1879,8 @@ func (c *WorkspaceInviteCreate) SetInput(i CreateWorkspaceInviteInput) *Workspac
 type UpdateWorkspaceInviteInput struct {
 	ClearUpdatedAt bool
 	UpdatedAt      *time.Time
+	ClearAppID     bool
+	AppID          *string
 	ClearEmail     bool
 	Email          *string
 	ClearRole      bool
@@ -1558,6 +1896,12 @@ func (i *UpdateWorkspaceInviteInput) Mutate(m *WorkspaceInviteMutation) {
 	}
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
+	}
+	if i.ClearAppID {
+		m.ClearAppID()
+	}
+	if v := i.AppID; v != nil {
+		m.SetAppID(*v)
 	}
 	if i.ClearEmail {
 		m.ClearEmail()
@@ -1625,6 +1969,8 @@ func (c *WorkspaceUserCreate) SetInput(i CreateWorkspaceUserInput) *WorkspaceUse
 type UpdateWorkspaceUserInput struct {
 	ClearUpdatedAt bool
 	UpdatedAt      *time.Time
+	ClearAppID     bool
+	AppID          *string
 	ClearRole      bool
 	Role           *string
 	UserID         *string
@@ -1638,6 +1984,12 @@ func (i *UpdateWorkspaceUserInput) Mutate(m *WorkspaceUserMutation) {
 	}
 	if v := i.UpdatedAt; v != nil {
 		m.SetUpdatedAt(*v)
+	}
+	if i.ClearAppID {
+		m.ClearAppID()
+	}
+	if v := i.AppID; v != nil {
+		m.SetAppID(*v)
 	}
 	if i.ClearRole {
 		m.ClearRole()

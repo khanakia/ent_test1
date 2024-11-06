@@ -5,12 +5,14 @@ package ent
 import (
 	"context"
 	"saas/gen/ent/app"
+	"saas/gen/ent/mailconn"
 	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/post"
 	"saas/gen/ent/postcategory"
 	"saas/gen/ent/poststatus"
 	"saas/gen/ent/posttag"
 	"saas/gen/ent/posttype"
+	"saas/gen/ent/templ"
 	"saas/gen/ent/todo"
 	"saas/gen/ent/user"
 	"saas/gen/ent/workspace"
@@ -42,6 +44,111 @@ func (a *AppQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphq
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+
+		case "defaultMailConn":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&MailConnClient{config: a.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, mailconnImplementors)...); err != nil {
+				return err
+			}
+			a.withDefaultMailConn = query
+			if _, ok := fieldSeen[app.FieldDefaultMailConnID]; !ok {
+				selectedFields = append(selectedFields, app.FieldDefaultMailConnID)
+				fieldSeen[app.FieldDefaultMailConnID] = struct{}{}
+			}
+
+		case "mailLayoutTempl":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&TemplClient{config: a.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, templImplementors)...); err != nil {
+				return err
+			}
+			a.withMailLayoutTempl = query
+			if _, ok := fieldSeen[app.FieldMailLayoutTemplID]; !ok {
+				selectedFields = append(selectedFields, app.FieldMailLayoutTemplID)
+				fieldSeen[app.FieldMailLayoutTemplID] = struct{}{}
+			}
+
+		case "wsapceInviteTempl":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&TemplClient{config: a.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, templImplementors)...); err != nil {
+				return err
+			}
+			a.withWsapceInviteTempl = query
+			if _, ok := fieldSeen[app.FieldWsapceInviteTemplID]; !ok {
+				selectedFields = append(selectedFields, app.FieldWsapceInviteTemplID)
+				fieldSeen[app.FieldWsapceInviteTemplID] = struct{}{}
+			}
+
+		case "wsapceSuccessTempl":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&TemplClient{config: a.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, templImplementors)...); err != nil {
+				return err
+			}
+			a.withWsapceSuccessTempl = query
+			if _, ok := fieldSeen[app.FieldWsapceSuccessTemplID]; !ok {
+				selectedFields = append(selectedFields, app.FieldWsapceSuccessTemplID)
+				fieldSeen[app.FieldWsapceSuccessTemplID] = struct{}{}
+			}
+
+		case "authFpTempl":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&TemplClient{config: a.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, templImplementors)...); err != nil {
+				return err
+			}
+			a.withAuthFpTempl = query
+			if _, ok := fieldSeen[app.FieldAuthFpTemplID]; !ok {
+				selectedFields = append(selectedFields, app.FieldAuthFpTemplID)
+				fieldSeen[app.FieldAuthFpTemplID] = struct{}{}
+			}
+
+		case "authWelcomeEmailTempl":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&TemplClient{config: a.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, templImplementors)...); err != nil {
+				return err
+			}
+			a.withAuthWelcomeEmailTempl = query
+			if _, ok := fieldSeen[app.FieldAuthWelcomeEmailTemplID]; !ok {
+				selectedFields = append(selectedFields, app.FieldAuthWelcomeEmailTemplID)
+				fieldSeen[app.FieldAuthWelcomeEmailTemplID] = struct{}{}
+			}
+
+		case "authVerificationTempl":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&TemplClient{config: a.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, templImplementors)...); err != nil {
+				return err
+			}
+			a.withAuthVerificationTempl = query
+			if _, ok := fieldSeen[app.FieldAuthVerificationTemplID]; !ok {
+				selectedFields = append(selectedFields, app.FieldAuthVerificationTemplID)
+				fieldSeen[app.FieldAuthVerificationTemplID] = struct{}{}
+			}
 		case "createdAt":
 			if _, ok := fieldSeen[app.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, app.FieldCreatedAt)
@@ -212,6 +319,156 @@ func newAppPaginateArgs(rv map[string]any) *appPaginateArgs {
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (mc *MailConnQuery) CollectFields(ctx context.Context, satisfies ...string) (*MailConnQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return mc, nil
+	}
+	if err := mc.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return mc, nil
+}
+
+func (mc *MailConnQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(mailconn.Columns))
+		selectedFields = []string{mailconn.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "createdAt":
+			if _, ok := fieldSeen[mailconn.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, mailconn.FieldCreatedAt)
+				fieldSeen[mailconn.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[mailconn.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, mailconn.FieldUpdatedAt)
+				fieldSeen[mailconn.FieldUpdatedAt] = struct{}{}
+			}
+		case "appID":
+			if _, ok := fieldSeen[mailconn.FieldAppID]; !ok {
+				selectedFields = append(selectedFields, mailconn.FieldAppID)
+				fieldSeen[mailconn.FieldAppID] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[mailconn.FieldName]; !ok {
+				selectedFields = append(selectedFields, mailconn.FieldName)
+				fieldSeen[mailconn.FieldName] = struct{}{}
+			}
+		case "host":
+			if _, ok := fieldSeen[mailconn.FieldHost]; !ok {
+				selectedFields = append(selectedFields, mailconn.FieldHost)
+				fieldSeen[mailconn.FieldHost] = struct{}{}
+			}
+		case "port":
+			if _, ok := fieldSeen[mailconn.FieldPort]; !ok {
+				selectedFields = append(selectedFields, mailconn.FieldPort)
+				fieldSeen[mailconn.FieldPort] = struct{}{}
+			}
+		case "username":
+			if _, ok := fieldSeen[mailconn.FieldUsername]; !ok {
+				selectedFields = append(selectedFields, mailconn.FieldUsername)
+				fieldSeen[mailconn.FieldUsername] = struct{}{}
+			}
+		case "password":
+			if _, ok := fieldSeen[mailconn.FieldPassword]; !ok {
+				selectedFields = append(selectedFields, mailconn.FieldPassword)
+				fieldSeen[mailconn.FieldPassword] = struct{}{}
+			}
+		case "encryption":
+			if _, ok := fieldSeen[mailconn.FieldEncryption]; !ok {
+				selectedFields = append(selectedFields, mailconn.FieldEncryption)
+				fieldSeen[mailconn.FieldEncryption] = struct{}{}
+			}
+		case "fromName":
+			if _, ok := fieldSeen[mailconn.FieldFromName]; !ok {
+				selectedFields = append(selectedFields, mailconn.FieldFromName)
+				fieldSeen[mailconn.FieldFromName] = struct{}{}
+			}
+		case "fromEmail":
+			if _, ok := fieldSeen[mailconn.FieldFromEmail]; !ok {
+				selectedFields = append(selectedFields, mailconn.FieldFromEmail)
+				fieldSeen[mailconn.FieldFromEmail] = struct{}{}
+			}
+		case "status":
+			if _, ok := fieldSeen[mailconn.FieldStatus]; !ok {
+				selectedFields = append(selectedFields, mailconn.FieldStatus)
+				fieldSeen[mailconn.FieldStatus] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		mc.Select(selectedFields...)
+	}
+	return nil
+}
+
+type mailconnPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []MailConnPaginateOption
+}
+
+func newMailConnPaginateArgs(rv map[string]any) *mailconnPaginateArgs {
+	args := &mailconnPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[orderByField]; ok {
+		switch v := v.(type) {
+		case []*MailConnOrder:
+			args.opts = append(args.opts, WithMailConnOrder(v))
+		case []any:
+			var orders []*MailConnOrder
+			for i := range v {
+				mv, ok := v[i].(map[string]any)
+				if !ok {
+					continue
+				}
+				var (
+					err1, err2 error
+					order      = &MailConnOrder{Field: &MailConnOrderField{}, Direction: entgql.OrderDirectionAsc}
+				)
+				if d, ok := mv[directionField]; ok {
+					err1 = order.Direction.UnmarshalGQL(d)
+				}
+				if f, ok := mv[fieldField]; ok {
+					err2 = order.Field.UnmarshalGQL(f)
+				}
+				if err1 == nil && err2 == nil {
+					orders = append(orders, order)
+				}
+			}
+			args.opts = append(args.opts, WithMailConnOrder(orders))
+		}
+	}
+	if v, ok := rv[whereField].(*MailConnWhereInput); ok {
+		args.opts = append(args.opts, WithMailConnFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (oc *OauthConnectionQuery) CollectFields(ctx context.Context, satisfies ...string) (*OauthConnectionQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
@@ -241,6 +498,11 @@ func (oc *OauthConnectionQuery) collectField(ctx context.Context, oneNode bool, 
 			if _, ok := fieldSeen[oauthconnection.FieldUpdatedAt]; !ok {
 				selectedFields = append(selectedFields, oauthconnection.FieldUpdatedAt)
 				fieldSeen[oauthconnection.FieldUpdatedAt] = struct{}{}
+			}
+		case "appID":
+			if _, ok := fieldSeen[oauthconnection.FieldAppID]; !ok {
+				selectedFields = append(selectedFields, oauthconnection.FieldAppID)
+				fieldSeen[oauthconnection.FieldAppID] = struct{}{}
 			}
 		case "name":
 			if _, ok := fieldSeen[oauthconnection.FieldName]; !ok {
@@ -432,6 +694,11 @@ func (po *PostQuery) collectField(ctx context.Context, oneNode bool, opCtx *grap
 				selectedFields = append(selectedFields, post.FieldUpdatedAt)
 				fieldSeen[post.FieldUpdatedAt] = struct{}{}
 			}
+		case "appID":
+			if _, ok := fieldSeen[post.FieldAppID]; !ok {
+				selectedFields = append(selectedFields, post.FieldAppID)
+				fieldSeen[post.FieldAppID] = struct{}{}
+			}
 		case "name":
 			if _, ok := fieldSeen[post.FieldName]; !ok {
 				selectedFields = append(selectedFields, post.FieldName)
@@ -604,6 +871,11 @@ func (pc *PostCategoryQuery) collectField(ctx context.Context, oneNode bool, opC
 			if _, ok := fieldSeen[postcategory.FieldUpdatedAt]; !ok {
 				selectedFields = append(selectedFields, postcategory.FieldUpdatedAt)
 				fieldSeen[postcategory.FieldUpdatedAt] = struct{}{}
+			}
+		case "appID":
+			if _, ok := fieldSeen[postcategory.FieldAppID]; !ok {
+				selectedFields = append(selectedFields, postcategory.FieldAppID)
+				fieldSeen[postcategory.FieldAppID] = struct{}{}
 			}
 		case "name":
 			if _, ok := fieldSeen[postcategory.FieldName]; !ok {
@@ -778,6 +1050,11 @@ func (ps *PostStatusQuery) collectField(ctx context.Context, oneNode bool, opCtx
 				selectedFields = append(selectedFields, poststatus.FieldUpdatedAt)
 				fieldSeen[poststatus.FieldUpdatedAt] = struct{}{}
 			}
+		case "appID":
+			if _, ok := fieldSeen[poststatus.FieldAppID]; !ok {
+				selectedFields = append(selectedFields, poststatus.FieldAppID)
+				fieldSeen[poststatus.FieldAppID] = struct{}{}
+			}
 		case "name":
 			if _, ok := fieldSeen[poststatus.FieldName]; !ok {
 				selectedFields = append(selectedFields, poststatus.FieldName)
@@ -897,6 +1174,11 @@ func (pt *PostTagQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 			if _, ok := fieldSeen[posttag.FieldUpdatedAt]; !ok {
 				selectedFields = append(selectedFields, posttag.FieldUpdatedAt)
 				fieldSeen[posttag.FieldUpdatedAt] = struct{}{}
+			}
+		case "appID":
+			if _, ok := fieldSeen[posttag.FieldAppID]; !ok {
+				selectedFields = append(selectedFields, posttag.FieldAppID)
+				fieldSeen[posttag.FieldAppID] = struct{}{}
 			}
 		case "name":
 			if _, ok := fieldSeen[posttag.FieldName]; !ok {
@@ -1063,6 +1345,11 @@ func (pt *PostTypeQuery) collectField(ctx context.Context, oneNode bool, opCtx *
 				selectedFields = append(selectedFields, posttype.FieldUpdatedAt)
 				fieldSeen[posttype.FieldUpdatedAt] = struct{}{}
 			}
+		case "appID":
+			if _, ok := fieldSeen[posttype.FieldAppID]; !ok {
+				selectedFields = append(selectedFields, posttype.FieldAppID)
+				fieldSeen[posttype.FieldAppID] = struct{}{}
+			}
 		case "name":
 			if _, ok := fieldSeen[posttype.FieldName]; !ok {
 				selectedFields = append(selectedFields, posttype.FieldName)
@@ -1178,6 +1465,131 @@ func newPostTypePaginateArgs(rv map[string]any) *posttypePaginateArgs {
 }
 
 // CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (t *TemplQuery) CollectFields(ctx context.Context, satisfies ...string) (*TemplQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return t, nil
+	}
+	if err := t.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return t, nil
+}
+
+func (t *TemplQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(templ.Columns))
+		selectedFields = []string{templ.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "createdAt":
+			if _, ok := fieldSeen[templ.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, templ.FieldCreatedAt)
+				fieldSeen[templ.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[templ.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, templ.FieldUpdatedAt)
+				fieldSeen[templ.FieldUpdatedAt] = struct{}{}
+			}
+		case "appID":
+			if _, ok := fieldSeen[templ.FieldAppID]; !ok {
+				selectedFields = append(selectedFields, templ.FieldAppID)
+				fieldSeen[templ.FieldAppID] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[templ.FieldName]; !ok {
+				selectedFields = append(selectedFields, templ.FieldName)
+				fieldSeen[templ.FieldName] = struct{}{}
+			}
+		case "body":
+			if _, ok := fieldSeen[templ.FieldBody]; !ok {
+				selectedFields = append(selectedFields, templ.FieldBody)
+				fieldSeen[templ.FieldBody] = struct{}{}
+			}
+		case "compiled":
+			if _, ok := fieldSeen[templ.FieldCompiled]; !ok {
+				selectedFields = append(selectedFields, templ.FieldCompiled)
+				fieldSeen[templ.FieldCompiled] = struct{}{}
+			}
+		case "status":
+			if _, ok := fieldSeen[templ.FieldStatus]; !ok {
+				selectedFields = append(selectedFields, templ.FieldStatus)
+				fieldSeen[templ.FieldStatus] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		t.Select(selectedFields...)
+	}
+	return nil
+}
+
+type templPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []TemplPaginateOption
+}
+
+func newTemplPaginateArgs(rv map[string]any) *templPaginateArgs {
+	args := &templPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[orderByField]; ok {
+		switch v := v.(type) {
+		case []*TemplOrder:
+			args.opts = append(args.opts, WithTemplOrder(v))
+		case []any:
+			var orders []*TemplOrder
+			for i := range v {
+				mv, ok := v[i].(map[string]any)
+				if !ok {
+					continue
+				}
+				var (
+					err1, err2 error
+					order      = &TemplOrder{Field: &TemplOrderField{}, Direction: entgql.OrderDirectionAsc}
+				)
+				if d, ok := mv[directionField]; ok {
+					err1 = order.Direction.UnmarshalGQL(d)
+				}
+				if f, ok := mv[fieldField]; ok {
+					err2 = order.Field.UnmarshalGQL(f)
+				}
+				if err1 == nil && err2 == nil {
+					orders = append(orders, order)
+				}
+			}
+			args.opts = append(args.opts, WithTemplOrder(orders))
+		}
+	}
+	if v, ok := rv[whereField].(*TemplWhereInput); ok {
+		args.opts = append(args.opts, WithTemplFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
 func (t *TodoQuery) CollectFields(ctx context.Context, satisfies ...string) (*TodoQuery, error) {
 	fc := graphql.GetFieldContext(ctx)
 	if fc == nil {
@@ -1231,6 +1643,11 @@ func (t *TodoQuery) collectField(ctx context.Context, oneNode bool, opCtx *graph
 			if _, ok := fieldSeen[todo.FieldUpdatedAt]; !ok {
 				selectedFields = append(selectedFields, todo.FieldUpdatedAt)
 				fieldSeen[todo.FieldUpdatedAt] = struct{}{}
+			}
+		case "appID":
+			if _, ok := fieldSeen[todo.FieldAppID]; !ok {
+				selectedFields = append(selectedFields, todo.FieldAppID)
+				fieldSeen[todo.FieldAppID] = struct{}{}
 			}
 		case "text":
 			if _, ok := fieldSeen[todo.FieldText]; !ok {
@@ -1366,6 +1783,11 @@ func (u *UserQuery) collectField(ctx context.Context, oneNode bool, opCtx *graph
 			if _, ok := fieldSeen[user.FieldUpdatedAt]; !ok {
 				selectedFields = append(selectedFields, user.FieldUpdatedAt)
 				fieldSeen[user.FieldUpdatedAt] = struct{}{}
+			}
+		case "appID":
+			if _, ok := fieldSeen[user.FieldAppID]; !ok {
+				selectedFields = append(selectedFields, user.FieldAppID)
+				fieldSeen[user.FieldAppID] = struct{}{}
 			}
 		case "email":
 			if _, ok := fieldSeen[user.FieldEmail]; !ok {
@@ -1561,6 +1983,11 @@ func (w *WorkspaceQuery) collectField(ctx context.Context, oneNode bool, opCtx *
 				selectedFields = append(selectedFields, workspace.FieldUpdatedAt)
 				fieldSeen[workspace.FieldUpdatedAt] = struct{}{}
 			}
+		case "appID":
+			if _, ok := fieldSeen[workspace.FieldAppID]; !ok {
+				selectedFields = append(selectedFields, workspace.FieldAppID)
+				fieldSeen[workspace.FieldAppID] = struct{}{}
+			}
 		case "name":
 			if _, ok := fieldSeen[workspace.FieldName]; !ok {
 				selectedFields = append(selectedFields, workspace.FieldName)
@@ -1690,6 +2117,11 @@ func (wi *WorkspaceInviteQuery) collectField(ctx context.Context, oneNode bool, 
 			if _, ok := fieldSeen[workspaceinvite.FieldUpdatedAt]; !ok {
 				selectedFields = append(selectedFields, workspaceinvite.FieldUpdatedAt)
 				fieldSeen[workspaceinvite.FieldUpdatedAt] = struct{}{}
+			}
+		case "appID":
+			if _, ok := fieldSeen[workspaceinvite.FieldAppID]; !ok {
+				selectedFields = append(selectedFields, workspaceinvite.FieldAppID)
+				fieldSeen[workspaceinvite.FieldAppID] = struct{}{}
 			}
 		case "workspaceID":
 			if _, ok := fieldSeen[workspaceinvite.FieldWorkspaceID]; !ok {
@@ -1835,6 +2267,11 @@ func (wu *WorkspaceUserQuery) collectField(ctx context.Context, oneNode bool, op
 			if _, ok := fieldSeen[workspaceuser.FieldUpdatedAt]; !ok {
 				selectedFields = append(selectedFields, workspaceuser.FieldUpdatedAt)
 				fieldSeen[workspaceuser.FieldUpdatedAt] = struct{}{}
+			}
+		case "appID":
+			if _, ok := fieldSeen[workspaceuser.FieldAppID]; !ok {
+				selectedFields = append(selectedFields, workspaceuser.FieldAppID)
+				fieldSeen[workspaceuser.FieldAppID] = struct{}{}
 			}
 		case "workspaceID":
 			if _, ok := fieldSeen[workspaceuser.FieldWorkspaceID]; !ok {

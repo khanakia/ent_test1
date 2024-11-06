@@ -32,7 +32,7 @@ type MailConn struct {
 	// Username holds the value of the "username" field.
 	Username string `json:"username,omitempty"`
 	// Password holds the value of the "password" field.
-	Password string `json:"-"`
+	Password string `json:"password,omitempty"`
 	// Encryption holds the value of the "encryption" field.
 	Encryption int `json:"encryption,omitempty"`
 	// FromName holds the value of the "from_name" field.
@@ -207,7 +207,8 @@ func (mc *MailConn) String() string {
 	builder.WriteString("username=")
 	builder.WriteString(mc.Username)
 	builder.WriteString(", ")
-	builder.WriteString("password=<sensitive>")
+	builder.WriteString("password=")
+	builder.WriteString(mc.Password)
 	builder.WriteString(", ")
 	builder.WriteString("encryption=")
 	builder.WriteString(fmt.Sprintf("%v", mc.Encryption))

@@ -31,6 +31,10 @@ type MutationResolver interface {
 	UpdatePost(ctx context.Context, id string, input ent.UpdatePostInput) (*ent.Post, error)
 	CreateOauthConnection(ctx context.Context, input ent.CreateOauthConnectionInput) (*ent.OauthConnection, error)
 	UpdateOauthConnection(ctx context.Context, id string, input ent.UpdateOauthConnectionInput) (*ent.OauthConnection, error)
+	CreateMailConn(ctx context.Context, input ent.CreateMailConnInput) (*ent.MailConn, error)
+	UpdateMailConn(ctx context.Context, id string, input ent.UpdateMailConnInput) (*ent.MailConn, error)
+	CreateTempl(ctx context.Context, input ent.CreateTemplInput) (*ent.Templ, error)
+	UpdateTempl(ctx context.Context, id string, input ent.UpdateTemplInput) (*ent.Templ, error)
 	Ping(ctx context.Context) (string, error)
 }
 
@@ -45,6 +49,21 @@ func (ec *executionContext) field_Mutation_adminAuthLogin_args(ctx context.Conte
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNLoginInput2gqlsaᚋgraphᚋmodelᚐLoginInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createMailConn_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 ent.CreateMailConnInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNCreateMailConnInput2saasᚋgenᚋentᚐCreateMailConnInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -128,6 +147,21 @@ func (ec *executionContext) field_Mutation_createPost_args(ctx context.Context, 
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_createTempl_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 ent.CreateTemplInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNCreateTemplInput2saasᚋgenᚋentᚐCreateTemplInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_createTodo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -140,6 +174,30 @@ func (ec *executionContext) field_Mutation_createTodo_args(ctx context.Context, 
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updateMailConn_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 ent.UpdateMailConnInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNUpdateMailConnInput2saasᚋgenᚋentᚐUpdateMailConnInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
 	return args, nil
 }
 
@@ -263,6 +321,30 @@ func (ec *executionContext) field_Mutation_updatePost_args(ctx context.Context, 
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_updateTempl_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 ent.UpdateTemplInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNUpdateTemplInput2saasᚋgenᚋentᚐUpdateTemplInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_updateTodo_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -340,6 +422,8 @@ func (ec *executionContext) fieldContext_Mutation_createTodo(ctx context.Context
 				return ec.fieldContext_Todo_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Todo_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_Todo_appID(ctx, field)
 			case "text":
 				return ec.fieldContext_Todo_text(ctx, field)
 			case "status":
@@ -413,6 +497,8 @@ func (ec *executionContext) fieldContext_Mutation_updateTodo(ctx context.Context
 				return ec.fieldContext_Todo_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Todo_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_Todo_appID(ctx, field)
 			case "text":
 				return ec.fieldContext_Todo_text(ctx, field)
 			case "status":
@@ -520,10 +606,10 @@ func (ec *executionContext) _Mutation_createPostType(ctx context.Context, field 
 			return ec.resolvers.Mutation().CreatePostType(rctx, fc.Args["input"].(ent.CreatePostTypeInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.CanAdmin == nil {
-				return nil, errors.New("directive canAdmin is not implemented")
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
 			}
-			return ec.directives.CanAdmin(ctx, nil, directive0)
+			return ec.directives.CanApp(ctx, nil, directive0)
 		}
 
 		tmp, err := directive1(rctx)
@@ -567,6 +653,8 @@ func (ec *executionContext) fieldContext_Mutation_createPostType(ctx context.Con
 				return ec.fieldContext_PostType_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_PostType_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_PostType_appID(ctx, field)
 			case "name":
 				return ec.fieldContext_PostType_name(ctx, field)
 			case "slug":
@@ -625,10 +713,10 @@ func (ec *executionContext) _Mutation_updatePostType(ctx context.Context, field 
 			return ec.resolvers.Mutation().UpdatePostType(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdatePostTypeInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.CanAdmin == nil {
-				return nil, errors.New("directive canAdmin is not implemented")
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
 			}
-			return ec.directives.CanAdmin(ctx, nil, directive0)
+			return ec.directives.CanApp(ctx, nil, directive0)
 		}
 
 		tmp, err := directive1(rctx)
@@ -672,6 +760,8 @@ func (ec *executionContext) fieldContext_Mutation_updatePostType(ctx context.Con
 				return ec.fieldContext_PostType_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_PostType_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_PostType_appID(ctx, field)
 			case "name":
 				return ec.fieldContext_PostType_name(ctx, field)
 			case "slug":
@@ -730,10 +820,10 @@ func (ec *executionContext) _Mutation_createPostStatus(ctx context.Context, fiel
 			return ec.resolvers.Mutation().CreatePostStatus(rctx, fc.Args["input"].(ent.CreatePostStatusInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.CanAdmin == nil {
-				return nil, errors.New("directive canAdmin is not implemented")
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
 			}
-			return ec.directives.CanAdmin(ctx, nil, directive0)
+			return ec.directives.CanApp(ctx, nil, directive0)
 		}
 
 		tmp, err := directive1(rctx)
@@ -777,6 +867,8 @@ func (ec *executionContext) fieldContext_Mutation_createPostStatus(ctx context.C
 				return ec.fieldContext_PostStatus_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_PostStatus_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_PostStatus_appID(ctx, field)
 			case "name":
 				return ec.fieldContext_PostStatus_name(ctx, field)
 			case "slug":
@@ -825,10 +917,10 @@ func (ec *executionContext) _Mutation_updatePostStatus(ctx context.Context, fiel
 			return ec.resolvers.Mutation().UpdatePostStatus(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdatePostStatusInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.CanAdmin == nil {
-				return nil, errors.New("directive canAdmin is not implemented")
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
 			}
-			return ec.directives.CanAdmin(ctx, nil, directive0)
+			return ec.directives.CanApp(ctx, nil, directive0)
 		}
 
 		tmp, err := directive1(rctx)
@@ -872,6 +964,8 @@ func (ec *executionContext) fieldContext_Mutation_updatePostStatus(ctx context.C
 				return ec.fieldContext_PostStatus_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_PostStatus_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_PostStatus_appID(ctx, field)
 			case "name":
 				return ec.fieldContext_PostStatus_name(ctx, field)
 			case "slug":
@@ -920,10 +1014,10 @@ func (ec *executionContext) _Mutation_createPostCategory(ctx context.Context, fi
 			return ec.resolvers.Mutation().CreatePostCategory(rctx, fc.Args["input"].(ent.CreatePostCategoryInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.CanAdmin == nil {
-				return nil, errors.New("directive canAdmin is not implemented")
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
 			}
-			return ec.directives.CanAdmin(ctx, nil, directive0)
+			return ec.directives.CanApp(ctx, nil, directive0)
 		}
 
 		tmp, err := directive1(rctx)
@@ -967,6 +1061,8 @@ func (ec *executionContext) fieldContext_Mutation_createPostCategory(ctx context
 				return ec.fieldContext_PostCategory_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_PostCategory_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_PostCategory_appID(ctx, field)
 			case "name":
 				return ec.fieldContext_PostCategory_name(ctx, field)
 			case "slug":
@@ -1023,10 +1119,10 @@ func (ec *executionContext) _Mutation_updatePostCategory(ctx context.Context, fi
 			return ec.resolvers.Mutation().UpdatePostCategory(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdatePostCategoryInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.CanAdmin == nil {
-				return nil, errors.New("directive canAdmin is not implemented")
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
 			}
-			return ec.directives.CanAdmin(ctx, nil, directive0)
+			return ec.directives.CanApp(ctx, nil, directive0)
 		}
 
 		tmp, err := directive1(rctx)
@@ -1070,6 +1166,8 @@ func (ec *executionContext) fieldContext_Mutation_updatePostCategory(ctx context
 				return ec.fieldContext_PostCategory_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_PostCategory_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_PostCategory_appID(ctx, field)
 			case "name":
 				return ec.fieldContext_PostCategory_name(ctx, field)
 			case "slug":
@@ -1126,10 +1224,10 @@ func (ec *executionContext) _Mutation_createPost(ctx context.Context, field grap
 			return ec.resolvers.Mutation().CreatePost(rctx, fc.Args["input"].(ent.CreatePostInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.CanAdmin == nil {
-				return nil, errors.New("directive canAdmin is not implemented")
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
 			}
-			return ec.directives.CanAdmin(ctx, nil, directive0)
+			return ec.directives.CanApp(ctx, nil, directive0)
 		}
 
 		tmp, err := directive1(rctx)
@@ -1173,6 +1271,8 @@ func (ec *executionContext) fieldContext_Mutation_createPost(ctx context.Context
 				return ec.fieldContext_Post_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Post_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_Post_appID(ctx, field)
 			case "name":
 				return ec.fieldContext_Post_name(ctx, field)
 			case "slug":
@@ -1239,10 +1339,10 @@ func (ec *executionContext) _Mutation_updatePost(ctx context.Context, field grap
 			return ec.resolvers.Mutation().UpdatePost(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdatePostInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.CanAdmin == nil {
-				return nil, errors.New("directive canAdmin is not implemented")
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
 			}
-			return ec.directives.CanAdmin(ctx, nil, directive0)
+			return ec.directives.CanApp(ctx, nil, directive0)
 		}
 
 		tmp, err := directive1(rctx)
@@ -1286,6 +1386,8 @@ func (ec *executionContext) fieldContext_Mutation_updatePost(ctx context.Context
 				return ec.fieldContext_Post_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Post_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_Post_appID(ctx, field)
 			case "name":
 				return ec.fieldContext_Post_name(ctx, field)
 			case "slug":
@@ -1352,10 +1454,10 @@ func (ec *executionContext) _Mutation_createOauthConnection(ctx context.Context,
 			return ec.resolvers.Mutation().CreateOauthConnection(rctx, fc.Args["input"].(ent.CreateOauthConnectionInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.CanAdmin == nil {
-				return nil, errors.New("directive canAdmin is not implemented")
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
 			}
-			return ec.directives.CanAdmin(ctx, nil, directive0)
+			return ec.directives.CanApp(ctx, nil, directive0)
 		}
 
 		tmp, err := directive1(rctx)
@@ -1399,6 +1501,8 @@ func (ec *executionContext) fieldContext_Mutation_createOauthConnection(ctx cont
 				return ec.fieldContext_OauthConnection_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_OauthConnection_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_OauthConnection_appID(ctx, field)
 			case "name":
 				return ec.fieldContext_OauthConnection_name(ctx, field)
 			case "provider":
@@ -1453,10 +1557,10 @@ func (ec *executionContext) _Mutation_updateOauthConnection(ctx context.Context,
 			return ec.resolvers.Mutation().UpdateOauthConnection(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdateOauthConnectionInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.CanAdmin == nil {
-				return nil, errors.New("directive canAdmin is not implemented")
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
 			}
-			return ec.directives.CanAdmin(ctx, nil, directive0)
+			return ec.directives.CanApp(ctx, nil, directive0)
 		}
 
 		tmp, err := directive1(rctx)
@@ -1500,6 +1604,8 @@ func (ec *executionContext) fieldContext_Mutation_updateOauthConnection(ctx cont
 				return ec.fieldContext_OauthConnection_createdAt(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_OauthConnection_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_OauthConnection_appID(ctx, field)
 			case "name":
 				return ec.fieldContext_OauthConnection_name(ctx, field)
 			case "provider":
@@ -1530,6 +1636,398 @@ func (ec *executionContext) fieldContext_Mutation_updateOauthConnection(ctx cont
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updateOauthConnection_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createMailConn(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createMailConn(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CreateMailConn(rctx, fc.Args["input"].(ent.CreateMailConnInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
+			}
+			return ec.directives.CanApp(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*ent.MailConn); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *saas/gen/ent.MailConn`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.MailConn)
+	fc.Result = res
+	return ec.marshalNMailConn2ᚖsaasᚋgenᚋentᚐMailConn(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createMailConn(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_MailConn_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_MailConn_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_MailConn_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_MailConn_appID(ctx, field)
+			case "name":
+				return ec.fieldContext_MailConn_name(ctx, field)
+			case "host":
+				return ec.fieldContext_MailConn_host(ctx, field)
+			case "port":
+				return ec.fieldContext_MailConn_port(ctx, field)
+			case "username":
+				return ec.fieldContext_MailConn_username(ctx, field)
+			case "password":
+				return ec.fieldContext_MailConn_password(ctx, field)
+			case "encryption":
+				return ec.fieldContext_MailConn_encryption(ctx, field)
+			case "fromName":
+				return ec.fieldContext_MailConn_fromName(ctx, field)
+			case "fromEmail":
+				return ec.fieldContext_MailConn_fromEmail(ctx, field)
+			case "status":
+				return ec.fieldContext_MailConn_status(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type MailConn", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createMailConn_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateMailConn(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateMailConn(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateMailConn(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdateMailConnInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
+			}
+			return ec.directives.CanApp(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*ent.MailConn); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *saas/gen/ent.MailConn`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.MailConn)
+	fc.Result = res
+	return ec.marshalNMailConn2ᚖsaasᚋgenᚋentᚐMailConn(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateMailConn(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_MailConn_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_MailConn_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_MailConn_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_MailConn_appID(ctx, field)
+			case "name":
+				return ec.fieldContext_MailConn_name(ctx, field)
+			case "host":
+				return ec.fieldContext_MailConn_host(ctx, field)
+			case "port":
+				return ec.fieldContext_MailConn_port(ctx, field)
+			case "username":
+				return ec.fieldContext_MailConn_username(ctx, field)
+			case "password":
+				return ec.fieldContext_MailConn_password(ctx, field)
+			case "encryption":
+				return ec.fieldContext_MailConn_encryption(ctx, field)
+			case "fromName":
+				return ec.fieldContext_MailConn_fromName(ctx, field)
+			case "fromEmail":
+				return ec.fieldContext_MailConn_fromEmail(ctx, field)
+			case "status":
+				return ec.fieldContext_MailConn_status(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type MailConn", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateMailConn_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createTempl(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createTempl(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CreateTempl(rctx, fc.Args["input"].(ent.CreateTemplInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
+			}
+			return ec.directives.CanApp(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*ent.Templ); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *saas/gen/ent.Templ`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Templ)
+	fc.Result = res
+	return ec.marshalNTempl2ᚖsaasᚋgenᚋentᚐTempl(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createTempl(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Templ_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Templ_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Templ_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_Templ_appID(ctx, field)
+			case "name":
+				return ec.fieldContext_Templ_name(ctx, field)
+			case "body":
+				return ec.fieldContext_Templ_body(ctx, field)
+			case "compiled":
+				return ec.fieldContext_Templ_compiled(ctx, field)
+			case "status":
+				return ec.fieldContext_Templ_status(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Templ", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createTempl_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updateTempl(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updateTempl(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdateTempl(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdateTemplInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
+			}
+			return ec.directives.CanApp(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*ent.Templ); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *saas/gen/ent.Templ`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Templ)
+	fc.Result = res
+	return ec.marshalNTempl2ᚖsaasᚋgenᚋentᚐTempl(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updateTempl(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Templ_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Templ_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Templ_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_Templ_appID(ctx, field)
+			case "name":
+				return ec.fieldContext_Templ_name(ctx, field)
+			case "body":
+				return ec.fieldContext_Templ_body(ctx, field)
+			case "compiled":
+				return ec.fieldContext_Templ_compiled(ctx, field)
+			case "status":
+				return ec.fieldContext_Templ_status(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Templ", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updateTempl_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -1698,6 +2196,34 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "updateOauthConnection":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updateOauthConnection(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createMailConn":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createMailConn(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateMailConn":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateMailConn(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createTempl":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createTempl(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updateTempl":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updateTempl(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++

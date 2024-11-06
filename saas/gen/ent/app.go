@@ -5,6 +5,8 @@ package ent
 import (
 	"fmt"
 	"saas/gen/ent/app"
+	"saas/gen/ent/mailconn"
+	"saas/gen/ent/templ"
 	"strings"
 	"time"
 
@@ -56,8 +58,125 @@ type App struct {
 	// AuthEmailVerify holds the value of the "auth_email_verify" field.
 	AuthEmailVerify string `json:"auth_email_verify,omitempty"`
 	// AdminUserID holds the value of the "admin_user_id" field.
-	AdminUserID  string `json:"admin_user_id,omitempty"`
+	AdminUserID string `json:"admin_user_id,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the AppQuery when eager-loading is set.
+	Edges        AppEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// AppEdges holds the relations/edges for other nodes in the graph.
+type AppEdges struct {
+	// DefaultMailConn holds the value of the default_mail_conn edge.
+	DefaultMailConn *MailConn `json:"default_mail_conn,omitempty"`
+	// MailLayoutTempl holds the value of the mail_layout_templ edge.
+	MailLayoutTempl *Templ `json:"mail_layout_templ,omitempty"`
+	// WsapceInviteTempl holds the value of the wsapce_invite_templ edge.
+	WsapceInviteTempl *Templ `json:"wsapce_invite_templ,omitempty"`
+	// WsapceSuccessTempl holds the value of the wsapce_success_templ edge.
+	WsapceSuccessTempl *Templ `json:"wsapce_success_templ,omitempty"`
+	// AuthFpTempl holds the value of the auth_fp_templ edge.
+	AuthFpTempl *Templ `json:"auth_fp_templ,omitempty"`
+	// AuthWelcomeEmailTempl holds the value of the auth_welcome_email_templ edge.
+	AuthWelcomeEmailTempl *Templ `json:"auth_welcome_email_templ,omitempty"`
+	// AuthVerificationTempl holds the value of the auth_verification_templ edge.
+	AuthVerificationTempl *Templ `json:"auth_verification_templ,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [7]bool
+	// totalCount holds the count of the edges above.
+	totalCount [7]map[string]int
+}
+
+// DefaultMailConnOrErr returns the DefaultMailConn value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e AppEdges) DefaultMailConnOrErr() (*MailConn, error) {
+	if e.loadedTypes[0] {
+		if e.DefaultMailConn == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: mailconn.Label}
+		}
+		return e.DefaultMailConn, nil
+	}
+	return nil, &NotLoadedError{edge: "default_mail_conn"}
+}
+
+// MailLayoutTemplOrErr returns the MailLayoutTempl value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e AppEdges) MailLayoutTemplOrErr() (*Templ, error) {
+	if e.loadedTypes[1] {
+		if e.MailLayoutTempl == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: templ.Label}
+		}
+		return e.MailLayoutTempl, nil
+	}
+	return nil, &NotLoadedError{edge: "mail_layout_templ"}
+}
+
+// WsapceInviteTemplOrErr returns the WsapceInviteTempl value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e AppEdges) WsapceInviteTemplOrErr() (*Templ, error) {
+	if e.loadedTypes[2] {
+		if e.WsapceInviteTempl == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: templ.Label}
+		}
+		return e.WsapceInviteTempl, nil
+	}
+	return nil, &NotLoadedError{edge: "wsapce_invite_templ"}
+}
+
+// WsapceSuccessTemplOrErr returns the WsapceSuccessTempl value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e AppEdges) WsapceSuccessTemplOrErr() (*Templ, error) {
+	if e.loadedTypes[3] {
+		if e.WsapceSuccessTempl == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: templ.Label}
+		}
+		return e.WsapceSuccessTempl, nil
+	}
+	return nil, &NotLoadedError{edge: "wsapce_success_templ"}
+}
+
+// AuthFpTemplOrErr returns the AuthFpTempl value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e AppEdges) AuthFpTemplOrErr() (*Templ, error) {
+	if e.loadedTypes[4] {
+		if e.AuthFpTempl == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: templ.Label}
+		}
+		return e.AuthFpTempl, nil
+	}
+	return nil, &NotLoadedError{edge: "auth_fp_templ"}
+}
+
+// AuthWelcomeEmailTemplOrErr returns the AuthWelcomeEmailTempl value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e AppEdges) AuthWelcomeEmailTemplOrErr() (*Templ, error) {
+	if e.loadedTypes[5] {
+		if e.AuthWelcomeEmailTempl == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: templ.Label}
+		}
+		return e.AuthWelcomeEmailTempl, nil
+	}
+	return nil, &NotLoadedError{edge: "auth_welcome_email_templ"}
+}
+
+// AuthVerificationTemplOrErr returns the AuthVerificationTempl value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e AppEdges) AuthVerificationTemplOrErr() (*Templ, error) {
+	if e.loadedTypes[6] {
+		if e.AuthVerificationTempl == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: templ.Label}
+		}
+		return e.AuthVerificationTempl, nil
+	}
+	return nil, &NotLoadedError{edge: "auth_verification_templ"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -221,6 +340,41 @@ func (a *App) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (a *App) Value(name string) (ent.Value, error) {
 	return a.selectValues.Get(name)
+}
+
+// QueryDefaultMailConn queries the "default_mail_conn" edge of the App entity.
+func (a *App) QueryDefaultMailConn() *MailConnQuery {
+	return NewAppClient(a.config).QueryDefaultMailConn(a)
+}
+
+// QueryMailLayoutTempl queries the "mail_layout_templ" edge of the App entity.
+func (a *App) QueryMailLayoutTempl() *TemplQuery {
+	return NewAppClient(a.config).QueryMailLayoutTempl(a)
+}
+
+// QueryWsapceInviteTempl queries the "wsapce_invite_templ" edge of the App entity.
+func (a *App) QueryWsapceInviteTempl() *TemplQuery {
+	return NewAppClient(a.config).QueryWsapceInviteTempl(a)
+}
+
+// QueryWsapceSuccessTempl queries the "wsapce_success_templ" edge of the App entity.
+func (a *App) QueryWsapceSuccessTempl() *TemplQuery {
+	return NewAppClient(a.config).QueryWsapceSuccessTempl(a)
+}
+
+// QueryAuthFpTempl queries the "auth_fp_templ" edge of the App entity.
+func (a *App) QueryAuthFpTempl() *TemplQuery {
+	return NewAppClient(a.config).QueryAuthFpTempl(a)
+}
+
+// QueryAuthWelcomeEmailTempl queries the "auth_welcome_email_templ" edge of the App entity.
+func (a *App) QueryAuthWelcomeEmailTempl() *TemplQuery {
+	return NewAppClient(a.config).QueryAuthWelcomeEmailTempl(a)
+}
+
+// QueryAuthVerificationTempl queries the "auth_verification_templ" edge of the App entity.
+func (a *App) QueryAuthVerificationTempl() *TemplQuery {
+	return NewAppClient(a.config).QueryAuthVerificationTempl(a)
 }
 
 // Update returns a builder for updating this App.

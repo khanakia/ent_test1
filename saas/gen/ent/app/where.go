@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -1612,6 +1613,167 @@ func AdminUserIDEqualFold(v string) predicate.App {
 // AdminUserIDContainsFold applies the ContainsFold predicate on the "admin_user_id" field.
 func AdminUserIDContainsFold(v string) predicate.App {
 	return predicate.App(sql.FieldContainsFold(FieldAdminUserID, v))
+}
+
+// HasDefaultMailConn applies the HasEdge predicate on the "default_mail_conn" edge.
+func HasDefaultMailConn() predicate.App {
+	return predicate.App(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, DefaultMailConnTable, DefaultMailConnColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasDefaultMailConnWith applies the HasEdge predicate on the "default_mail_conn" edge with a given conditions (other predicates).
+func HasDefaultMailConnWith(preds ...predicate.MailConn) predicate.App {
+	return predicate.App(func(s *sql.Selector) {
+		step := newDefaultMailConnStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasMailLayoutTempl applies the HasEdge predicate on the "mail_layout_templ" edge.
+func HasMailLayoutTempl() predicate.App {
+	return predicate.App(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, MailLayoutTemplTable, MailLayoutTemplColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasMailLayoutTemplWith applies the HasEdge predicate on the "mail_layout_templ" edge with a given conditions (other predicates).
+func HasMailLayoutTemplWith(preds ...predicate.Templ) predicate.App {
+	return predicate.App(func(s *sql.Selector) {
+		step := newMailLayoutTemplStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasWsapceInviteTempl applies the HasEdge predicate on the "wsapce_invite_templ" edge.
+func HasWsapceInviteTempl() predicate.App {
+	return predicate.App(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, WsapceInviteTemplTable, WsapceInviteTemplColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasWsapceInviteTemplWith applies the HasEdge predicate on the "wsapce_invite_templ" edge with a given conditions (other predicates).
+func HasWsapceInviteTemplWith(preds ...predicate.Templ) predicate.App {
+	return predicate.App(func(s *sql.Selector) {
+		step := newWsapceInviteTemplStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasWsapceSuccessTempl applies the HasEdge predicate on the "wsapce_success_templ" edge.
+func HasWsapceSuccessTempl() predicate.App {
+	return predicate.App(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, WsapceSuccessTemplTable, WsapceSuccessTemplColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasWsapceSuccessTemplWith applies the HasEdge predicate on the "wsapce_success_templ" edge with a given conditions (other predicates).
+func HasWsapceSuccessTemplWith(preds ...predicate.Templ) predicate.App {
+	return predicate.App(func(s *sql.Selector) {
+		step := newWsapceSuccessTemplStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasAuthFpTempl applies the HasEdge predicate on the "auth_fp_templ" edge.
+func HasAuthFpTempl() predicate.App {
+	return predicate.App(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, AuthFpTemplTable, AuthFpTemplColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAuthFpTemplWith applies the HasEdge predicate on the "auth_fp_templ" edge with a given conditions (other predicates).
+func HasAuthFpTemplWith(preds ...predicate.Templ) predicate.App {
+	return predicate.App(func(s *sql.Selector) {
+		step := newAuthFpTemplStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasAuthWelcomeEmailTempl applies the HasEdge predicate on the "auth_welcome_email_templ" edge.
+func HasAuthWelcomeEmailTempl() predicate.App {
+	return predicate.App(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, AuthWelcomeEmailTemplTable, AuthWelcomeEmailTemplColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAuthWelcomeEmailTemplWith applies the HasEdge predicate on the "auth_welcome_email_templ" edge with a given conditions (other predicates).
+func HasAuthWelcomeEmailTemplWith(preds ...predicate.Templ) predicate.App {
+	return predicate.App(func(s *sql.Selector) {
+		step := newAuthWelcomeEmailTemplStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasAuthVerificationTempl applies the HasEdge predicate on the "auth_verification_templ" edge.
+func HasAuthVerificationTempl() predicate.App {
+	return predicate.App(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, AuthVerificationTemplTable, AuthVerificationTemplColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAuthVerificationTemplWith applies the HasEdge predicate on the "auth_verification_templ" edge with a given conditions (other predicates).
+func HasAuthVerificationTemplWith(preds ...predicate.Templ) predicate.App {
+	return predicate.App(func(s *sql.Selector) {
+		step := newAuthVerificationTemplStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

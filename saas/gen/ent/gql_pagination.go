@@ -8,12 +8,14 @@ import (
 	"fmt"
 	"io"
 	"saas/gen/ent/app"
+	"saas/gen/ent/mailconn"
 	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/post"
 	"saas/gen/ent/postcategory"
 	"saas/gen/ent/poststatus"
 	"saas/gen/ent/posttag"
 	"saas/gen/ent/posttype"
+	"saas/gen/ent/templ"
 	"saas/gen/ent/todo"
 	"saas/gen/ent/user"
 	"saas/gen/ent/workspace"
@@ -438,6 +440,338 @@ func (a *App) ToEdge(order *AppOrder) *AppEdge {
 	return &AppEdge{
 		Node:   a,
 		Cursor: order.Field.toCursor(a),
+	}
+}
+
+// MailConnEdge is the edge representation of MailConn.
+type MailConnEdge struct {
+	Node   *MailConn `json:"node"`
+	Cursor Cursor    `json:"cursor"`
+}
+
+// MailConnConnection is the connection containing edges to MailConn.
+type MailConnConnection struct {
+	Edges      []*MailConnEdge `json:"edges"`
+	PageInfo   PageInfo        `json:"pageInfo"`
+	TotalCount int             `json:"totalCount"`
+}
+
+func (c *MailConnConnection) build(nodes []*MailConn, pager *mailconnPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *MailConn
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *MailConn {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *MailConn {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*MailConnEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &MailConnEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// MailConnPaginateOption enables pagination customization.
+type MailConnPaginateOption func(*mailconnPager) error
+
+// WithMailConnOrder configures pagination ordering.
+func WithMailConnOrder(order []*MailConnOrder) MailConnPaginateOption {
+	return func(pager *mailconnPager) error {
+		for _, o := range order {
+			if err := o.Direction.Validate(); err != nil {
+				return err
+			}
+		}
+		pager.order = append(pager.order, order...)
+		return nil
+	}
+}
+
+// WithMailConnFilter configures pagination filter.
+func WithMailConnFilter(filter func(*MailConnQuery) (*MailConnQuery, error)) MailConnPaginateOption {
+	return func(pager *mailconnPager) error {
+		if filter == nil {
+			return errors.New("MailConnQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type mailconnPager struct {
+	reverse bool
+	order   []*MailConnOrder
+	filter  func(*MailConnQuery) (*MailConnQuery, error)
+}
+
+func newMailConnPager(opts []MailConnPaginateOption, reverse bool) (*mailconnPager, error) {
+	pager := &mailconnPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	for i, o := range pager.order {
+		if i > 0 && o.Field == pager.order[i-1].Field {
+			return nil, fmt.Errorf("duplicate order direction %q", o.Direction)
+		}
+	}
+	return pager, nil
+}
+
+func (p *mailconnPager) applyFilter(query *MailConnQuery) (*MailConnQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *mailconnPager) toCursor(mc *MailConn) Cursor {
+	cs_ := make([]any, 0, len(p.order))
+	for _, o_ := range p.order {
+		cs_ = append(cs_, o_.Field.toCursor(mc).Value)
+	}
+	return Cursor{ID: mc.ID, Value: cs_}
+}
+
+func (p *mailconnPager) applyCursors(query *MailConnQuery, after, before *Cursor) (*MailConnQuery, error) {
+	idDirection := entgql.OrderDirectionAsc
+	if p.reverse {
+		idDirection = entgql.OrderDirectionDesc
+	}
+	fields, directions := make([]string, 0, len(p.order)), make([]OrderDirection, 0, len(p.order))
+	for _, o := range p.order {
+		fields = append(fields, o.Field.column)
+		direction := o.Direction
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		directions = append(directions, direction)
+	}
+	predicates, err := entgql.MultiCursorsPredicate(after, before, &entgql.MultiCursorsOptions{
+		FieldID:     DefaultMailConnOrder.Field.column,
+		DirectionID: idDirection,
+		Fields:      fields,
+		Directions:  directions,
+	})
+	if err != nil {
+		return nil, err
+	}
+	for _, predicate := range predicates {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *mailconnPager) applyOrder(query *MailConnQuery) *MailConnQuery {
+	var defaultOrdered bool
+	for _, o := range p.order {
+		direction := o.Direction
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		query = query.Order(o.Field.toTerm(direction.OrderTermOption()))
+		if o.Field.column == DefaultMailConnOrder.Field.column {
+			defaultOrdered = true
+		}
+		if len(query.ctx.Fields) > 0 {
+			query.ctx.AppendFieldOnce(o.Field.column)
+		}
+	}
+	if !defaultOrdered {
+		direction := entgql.OrderDirectionAsc
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		query = query.Order(DefaultMailConnOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	return query
+}
+
+func (p *mailconnPager) orderExpr(query *MailConnQuery) sql.Querier {
+	if len(query.ctx.Fields) > 0 {
+		for _, o := range p.order {
+			query.ctx.AppendFieldOnce(o.Field.column)
+		}
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		for _, o := range p.order {
+			direction := o.Direction
+			if p.reverse {
+				direction = direction.Reverse()
+			}
+			b.Ident(o.Field.column).Pad().WriteString(string(direction))
+			b.Comma()
+		}
+		direction := entgql.OrderDirectionAsc
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		b.Ident(DefaultMailConnOrder.Field.column).Pad().WriteString(string(direction))
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to MailConn.
+func (mc *MailConnQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...MailConnPaginateOption,
+) (*MailConnConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newMailConnPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if mc, err = pager.applyFilter(mc); err != nil {
+		return nil, err
+	}
+	conn := &MailConnConnection{Edges: []*MailConnEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := mc.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if mc, err = pager.applyCursors(mc, after, before); err != nil {
+		return nil, err
+	}
+	limit := paginateLimit(first, last)
+	if limit != 0 {
+		mc.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := mc.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	mc = pager.applyOrder(mc)
+	nodes, err := mc.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+var (
+	// MailConnOrderFieldCreatedAt orders MailConn by created_at.
+	MailConnOrderFieldCreatedAt = &MailConnOrderField{
+		Value: func(mc *MailConn) (ent.Value, error) {
+			return mc.CreatedAt, nil
+		},
+		column: mailconn.FieldCreatedAt,
+		toTerm: mailconn.ByCreatedAt,
+		toCursor: func(mc *MailConn) Cursor {
+			return Cursor{
+				ID:    mc.ID,
+				Value: mc.CreatedAt,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f MailConnOrderField) String() string {
+	var str string
+	switch f.column {
+	case MailConnOrderFieldCreatedAt.column:
+		str = "CREATED_AT"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f MailConnOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *MailConnOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("MailConnOrderField %T must be a string", v)
+	}
+	switch str {
+	case "CREATED_AT":
+		*f = *MailConnOrderFieldCreatedAt
+	default:
+		return fmt.Errorf("%s is not a valid MailConnOrderField", str)
+	}
+	return nil
+}
+
+// MailConnOrderField defines the ordering field of MailConn.
+type MailConnOrderField struct {
+	// Value extracts the ordering value from the given MailConn.
+	Value    func(*MailConn) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) mailconn.OrderOption
+	toCursor func(*MailConn) Cursor
+}
+
+// MailConnOrder defines the ordering of MailConn.
+type MailConnOrder struct {
+	Direction OrderDirection      `json:"direction"`
+	Field     *MailConnOrderField `json:"field"`
+}
+
+// DefaultMailConnOrder is the default ordering of MailConn.
+var DefaultMailConnOrder = &MailConnOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &MailConnOrderField{
+		Value: func(mc *MailConn) (ent.Value, error) {
+			return mc.ID, nil
+		},
+		column: mailconn.FieldID,
+		toTerm: mailconn.ByID,
+		toCursor: func(mc *MailConn) Cursor {
+			return Cursor{ID: mc.ID}
+		},
+	},
+}
+
+// ToEdge converts MailConn into MailConnEdge.
+func (mc *MailConn) ToEdge(order *MailConnOrder) *MailConnEdge {
+	if order == nil {
+		order = DefaultMailConnOrder
+	}
+	return &MailConnEdge{
+		Node:   mc,
+		Cursor: order.Field.toCursor(mc),
 	}
 }
 
@@ -2503,6 +2837,338 @@ func (pt *PostType) ToEdge(order *PostTypeOrder) *PostTypeEdge {
 	return &PostTypeEdge{
 		Node:   pt,
 		Cursor: order.Field.toCursor(pt),
+	}
+}
+
+// TemplEdge is the edge representation of Templ.
+type TemplEdge struct {
+	Node   *Templ `json:"node"`
+	Cursor Cursor `json:"cursor"`
+}
+
+// TemplConnection is the connection containing edges to Templ.
+type TemplConnection struct {
+	Edges      []*TemplEdge `json:"edges"`
+	PageInfo   PageInfo     `json:"pageInfo"`
+	TotalCount int          `json:"totalCount"`
+}
+
+func (c *TemplConnection) build(nodes []*Templ, pager *templPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *Templ
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *Templ {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *Templ {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*TemplEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &TemplEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// TemplPaginateOption enables pagination customization.
+type TemplPaginateOption func(*templPager) error
+
+// WithTemplOrder configures pagination ordering.
+func WithTemplOrder(order []*TemplOrder) TemplPaginateOption {
+	return func(pager *templPager) error {
+		for _, o := range order {
+			if err := o.Direction.Validate(); err != nil {
+				return err
+			}
+		}
+		pager.order = append(pager.order, order...)
+		return nil
+	}
+}
+
+// WithTemplFilter configures pagination filter.
+func WithTemplFilter(filter func(*TemplQuery) (*TemplQuery, error)) TemplPaginateOption {
+	return func(pager *templPager) error {
+		if filter == nil {
+			return errors.New("TemplQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type templPager struct {
+	reverse bool
+	order   []*TemplOrder
+	filter  func(*TemplQuery) (*TemplQuery, error)
+}
+
+func newTemplPager(opts []TemplPaginateOption, reverse bool) (*templPager, error) {
+	pager := &templPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	for i, o := range pager.order {
+		if i > 0 && o.Field == pager.order[i-1].Field {
+			return nil, fmt.Errorf("duplicate order direction %q", o.Direction)
+		}
+	}
+	return pager, nil
+}
+
+func (p *templPager) applyFilter(query *TemplQuery) (*TemplQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *templPager) toCursor(t *Templ) Cursor {
+	cs_ := make([]any, 0, len(p.order))
+	for _, o_ := range p.order {
+		cs_ = append(cs_, o_.Field.toCursor(t).Value)
+	}
+	return Cursor{ID: t.ID, Value: cs_}
+}
+
+func (p *templPager) applyCursors(query *TemplQuery, after, before *Cursor) (*TemplQuery, error) {
+	idDirection := entgql.OrderDirectionAsc
+	if p.reverse {
+		idDirection = entgql.OrderDirectionDesc
+	}
+	fields, directions := make([]string, 0, len(p.order)), make([]OrderDirection, 0, len(p.order))
+	for _, o := range p.order {
+		fields = append(fields, o.Field.column)
+		direction := o.Direction
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		directions = append(directions, direction)
+	}
+	predicates, err := entgql.MultiCursorsPredicate(after, before, &entgql.MultiCursorsOptions{
+		FieldID:     DefaultTemplOrder.Field.column,
+		DirectionID: idDirection,
+		Fields:      fields,
+		Directions:  directions,
+	})
+	if err != nil {
+		return nil, err
+	}
+	for _, predicate := range predicates {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *templPager) applyOrder(query *TemplQuery) *TemplQuery {
+	var defaultOrdered bool
+	for _, o := range p.order {
+		direction := o.Direction
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		query = query.Order(o.Field.toTerm(direction.OrderTermOption()))
+		if o.Field.column == DefaultTemplOrder.Field.column {
+			defaultOrdered = true
+		}
+		if len(query.ctx.Fields) > 0 {
+			query.ctx.AppendFieldOnce(o.Field.column)
+		}
+	}
+	if !defaultOrdered {
+		direction := entgql.OrderDirectionAsc
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		query = query.Order(DefaultTemplOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	return query
+}
+
+func (p *templPager) orderExpr(query *TemplQuery) sql.Querier {
+	if len(query.ctx.Fields) > 0 {
+		for _, o := range p.order {
+			query.ctx.AppendFieldOnce(o.Field.column)
+		}
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		for _, o := range p.order {
+			direction := o.Direction
+			if p.reverse {
+				direction = direction.Reverse()
+			}
+			b.Ident(o.Field.column).Pad().WriteString(string(direction))
+			b.Comma()
+		}
+		direction := entgql.OrderDirectionAsc
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		b.Ident(DefaultTemplOrder.Field.column).Pad().WriteString(string(direction))
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to Templ.
+func (t *TemplQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...TemplPaginateOption,
+) (*TemplConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newTemplPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if t, err = pager.applyFilter(t); err != nil {
+		return nil, err
+	}
+	conn := &TemplConnection{Edges: []*TemplEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := t.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if t, err = pager.applyCursors(t, after, before); err != nil {
+		return nil, err
+	}
+	limit := paginateLimit(first, last)
+	if limit != 0 {
+		t.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := t.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	t = pager.applyOrder(t)
+	nodes, err := t.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+var (
+	// TemplOrderFieldCreatedAt orders Templ by created_at.
+	TemplOrderFieldCreatedAt = &TemplOrderField{
+		Value: func(t *Templ) (ent.Value, error) {
+			return t.CreatedAt, nil
+		},
+		column: templ.FieldCreatedAt,
+		toTerm: templ.ByCreatedAt,
+		toCursor: func(t *Templ) Cursor {
+			return Cursor{
+				ID:    t.ID,
+				Value: t.CreatedAt,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f TemplOrderField) String() string {
+	var str string
+	switch f.column {
+	case TemplOrderFieldCreatedAt.column:
+		str = "CREATED_AT"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f TemplOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *TemplOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("TemplOrderField %T must be a string", v)
+	}
+	switch str {
+	case "CREATED_AT":
+		*f = *TemplOrderFieldCreatedAt
+	default:
+		return fmt.Errorf("%s is not a valid TemplOrderField", str)
+	}
+	return nil
+}
+
+// TemplOrderField defines the ordering field of Templ.
+type TemplOrderField struct {
+	// Value extracts the ordering value from the given Templ.
+	Value    func(*Templ) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) templ.OrderOption
+	toCursor func(*Templ) Cursor
+}
+
+// TemplOrder defines the ordering of Templ.
+type TemplOrder struct {
+	Direction OrderDirection   `json:"direction"`
+	Field     *TemplOrderField `json:"field"`
+}
+
+// DefaultTemplOrder is the default ordering of Templ.
+var DefaultTemplOrder = &TemplOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &TemplOrderField{
+		Value: func(t *Templ) (ent.Value, error) {
+			return t.ID, nil
+		},
+		column: templ.FieldID,
+		toTerm: templ.ByID,
+		toCursor: func(t *Templ) Cursor {
+			return Cursor{ID: t.ID}
+		},
+	},
+}
+
+// ToEdge converts Templ into TemplEdge.
+func (t *Templ) ToEdge(order *TemplOrder) *TemplEdge {
+	if order == nil {
+		order = DefaultTemplOrder
+	}
+	return &TemplEdge{
+		Node:   t,
+		Cursor: order.Field.toCursor(t),
 	}
 }
 

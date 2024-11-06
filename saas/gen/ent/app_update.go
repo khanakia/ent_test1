@@ -7,7 +7,9 @@ import (
 	"errors"
 	"fmt"
 	"saas/gen/ent/app"
+	"saas/gen/ent/mailconn"
 	"saas/gen/ent/predicate"
+	"saas/gen/ent/templ"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -401,9 +403,86 @@ func (au *AppUpdate) ClearAdminUserID() *AppUpdate {
 	return au
 }
 
+// SetDefaultMailConn sets the "default_mail_conn" edge to the MailConn entity.
+func (au *AppUpdate) SetDefaultMailConn(m *MailConn) *AppUpdate {
+	return au.SetDefaultMailConnID(m.ID)
+}
+
+// SetMailLayoutTempl sets the "mail_layout_templ" edge to the Templ entity.
+func (au *AppUpdate) SetMailLayoutTempl(t *Templ) *AppUpdate {
+	return au.SetMailLayoutTemplID(t.ID)
+}
+
+// SetWsapceInviteTempl sets the "wsapce_invite_templ" edge to the Templ entity.
+func (au *AppUpdate) SetWsapceInviteTempl(t *Templ) *AppUpdate {
+	return au.SetWsapceInviteTemplID(t.ID)
+}
+
+// SetWsapceSuccessTempl sets the "wsapce_success_templ" edge to the Templ entity.
+func (au *AppUpdate) SetWsapceSuccessTempl(t *Templ) *AppUpdate {
+	return au.SetWsapceSuccessTemplID(t.ID)
+}
+
+// SetAuthFpTempl sets the "auth_fp_templ" edge to the Templ entity.
+func (au *AppUpdate) SetAuthFpTempl(t *Templ) *AppUpdate {
+	return au.SetAuthFpTemplID(t.ID)
+}
+
+// SetAuthWelcomeEmailTempl sets the "auth_welcome_email_templ" edge to the Templ entity.
+func (au *AppUpdate) SetAuthWelcomeEmailTempl(t *Templ) *AppUpdate {
+	return au.SetAuthWelcomeEmailTemplID(t.ID)
+}
+
+// SetAuthVerificationTempl sets the "auth_verification_templ" edge to the Templ entity.
+func (au *AppUpdate) SetAuthVerificationTempl(t *Templ) *AppUpdate {
+	return au.SetAuthVerificationTemplID(t.ID)
+}
+
 // Mutation returns the AppMutation object of the builder.
 func (au *AppUpdate) Mutation() *AppMutation {
 	return au.mutation
+}
+
+// ClearDefaultMailConn clears the "default_mail_conn" edge to the MailConn entity.
+func (au *AppUpdate) ClearDefaultMailConn() *AppUpdate {
+	au.mutation.ClearDefaultMailConn()
+	return au
+}
+
+// ClearMailLayoutTempl clears the "mail_layout_templ" edge to the Templ entity.
+func (au *AppUpdate) ClearMailLayoutTempl() *AppUpdate {
+	au.mutation.ClearMailLayoutTempl()
+	return au
+}
+
+// ClearWsapceInviteTempl clears the "wsapce_invite_templ" edge to the Templ entity.
+func (au *AppUpdate) ClearWsapceInviteTempl() *AppUpdate {
+	au.mutation.ClearWsapceInviteTempl()
+	return au
+}
+
+// ClearWsapceSuccessTempl clears the "wsapce_success_templ" edge to the Templ entity.
+func (au *AppUpdate) ClearWsapceSuccessTempl() *AppUpdate {
+	au.mutation.ClearWsapceSuccessTempl()
+	return au
+}
+
+// ClearAuthFpTempl clears the "auth_fp_templ" edge to the Templ entity.
+func (au *AppUpdate) ClearAuthFpTempl() *AppUpdate {
+	au.mutation.ClearAuthFpTempl()
+	return au
+}
+
+// ClearAuthWelcomeEmailTempl clears the "auth_welcome_email_templ" edge to the Templ entity.
+func (au *AppUpdate) ClearAuthWelcomeEmailTempl() *AppUpdate {
+	au.mutation.ClearAuthWelcomeEmailTempl()
+	return au
+}
+
+// ClearAuthVerificationTempl clears the "auth_verification_templ" edge to the Templ entity.
+func (au *AppUpdate) ClearAuthVerificationTempl() *AppUpdate {
+	au.mutation.ClearAuthVerificationTempl()
+	return au
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -520,48 +599,6 @@ func (au *AppUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if au.mutation.SiteURLCleared() {
 		_spec.ClearField(app.FieldSiteURL, field.TypeString)
 	}
-	if value, ok := au.mutation.DefaultMailConnID(); ok {
-		_spec.SetField(app.FieldDefaultMailConnID, field.TypeString, value)
-	}
-	if au.mutation.DefaultMailConnIDCleared() {
-		_spec.ClearField(app.FieldDefaultMailConnID, field.TypeString)
-	}
-	if value, ok := au.mutation.MailLayoutTemplID(); ok {
-		_spec.SetField(app.FieldMailLayoutTemplID, field.TypeString, value)
-	}
-	if au.mutation.MailLayoutTemplIDCleared() {
-		_spec.ClearField(app.FieldMailLayoutTemplID, field.TypeString)
-	}
-	if value, ok := au.mutation.WsapceInviteTemplID(); ok {
-		_spec.SetField(app.FieldWsapceInviteTemplID, field.TypeString, value)
-	}
-	if au.mutation.WsapceInviteTemplIDCleared() {
-		_spec.ClearField(app.FieldWsapceInviteTemplID, field.TypeString)
-	}
-	if value, ok := au.mutation.WsapceSuccessTemplID(); ok {
-		_spec.SetField(app.FieldWsapceSuccessTemplID, field.TypeString, value)
-	}
-	if au.mutation.WsapceSuccessTemplIDCleared() {
-		_spec.ClearField(app.FieldWsapceSuccessTemplID, field.TypeString)
-	}
-	if value, ok := au.mutation.AuthFpTemplID(); ok {
-		_spec.SetField(app.FieldAuthFpTemplID, field.TypeString, value)
-	}
-	if au.mutation.AuthFpTemplIDCleared() {
-		_spec.ClearField(app.FieldAuthFpTemplID, field.TypeString)
-	}
-	if value, ok := au.mutation.AuthWelcomeEmailTemplID(); ok {
-		_spec.SetField(app.FieldAuthWelcomeEmailTemplID, field.TypeString, value)
-	}
-	if au.mutation.AuthWelcomeEmailTemplIDCleared() {
-		_spec.ClearField(app.FieldAuthWelcomeEmailTemplID, field.TypeString)
-	}
-	if value, ok := au.mutation.AuthVerificationTemplID(); ok {
-		_spec.SetField(app.FieldAuthVerificationTemplID, field.TypeString, value)
-	}
-	if au.mutation.AuthVerificationTemplIDCleared() {
-		_spec.ClearField(app.FieldAuthVerificationTemplID, field.TypeString)
-	}
 	if value, ok := au.mutation.AuthEmailVerify(); ok {
 		_spec.SetField(app.FieldAuthEmailVerify, field.TypeString, value)
 	}
@@ -573,6 +610,209 @@ func (au *AppUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if au.mutation.AdminUserIDCleared() {
 		_spec.ClearField(app.FieldAdminUserID, field.TypeString)
+	}
+	if au.mutation.DefaultMailConnCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.DefaultMailConnTable,
+			Columns: []string{app.DefaultMailConnColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mailconn.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.DefaultMailConnIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.DefaultMailConnTable,
+			Columns: []string{app.DefaultMailConnColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mailconn.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if au.mutation.MailLayoutTemplCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.MailLayoutTemplTable,
+			Columns: []string{app.MailLayoutTemplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(templ.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.MailLayoutTemplIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.MailLayoutTemplTable,
+			Columns: []string{app.MailLayoutTemplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(templ.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if au.mutation.WsapceInviteTemplCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.WsapceInviteTemplTable,
+			Columns: []string{app.WsapceInviteTemplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(templ.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.WsapceInviteTemplIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.WsapceInviteTemplTable,
+			Columns: []string{app.WsapceInviteTemplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(templ.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if au.mutation.WsapceSuccessTemplCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.WsapceSuccessTemplTable,
+			Columns: []string{app.WsapceSuccessTemplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(templ.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.WsapceSuccessTemplIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.WsapceSuccessTemplTable,
+			Columns: []string{app.WsapceSuccessTemplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(templ.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if au.mutation.AuthFpTemplCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.AuthFpTemplTable,
+			Columns: []string{app.AuthFpTemplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(templ.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.AuthFpTemplIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.AuthFpTemplTable,
+			Columns: []string{app.AuthFpTemplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(templ.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if au.mutation.AuthWelcomeEmailTemplCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.AuthWelcomeEmailTemplTable,
+			Columns: []string{app.AuthWelcomeEmailTemplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(templ.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.AuthWelcomeEmailTemplIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.AuthWelcomeEmailTemplTable,
+			Columns: []string{app.AuthWelcomeEmailTemplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(templ.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if au.mutation.AuthVerificationTemplCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.AuthVerificationTemplTable,
+			Columns: []string{app.AuthVerificationTemplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(templ.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := au.mutation.AuthVerificationTemplIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.AuthVerificationTemplTable,
+			Columns: []string{app.AuthVerificationTemplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(templ.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.AddModifiers(au.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, au.driver, _spec); err != nil {
@@ -968,9 +1208,86 @@ func (auo *AppUpdateOne) ClearAdminUserID() *AppUpdateOne {
 	return auo
 }
 
+// SetDefaultMailConn sets the "default_mail_conn" edge to the MailConn entity.
+func (auo *AppUpdateOne) SetDefaultMailConn(m *MailConn) *AppUpdateOne {
+	return auo.SetDefaultMailConnID(m.ID)
+}
+
+// SetMailLayoutTempl sets the "mail_layout_templ" edge to the Templ entity.
+func (auo *AppUpdateOne) SetMailLayoutTempl(t *Templ) *AppUpdateOne {
+	return auo.SetMailLayoutTemplID(t.ID)
+}
+
+// SetWsapceInviteTempl sets the "wsapce_invite_templ" edge to the Templ entity.
+func (auo *AppUpdateOne) SetWsapceInviteTempl(t *Templ) *AppUpdateOne {
+	return auo.SetWsapceInviteTemplID(t.ID)
+}
+
+// SetWsapceSuccessTempl sets the "wsapce_success_templ" edge to the Templ entity.
+func (auo *AppUpdateOne) SetWsapceSuccessTempl(t *Templ) *AppUpdateOne {
+	return auo.SetWsapceSuccessTemplID(t.ID)
+}
+
+// SetAuthFpTempl sets the "auth_fp_templ" edge to the Templ entity.
+func (auo *AppUpdateOne) SetAuthFpTempl(t *Templ) *AppUpdateOne {
+	return auo.SetAuthFpTemplID(t.ID)
+}
+
+// SetAuthWelcomeEmailTempl sets the "auth_welcome_email_templ" edge to the Templ entity.
+func (auo *AppUpdateOne) SetAuthWelcomeEmailTempl(t *Templ) *AppUpdateOne {
+	return auo.SetAuthWelcomeEmailTemplID(t.ID)
+}
+
+// SetAuthVerificationTempl sets the "auth_verification_templ" edge to the Templ entity.
+func (auo *AppUpdateOne) SetAuthVerificationTempl(t *Templ) *AppUpdateOne {
+	return auo.SetAuthVerificationTemplID(t.ID)
+}
+
 // Mutation returns the AppMutation object of the builder.
 func (auo *AppUpdateOne) Mutation() *AppMutation {
 	return auo.mutation
+}
+
+// ClearDefaultMailConn clears the "default_mail_conn" edge to the MailConn entity.
+func (auo *AppUpdateOne) ClearDefaultMailConn() *AppUpdateOne {
+	auo.mutation.ClearDefaultMailConn()
+	return auo
+}
+
+// ClearMailLayoutTempl clears the "mail_layout_templ" edge to the Templ entity.
+func (auo *AppUpdateOne) ClearMailLayoutTempl() *AppUpdateOne {
+	auo.mutation.ClearMailLayoutTempl()
+	return auo
+}
+
+// ClearWsapceInviteTempl clears the "wsapce_invite_templ" edge to the Templ entity.
+func (auo *AppUpdateOne) ClearWsapceInviteTempl() *AppUpdateOne {
+	auo.mutation.ClearWsapceInviteTempl()
+	return auo
+}
+
+// ClearWsapceSuccessTempl clears the "wsapce_success_templ" edge to the Templ entity.
+func (auo *AppUpdateOne) ClearWsapceSuccessTempl() *AppUpdateOne {
+	auo.mutation.ClearWsapceSuccessTempl()
+	return auo
+}
+
+// ClearAuthFpTempl clears the "auth_fp_templ" edge to the Templ entity.
+func (auo *AppUpdateOne) ClearAuthFpTempl() *AppUpdateOne {
+	auo.mutation.ClearAuthFpTempl()
+	return auo
+}
+
+// ClearAuthWelcomeEmailTempl clears the "auth_welcome_email_templ" edge to the Templ entity.
+func (auo *AppUpdateOne) ClearAuthWelcomeEmailTempl() *AppUpdateOne {
+	auo.mutation.ClearAuthWelcomeEmailTempl()
+	return auo
+}
+
+// ClearAuthVerificationTempl clears the "auth_verification_templ" edge to the Templ entity.
+func (auo *AppUpdateOne) ClearAuthVerificationTempl() *AppUpdateOne {
+	auo.mutation.ClearAuthVerificationTempl()
+	return auo
 }
 
 // Where appends a list predicates to the AppUpdate builder.
@@ -1117,48 +1434,6 @@ func (auo *AppUpdateOne) sqlSave(ctx context.Context) (_node *App, err error) {
 	if auo.mutation.SiteURLCleared() {
 		_spec.ClearField(app.FieldSiteURL, field.TypeString)
 	}
-	if value, ok := auo.mutation.DefaultMailConnID(); ok {
-		_spec.SetField(app.FieldDefaultMailConnID, field.TypeString, value)
-	}
-	if auo.mutation.DefaultMailConnIDCleared() {
-		_spec.ClearField(app.FieldDefaultMailConnID, field.TypeString)
-	}
-	if value, ok := auo.mutation.MailLayoutTemplID(); ok {
-		_spec.SetField(app.FieldMailLayoutTemplID, field.TypeString, value)
-	}
-	if auo.mutation.MailLayoutTemplIDCleared() {
-		_spec.ClearField(app.FieldMailLayoutTemplID, field.TypeString)
-	}
-	if value, ok := auo.mutation.WsapceInviteTemplID(); ok {
-		_spec.SetField(app.FieldWsapceInviteTemplID, field.TypeString, value)
-	}
-	if auo.mutation.WsapceInviteTemplIDCleared() {
-		_spec.ClearField(app.FieldWsapceInviteTemplID, field.TypeString)
-	}
-	if value, ok := auo.mutation.WsapceSuccessTemplID(); ok {
-		_spec.SetField(app.FieldWsapceSuccessTemplID, field.TypeString, value)
-	}
-	if auo.mutation.WsapceSuccessTemplIDCleared() {
-		_spec.ClearField(app.FieldWsapceSuccessTemplID, field.TypeString)
-	}
-	if value, ok := auo.mutation.AuthFpTemplID(); ok {
-		_spec.SetField(app.FieldAuthFpTemplID, field.TypeString, value)
-	}
-	if auo.mutation.AuthFpTemplIDCleared() {
-		_spec.ClearField(app.FieldAuthFpTemplID, field.TypeString)
-	}
-	if value, ok := auo.mutation.AuthWelcomeEmailTemplID(); ok {
-		_spec.SetField(app.FieldAuthWelcomeEmailTemplID, field.TypeString, value)
-	}
-	if auo.mutation.AuthWelcomeEmailTemplIDCleared() {
-		_spec.ClearField(app.FieldAuthWelcomeEmailTemplID, field.TypeString)
-	}
-	if value, ok := auo.mutation.AuthVerificationTemplID(); ok {
-		_spec.SetField(app.FieldAuthVerificationTemplID, field.TypeString, value)
-	}
-	if auo.mutation.AuthVerificationTemplIDCleared() {
-		_spec.ClearField(app.FieldAuthVerificationTemplID, field.TypeString)
-	}
 	if value, ok := auo.mutation.AuthEmailVerify(); ok {
 		_spec.SetField(app.FieldAuthEmailVerify, field.TypeString, value)
 	}
@@ -1170,6 +1445,209 @@ func (auo *AppUpdateOne) sqlSave(ctx context.Context) (_node *App, err error) {
 	}
 	if auo.mutation.AdminUserIDCleared() {
 		_spec.ClearField(app.FieldAdminUserID, field.TypeString)
+	}
+	if auo.mutation.DefaultMailConnCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.DefaultMailConnTable,
+			Columns: []string{app.DefaultMailConnColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mailconn.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.DefaultMailConnIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.DefaultMailConnTable,
+			Columns: []string{app.DefaultMailConnColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mailconn.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if auo.mutation.MailLayoutTemplCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.MailLayoutTemplTable,
+			Columns: []string{app.MailLayoutTemplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(templ.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.MailLayoutTemplIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.MailLayoutTemplTable,
+			Columns: []string{app.MailLayoutTemplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(templ.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if auo.mutation.WsapceInviteTemplCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.WsapceInviteTemplTable,
+			Columns: []string{app.WsapceInviteTemplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(templ.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.WsapceInviteTemplIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.WsapceInviteTemplTable,
+			Columns: []string{app.WsapceInviteTemplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(templ.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if auo.mutation.WsapceSuccessTemplCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.WsapceSuccessTemplTable,
+			Columns: []string{app.WsapceSuccessTemplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(templ.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.WsapceSuccessTemplIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.WsapceSuccessTemplTable,
+			Columns: []string{app.WsapceSuccessTemplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(templ.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if auo.mutation.AuthFpTemplCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.AuthFpTemplTable,
+			Columns: []string{app.AuthFpTemplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(templ.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.AuthFpTemplIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.AuthFpTemplTable,
+			Columns: []string{app.AuthFpTemplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(templ.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if auo.mutation.AuthWelcomeEmailTemplCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.AuthWelcomeEmailTemplTable,
+			Columns: []string{app.AuthWelcomeEmailTemplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(templ.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.AuthWelcomeEmailTemplIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.AuthWelcomeEmailTemplTable,
+			Columns: []string{app.AuthWelcomeEmailTemplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(templ.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if auo.mutation.AuthVerificationTemplCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.AuthVerificationTemplTable,
+			Columns: []string{app.AuthVerificationTemplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(templ.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auo.mutation.AuthVerificationTemplIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: false,
+			Table:   app.AuthVerificationTemplTable,
+			Columns: []string{app.AuthVerificationTemplColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(templ.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.AddModifiers(auo.modifiers...)
 	_node = &App{config: auo.config}

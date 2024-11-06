@@ -58,21 +58,30 @@ type ComplexityRoot struct {
 		Address                 func(childComplexity int) int
 		AdminUserID             func(childComplexity int) int
 		AuthEmailVerify         func(childComplexity int) int
+		AuthFpTempl             func(childComplexity int) int
 		AuthFpTemplID           func(childComplexity int) int
+		AuthVerificationTempl   func(childComplexity int) int
 		AuthVerificationTemplID func(childComplexity int) int
+		AuthWelcomeEmailTempl   func(childComplexity int) int
 		AuthWelcomeEmailTemplID func(childComplexity int) int
 		Copyright               func(childComplexity int) int
+		CreatedAt               func(childComplexity int) int
+		DefaultMailConn         func(childComplexity int) int
 		DefaultMailConnID       func(childComplexity int) int
 		Email                   func(childComplexity int) int
 		ID                      func(childComplexity int) int
 		LogoURL                 func(childComplexity int) int
+		MailLayoutTempl         func(childComplexity int) int
 		MailLayoutTemplID       func(childComplexity int) int
 		Name                    func(childComplexity int) int
 		SiteURL                 func(childComplexity int) int
 		SocialFb                func(childComplexity int) int
 		SocialIn                func(childComplexity int) int
 		SocialTw                func(childComplexity int) int
+		UpdatedAt               func(childComplexity int) int
+		WsapceInviteTempl       func(childComplexity int) int
 		WsapceInviteTemplID     func(childComplexity int) int
+		WsapceSuccessTempl      func(childComplexity int) int
 		WsapceSuccessTemplID    func(childComplexity int) int
 	}
 
@@ -92,24 +101,56 @@ type ComplexityRoot struct {
 		Token func(childComplexity int) int
 	}
 
+	MailConn struct {
+		AppID      func(childComplexity int) int
+		CreatedAt  func(childComplexity int) int
+		Encryption func(childComplexity int) int
+		FromEmail  func(childComplexity int) int
+		FromName   func(childComplexity int) int
+		Host       func(childComplexity int) int
+		ID         func(childComplexity int) int
+		Name       func(childComplexity int) int
+		Password   func(childComplexity int) int
+		Port       func(childComplexity int) int
+		Status     func(childComplexity int) int
+		UpdatedAt  func(childComplexity int) int
+		Username   func(childComplexity int) int
+	}
+
+	MailConnConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	MailConnEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	Mutation struct {
 		AdminAuthLogin        func(childComplexity int, input model.LoginInput) int
+		CreateMailConn        func(childComplexity int, input ent.CreateMailConnInput) int
 		CreateOauthConnection func(childComplexity int, input ent.CreateOauthConnectionInput) int
 		CreatePost            func(childComplexity int, input ent.CreatePostInput) int
 		CreatePostCategory    func(childComplexity int, input ent.CreatePostCategoryInput) int
 		CreatePostStatus      func(childComplexity int, input ent.CreatePostStatusInput) int
 		CreatePostType        func(childComplexity int, input ent.CreatePostTypeInput) int
+		CreateTempl           func(childComplexity int, input ent.CreateTemplInput) int
 		CreateTodo            func(childComplexity int, input ent.CreateTodoInput) int
 		Ping                  func(childComplexity int) int
+		UpdateMailConn        func(childComplexity int, id string, input ent.UpdateMailConnInput) int
 		UpdateOauthConnection func(childComplexity int, id string, input ent.UpdateOauthConnectionInput) int
 		UpdatePost            func(childComplexity int, id string, input ent.UpdatePostInput) int
 		UpdatePostCategory    func(childComplexity int, id string, input ent.UpdatePostCategoryInput) int
 		UpdatePostStatus      func(childComplexity int, id string, input ent.UpdatePostStatusInput) int
 		UpdatePostType        func(childComplexity int, id string, input ent.UpdatePostTypeInput) int
+		UpdateTempl           func(childComplexity int, id string, input ent.UpdateTemplInput) int
 		UpdateTodo            func(childComplexity int, id string, input ent.UpdateTodoInput) int
 	}
 
 	OauthConnection struct {
+		AppID         func(childComplexity int) int
 		ClientID      func(childComplexity int) int
 		ClientSecret  func(childComplexity int) int
 		CreatedAt     func(childComplexity int) int
@@ -143,6 +184,7 @@ type ComplexityRoot struct {
 	}
 
 	Post struct {
+		AppID             func(childComplexity int) int
 		Content           func(childComplexity int) int
 		CreatedAt         func(childComplexity int) int
 		Excerpt           func(childComplexity int) int
@@ -164,6 +206,7 @@ type ComplexityRoot struct {
 	}
 
 	PostCategory struct {
+		AppID            func(childComplexity int) int
 		Content          func(childComplexity int) int
 		CreatedAt        func(childComplexity int) int
 		Excerpt          func(childComplexity int) int
@@ -202,6 +245,7 @@ type ComplexityRoot struct {
 	}
 
 	PostStatus struct {
+		AppID      func(childComplexity int) int
 		CreatedAt  func(childComplexity int) int
 		ID         func(childComplexity int) int
 		Name       func(childComplexity int) int
@@ -225,6 +269,7 @@ type ComplexityRoot struct {
 	}
 
 	PostTag struct {
+		AppID            func(childComplexity int) int
 		Content          func(childComplexity int) int
 		CreatedAt        func(childComplexity int) int
 		Excerpt          func(childComplexity int) int
@@ -240,6 +285,7 @@ type ComplexityRoot struct {
 	}
 
 	PostType struct {
+		AppID            func(childComplexity int) int
 		Content          func(childComplexity int) int
 		CreatedAt        func(childComplexity int) int
 		Excerpt          func(childComplexity int) int
@@ -268,7 +314,8 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		Apps             func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *ent.AppWhereInput) int
+		Apps             func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.AppOrder, where *ent.AppWhereInput) int
+		MailConns        func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.MailConnOrder, where *ent.MailConnWhereInput) int
 		Node             func(childComplexity int, id string) int
 		Nodes            func(childComplexity int, ids []string) int
 		OauthConnections func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.OauthConnectionOrder, where *ent.OauthConnectionWhereInput) int
@@ -277,6 +324,7 @@ type ComplexityRoot struct {
 		PostStatuses     func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostStatusOrder, where *ent.PostStatusWhereInput) int
 		PostTypes        func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostTypeOrder, where *ent.PostTypeWhereInput) int
 		Posts            func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostOrder, where *ent.PostWhereInput) int
+		Templs           func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.TemplOrder, where *ent.TemplWhereInput) int
 		Todos            func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *ent.TodoOrder, where *ent.TodoWhereInput) int
 		Users            func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.UserOrder, where *ent.UserWhereInput) int
 		WorkspaceInvites func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.WorkspaceInviteOrder, where *ent.WorkspaceInviteWhereInput) int
@@ -288,7 +336,30 @@ type ComplexityRoot struct {
 		Name func(childComplexity int) int
 	}
 
+	Templ struct {
+		AppID     func(childComplexity int) int
+		Body      func(childComplexity int) int
+		Compiled  func(childComplexity int) int
+		CreatedAt func(childComplexity int) int
+		ID        func(childComplexity int) int
+		Name      func(childComplexity int) int
+		Status    func(childComplexity int) int
+		UpdatedAt func(childComplexity int) int
+	}
+
+	TemplConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	TemplEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	Todo struct {
+		AppID     func(childComplexity int) int
 		Children  func(childComplexity int) int
 		CreatedAt func(childComplexity int) int
 		ID        func(childComplexity int) int
@@ -312,6 +383,7 @@ type ComplexityRoot struct {
 
 	User struct {
 		APIKey           func(childComplexity int) int
+		AppID            func(childComplexity int) int
 		CanAdmin         func(childComplexity int) int
 		Company          func(childComplexity int) int
 		CreatedAt        func(childComplexity int) int
@@ -341,6 +413,7 @@ type ComplexityRoot struct {
 	}
 
 	Workspace struct {
+		AppID            func(childComplexity int) int
 		CreatedAt        func(childComplexity int) int
 		ID               func(childComplexity int) int
 		IsPersonal       func(childComplexity int) int
@@ -364,6 +437,7 @@ type ComplexityRoot struct {
 	}
 
 	WorkspaceInvite struct {
+		AppID       func(childComplexity int) int
 		CreatedAt   func(childComplexity int) int
 		Email       func(childComplexity int) int
 		ID          func(childComplexity int) int
@@ -385,6 +459,7 @@ type ComplexityRoot struct {
 	}
 
 	WorkspaceUser struct {
+		AppID       func(childComplexity int) int
 		CreatedAt   func(childComplexity int) int
 		ID          func(childComplexity int) int
 		Role        func(childComplexity int) int
@@ -489,6 +564,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.App.AuthEmailVerify(childComplexity), true
 
+	case "App.authFpTempl":
+		if e.complexity.App.AuthFpTempl == nil {
+			break
+		}
+
+		return e.complexity.App.AuthFpTempl(childComplexity), true
+
 	case "App.authFpTemplID":
 		if e.complexity.App.AuthFpTemplID == nil {
 			break
@@ -496,12 +578,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.App.AuthFpTemplID(childComplexity), true
 
+	case "App.authVerificationTempl":
+		if e.complexity.App.AuthVerificationTempl == nil {
+			break
+		}
+
+		return e.complexity.App.AuthVerificationTempl(childComplexity), true
+
 	case "App.authVerificationTemplID":
 		if e.complexity.App.AuthVerificationTemplID == nil {
 			break
 		}
 
 		return e.complexity.App.AuthVerificationTemplID(childComplexity), true
+
+	case "App.authWelcomeEmailTempl":
+		if e.complexity.App.AuthWelcomeEmailTempl == nil {
+			break
+		}
+
+		return e.complexity.App.AuthWelcomeEmailTempl(childComplexity), true
 
 	case "App.authWelcomeEmailTemplID":
 		if e.complexity.App.AuthWelcomeEmailTemplID == nil {
@@ -516,6 +612,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.App.Copyright(childComplexity), true
+
+	case "App.createdAt":
+		if e.complexity.App.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.App.CreatedAt(childComplexity), true
+
+	case "App.defaultMailConn":
+		if e.complexity.App.DefaultMailConn == nil {
+			break
+		}
+
+		return e.complexity.App.DefaultMailConn(childComplexity), true
 
 	case "App.defaultMailConnID":
 		if e.complexity.App.DefaultMailConnID == nil {
@@ -544,6 +654,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.App.LogoURL(childComplexity), true
+
+	case "App.mailLayoutTempl":
+		if e.complexity.App.MailLayoutTempl == nil {
+			break
+		}
+
+		return e.complexity.App.MailLayoutTempl(childComplexity), true
 
 	case "App.mailLayoutTemplID":
 		if e.complexity.App.MailLayoutTemplID == nil {
@@ -587,12 +704,33 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.App.SocialTw(childComplexity), true
 
+	case "App.updatedAt":
+		if e.complexity.App.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.App.UpdatedAt(childComplexity), true
+
+	case "App.wsapceInviteTempl":
+		if e.complexity.App.WsapceInviteTempl == nil {
+			break
+		}
+
+		return e.complexity.App.WsapceInviteTempl(childComplexity), true
+
 	case "App.wsapceInviteTemplID":
 		if e.complexity.App.WsapceInviteTemplID == nil {
 			break
 		}
 
 		return e.complexity.App.WsapceInviteTemplID(childComplexity), true
+
+	case "App.wsapceSuccessTempl":
+		if e.complexity.App.WsapceSuccessTempl == nil {
+			break
+		}
+
+		return e.complexity.App.WsapceSuccessTempl(childComplexity), true
 
 	case "App.wsapceSuccessTemplID":
 		if e.complexity.App.WsapceSuccessTemplID == nil {
@@ -650,6 +788,132 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.LoginResponse.Token(childComplexity), true
 
+	case "MailConn.appID":
+		if e.complexity.MailConn.AppID == nil {
+			break
+		}
+
+		return e.complexity.MailConn.AppID(childComplexity), true
+
+	case "MailConn.createdAt":
+		if e.complexity.MailConn.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.MailConn.CreatedAt(childComplexity), true
+
+	case "MailConn.encryption":
+		if e.complexity.MailConn.Encryption == nil {
+			break
+		}
+
+		return e.complexity.MailConn.Encryption(childComplexity), true
+
+	case "MailConn.fromEmail":
+		if e.complexity.MailConn.FromEmail == nil {
+			break
+		}
+
+		return e.complexity.MailConn.FromEmail(childComplexity), true
+
+	case "MailConn.fromName":
+		if e.complexity.MailConn.FromName == nil {
+			break
+		}
+
+		return e.complexity.MailConn.FromName(childComplexity), true
+
+	case "MailConn.host":
+		if e.complexity.MailConn.Host == nil {
+			break
+		}
+
+		return e.complexity.MailConn.Host(childComplexity), true
+
+	case "MailConn.id":
+		if e.complexity.MailConn.ID == nil {
+			break
+		}
+
+		return e.complexity.MailConn.ID(childComplexity), true
+
+	case "MailConn.name":
+		if e.complexity.MailConn.Name == nil {
+			break
+		}
+
+		return e.complexity.MailConn.Name(childComplexity), true
+
+	case "MailConn.password":
+		if e.complexity.MailConn.Password == nil {
+			break
+		}
+
+		return e.complexity.MailConn.Password(childComplexity), true
+
+	case "MailConn.port":
+		if e.complexity.MailConn.Port == nil {
+			break
+		}
+
+		return e.complexity.MailConn.Port(childComplexity), true
+
+	case "MailConn.status":
+		if e.complexity.MailConn.Status == nil {
+			break
+		}
+
+		return e.complexity.MailConn.Status(childComplexity), true
+
+	case "MailConn.updatedAt":
+		if e.complexity.MailConn.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.MailConn.UpdatedAt(childComplexity), true
+
+	case "MailConn.username":
+		if e.complexity.MailConn.Username == nil {
+			break
+		}
+
+		return e.complexity.MailConn.Username(childComplexity), true
+
+	case "MailConnConnection.edges":
+		if e.complexity.MailConnConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.MailConnConnection.Edges(childComplexity), true
+
+	case "MailConnConnection.pageInfo":
+		if e.complexity.MailConnConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.MailConnConnection.PageInfo(childComplexity), true
+
+	case "MailConnConnection.totalCount":
+		if e.complexity.MailConnConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.MailConnConnection.TotalCount(childComplexity), true
+
+	case "MailConnEdge.cursor":
+		if e.complexity.MailConnEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.MailConnEdge.Cursor(childComplexity), true
+
+	case "MailConnEdge.node":
+		if e.complexity.MailConnEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.MailConnEdge.Node(childComplexity), true
+
 	case "Mutation.adminAuthLogin":
 		if e.complexity.Mutation.AdminAuthLogin == nil {
 			break
@@ -661,6 +925,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.AdminAuthLogin(childComplexity, args["input"].(model.LoginInput)), true
+
+	case "Mutation.createMailConn":
+		if e.complexity.Mutation.CreateMailConn == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createMailConn_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateMailConn(childComplexity, args["input"].(ent.CreateMailConnInput)), true
 
 	case "Mutation.createOauthConnection":
 		if e.complexity.Mutation.CreateOauthConnection == nil {
@@ -722,6 +998,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreatePostType(childComplexity, args["input"].(ent.CreatePostTypeInput)), true
 
+	case "Mutation.createTempl":
+		if e.complexity.Mutation.CreateTempl == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createTempl_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateTempl(childComplexity, args["input"].(ent.CreateTemplInput)), true
+
 	case "Mutation.createTodo":
 		if e.complexity.Mutation.CreateTodo == nil {
 			break
@@ -740,6 +1028,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.Ping(childComplexity), true
+
+	case "Mutation.updateMailConn":
+		if e.complexity.Mutation.UpdateMailConn == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateMailConn_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateMailConn(childComplexity, args["id"].(string), args["input"].(ent.UpdateMailConnInput)), true
 
 	case "Mutation.updateOauthConnection":
 		if e.complexity.Mutation.UpdateOauthConnection == nil {
@@ -801,6 +1101,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdatePostType(childComplexity, args["id"].(string), args["input"].(ent.UpdatePostTypeInput)), true
 
+	case "Mutation.updateTempl":
+		if e.complexity.Mutation.UpdateTempl == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateTempl_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateTempl(childComplexity, args["id"].(string), args["input"].(ent.UpdateTemplInput)), true
+
 	case "Mutation.updateTodo":
 		if e.complexity.Mutation.UpdateTodo == nil {
 			break
@@ -812,6 +1124,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateTodo(childComplexity, args["id"].(string), args["input"].(ent.UpdateTodoInput)), true
+
+	case "OauthConnection.appID":
+		if e.complexity.OauthConnection.AppID == nil {
+			break
+		}
+
+		return e.complexity.OauthConnection.AppID(childComplexity), true
 
 	case "OauthConnection.clientID":
 		if e.complexity.OauthConnection.ClientID == nil {
@@ -960,6 +1279,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PageInfo.StartCursor(childComplexity), true
 
+	case "Post.appID":
+		if e.complexity.Post.AppID == nil {
+			break
+		}
+
+		return e.complexity.Post.AppID(childComplexity), true
+
 	case "Post.content":
 		if e.complexity.Post.Content == nil {
 			break
@@ -1085,6 +1411,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Post.UpdatedAt(childComplexity), true
+
+	case "PostCategory.appID":
+		if e.complexity.PostCategory.AppID == nil {
+			break
+		}
+
+		return e.complexity.PostCategory.AppID(childComplexity), true
 
 	case "PostCategory.content":
 		if e.complexity.PostCategory.Content == nil {
@@ -1247,6 +1580,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PostEdge.Node(childComplexity), true
 
+	case "PostStatus.appID":
+		if e.complexity.PostStatus.AppID == nil {
+			break
+		}
+
+		return e.complexity.PostStatus.AppID(childComplexity), true
+
 	case "PostStatus.createdAt":
 		if e.complexity.PostStatus.CreatedAt == nil {
 			break
@@ -1345,6 +1685,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PostStatusEdge.Node(childComplexity), true
 
+	case "PostTag.appID":
+		if e.complexity.PostTag.AppID == nil {
+			break
+		}
+
+		return e.complexity.PostTag.AppID(childComplexity), true
+
 	case "PostTag.content":
 		if e.complexity.PostTag.Content == nil {
 			break
@@ -1428,6 +1775,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PostTag.UpdatedAt(childComplexity), true
+
+	case "PostType.appID":
+		if e.complexity.PostType.AppID == nil {
+			break
+		}
+
+		return e.complexity.PostType.AppID(childComplexity), true
 
 	case "PostType.content":
 		if e.complexity.PostType.Content == nil {
@@ -1572,7 +1926,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Apps(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["where"].(*ent.AppWhereInput)), true
+		return e.complexity.Query.Apps(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].([]*ent.AppOrder), args["where"].(*ent.AppWhereInput)), true
+
+	case "Query.mailConns":
+		if e.complexity.Query.MailConns == nil {
+			break
+		}
+
+		args, err := ec.field_Query_mailConns_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.MailConns(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].([]*ent.MailConnOrder), args["where"].(*ent.MailConnWhereInput)), true
 
 	case "Query.node":
 		if e.complexity.Query.Node == nil {
@@ -1665,6 +2031,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.Posts(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].([]*ent.PostOrder), args["where"].(*ent.PostWhereInput)), true
 
+	case "Query.templs":
+		if e.complexity.Query.Templs == nil {
+			break
+		}
+
+		args, err := ec.field_Query_templs_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Templs(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].([]*ent.TemplOrder), args["where"].(*ent.TemplWhereInput)), true
+
 	case "Query.todos":
 		if e.complexity.Query.Todos == nil {
 			break
@@ -1731,6 +2109,104 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Student.Name(childComplexity), true
+
+	case "Templ.appID":
+		if e.complexity.Templ.AppID == nil {
+			break
+		}
+
+		return e.complexity.Templ.AppID(childComplexity), true
+
+	case "Templ.body":
+		if e.complexity.Templ.Body == nil {
+			break
+		}
+
+		return e.complexity.Templ.Body(childComplexity), true
+
+	case "Templ.compiled":
+		if e.complexity.Templ.Compiled == nil {
+			break
+		}
+
+		return e.complexity.Templ.Compiled(childComplexity), true
+
+	case "Templ.createdAt":
+		if e.complexity.Templ.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.Templ.CreatedAt(childComplexity), true
+
+	case "Templ.id":
+		if e.complexity.Templ.ID == nil {
+			break
+		}
+
+		return e.complexity.Templ.ID(childComplexity), true
+
+	case "Templ.name":
+		if e.complexity.Templ.Name == nil {
+			break
+		}
+
+		return e.complexity.Templ.Name(childComplexity), true
+
+	case "Templ.status":
+		if e.complexity.Templ.Status == nil {
+			break
+		}
+
+		return e.complexity.Templ.Status(childComplexity), true
+
+	case "Templ.updatedAt":
+		if e.complexity.Templ.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.Templ.UpdatedAt(childComplexity), true
+
+	case "TemplConnection.edges":
+		if e.complexity.TemplConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.TemplConnection.Edges(childComplexity), true
+
+	case "TemplConnection.pageInfo":
+		if e.complexity.TemplConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.TemplConnection.PageInfo(childComplexity), true
+
+	case "TemplConnection.totalCount":
+		if e.complexity.TemplConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.TemplConnection.TotalCount(childComplexity), true
+
+	case "TemplEdge.cursor":
+		if e.complexity.TemplEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.TemplEdge.Cursor(childComplexity), true
+
+	case "TemplEdge.node":
+		if e.complexity.TemplEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.TemplEdge.Node(childComplexity), true
+
+	case "Todo.appID":
+		if e.complexity.Todo.AppID == nil {
+			break
+		}
+
+		return e.complexity.Todo.AppID(childComplexity), true
 
 	case "Todo.children":
 		if e.complexity.Todo.Children == nil {
@@ -1829,6 +2305,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.User.APIKey(childComplexity), true
+
+	case "User.appID":
+		if e.complexity.User.AppID == nil {
+			break
+		}
+
+		return e.complexity.User.AppID(childComplexity), true
 
 	case "User.canAdmin":
 		if e.complexity.User.CanAdmin == nil {
@@ -1970,6 +2453,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.UserEdge.Node(childComplexity), true
 
+	case "Workspace.appID":
+		if e.complexity.Workspace.AppID == nil {
+			break
+		}
+
+		return e.complexity.Workspace.AppID(childComplexity), true
+
 	case "Workspace.createdAt":
 		if e.complexity.Workspace.CreatedAt == nil {
 			break
@@ -2068,6 +2558,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.WorkspaceEdge.Node(childComplexity), true
 
+	case "WorkspaceInvite.appID":
+		if e.complexity.WorkspaceInvite.AppID == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceInvite.AppID(childComplexity), true
+
 	case "WorkspaceInvite.createdAt":
 		if e.complexity.WorkspaceInvite.CreatedAt == nil {
 			break
@@ -2151,6 +2648,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.WorkspaceInviteEdge.Node(childComplexity), true
+
+	case "WorkspaceUser.appID":
+		if e.complexity.WorkspaceUser.AppID == nil {
+			break
+		}
+
+		return e.complexity.WorkspaceUser.AppID(childComplexity), true
 
 	case "WorkspaceUser.createdAt":
 		if e.complexity.WorkspaceUser.CreatedAt == nil {
@@ -2251,19 +2755,24 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
+		ec.unmarshalInputAppOrder,
 		ec.unmarshalInputAppWhereInput,
 		ec.unmarshalInputCreateAppInput,
+		ec.unmarshalInputCreateMailConnInput,
 		ec.unmarshalInputCreateOauthConnectionInput,
 		ec.unmarshalInputCreatePostCategoryInput,
 		ec.unmarshalInputCreatePostInput,
 		ec.unmarshalInputCreatePostStatusInput,
 		ec.unmarshalInputCreatePostTypeInput,
+		ec.unmarshalInputCreateTemplInput,
 		ec.unmarshalInputCreateTodoInput,
 		ec.unmarshalInputCreateUserInput,
 		ec.unmarshalInputCreateWorkspaceInput,
 		ec.unmarshalInputCreateWorkspaceInviteInput,
 		ec.unmarshalInputCreateWorkspaceUserInput,
 		ec.unmarshalInputLoginInput,
+		ec.unmarshalInputMailConnOrder,
+		ec.unmarshalInputMailConnWhereInput,
 		ec.unmarshalInputOauthConnectionOrder,
 		ec.unmarshalInputOauthConnectionWhereInput,
 		ec.unmarshalInputPostCategoryOrder,
@@ -2276,14 +2785,18 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputPostTypeOrder,
 		ec.unmarshalInputPostTypeWhereInput,
 		ec.unmarshalInputPostWhereInput,
+		ec.unmarshalInputTemplOrder,
+		ec.unmarshalInputTemplWhereInput,
 		ec.unmarshalInputTodoOrder,
 		ec.unmarshalInputTodoWhereInput,
 		ec.unmarshalInputUpdateAppInput,
+		ec.unmarshalInputUpdateMailConnInput,
 		ec.unmarshalInputUpdateOauthConnectionInput,
 		ec.unmarshalInputUpdatePostCategoryInput,
 		ec.unmarshalInputUpdatePostInput,
 		ec.unmarshalInputUpdatePostStatusInput,
 		ec.unmarshalInputUpdatePostTypeInput,
+		ec.unmarshalInputUpdateTemplInput,
 		ec.unmarshalInputUpdateTodoInput,
 		ec.unmarshalInputUpdateUserInput,
 		ec.unmarshalInputUpdateWorkspaceInput,
@@ -2418,21 +2931,22 @@ extend type Mutation {
 }
 `, BuiltIn: false},
 	{Name: "../cms.graphql", Input: `extend type Mutation {
-  createPostType(input: CreatePostTypeInput!): PostType! @canAdmin
-  updatePostType(id: ID!, input: UpdatePostTypeInput!): PostType! @canAdmin
-  createPostStatus(input: CreatePostStatusInput!): PostStatus! @canAdmin
-  updatePostStatus(id: ID!, input: UpdatePostStatusInput!): PostStatus! @canAdmin
-  createPostCategory(input: CreatePostCategoryInput!): PostCategory! @canAdmin
-  updatePostCategory(id: ID!, input: UpdatePostCategoryInput!): PostCategory! @canAdmin
-  createPost(input: CreatePostInput!): Post! @canAdmin
-  updatePost(id: ID!, input: UpdatePostInput!): Post! @canAdmin
+  createPostType(input: CreatePostTypeInput!): PostType! @canApp
+  updatePostType(id: ID!, input: UpdatePostTypeInput!): PostType! @canApp
+  createPostStatus(input: CreatePostStatusInput!): PostStatus! @canApp
+  updatePostStatus(id: ID!, input: UpdatePostStatusInput!): PostStatus! @canApp
+  createPostCategory(input: CreatePostCategoryInput!): PostCategory! @canApp
+  updatePostCategory(id: ID!, input: UpdatePostCategoryInput!): PostCategory! @canApp
+  createPost(input: CreatePostInput!): Post! @canApp
+  updatePost(id: ID!, input: UpdatePostInput!): Post! @canApp
 }
-
 `, BuiltIn: false},
 	{Name: "../ent.graphql", Input: `directive @goField(forceResolver: Boolean, name: String, omittable: Boolean) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
 directive @goModel(model: String, models: [String!], forceGenerate: Boolean) on OBJECT | INPUT_OBJECT | SCALAR | ENUM | INTERFACE | UNION
 type App implements Node {
   id: ID!
+  createdAt: Time
+  updatedAt: Time
   name: String
   copyright: String
   email: String
@@ -2442,15 +2956,22 @@ type App implements Node {
   socialIn: String
   logoURL: String
   siteURL: String
-  defaultMailConnID: String
-  mailLayoutTemplID: String
-  wsapceInviteTemplID: String
-  wsapceSuccessTemplID: String
-  authFpTemplID: String
-  authWelcomeEmailTemplID: String
-  authVerificationTemplID: String
+  defaultMailConnID: ID
+  mailLayoutTemplID: ID
+  wsapceInviteTemplID: ID
+  wsapceSuccessTemplID: ID
+  authFpTemplID: ID
+  authWelcomeEmailTemplID: ID
+  authVerificationTemplID: ID
   authEmailVerify: String
   adminUserID: String
+  defaultMailConn: MailConn
+  mailLayoutTempl: Templ
+  wsapceInviteTempl: Templ
+  wsapceSuccessTempl: Templ
+  authFpTempl: Templ
+  authWelcomeEmailTempl: Templ
+  authVerificationTempl: Templ
 }
 """
 A connection to a list of items.
@@ -2483,6 +3004,25 @@ type AppEdge {
   cursor: Cursor!
 }
 """
+Ordering options for App connections
+"""
+input AppOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection! = ASC
+  """
+  The field by which to order Apps.
+  """
+  field: AppOrderField!
+}
+"""
+Properties by which App connections can be ordered.
+"""
+enum AppOrderField {
+  CREATED_AT
+}
+"""
 AppWhereInput is used for filtering App objects.
 Input was generated by ent.
 """
@@ -2503,6 +3043,32 @@ input AppWhereInput {
   idLTE: ID
   idEqualFold: ID
   idContainsFold: ID
+  """
+  created_at field predicates
+  """
+  createdAt: Time
+  createdAtNEQ: Time
+  createdAtIn: [Time!]
+  createdAtNotIn: [Time!]
+  createdAtGT: Time
+  createdAtGTE: Time
+  createdAtLT: Time
+  createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
+  """
+  updated_at field predicates
+  """
+  updatedAt: Time
+  updatedAtNEQ: Time
+  updatedAtIn: [Time!]
+  updatedAtNotIn: [Time!]
+  updatedAtGT: Time
+  updatedAtGTE: Time
+  updatedAtLT: Time
+  updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
   """
   name field predicates
   """
@@ -2668,129 +3234,129 @@ input AppWhereInput {
   """
   default_mail_conn_id field predicates
   """
-  defaultMailConnID: String
-  defaultMailConnIDNEQ: String
-  defaultMailConnIDIn: [String!]
-  defaultMailConnIDNotIn: [String!]
-  defaultMailConnIDGT: String
-  defaultMailConnIDGTE: String
-  defaultMailConnIDLT: String
-  defaultMailConnIDLTE: String
-  defaultMailConnIDContains: String
-  defaultMailConnIDHasPrefix: String
-  defaultMailConnIDHasSuffix: String
+  defaultMailConnID: ID
+  defaultMailConnIDNEQ: ID
+  defaultMailConnIDIn: [ID!]
+  defaultMailConnIDNotIn: [ID!]
+  defaultMailConnIDGT: ID
+  defaultMailConnIDGTE: ID
+  defaultMailConnIDLT: ID
+  defaultMailConnIDLTE: ID
+  defaultMailConnIDContains: ID
+  defaultMailConnIDHasPrefix: ID
+  defaultMailConnIDHasSuffix: ID
   defaultMailConnIDIsNil: Boolean
   defaultMailConnIDNotNil: Boolean
-  defaultMailConnIDEqualFold: String
-  defaultMailConnIDContainsFold: String
+  defaultMailConnIDEqualFold: ID
+  defaultMailConnIDContainsFold: ID
   """
   mail_layout_templ_id field predicates
   """
-  mailLayoutTemplID: String
-  mailLayoutTemplIDNEQ: String
-  mailLayoutTemplIDIn: [String!]
-  mailLayoutTemplIDNotIn: [String!]
-  mailLayoutTemplIDGT: String
-  mailLayoutTemplIDGTE: String
-  mailLayoutTemplIDLT: String
-  mailLayoutTemplIDLTE: String
-  mailLayoutTemplIDContains: String
-  mailLayoutTemplIDHasPrefix: String
-  mailLayoutTemplIDHasSuffix: String
+  mailLayoutTemplID: ID
+  mailLayoutTemplIDNEQ: ID
+  mailLayoutTemplIDIn: [ID!]
+  mailLayoutTemplIDNotIn: [ID!]
+  mailLayoutTemplIDGT: ID
+  mailLayoutTemplIDGTE: ID
+  mailLayoutTemplIDLT: ID
+  mailLayoutTemplIDLTE: ID
+  mailLayoutTemplIDContains: ID
+  mailLayoutTemplIDHasPrefix: ID
+  mailLayoutTemplIDHasSuffix: ID
   mailLayoutTemplIDIsNil: Boolean
   mailLayoutTemplIDNotNil: Boolean
-  mailLayoutTemplIDEqualFold: String
-  mailLayoutTemplIDContainsFold: String
+  mailLayoutTemplIDEqualFold: ID
+  mailLayoutTemplIDContainsFold: ID
   """
   wsapce_invite_templ_id field predicates
   """
-  wsapceInviteTemplID: String
-  wsapceInviteTemplIDNEQ: String
-  wsapceInviteTemplIDIn: [String!]
-  wsapceInviteTemplIDNotIn: [String!]
-  wsapceInviteTemplIDGT: String
-  wsapceInviteTemplIDGTE: String
-  wsapceInviteTemplIDLT: String
-  wsapceInviteTemplIDLTE: String
-  wsapceInviteTemplIDContains: String
-  wsapceInviteTemplIDHasPrefix: String
-  wsapceInviteTemplIDHasSuffix: String
+  wsapceInviteTemplID: ID
+  wsapceInviteTemplIDNEQ: ID
+  wsapceInviteTemplIDIn: [ID!]
+  wsapceInviteTemplIDNotIn: [ID!]
+  wsapceInviteTemplIDGT: ID
+  wsapceInviteTemplIDGTE: ID
+  wsapceInviteTemplIDLT: ID
+  wsapceInviteTemplIDLTE: ID
+  wsapceInviteTemplIDContains: ID
+  wsapceInviteTemplIDHasPrefix: ID
+  wsapceInviteTemplIDHasSuffix: ID
   wsapceInviteTemplIDIsNil: Boolean
   wsapceInviteTemplIDNotNil: Boolean
-  wsapceInviteTemplIDEqualFold: String
-  wsapceInviteTemplIDContainsFold: String
+  wsapceInviteTemplIDEqualFold: ID
+  wsapceInviteTemplIDContainsFold: ID
   """
   wsapce_success_templ_id field predicates
   """
-  wsapceSuccessTemplID: String
-  wsapceSuccessTemplIDNEQ: String
-  wsapceSuccessTemplIDIn: [String!]
-  wsapceSuccessTemplIDNotIn: [String!]
-  wsapceSuccessTemplIDGT: String
-  wsapceSuccessTemplIDGTE: String
-  wsapceSuccessTemplIDLT: String
-  wsapceSuccessTemplIDLTE: String
-  wsapceSuccessTemplIDContains: String
-  wsapceSuccessTemplIDHasPrefix: String
-  wsapceSuccessTemplIDHasSuffix: String
+  wsapceSuccessTemplID: ID
+  wsapceSuccessTemplIDNEQ: ID
+  wsapceSuccessTemplIDIn: [ID!]
+  wsapceSuccessTemplIDNotIn: [ID!]
+  wsapceSuccessTemplIDGT: ID
+  wsapceSuccessTemplIDGTE: ID
+  wsapceSuccessTemplIDLT: ID
+  wsapceSuccessTemplIDLTE: ID
+  wsapceSuccessTemplIDContains: ID
+  wsapceSuccessTemplIDHasPrefix: ID
+  wsapceSuccessTemplIDHasSuffix: ID
   wsapceSuccessTemplIDIsNil: Boolean
   wsapceSuccessTemplIDNotNil: Boolean
-  wsapceSuccessTemplIDEqualFold: String
-  wsapceSuccessTemplIDContainsFold: String
+  wsapceSuccessTemplIDEqualFold: ID
+  wsapceSuccessTemplIDContainsFold: ID
   """
   auth_fp_templ_id field predicates
   """
-  authFpTemplID: String
-  authFpTemplIDNEQ: String
-  authFpTemplIDIn: [String!]
-  authFpTemplIDNotIn: [String!]
-  authFpTemplIDGT: String
-  authFpTemplIDGTE: String
-  authFpTemplIDLT: String
-  authFpTemplIDLTE: String
-  authFpTemplIDContains: String
-  authFpTemplIDHasPrefix: String
-  authFpTemplIDHasSuffix: String
+  authFpTemplID: ID
+  authFpTemplIDNEQ: ID
+  authFpTemplIDIn: [ID!]
+  authFpTemplIDNotIn: [ID!]
+  authFpTemplIDGT: ID
+  authFpTemplIDGTE: ID
+  authFpTemplIDLT: ID
+  authFpTemplIDLTE: ID
+  authFpTemplIDContains: ID
+  authFpTemplIDHasPrefix: ID
+  authFpTemplIDHasSuffix: ID
   authFpTemplIDIsNil: Boolean
   authFpTemplIDNotNil: Boolean
-  authFpTemplIDEqualFold: String
-  authFpTemplIDContainsFold: String
+  authFpTemplIDEqualFold: ID
+  authFpTemplIDContainsFold: ID
   """
   auth_welcome_email_templ_id field predicates
   """
-  authWelcomeEmailTemplID: String
-  authWelcomeEmailTemplIDNEQ: String
-  authWelcomeEmailTemplIDIn: [String!]
-  authWelcomeEmailTemplIDNotIn: [String!]
-  authWelcomeEmailTemplIDGT: String
-  authWelcomeEmailTemplIDGTE: String
-  authWelcomeEmailTemplIDLT: String
-  authWelcomeEmailTemplIDLTE: String
-  authWelcomeEmailTemplIDContains: String
-  authWelcomeEmailTemplIDHasPrefix: String
-  authWelcomeEmailTemplIDHasSuffix: String
+  authWelcomeEmailTemplID: ID
+  authWelcomeEmailTemplIDNEQ: ID
+  authWelcomeEmailTemplIDIn: [ID!]
+  authWelcomeEmailTemplIDNotIn: [ID!]
+  authWelcomeEmailTemplIDGT: ID
+  authWelcomeEmailTemplIDGTE: ID
+  authWelcomeEmailTemplIDLT: ID
+  authWelcomeEmailTemplIDLTE: ID
+  authWelcomeEmailTemplIDContains: ID
+  authWelcomeEmailTemplIDHasPrefix: ID
+  authWelcomeEmailTemplIDHasSuffix: ID
   authWelcomeEmailTemplIDIsNil: Boolean
   authWelcomeEmailTemplIDNotNil: Boolean
-  authWelcomeEmailTemplIDEqualFold: String
-  authWelcomeEmailTemplIDContainsFold: String
+  authWelcomeEmailTemplIDEqualFold: ID
+  authWelcomeEmailTemplIDContainsFold: ID
   """
   auth_verification_templ_id field predicates
   """
-  authVerificationTemplID: String
-  authVerificationTemplIDNEQ: String
-  authVerificationTemplIDIn: [String!]
-  authVerificationTemplIDNotIn: [String!]
-  authVerificationTemplIDGT: String
-  authVerificationTemplIDGTE: String
-  authVerificationTemplIDLT: String
-  authVerificationTemplIDLTE: String
-  authVerificationTemplIDContains: String
-  authVerificationTemplIDHasPrefix: String
-  authVerificationTemplIDHasSuffix: String
+  authVerificationTemplID: ID
+  authVerificationTemplIDNEQ: ID
+  authVerificationTemplIDIn: [ID!]
+  authVerificationTemplIDNotIn: [ID!]
+  authVerificationTemplIDGT: ID
+  authVerificationTemplIDGTE: ID
+  authVerificationTemplIDLT: ID
+  authVerificationTemplIDLTE: ID
+  authVerificationTemplIDContains: ID
+  authVerificationTemplIDHasPrefix: ID
+  authVerificationTemplIDHasSuffix: ID
   authVerificationTemplIDIsNil: Boolean
   authVerificationTemplIDNotNil: Boolean
-  authVerificationTemplIDEqualFold: String
-  authVerificationTemplIDContainsFold: String
+  authVerificationTemplIDEqualFold: ID
+  authVerificationTemplIDContainsFold: ID
   """
   auth_email_verify field predicates
   """
@@ -2827,12 +3393,49 @@ input AppWhereInput {
   adminUserIDNotNil: Boolean
   adminUserIDEqualFold: String
   adminUserIDContainsFold: String
+  """
+  default_mail_conn edge predicates
+  """
+  hasDefaultMailConn: Boolean
+  hasDefaultMailConnWith: [MailConnWhereInput!]
+  """
+  mail_layout_templ edge predicates
+  """
+  hasMailLayoutTempl: Boolean
+  hasMailLayoutTemplWith: [TemplWhereInput!]
+  """
+  wsapce_invite_templ edge predicates
+  """
+  hasWsapceInviteTempl: Boolean
+  hasWsapceInviteTemplWith: [TemplWhereInput!]
+  """
+  wsapce_success_templ edge predicates
+  """
+  hasWsapceSuccessTempl: Boolean
+  hasWsapceSuccessTemplWith: [TemplWhereInput!]
+  """
+  auth_fp_templ edge predicates
+  """
+  hasAuthFpTempl: Boolean
+  hasAuthFpTemplWith: [TemplWhereInput!]
+  """
+  auth_welcome_email_templ edge predicates
+  """
+  hasAuthWelcomeEmailTempl: Boolean
+  hasAuthWelcomeEmailTemplWith: [TemplWhereInput!]
+  """
+  auth_verification_templ edge predicates
+  """
+  hasAuthVerificationTempl: Boolean
+  hasAuthVerificationTemplWith: [TemplWhereInput!]
 }
 """
 CreateAppInput is used for create App object.
 Input was generated by ent.
 """
 input CreateAppInput {
+  createdAt: Time
+  updatedAt: Time
   name: String
   copyright: String
   email: String
@@ -2842,15 +3445,32 @@ input CreateAppInput {
   socialIn: String
   logoURL: String
   siteURL: String
-  defaultMailConnID: String
-  mailLayoutTemplID: String
-  wsapceInviteTemplID: String
-  wsapceSuccessTemplID: String
-  authFpTemplID: String
-  authWelcomeEmailTemplID: String
-  authVerificationTemplID: String
   authEmailVerify: String
   adminUserID: String
+  defaultMailConnID: ID
+  mailLayoutTemplID: ID
+  wsapceInviteTemplID: ID
+  wsapceSuccessTemplID: ID
+  authFpTemplID: ID
+  authWelcomeEmailTemplID: ID
+  authVerificationTemplID: ID
+}
+"""
+CreateMailConnInput is used for create MailConn object.
+Input was generated by ent.
+"""
+input CreateMailConnInput {
+  createdAt: Time
+  updatedAt: Time
+  name: String
+  host: String
+  port: Int
+  username: String
+  password: String
+  encryption: Int
+  fromName: String
+  fromEmail: String
+  status: Boolean
 }
 """
 CreateOauthConnectionInput is used for create OauthConnection object.
@@ -2937,6 +3557,18 @@ input CreatePostTypeInput {
   metaRobots: String
 }
 """
+CreateTemplInput is used for create Templ object.
+Input was generated by ent.
+"""
+input CreateTemplInput {
+  createdAt: Time
+  updatedAt: Time
+  name: String
+  body: String
+  compiled: String
+  status: Boolean
+}
+"""
 CreateTodoInput is used for create Todo object.
 Input was generated by ent.
 """
@@ -3012,6 +3644,277 @@ Define a Relay Cursor type:
 https://relay.dev/graphql/connections.htm#sec-Cursor
 """
 scalar Cursor
+type MailConn implements Node {
+  id: ID!
+  createdAt: Time
+  updatedAt: Time
+  appID: String
+  name: String
+  host: String
+  port: Int
+  username: String
+  password: String
+  encryption: Int
+  fromName: String
+  fromEmail: String
+  status: Boolean
+}
+"""
+A connection to a list of items.
+"""
+type MailConnConnection {
+  """
+  A list of edges.
+  """
+  edges: [MailConnEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type MailConnEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: MailConn
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+Ordering options for MailConn connections
+"""
+input MailConnOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection! = ASC
+  """
+  The field by which to order MailConns.
+  """
+  field: MailConnOrderField!
+}
+"""
+Properties by which MailConn connections can be ordered.
+"""
+enum MailConnOrderField {
+  CREATED_AT
+}
+"""
+MailConnWhereInput is used for filtering MailConn objects.
+Input was generated by ent.
+"""
+input MailConnWhereInput {
+  not: MailConnWhereInput
+  and: [MailConnWhereInput!]
+  or: [MailConnWhereInput!]
+  """
+  id field predicates
+  """
+  id: ID
+  idNEQ: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+  idGT: ID
+  idGTE: ID
+  idLT: ID
+  idLTE: ID
+  idEqualFold: ID
+  idContainsFold: ID
+  """
+  created_at field predicates
+  """
+  createdAt: Time
+  createdAtNEQ: Time
+  createdAtIn: [Time!]
+  createdAtNotIn: [Time!]
+  createdAtGT: Time
+  createdAtGTE: Time
+  createdAtLT: Time
+  createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
+  """
+  updated_at field predicates
+  """
+  updatedAt: Time
+  updatedAtNEQ: Time
+  updatedAtIn: [Time!]
+  updatedAtNotIn: [Time!]
+  updatedAtGT: Time
+  updatedAtGTE: Time
+  updatedAtLT: Time
+  updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
+  """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
+  """
+  name field predicates
+  """
+  name: String
+  nameNEQ: String
+  nameIn: [String!]
+  nameNotIn: [String!]
+  nameGT: String
+  nameGTE: String
+  nameLT: String
+  nameLTE: String
+  nameContains: String
+  nameHasPrefix: String
+  nameHasSuffix: String
+  nameIsNil: Boolean
+  nameNotNil: Boolean
+  nameEqualFold: String
+  nameContainsFold: String
+  """
+  host field predicates
+  """
+  host: String
+  hostNEQ: String
+  hostIn: [String!]
+  hostNotIn: [String!]
+  hostGT: String
+  hostGTE: String
+  hostLT: String
+  hostLTE: String
+  hostContains: String
+  hostHasPrefix: String
+  hostHasSuffix: String
+  hostIsNil: Boolean
+  hostNotNil: Boolean
+  hostEqualFold: String
+  hostContainsFold: String
+  """
+  port field predicates
+  """
+  port: Int
+  portNEQ: Int
+  portIn: [Int!]
+  portNotIn: [Int!]
+  portGT: Int
+  portGTE: Int
+  portLT: Int
+  portLTE: Int
+  portIsNil: Boolean
+  portNotNil: Boolean
+  """
+  username field predicates
+  """
+  username: String
+  usernameNEQ: String
+  usernameIn: [String!]
+  usernameNotIn: [String!]
+  usernameGT: String
+  usernameGTE: String
+  usernameLT: String
+  usernameLTE: String
+  usernameContains: String
+  usernameHasPrefix: String
+  usernameHasSuffix: String
+  usernameIsNil: Boolean
+  usernameNotNil: Boolean
+  usernameEqualFold: String
+  usernameContainsFold: String
+  """
+  password field predicates
+  """
+  password: String
+  passwordNEQ: String
+  passwordIn: [String!]
+  passwordNotIn: [String!]
+  passwordGT: String
+  passwordGTE: String
+  passwordLT: String
+  passwordLTE: String
+  passwordContains: String
+  passwordHasPrefix: String
+  passwordHasSuffix: String
+  passwordIsNil: Boolean
+  passwordNotNil: Boolean
+  passwordEqualFold: String
+  passwordContainsFold: String
+  """
+  encryption field predicates
+  """
+  encryption: Int
+  encryptionNEQ: Int
+  encryptionIn: [Int!]
+  encryptionNotIn: [Int!]
+  encryptionGT: Int
+  encryptionGTE: Int
+  encryptionLT: Int
+  encryptionLTE: Int
+  encryptionIsNil: Boolean
+  encryptionNotNil: Boolean
+  """
+  from_name field predicates
+  """
+  fromName: String
+  fromNameNEQ: String
+  fromNameIn: [String!]
+  fromNameNotIn: [String!]
+  fromNameGT: String
+  fromNameGTE: String
+  fromNameLT: String
+  fromNameLTE: String
+  fromNameContains: String
+  fromNameHasPrefix: String
+  fromNameHasSuffix: String
+  fromNameIsNil: Boolean
+  fromNameNotNil: Boolean
+  fromNameEqualFold: String
+  fromNameContainsFold: String
+  """
+  from_email field predicates
+  """
+  fromEmail: String
+  fromEmailNEQ: String
+  fromEmailIn: [String!]
+  fromEmailNotIn: [String!]
+  fromEmailGT: String
+  fromEmailGTE: String
+  fromEmailLT: String
+  fromEmailLTE: String
+  fromEmailContains: String
+  fromEmailHasPrefix: String
+  fromEmailHasSuffix: String
+  fromEmailIsNil: Boolean
+  fromEmailNotNil: Boolean
+  fromEmailEqualFold: String
+  fromEmailContainsFold: String
+  """
+  status field predicates
+  """
+  status: Boolean
+  statusNEQ: Boolean
+  statusIsNil: Boolean
+  statusNotNil: Boolean
+}
 """
 An object with an ID.
 Follows the [Relay Global Object Identification Specification](https://relay.dev/graphql/objectidentification.htm)
@@ -3026,6 +3929,7 @@ type OauthConnection implements Node {
   id: ID!
   createdAt: Time
   updatedAt: Time
+  appID: String
   name: String
   provider: String
   clientID: String
@@ -3132,6 +4036,24 @@ input OauthConnectionWhereInput {
   updatedAtLTE: Time
   updatedAtIsNil: Boolean
   updatedAtNotNil: Boolean
+  """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
   """
   name field predicates
   """
@@ -3323,6 +4245,7 @@ type Post implements Node {
   id: ID!
   createdAt: Time
   updatedAt: Time
+  appID: String
   name: String
   slug: String
   postStatusID: ID
@@ -3343,6 +4266,7 @@ type PostCategory implements Node {
   id: ID!
   createdAt: Time
   updatedAt: Time
+  appID: String
   name: String
   slug: String
   status: String
@@ -3450,6 +4374,24 @@ input PostCategoryWhereInput {
   updatedAtLTE: Time
   updatedAtIsNil: Boolean
   updatedAtNotNil: Boolean
+  """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
   """
   name field predicates
   """
@@ -3671,6 +4613,7 @@ type PostStatus implements Node {
   id: ID!
   createdAt: Time
   updatedAt: Time
+  appID: String
   name: String
   slug: String
   status: Boolean
@@ -3778,6 +4721,24 @@ input PostStatusWhereInput {
   updatedAtIsNil: Boolean
   updatedAtNotNil: Boolean
   """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
+  """
   name field predicates
   """
   name: String
@@ -3853,6 +4814,7 @@ type PostTag implements Node {
   id: ID!
   createdAt: Time
   updatedAt: Time
+  appID: String
   name: String
   slug: String
   status: String
@@ -3929,6 +4891,24 @@ input PostTagWhereInput {
   updatedAtLTE: Time
   updatedAtIsNil: Boolean
   updatedAtNotNil: Boolean
+  """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
   """
   name field predicates
   """
@@ -4096,6 +5076,7 @@ type PostType implements Node {
   id: ID!
   createdAt: Time
   updatedAt: Time
+  appID: String
   name: String
   slug: String
   status: String
@@ -4206,6 +5187,24 @@ input PostTypeWhereInput {
   updatedAtLTE: Time
   updatedAtIsNil: Boolean
   updatedAtNotNil: Boolean
+  """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
   """
   name field predicates
   """
@@ -4426,6 +5425,24 @@ input PostWhereInput {
   updatedAtLTE: Time
   updatedAtIsNil: Boolean
   updatedAtNotNil: Boolean
+  """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
   """
   name field predicates
   """
@@ -4667,7 +5684,7 @@ type Query {
     ID of the object.
     """
     id: ID!
-  ): Node @canAdmin
+  ): Node @canApp
   """
   Lookup nodes by a list of IDs.
   """
@@ -4676,7 +5693,7 @@ type Query {
     The list of node IDs.
     """
     ids: [ID!]!
-  ): [Node]! @canAdmin
+  ): [Node]! @canApp
   apps(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -4699,10 +5716,46 @@ type Query {
     last: Int
 
     """
+    Ordering options for Apps returned from the connection.
+    """
+    orderBy: [AppOrder!]
+
+    """
     Filtering options for Apps returned from the connection.
     """
     where: AppWhereInput
   ): AppConnection! @canAdmin
+  mailConns(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for MailConns returned from the connection.
+    """
+    orderBy: [MailConnOrder!]
+
+    """
+    Filtering options for MailConns returned from the connection.
+    """
+    where: MailConnWhereInput
+  ): MailConnConnection! @canAdmin
   oauthConnections(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -4858,6 +5911,37 @@ type Query {
     """
     where: PostTypeWhereInput
   ): PostTypeConnection! @canApp
+  templs(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for Templs returned from the connection.
+    """
+    orderBy: [TemplOrder!]
+
+    """
+    Filtering options for Templs returned from the connection.
+    """
+    where: TemplWhereInput
+  ): TemplConnection! @canAdmin
   todos(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -5014,10 +6098,197 @@ type Query {
     where: WorkspaceUserWhereInput
   ): WorkspaceUserConnection! @canApp
 }
+type Templ implements Node {
+  id: ID!
+  createdAt: Time
+  updatedAt: Time
+  appID: String
+  name: String
+  body: String
+  compiled: String
+  status: Boolean
+}
+"""
+A connection to a list of items.
+"""
+type TemplConnection {
+  """
+  A list of edges.
+  """
+  edges: [TemplEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type TemplEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Templ
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+Ordering options for Templ connections
+"""
+input TemplOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection! = ASC
+  """
+  The field by which to order Templs.
+  """
+  field: TemplOrderField!
+}
+"""
+Properties by which Templ connections can be ordered.
+"""
+enum TemplOrderField {
+  CREATED_AT
+}
+"""
+TemplWhereInput is used for filtering Templ objects.
+Input was generated by ent.
+"""
+input TemplWhereInput {
+  not: TemplWhereInput
+  and: [TemplWhereInput!]
+  or: [TemplWhereInput!]
+  """
+  id field predicates
+  """
+  id: ID
+  idNEQ: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+  idGT: ID
+  idGTE: ID
+  idLT: ID
+  idLTE: ID
+  idEqualFold: ID
+  idContainsFold: ID
+  """
+  created_at field predicates
+  """
+  createdAt: Time
+  createdAtNEQ: Time
+  createdAtIn: [Time!]
+  createdAtNotIn: [Time!]
+  createdAtGT: Time
+  createdAtGTE: Time
+  createdAtLT: Time
+  createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
+  """
+  updated_at field predicates
+  """
+  updatedAt: Time
+  updatedAtNEQ: Time
+  updatedAtIn: [Time!]
+  updatedAtNotIn: [Time!]
+  updatedAtGT: Time
+  updatedAtGTE: Time
+  updatedAtLT: Time
+  updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
+  """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
+  """
+  name field predicates
+  """
+  name: String
+  nameNEQ: String
+  nameIn: [String!]
+  nameNotIn: [String!]
+  nameGT: String
+  nameGTE: String
+  nameLT: String
+  nameLTE: String
+  nameContains: String
+  nameHasPrefix: String
+  nameHasSuffix: String
+  nameIsNil: Boolean
+  nameNotNil: Boolean
+  nameEqualFold: String
+  nameContainsFold: String
+  """
+  body field predicates
+  """
+  body: String
+  bodyNEQ: String
+  bodyIn: [String!]
+  bodyNotIn: [String!]
+  bodyGT: String
+  bodyGTE: String
+  bodyLT: String
+  bodyLTE: String
+  bodyContains: String
+  bodyHasPrefix: String
+  bodyHasSuffix: String
+  bodyIsNil: Boolean
+  bodyNotNil: Boolean
+  bodyEqualFold: String
+  bodyContainsFold: String
+  """
+  compiled field predicates
+  """
+  compiled: String
+  compiledNEQ: String
+  compiledIn: [String!]
+  compiledNotIn: [String!]
+  compiledGT: String
+  compiledGTE: String
+  compiledLT: String
+  compiledLTE: String
+  compiledContains: String
+  compiledHasPrefix: String
+  compiledHasSuffix: String
+  compiledIsNil: Boolean
+  compiledNotNil: Boolean
+  compiledEqualFold: String
+  compiledContainsFold: String
+  """
+  status field predicates
+  """
+  status: Boolean
+  statusNEQ: Boolean
+  statusIsNil: Boolean
+  statusNotNil: Boolean
+}
 type Todo implements Node {
   id: ID!
   createdAt: Time
   updatedAt: Time
+  appID: String
   text: String!
   status: TodoStatus!
   priority: Int!
@@ -5131,6 +6402,24 @@ input TodoWhereInput {
   updatedAtIsNil: Boolean
   updatedAtNotNil: Boolean
   """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
+  """
   text field predicates
   """
   text: String
@@ -5180,6 +6469,8 @@ UpdateAppInput is used for update App object.
 Input was generated by ent.
 """
 input UpdateAppInput {
+  updatedAt: Time
+  clearUpdatedAt: Boolean
   name: String
   clearName: Boolean
   copyright: String
@@ -5198,24 +6489,52 @@ input UpdateAppInput {
   clearLogoURL: Boolean
   siteURL: String
   clearSiteURL: Boolean
-  defaultMailConnID: String
-  clearDefaultMailConnID: Boolean
-  mailLayoutTemplID: String
-  clearMailLayoutTemplID: Boolean
-  wsapceInviteTemplID: String
-  clearWsapceInviteTemplID: Boolean
-  wsapceSuccessTemplID: String
-  clearWsapceSuccessTemplID: Boolean
-  authFpTemplID: String
-  clearAuthFpTemplID: Boolean
-  authWelcomeEmailTemplID: String
-  clearAuthWelcomeEmailTemplID: Boolean
-  authVerificationTemplID: String
-  clearAuthVerificationTemplID: Boolean
   authEmailVerify: String
   clearAuthEmailVerify: Boolean
   adminUserID: String
   clearAdminUserID: Boolean
+  defaultMailConnID: ID
+  clearDefaultMailConn: Boolean
+  mailLayoutTemplID: ID
+  clearMailLayoutTempl: Boolean
+  wsapceInviteTemplID: ID
+  clearWsapceInviteTempl: Boolean
+  wsapceSuccessTemplID: ID
+  clearWsapceSuccessTempl: Boolean
+  authFpTemplID: ID
+  clearAuthFpTempl: Boolean
+  authWelcomeEmailTemplID: ID
+  clearAuthWelcomeEmailTempl: Boolean
+  authVerificationTemplID: ID
+  clearAuthVerificationTempl: Boolean
+}
+"""
+UpdateMailConnInput is used for update MailConn object.
+Input was generated by ent.
+"""
+input UpdateMailConnInput {
+  updatedAt: Time
+  clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
+  name: String
+  clearName: Boolean
+  host: String
+  clearHost: Boolean
+  port: Int
+  clearPort: Boolean
+  username: String
+  clearUsername: Boolean
+  password: String
+  clearPassword: Boolean
+  encryption: Int
+  clearEncryption: Boolean
+  fromName: String
+  clearFromName: Boolean
+  fromEmail: String
+  clearFromEmail: Boolean
+  status: Boolean
+  clearStatus: Boolean
 }
 """
 UpdateOauthConnectionInput is used for update OauthConnection object.
@@ -5224,6 +6543,8 @@ Input was generated by ent.
 input UpdateOauthConnectionInput {
   updatedAt: Time
   clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
   name: String
   clearName: Boolean
   provider: String
@@ -5250,6 +6571,8 @@ Input was generated by ent.
 input UpdatePostCategoryInput {
   updatedAt: Time
   clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
   name: String
   clearName: Boolean
   slug: String
@@ -5279,6 +6602,8 @@ Input was generated by ent.
 input UpdatePostInput {
   updatedAt: Time
   clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
   name: String
   clearName: Boolean
   slug: String
@@ -5311,6 +6636,8 @@ Input was generated by ent.
 input UpdatePostStatusInput {
   updatedAt: Time
   clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
   name: String
   clearName: Boolean
   slug: String
@@ -5327,6 +6654,8 @@ Input was generated by ent.
 input UpdatePostTypeInput {
   updatedAt: Time
   clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
   name: String
   clearName: Boolean
   slug: String
@@ -5347,12 +6676,32 @@ input UpdatePostTypeInput {
   clearMetaRobots: Boolean
 }
 """
+UpdateTemplInput is used for update Templ object.
+Input was generated by ent.
+"""
+input UpdateTemplInput {
+  updatedAt: Time
+  clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
+  name: String
+  clearName: Boolean
+  body: String
+  clearBody: Boolean
+  compiled: String
+  clearCompiled: Boolean
+  status: Boolean
+  clearStatus: Boolean
+}
+"""
 UpdateTodoInput is used for update Todo object.
 Input was generated by ent.
 """
 input UpdateTodoInput {
   updatedAt: Time
   clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
   text: String
   status: TodoStatus
   priority: Int
@@ -5369,6 +6718,8 @@ Input was generated by ent.
 input UpdateUserInput {
   updatedAt: Time
   clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
   email: String
   phone: String
   clearPhone: Boolean
@@ -5408,6 +6759,8 @@ Input was generated by ent.
 input UpdateWorkspaceInput {
   updatedAt: Time
   clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
   name: String
   clearName: Boolean
   isPersonal: Boolean
@@ -5428,6 +6781,8 @@ Input was generated by ent.
 input UpdateWorkspaceInviteInput {
   updatedAt: Time
   clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
   email: String
   clearEmail: Boolean
   role: String
@@ -5442,6 +6797,8 @@ Input was generated by ent.
 input UpdateWorkspaceUserInput {
   updatedAt: Time
   clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
   role: String
   clearRole: Boolean
   userID: ID
@@ -5451,6 +6808,7 @@ type User implements Node {
   id: ID!
   createdAt: Time
   updatedAt: Time
+  appID: String
   email: String!
   phone: String
   firstName: String
@@ -5564,6 +6922,24 @@ input UserWhereInput {
   updatedAtLTE: Time
   updatedAtIsNil: Boolean
   updatedAtNotNil: Boolean
+  """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
   """
   email field predicates
   """
@@ -5742,6 +7118,7 @@ type Workspace implements Node {
   id: ID!
   createdAt: Time
   updatedAt: Time
+  appID: String
   name: String
   isPersonal: Boolean
   userID: String
@@ -5783,6 +7160,7 @@ type WorkspaceInvite implements Node {
   id: ID!
   createdAt: Time
   updatedAt: Time
+  appID: String
   workspaceID: ID
   email: String
   role: String
@@ -5885,6 +7263,24 @@ input WorkspaceInviteWhereInput {
   updatedAtIsNil: Boolean
   updatedAtNotNil: Boolean
   """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
+  """
   workspace_id field predicates
   """
   workspaceID: ID
@@ -5968,6 +7364,7 @@ type WorkspaceUser implements Node {
   id: ID!
   createdAt: Time
   updatedAt: Time
+  appID: String
   workspaceID: ID!
   userID: ID!
   role: String
@@ -6073,6 +7470,24 @@ input WorkspaceUserWhereInput {
   updatedAtIsNil: Boolean
   updatedAtNotNil: Boolean
   """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
+  """
   role field predicates
   """
   role: String
@@ -6139,6 +7554,24 @@ input WorkspaceWhereInput {
   updatedAtIsNil: Boolean
   updatedAtNotNil: Boolean
   """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
+  """
   name field predicates
   """
   name: String
@@ -6199,10 +7632,13 @@ input WorkspaceWhereInput {
 }
 `, BuiltIn: false},
 	{Name: "../other.graphql", Input: `extend type Mutation {
-  createOauthConnection(input: CreateOauthConnectionInput!): OauthConnection! @canAdmin
-  updateOauthConnection(id: ID!, input: UpdateOauthConnectionInput!): OauthConnection! @canAdmin
+  createOauthConnection(input: CreateOauthConnectionInput!): OauthConnection! @canApp
+  updateOauthConnection(id: ID!, input: UpdateOauthConnectionInput!): OauthConnection! @canApp
+  createMailConn(input: CreateMailConnInput!): MailConn! @canApp
+  updateMailConn(id: ID!, input: UpdateMailConnInput!): MailConn! @canApp
+  createTempl(input: CreateTemplInput!): Templ! @canApp
+  updateTempl(id: ID!, input: UpdateTemplInput!): Templ! @canApp
 }
-
 `, BuiltIn: false},
 	{Name: "../schema.graphql", Input: `directive @canAdmin on FIELD_DEFINITION
 directive @canApp on FIELD_DEFINITION
