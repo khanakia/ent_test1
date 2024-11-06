@@ -6,6 +6,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"gqlsa/graph/model"
 	"saas/gen/ent"
 	"sync/atomic"
 
@@ -40,11 +41,22 @@ type ResolverRoot interface {
 
 type DirectiveRoot struct {
 	CanAdmin func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
+	CanApp   func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
 }
 
 type ComplexityRoot struct {
+	AdminUser struct {
+		Company   func(childComplexity int) int
+		Email     func(childComplexity int) int
+		FirstName func(childComplexity int) int
+		ID        func(childComplexity int) int
+		LastName  func(childComplexity int) int
+		Phone     func(childComplexity int) int
+	}
+
 	App struct {
 		Address                 func(childComplexity int) int
+		AdminUserID             func(childComplexity int) int
 		AuthEmailVerify         func(childComplexity int) int
 		AuthFpTemplID           func(childComplexity int) int
 		AuthVerificationTemplID func(childComplexity int) int
@@ -75,7 +87,13 @@ type ComplexityRoot struct {
 		Node   func(childComplexity int) int
 	}
 
+	LoginResponse struct {
+		Me    func(childComplexity int) int
+		Token func(childComplexity int) int
+	}
+
 	Mutation struct {
+		AdminAuthLogin        func(childComplexity int, input model.LoginInput) int
 		CreateOauthConnection func(childComplexity int, input ent.CreateOauthConnectionInput) int
 		CreatePost            func(childComplexity int, input ent.CreatePostInput) int
 		CreatePostCategory    func(childComplexity int, input ent.CreatePostCategoryInput) int
@@ -408,12 +426,61 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 	_ = ec
 	switch typeName + "." + field {
 
+	case "AdminUser.company":
+		if e.complexity.AdminUser.Company == nil {
+			break
+		}
+
+		return e.complexity.AdminUser.Company(childComplexity), true
+
+	case "AdminUser.email":
+		if e.complexity.AdminUser.Email == nil {
+			break
+		}
+
+		return e.complexity.AdminUser.Email(childComplexity), true
+
+	case "AdminUser.firstName":
+		if e.complexity.AdminUser.FirstName == nil {
+			break
+		}
+
+		return e.complexity.AdminUser.FirstName(childComplexity), true
+
+	case "AdminUser.id":
+		if e.complexity.AdminUser.ID == nil {
+			break
+		}
+
+		return e.complexity.AdminUser.ID(childComplexity), true
+
+	case "AdminUser.lastName":
+		if e.complexity.AdminUser.LastName == nil {
+			break
+		}
+
+		return e.complexity.AdminUser.LastName(childComplexity), true
+
+	case "AdminUser.phone":
+		if e.complexity.AdminUser.Phone == nil {
+			break
+		}
+
+		return e.complexity.AdminUser.Phone(childComplexity), true
+
 	case "App.address":
 		if e.complexity.App.Address == nil {
 			break
 		}
 
 		return e.complexity.App.Address(childComplexity), true
+
+	case "App.adminUserID":
+		if e.complexity.App.AdminUserID == nil {
+			break
+		}
+
+		return e.complexity.App.AdminUserID(childComplexity), true
 
 	case "App.authEmailVerify":
 		if e.complexity.App.AuthEmailVerify == nil {
@@ -568,6 +635,32 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.AppEdge.Node(childComplexity), true
+
+	case "LoginResponse.me":
+		if e.complexity.LoginResponse.Me == nil {
+			break
+		}
+
+		return e.complexity.LoginResponse.Me(childComplexity), true
+
+	case "LoginResponse.token":
+		if e.complexity.LoginResponse.Token == nil {
+			break
+		}
+
+		return e.complexity.LoginResponse.Token(childComplexity), true
+
+	case "Mutation.adminAuthLogin":
+		if e.complexity.Mutation.AdminAuthLogin == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_adminAuthLogin_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AdminAuthLogin(childComplexity, args["input"].(model.LoginInput)), true
 
 	case "Mutation.createOauthConnection":
 		if e.complexity.Mutation.CreateOauthConnection == nil {
@@ -2170,6 +2263,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreateWorkspaceInput,
 		ec.unmarshalInputCreateWorkspaceInviteInput,
 		ec.unmarshalInputCreateWorkspaceUserInput,
+		ec.unmarshalInputLoginInput,
 		ec.unmarshalInputOauthConnectionOrder,
 		ec.unmarshalInputOauthConnectionWhereInput,
 		ec.unmarshalInputPostCategoryOrder,
@@ -2300,6 +2394,29 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
+	{Name: "../adminauth.graphql", Input: `type AdminUser {
+  id: String!
+  email: String!
+  firstName: String
+  lastName: String
+  company: String
+  phone: String
+}
+
+type LoginResponse {
+  token: String!
+  me: AdminUser!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+extend type Mutation {
+  adminAuthLogin(input: LoginInput!): LoginResponse!
+}
+`, BuiltIn: false},
 	{Name: "../cms.graphql", Input: `extend type Mutation {
   createPostType(input: CreatePostTypeInput!): PostType! @canAdmin
   updatePostType(id: ID!, input: UpdatePostTypeInput!): PostType! @canAdmin
@@ -2333,6 +2450,7 @@ type App implements Node {
   authWelcomeEmailTemplID: String
   authVerificationTemplID: String
   authEmailVerify: String
+  adminUserID: String
 }
 """
 A connection to a list of items.
@@ -2691,6 +2809,24 @@ input AppWhereInput {
   authEmailVerifyNotNil: Boolean
   authEmailVerifyEqualFold: String
   authEmailVerifyContainsFold: String
+  """
+  admin_user_id field predicates
+  """
+  adminUserID: String
+  adminUserIDNEQ: String
+  adminUserIDIn: [String!]
+  adminUserIDNotIn: [String!]
+  adminUserIDGT: String
+  adminUserIDGTE: String
+  adminUserIDLT: String
+  adminUserIDLTE: String
+  adminUserIDContains: String
+  adminUserIDHasPrefix: String
+  adminUserIDHasSuffix: String
+  adminUserIDIsNil: Boolean
+  adminUserIDNotNil: Boolean
+  adminUserIDEqualFold: String
+  adminUserIDContainsFold: String
 }
 """
 CreateAppInput is used for create App object.
@@ -2714,6 +2850,7 @@ input CreateAppInput {
   authWelcomeEmailTemplID: String
   authVerificationTemplID: String
   authEmailVerify: String
+  adminUserID: String
 }
 """
 CreateOauthConnectionInput is used for create OauthConnection object.
@@ -4596,7 +4733,7 @@ type Query {
     Filtering options for OauthConnections returned from the connection.
     """
     where: OauthConnectionWhereInput
-  ): OauthConnectionConnection! @canAdmin
+  ): OauthConnectionConnection! @canApp
   posts(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -4627,7 +4764,7 @@ type Query {
     Filtering options for Posts returned from the connection.
     """
     where: PostWhereInput
-  ): PostConnection! @canAdmin
+  ): PostConnection! @canApp
   postCategories(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -4658,7 +4795,7 @@ type Query {
     Filtering options for PostCategories returned from the connection.
     """
     where: PostCategoryWhereInput
-  ): PostCategoryConnection! @canAdmin
+  ): PostCategoryConnection! @canApp
   postStatuses(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -4689,7 +4826,7 @@ type Query {
     Filtering options for PostStatusSlice returned from the connection.
     """
     where: PostStatusWhereInput
-  ): PostStatusConnection! @canAdmin
+  ): PostStatusConnection! @canApp
   postTypes(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -4720,7 +4857,7 @@ type Query {
     Filtering options for PostTypes returned from the connection.
     """
     where: PostTypeWhereInput
-  ): PostTypeConnection! @canAdmin
+  ): PostTypeConnection! @canApp
   todos(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -4782,7 +4919,7 @@ type Query {
     Filtering options for Users returned from the connection.
     """
     where: UserWhereInput
-  ): UserConnection! @canAdmin
+  ): UserConnection! @canApp
   workspaces(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -4813,7 +4950,7 @@ type Query {
     Filtering options for Workspaces returned from the connection.
     """
     where: WorkspaceWhereInput
-  ): WorkspaceConnection! @canAdmin
+  ): WorkspaceConnection! @canApp
   workspaceInvites(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -4844,7 +4981,7 @@ type Query {
     Filtering options for WorkspaceInvites returned from the connection.
     """
     where: WorkspaceInviteWhereInput
-  ): WorkspaceInviteConnection! @canAdmin
+  ): WorkspaceInviteConnection! @canApp
   workspaceUsers(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -4875,7 +5012,7 @@ type Query {
     Filtering options for WorkspaceUsers returned from the connection.
     """
     where: WorkspaceUserWhereInput
-  ): WorkspaceUserConnection! @canAdmin
+  ): WorkspaceUserConnection! @canApp
 }
 type Todo implements Node {
   id: ID!
@@ -5077,6 +5214,8 @@ input UpdateAppInput {
   clearAuthVerificationTemplID: Boolean
   authEmailVerify: String
   clearAuthEmailVerify: Boolean
+  adminUserID: String
+  clearAdminUserID: Boolean
 }
 """
 UpdateOauthConnectionInput is used for update OauthConnection object.
@@ -6066,13 +6205,12 @@ input WorkspaceWhereInput {
 
 `, BuiltIn: false},
 	{Name: "../schema.graphql", Input: `directive @canAdmin on FIELD_DEFINITION
-
+directive @canApp on FIELD_DEFINITION
 
 scalar Time
 scalar Uint64
 scalar Map
 scalar JSON
-
 
 type Student {
   name: String!

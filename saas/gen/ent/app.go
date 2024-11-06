@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"saas/gen/ent/app"
 	"strings"
+	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -16,6 +17,10 @@ type App struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID string `json:"id,omitempty"`
+	// CreatedAt holds the value of the "created_at" field.
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// UpdatedAt holds the value of the "updated_at" field.
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Copyright holds the value of the "copyright" field.
@@ -50,7 +55,9 @@ type App struct {
 	AuthVerificationTemplID string `json:"auth_verification_templ_id,omitempty"`
 	// AuthEmailVerify holds the value of the "auth_email_verify" field.
 	AuthEmailVerify string `json:"auth_email_verify,omitempty"`
-	selectValues    sql.SelectValues
+	// AdminUserID holds the value of the "admin_user_id" field.
+	AdminUserID  string `json:"admin_user_id,omitempty"`
+	selectValues sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -58,8 +65,10 @@ func (*App) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case app.FieldID, app.FieldName, app.FieldCopyright, app.FieldEmail, app.FieldAddress, app.FieldSocialTw, app.FieldSocialFb, app.FieldSocialIn, app.FieldLogoURL, app.FieldSiteURL, app.FieldDefaultMailConnID, app.FieldMailLayoutTemplID, app.FieldWsapceInviteTemplID, app.FieldWsapceSuccessTemplID, app.FieldAuthFpTemplID, app.FieldAuthWelcomeEmailTemplID, app.FieldAuthVerificationTemplID, app.FieldAuthEmailVerify:
+		case app.FieldID, app.FieldName, app.FieldCopyright, app.FieldEmail, app.FieldAddress, app.FieldSocialTw, app.FieldSocialFb, app.FieldSocialIn, app.FieldLogoURL, app.FieldSiteURL, app.FieldDefaultMailConnID, app.FieldMailLayoutTemplID, app.FieldWsapceInviteTemplID, app.FieldWsapceSuccessTemplID, app.FieldAuthFpTemplID, app.FieldAuthWelcomeEmailTemplID, app.FieldAuthVerificationTemplID, app.FieldAuthEmailVerify, app.FieldAdminUserID:
 			values[i] = new(sql.NullString)
+		case app.FieldCreatedAt, app.FieldUpdatedAt:
+			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -80,6 +89,18 @@ func (a *App) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", values[i])
 			} else if value.Valid {
 				a.ID = value.String
+			}
+		case app.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				a.CreatedAt = value.Time
+			}
+		case app.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				a.UpdatedAt = value.Time
 			}
 		case app.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -183,6 +204,12 @@ func (a *App) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				a.AuthEmailVerify = value.String
 			}
+		case app.FieldAdminUserID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field admin_user_id", values[i])
+			} else if value.Valid {
+				a.AdminUserID = value.String
+			}
 		default:
 			a.selectValues.Set(columns[i], values[i])
 		}
@@ -219,6 +246,12 @@ func (a *App) String() string {
 	var builder strings.Builder
 	builder.WriteString("App(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", a.ID))
+	builder.WriteString("created_at=")
+	builder.WriteString(a.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(a.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(a.Name)
 	builder.WriteString(", ")
@@ -269,6 +302,9 @@ func (a *App) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("auth_email_verify=")
 	builder.WriteString(a.AuthEmailVerify)
+	builder.WriteString(", ")
+	builder.WriteString("admin_user_id=")
+	builder.WriteString(a.AdminUserID)
 	builder.WriteByte(')')
 	return builder.String()
 }

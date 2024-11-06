@@ -1487,6 +1487,47 @@ func (ec *executionContext) fieldContext_App_authEmailVerify(_ context.Context, 
 	return fc, nil
 }
 
+func (ec *executionContext) _App_adminUserID(ctx context.Context, field graphql.CollectedField, obj *ent.App) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_App_adminUserID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AdminUserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_App_adminUserID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "App",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _AppConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.AppConnection) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_AppConnection_edges(ctx, field)
 	if err != nil {
@@ -1704,6 +1745,8 @@ func (ec *executionContext) fieldContext_AppEdge_node(_ context.Context, field g
 				return ec.fieldContext_App_authVerificationTemplID(ctx, field)
 			case "authEmailVerify":
 				return ec.fieldContext_App_authEmailVerify(ctx, field)
+			case "adminUserID":
+				return ec.fieldContext_App_adminUserID(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type App", field.Name)
 		},
@@ -6923,10 +6966,10 @@ func (ec *executionContext) _Query_oauthConnections(ctx context.Context, field g
 			return ec.resolvers.Query().OauthConnections(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["orderBy"].([]*ent.OauthConnectionOrder), fc.Args["where"].(*ent.OauthConnectionWhereInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.CanAdmin == nil {
-				return nil, errors.New("directive canAdmin is not implemented")
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
 			}
-			return ec.directives.CanAdmin(ctx, nil, directive0)
+			return ec.directives.CanApp(ctx, nil, directive0)
 		}
 
 		tmp, err := directive1(rctx)
@@ -7006,10 +7049,10 @@ func (ec *executionContext) _Query_posts(ctx context.Context, field graphql.Coll
 			return ec.resolvers.Query().Posts(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["orderBy"].([]*ent.PostOrder), fc.Args["where"].(*ent.PostWhereInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.CanAdmin == nil {
-				return nil, errors.New("directive canAdmin is not implemented")
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
 			}
-			return ec.directives.CanAdmin(ctx, nil, directive0)
+			return ec.directives.CanApp(ctx, nil, directive0)
 		}
 
 		tmp, err := directive1(rctx)
@@ -7089,10 +7132,10 @@ func (ec *executionContext) _Query_postCategories(ctx context.Context, field gra
 			return ec.resolvers.Query().PostCategories(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["orderBy"].([]*ent.PostCategoryOrder), fc.Args["where"].(*ent.PostCategoryWhereInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.CanAdmin == nil {
-				return nil, errors.New("directive canAdmin is not implemented")
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
 			}
-			return ec.directives.CanAdmin(ctx, nil, directive0)
+			return ec.directives.CanApp(ctx, nil, directive0)
 		}
 
 		tmp, err := directive1(rctx)
@@ -7172,10 +7215,10 @@ func (ec *executionContext) _Query_postStatuses(ctx context.Context, field graph
 			return ec.resolvers.Query().PostStatuses(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["orderBy"].([]*ent.PostStatusOrder), fc.Args["where"].(*ent.PostStatusWhereInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.CanAdmin == nil {
-				return nil, errors.New("directive canAdmin is not implemented")
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
 			}
-			return ec.directives.CanAdmin(ctx, nil, directive0)
+			return ec.directives.CanApp(ctx, nil, directive0)
 		}
 
 		tmp, err := directive1(rctx)
@@ -7255,10 +7298,10 @@ func (ec *executionContext) _Query_postTypes(ctx context.Context, field graphql.
 			return ec.resolvers.Query().PostTypes(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["orderBy"].([]*ent.PostTypeOrder), fc.Args["where"].(*ent.PostTypeWhereInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.CanAdmin == nil {
-				return nil, errors.New("directive canAdmin is not implemented")
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
 			}
-			return ec.directives.CanAdmin(ctx, nil, directive0)
+			return ec.directives.CanApp(ctx, nil, directive0)
 		}
 
 		tmp, err := directive1(rctx)
@@ -7401,10 +7444,10 @@ func (ec *executionContext) _Query_users(ctx context.Context, field graphql.Coll
 			return ec.resolvers.Query().Users(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["orderBy"].([]*ent.UserOrder), fc.Args["where"].(*ent.UserWhereInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.CanAdmin == nil {
-				return nil, errors.New("directive canAdmin is not implemented")
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
 			}
-			return ec.directives.CanAdmin(ctx, nil, directive0)
+			return ec.directives.CanApp(ctx, nil, directive0)
 		}
 
 		tmp, err := directive1(rctx)
@@ -7484,10 +7527,10 @@ func (ec *executionContext) _Query_workspaces(ctx context.Context, field graphql
 			return ec.resolvers.Query().Workspaces(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["orderBy"].([]*ent.WorkspaceOrder), fc.Args["where"].(*ent.WorkspaceWhereInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.CanAdmin == nil {
-				return nil, errors.New("directive canAdmin is not implemented")
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
 			}
-			return ec.directives.CanAdmin(ctx, nil, directive0)
+			return ec.directives.CanApp(ctx, nil, directive0)
 		}
 
 		tmp, err := directive1(rctx)
@@ -7567,10 +7610,10 @@ func (ec *executionContext) _Query_workspaceInvites(ctx context.Context, field g
 			return ec.resolvers.Query().WorkspaceInvites(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["orderBy"].([]*ent.WorkspaceInviteOrder), fc.Args["where"].(*ent.WorkspaceInviteWhereInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.CanAdmin == nil {
-				return nil, errors.New("directive canAdmin is not implemented")
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
 			}
-			return ec.directives.CanAdmin(ctx, nil, directive0)
+			return ec.directives.CanApp(ctx, nil, directive0)
 		}
 
 		tmp, err := directive1(rctx)
@@ -7650,10 +7693,10 @@ func (ec *executionContext) _Query_workspaceUsers(ctx context.Context, field gra
 			return ec.resolvers.Query().WorkspaceUsers(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["orderBy"].([]*ent.WorkspaceUserOrder), fc.Args["where"].(*ent.WorkspaceUserWhereInput))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.CanAdmin == nil {
-				return nil, errors.New("directive canAdmin is not implemented")
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
 			}
-			return ec.directives.CanAdmin(ctx, nil, directive0)
+			return ec.directives.CanApp(ctx, nil, directive0)
 		}
 
 		tmp, err := directive1(rctx)
@@ -11378,7 +11421,7 @@ func (ec *executionContext) unmarshalInputAppWhereInput(ctx context.Context, obj
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameIsNil", "nameNotNil", "nameEqualFold", "nameContainsFold", "copyright", "copyrightNEQ", "copyrightIn", "copyrightNotIn", "copyrightGT", "copyrightGTE", "copyrightLT", "copyrightLTE", "copyrightContains", "copyrightHasPrefix", "copyrightHasSuffix", "copyrightIsNil", "copyrightNotNil", "copyrightEqualFold", "copyrightContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailIsNil", "emailNotNil", "emailEqualFold", "emailContainsFold", "address", "addressNEQ", "addressIn", "addressNotIn", "addressGT", "addressGTE", "addressLT", "addressLTE", "addressContains", "addressHasPrefix", "addressHasSuffix", "addressIsNil", "addressNotNil", "addressEqualFold", "addressContainsFold", "socialTw", "socialTwNEQ", "socialTwIn", "socialTwNotIn", "socialTwGT", "socialTwGTE", "socialTwLT", "socialTwLTE", "socialTwContains", "socialTwHasPrefix", "socialTwHasSuffix", "socialTwIsNil", "socialTwNotNil", "socialTwEqualFold", "socialTwContainsFold", "socialFb", "socialFbNEQ", "socialFbIn", "socialFbNotIn", "socialFbGT", "socialFbGTE", "socialFbLT", "socialFbLTE", "socialFbContains", "socialFbHasPrefix", "socialFbHasSuffix", "socialFbIsNil", "socialFbNotNil", "socialFbEqualFold", "socialFbContainsFold", "socialIn", "socialInNEQ", "socialInIn", "socialInNotIn", "socialInGT", "socialInGTE", "socialInLT", "socialInLTE", "socialInContains", "socialInHasPrefix", "socialInHasSuffix", "socialInIsNil", "socialInNotNil", "socialInEqualFold", "socialInContainsFold", "logoURL", "logoURLNEQ", "logoURLIn", "logoURLNotIn", "logoURLGT", "logoURLGTE", "logoURLLT", "logoURLLTE", "logoURLContains", "logoURLHasPrefix", "logoURLHasSuffix", "logoURLIsNil", "logoURLNotNil", "logoURLEqualFold", "logoURLContainsFold", "siteURL", "siteURLNEQ", "siteURLIn", "siteURLNotIn", "siteURLGT", "siteURLGTE", "siteURLLT", "siteURLLTE", "siteURLContains", "siteURLHasPrefix", "siteURLHasSuffix", "siteURLIsNil", "siteURLNotNil", "siteURLEqualFold", "siteURLContainsFold", "defaultMailConnID", "defaultMailConnIDNEQ", "defaultMailConnIDIn", "defaultMailConnIDNotIn", "defaultMailConnIDGT", "defaultMailConnIDGTE", "defaultMailConnIDLT", "defaultMailConnIDLTE", "defaultMailConnIDContains", "defaultMailConnIDHasPrefix", "defaultMailConnIDHasSuffix", "defaultMailConnIDIsNil", "defaultMailConnIDNotNil", "defaultMailConnIDEqualFold", "defaultMailConnIDContainsFold", "mailLayoutTemplID", "mailLayoutTemplIDNEQ", "mailLayoutTemplIDIn", "mailLayoutTemplIDNotIn", "mailLayoutTemplIDGT", "mailLayoutTemplIDGTE", "mailLayoutTemplIDLT", "mailLayoutTemplIDLTE", "mailLayoutTemplIDContains", "mailLayoutTemplIDHasPrefix", "mailLayoutTemplIDHasSuffix", "mailLayoutTemplIDIsNil", "mailLayoutTemplIDNotNil", "mailLayoutTemplIDEqualFold", "mailLayoutTemplIDContainsFold", "wsapceInviteTemplID", "wsapceInviteTemplIDNEQ", "wsapceInviteTemplIDIn", "wsapceInviteTemplIDNotIn", "wsapceInviteTemplIDGT", "wsapceInviteTemplIDGTE", "wsapceInviteTemplIDLT", "wsapceInviteTemplIDLTE", "wsapceInviteTemplIDContains", "wsapceInviteTemplIDHasPrefix", "wsapceInviteTemplIDHasSuffix", "wsapceInviteTemplIDIsNil", "wsapceInviteTemplIDNotNil", "wsapceInviteTemplIDEqualFold", "wsapceInviteTemplIDContainsFold", "wsapceSuccessTemplID", "wsapceSuccessTemplIDNEQ", "wsapceSuccessTemplIDIn", "wsapceSuccessTemplIDNotIn", "wsapceSuccessTemplIDGT", "wsapceSuccessTemplIDGTE", "wsapceSuccessTemplIDLT", "wsapceSuccessTemplIDLTE", "wsapceSuccessTemplIDContains", "wsapceSuccessTemplIDHasPrefix", "wsapceSuccessTemplIDHasSuffix", "wsapceSuccessTemplIDIsNil", "wsapceSuccessTemplIDNotNil", "wsapceSuccessTemplIDEqualFold", "wsapceSuccessTemplIDContainsFold", "authFpTemplID", "authFpTemplIDNEQ", "authFpTemplIDIn", "authFpTemplIDNotIn", "authFpTemplIDGT", "authFpTemplIDGTE", "authFpTemplIDLT", "authFpTemplIDLTE", "authFpTemplIDContains", "authFpTemplIDHasPrefix", "authFpTemplIDHasSuffix", "authFpTemplIDIsNil", "authFpTemplIDNotNil", "authFpTemplIDEqualFold", "authFpTemplIDContainsFold", "authWelcomeEmailTemplID", "authWelcomeEmailTemplIDNEQ", "authWelcomeEmailTemplIDIn", "authWelcomeEmailTemplIDNotIn", "authWelcomeEmailTemplIDGT", "authWelcomeEmailTemplIDGTE", "authWelcomeEmailTemplIDLT", "authWelcomeEmailTemplIDLTE", "authWelcomeEmailTemplIDContains", "authWelcomeEmailTemplIDHasPrefix", "authWelcomeEmailTemplIDHasSuffix", "authWelcomeEmailTemplIDIsNil", "authWelcomeEmailTemplIDNotNil", "authWelcomeEmailTemplIDEqualFold", "authWelcomeEmailTemplIDContainsFold", "authVerificationTemplID", "authVerificationTemplIDNEQ", "authVerificationTemplIDIn", "authVerificationTemplIDNotIn", "authVerificationTemplIDGT", "authVerificationTemplIDGTE", "authVerificationTemplIDLT", "authVerificationTemplIDLTE", "authVerificationTemplIDContains", "authVerificationTemplIDHasPrefix", "authVerificationTemplIDHasSuffix", "authVerificationTemplIDIsNil", "authVerificationTemplIDNotNil", "authVerificationTemplIDEqualFold", "authVerificationTemplIDContainsFold", "authEmailVerify", "authEmailVerifyNEQ", "authEmailVerifyIn", "authEmailVerifyNotIn", "authEmailVerifyGT", "authEmailVerifyGTE", "authEmailVerifyLT", "authEmailVerifyLTE", "authEmailVerifyContains", "authEmailVerifyHasPrefix", "authEmailVerifyHasSuffix", "authEmailVerifyIsNil", "authEmailVerifyNotNil", "authEmailVerifyEqualFold", "authEmailVerifyContainsFold"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameIsNil", "nameNotNil", "nameEqualFold", "nameContainsFold", "copyright", "copyrightNEQ", "copyrightIn", "copyrightNotIn", "copyrightGT", "copyrightGTE", "copyrightLT", "copyrightLTE", "copyrightContains", "copyrightHasPrefix", "copyrightHasSuffix", "copyrightIsNil", "copyrightNotNil", "copyrightEqualFold", "copyrightContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailIsNil", "emailNotNil", "emailEqualFold", "emailContainsFold", "address", "addressNEQ", "addressIn", "addressNotIn", "addressGT", "addressGTE", "addressLT", "addressLTE", "addressContains", "addressHasPrefix", "addressHasSuffix", "addressIsNil", "addressNotNil", "addressEqualFold", "addressContainsFold", "socialTw", "socialTwNEQ", "socialTwIn", "socialTwNotIn", "socialTwGT", "socialTwGTE", "socialTwLT", "socialTwLTE", "socialTwContains", "socialTwHasPrefix", "socialTwHasSuffix", "socialTwIsNil", "socialTwNotNil", "socialTwEqualFold", "socialTwContainsFold", "socialFb", "socialFbNEQ", "socialFbIn", "socialFbNotIn", "socialFbGT", "socialFbGTE", "socialFbLT", "socialFbLTE", "socialFbContains", "socialFbHasPrefix", "socialFbHasSuffix", "socialFbIsNil", "socialFbNotNil", "socialFbEqualFold", "socialFbContainsFold", "socialIn", "socialInNEQ", "socialInIn", "socialInNotIn", "socialInGT", "socialInGTE", "socialInLT", "socialInLTE", "socialInContains", "socialInHasPrefix", "socialInHasSuffix", "socialInIsNil", "socialInNotNil", "socialInEqualFold", "socialInContainsFold", "logoURL", "logoURLNEQ", "logoURLIn", "logoURLNotIn", "logoURLGT", "logoURLGTE", "logoURLLT", "logoURLLTE", "logoURLContains", "logoURLHasPrefix", "logoURLHasSuffix", "logoURLIsNil", "logoURLNotNil", "logoURLEqualFold", "logoURLContainsFold", "siteURL", "siteURLNEQ", "siteURLIn", "siteURLNotIn", "siteURLGT", "siteURLGTE", "siteURLLT", "siteURLLTE", "siteURLContains", "siteURLHasPrefix", "siteURLHasSuffix", "siteURLIsNil", "siteURLNotNil", "siteURLEqualFold", "siteURLContainsFold", "defaultMailConnID", "defaultMailConnIDNEQ", "defaultMailConnIDIn", "defaultMailConnIDNotIn", "defaultMailConnIDGT", "defaultMailConnIDGTE", "defaultMailConnIDLT", "defaultMailConnIDLTE", "defaultMailConnIDContains", "defaultMailConnIDHasPrefix", "defaultMailConnIDHasSuffix", "defaultMailConnIDIsNil", "defaultMailConnIDNotNil", "defaultMailConnIDEqualFold", "defaultMailConnIDContainsFold", "mailLayoutTemplID", "mailLayoutTemplIDNEQ", "mailLayoutTemplIDIn", "mailLayoutTemplIDNotIn", "mailLayoutTemplIDGT", "mailLayoutTemplIDGTE", "mailLayoutTemplIDLT", "mailLayoutTemplIDLTE", "mailLayoutTemplIDContains", "mailLayoutTemplIDHasPrefix", "mailLayoutTemplIDHasSuffix", "mailLayoutTemplIDIsNil", "mailLayoutTemplIDNotNil", "mailLayoutTemplIDEqualFold", "mailLayoutTemplIDContainsFold", "wsapceInviteTemplID", "wsapceInviteTemplIDNEQ", "wsapceInviteTemplIDIn", "wsapceInviteTemplIDNotIn", "wsapceInviteTemplIDGT", "wsapceInviteTemplIDGTE", "wsapceInviteTemplIDLT", "wsapceInviteTemplIDLTE", "wsapceInviteTemplIDContains", "wsapceInviteTemplIDHasPrefix", "wsapceInviteTemplIDHasSuffix", "wsapceInviteTemplIDIsNil", "wsapceInviteTemplIDNotNil", "wsapceInviteTemplIDEqualFold", "wsapceInviteTemplIDContainsFold", "wsapceSuccessTemplID", "wsapceSuccessTemplIDNEQ", "wsapceSuccessTemplIDIn", "wsapceSuccessTemplIDNotIn", "wsapceSuccessTemplIDGT", "wsapceSuccessTemplIDGTE", "wsapceSuccessTemplIDLT", "wsapceSuccessTemplIDLTE", "wsapceSuccessTemplIDContains", "wsapceSuccessTemplIDHasPrefix", "wsapceSuccessTemplIDHasSuffix", "wsapceSuccessTemplIDIsNil", "wsapceSuccessTemplIDNotNil", "wsapceSuccessTemplIDEqualFold", "wsapceSuccessTemplIDContainsFold", "authFpTemplID", "authFpTemplIDNEQ", "authFpTemplIDIn", "authFpTemplIDNotIn", "authFpTemplIDGT", "authFpTemplIDGTE", "authFpTemplIDLT", "authFpTemplIDLTE", "authFpTemplIDContains", "authFpTemplIDHasPrefix", "authFpTemplIDHasSuffix", "authFpTemplIDIsNil", "authFpTemplIDNotNil", "authFpTemplIDEqualFold", "authFpTemplIDContainsFold", "authWelcomeEmailTemplID", "authWelcomeEmailTemplIDNEQ", "authWelcomeEmailTemplIDIn", "authWelcomeEmailTemplIDNotIn", "authWelcomeEmailTemplIDGT", "authWelcomeEmailTemplIDGTE", "authWelcomeEmailTemplIDLT", "authWelcomeEmailTemplIDLTE", "authWelcomeEmailTemplIDContains", "authWelcomeEmailTemplIDHasPrefix", "authWelcomeEmailTemplIDHasSuffix", "authWelcomeEmailTemplIDIsNil", "authWelcomeEmailTemplIDNotNil", "authWelcomeEmailTemplIDEqualFold", "authWelcomeEmailTemplIDContainsFold", "authVerificationTemplID", "authVerificationTemplIDNEQ", "authVerificationTemplIDIn", "authVerificationTemplIDNotIn", "authVerificationTemplIDGT", "authVerificationTemplIDGTE", "authVerificationTemplIDLT", "authVerificationTemplIDLTE", "authVerificationTemplIDContains", "authVerificationTemplIDHasPrefix", "authVerificationTemplIDHasSuffix", "authVerificationTemplIDIsNil", "authVerificationTemplIDNotNil", "authVerificationTemplIDEqualFold", "authVerificationTemplIDContainsFold", "authEmailVerify", "authEmailVerifyNEQ", "authEmailVerifyIn", "authEmailVerifyNotIn", "authEmailVerifyGT", "authEmailVerifyGTE", "authEmailVerifyLT", "authEmailVerifyLTE", "authEmailVerifyContains", "authEmailVerifyHasPrefix", "authEmailVerifyHasSuffix", "authEmailVerifyIsNil", "authEmailVerifyNotNil", "authEmailVerifyEqualFold", "authEmailVerifyContainsFold", "adminUserID", "adminUserIDNEQ", "adminUserIDIn", "adminUserIDNotIn", "adminUserIDGT", "adminUserIDGTE", "adminUserIDLT", "adminUserIDLTE", "adminUserIDContains", "adminUserIDHasPrefix", "adminUserIDHasSuffix", "adminUserIDIsNil", "adminUserIDNotNil", "adminUserIDEqualFold", "adminUserIDContainsFold"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -13261,6 +13304,111 @@ func (ec *executionContext) unmarshalInputAppWhereInput(ctx context.Context, obj
 				return it, err
 			}
 			it.AuthEmailVerifyContainsFold = data
+		case "adminUserID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("adminUserID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AdminUserID = data
+		case "adminUserIDNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("adminUserIDNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AdminUserIDNEQ = data
+		case "adminUserIDIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("adminUserIDIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AdminUserIDIn = data
+		case "adminUserIDNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("adminUserIDNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AdminUserIDNotIn = data
+		case "adminUserIDGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("adminUserIDGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AdminUserIDGT = data
+		case "adminUserIDGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("adminUserIDGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AdminUserIDGTE = data
+		case "adminUserIDLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("adminUserIDLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AdminUserIDLT = data
+		case "adminUserIDLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("adminUserIDLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AdminUserIDLTE = data
+		case "adminUserIDContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("adminUserIDContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AdminUserIDContains = data
+		case "adminUserIDHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("adminUserIDHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AdminUserIDHasPrefix = data
+		case "adminUserIDHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("adminUserIDHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AdminUserIDHasSuffix = data
+		case "adminUserIDIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("adminUserIDIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AdminUserIDIsNil = data
+		case "adminUserIDNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("adminUserIDNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AdminUserIDNotNil = data
+		case "adminUserIDEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("adminUserIDEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AdminUserIDEqualFold = data
+		case "adminUserIDContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("adminUserIDContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AdminUserIDContainsFold = data
 		}
 	}
 
@@ -13274,7 +13422,7 @@ func (ec *executionContext) unmarshalInputCreateAppInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "copyright", "email", "address", "socialTw", "socialFb", "socialIn", "logoURL", "siteURL", "defaultMailConnID", "mailLayoutTemplID", "wsapceInviteTemplID", "wsapceSuccessTemplID", "authFpTemplID", "authWelcomeEmailTemplID", "authVerificationTemplID", "authEmailVerify"}
+	fieldsInOrder := [...]string{"name", "copyright", "email", "address", "socialTw", "socialFb", "socialIn", "logoURL", "siteURL", "defaultMailConnID", "mailLayoutTemplID", "wsapceInviteTemplID", "wsapceSuccessTemplID", "authFpTemplID", "authWelcomeEmailTemplID", "authVerificationTemplID", "authEmailVerify", "adminUserID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -13400,6 +13548,13 @@ func (ec *executionContext) unmarshalInputCreateAppInput(ctx context.Context, ob
 				return it, err
 			}
 			it.AuthEmailVerify = data
+		case "adminUserID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("adminUserID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AdminUserID = data
 		}
 	}
 
@@ -21922,7 +22077,7 @@ func (ec *executionContext) unmarshalInputUpdateAppInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "clearName", "copyright", "clearCopyright", "email", "clearEmail", "address", "clearAddress", "socialTw", "clearSocialTw", "socialFb", "clearSocialFb", "socialIn", "clearSocialIn", "logoURL", "clearLogoURL", "siteURL", "clearSiteURL", "defaultMailConnID", "clearDefaultMailConnID", "mailLayoutTemplID", "clearMailLayoutTemplID", "wsapceInviteTemplID", "clearWsapceInviteTemplID", "wsapceSuccessTemplID", "clearWsapceSuccessTemplID", "authFpTemplID", "clearAuthFpTemplID", "authWelcomeEmailTemplID", "clearAuthWelcomeEmailTemplID", "authVerificationTemplID", "clearAuthVerificationTemplID", "authEmailVerify", "clearAuthEmailVerify"}
+	fieldsInOrder := [...]string{"name", "clearName", "copyright", "clearCopyright", "email", "clearEmail", "address", "clearAddress", "socialTw", "clearSocialTw", "socialFb", "clearSocialFb", "socialIn", "clearSocialIn", "logoURL", "clearLogoURL", "siteURL", "clearSiteURL", "defaultMailConnID", "clearDefaultMailConnID", "mailLayoutTemplID", "clearMailLayoutTemplID", "wsapceInviteTemplID", "clearWsapceInviteTemplID", "wsapceSuccessTemplID", "clearWsapceSuccessTemplID", "authFpTemplID", "clearAuthFpTemplID", "authWelcomeEmailTemplID", "clearAuthWelcomeEmailTemplID", "authVerificationTemplID", "clearAuthVerificationTemplID", "authEmailVerify", "clearAuthEmailVerify", "adminUserID", "clearAdminUserID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -22167,6 +22322,20 @@ func (ec *executionContext) unmarshalInputUpdateAppInput(ctx context.Context, ob
 				return it, err
 			}
 			it.ClearAuthEmailVerify = data
+		case "adminUserID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("adminUserID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AdminUserID = data
+		case "clearAdminUserID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearAdminUserID"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearAdminUserID = data
 		}
 	}
 
@@ -26498,6 +26667,8 @@ func (ec *executionContext) _App(ctx context.Context, sel ast.SelectionSet, obj 
 			out.Values[i] = ec._App_authVerificationTemplID(ctx, field, obj)
 		case "authEmailVerify":
 			out.Values[i] = ec._App_authEmailVerify(ctx, field, obj)
+		case "adminUserID":
+			out.Values[i] = ec._App_adminUserID(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

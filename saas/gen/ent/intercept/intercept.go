@@ -6,7 +6,7 @@ import (
 	"context"
 	"fmt"
 	"saas/gen/ent"
-	"saas/gen/ent/admin"
+	"saas/gen/ent/adminuser"
 	"saas/gen/ent/app"
 	"saas/gen/ent/kache"
 	"saas/gen/ent/keyvalue"
@@ -88,31 +88,31 @@ func (f TraverseFunc) Traverse(ctx context.Context, q ent.Query) error {
 	return f(ctx, query)
 }
 
-// The AdminFunc type is an adapter to allow the use of ordinary function as a Querier.
-type AdminFunc func(context.Context, *ent.AdminQuery) (ent.Value, error)
+// The AdminUserFunc type is an adapter to allow the use of ordinary function as a Querier.
+type AdminUserFunc func(context.Context, *ent.AdminUserQuery) (ent.Value, error)
 
 // Query calls f(ctx, q).
-func (f AdminFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
-	if q, ok := q.(*ent.AdminQuery); ok {
+func (f AdminUserFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.AdminUserQuery); ok {
 		return f(ctx, q)
 	}
-	return nil, fmt.Errorf("unexpected query type %T. expect *ent.AdminQuery", q)
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.AdminUserQuery", q)
 }
 
-// The TraverseAdmin type is an adapter to allow the use of ordinary function as Traverser.
-type TraverseAdmin func(context.Context, *ent.AdminQuery) error
+// The TraverseAdminUser type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseAdminUser func(context.Context, *ent.AdminUserQuery) error
 
 // Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
-func (f TraverseAdmin) Intercept(next ent.Querier) ent.Querier {
+func (f TraverseAdminUser) Intercept(next ent.Querier) ent.Querier {
 	return next
 }
 
 // Traverse calls f(ctx, q).
-func (f TraverseAdmin) Traverse(ctx context.Context, q ent.Query) error {
-	if q, ok := q.(*ent.AdminQuery); ok {
+func (f TraverseAdminUser) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AdminUserQuery); ok {
 		return f(ctx, q)
 	}
-	return fmt.Errorf("unexpected query type %T. expect *ent.AdminQuery", q)
+	return fmt.Errorf("unexpected query type %T. expect *ent.AdminUserQuery", q)
 }
 
 // The AppFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -658,8 +658,8 @@ func (f TraverseWorkspaceUser) Traverse(ctx context.Context, q ent.Query) error 
 // NewQuery returns the generic Query interface for the given typed query.
 func NewQuery(q ent.Query) (Query, error) {
 	switch q := q.(type) {
-	case *ent.AdminQuery:
-		return &query[*ent.AdminQuery, predicate.Admin, admin.OrderOption]{typ: ent.TypeAdmin, tq: q}, nil
+	case *ent.AdminUserQuery:
+		return &query[*ent.AdminUserQuery, predicate.AdminUser, adminuser.OrderOption]{typ: ent.TypeAdminUser, tq: q}, nil
 	case *ent.AppQuery:
 		return &query[*ent.AppQuery, predicate.App, app.OrderOption]{typ: ent.TypeApp, tq: q}, nil
 	case *ent.KacheQuery:

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"saas/gen/ent/app"
+	"time"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -20,6 +21,34 @@ type AppCreate struct {
 	mutation *AppMutation
 	hooks    []Hook
 	conflict []sql.ConflictOption
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (ac *AppCreate) SetCreatedAt(t time.Time) *AppCreate {
+	ac.mutation.SetCreatedAt(t)
+	return ac
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (ac *AppCreate) SetNillableCreatedAt(t *time.Time) *AppCreate {
+	if t != nil {
+		ac.SetCreatedAt(*t)
+	}
+	return ac
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (ac *AppCreate) SetUpdatedAt(t time.Time) *AppCreate {
+	ac.mutation.SetUpdatedAt(t)
+	return ac
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (ac *AppCreate) SetNillableUpdatedAt(t *time.Time) *AppCreate {
+	if t != nil {
+		ac.SetUpdatedAt(*t)
+	}
+	return ac
 }
 
 // SetName sets the "name" field.
@@ -260,6 +289,20 @@ func (ac *AppCreate) SetNillableAuthEmailVerify(s *string) *AppCreate {
 	return ac
 }
 
+// SetAdminUserID sets the "admin_user_id" field.
+func (ac *AppCreate) SetAdminUserID(s string) *AppCreate {
+	ac.mutation.SetAdminUserID(s)
+	return ac
+}
+
+// SetNillableAdminUserID sets the "admin_user_id" field if the given value is not nil.
+func (ac *AppCreate) SetNillableAdminUserID(s *string) *AppCreate {
+	if s != nil {
+		ac.SetAdminUserID(*s)
+	}
+	return ac
+}
+
 // SetID sets the "id" field.
 func (ac *AppCreate) SetID(s string) *AppCreate {
 	ac.mutation.SetID(s)
@@ -309,6 +352,14 @@ func (ac *AppCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (ac *AppCreate) defaults() {
+	if _, ok := ac.mutation.CreatedAt(); !ok {
+		v := app.DefaultCreatedAt()
+		ac.mutation.SetCreatedAt(v)
+	}
+	if _, ok := ac.mutation.UpdatedAt(); !ok {
+		v := app.DefaultUpdatedAt()
+		ac.mutation.SetUpdatedAt(v)
+	}
 	if _, ok := ac.mutation.ID(); !ok {
 		v := app.DefaultID()
 		ac.mutation.SetID(v)
@@ -352,6 +403,14 @@ func (ac *AppCreate) createSpec() (*App, *sqlgraph.CreateSpec) {
 	if id, ok := ac.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
+	}
+	if value, ok := ac.mutation.CreatedAt(); ok {
+		_spec.SetField(app.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := ac.mutation.UpdatedAt(); ok {
+		_spec.SetField(app.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
 	}
 	if value, ok := ac.mutation.Name(); ok {
 		_spec.SetField(app.FieldName, field.TypeString, value)
@@ -421,6 +480,10 @@ func (ac *AppCreate) createSpec() (*App, *sqlgraph.CreateSpec) {
 		_spec.SetField(app.FieldAuthEmailVerify, field.TypeString, value)
 		_node.AuthEmailVerify = value
 	}
+	if value, ok := ac.mutation.AdminUserID(); ok {
+		_spec.SetField(app.FieldAdminUserID, field.TypeString, value)
+		_node.AdminUserID = value
+	}
 	return _node, _spec
 }
 
@@ -428,7 +491,7 @@ func (ac *AppCreate) createSpec() (*App, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.App.Create().
-//		SetName(v).
+//		SetCreatedAt(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -437,7 +500,7 @@ func (ac *AppCreate) createSpec() (*App, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.AppUpsert) {
-//			SetName(v+v).
+//			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
 func (ac *AppCreate) OnConflict(opts ...sql.ConflictOption) *AppUpsertOne {
@@ -472,6 +535,24 @@ type (
 		*sql.UpdateSet
 	}
 )
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *AppUpsert) SetUpdatedAt(v time.Time) *AppUpsert {
+	u.Set(app.FieldUpdatedAt, v)
+	return u
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *AppUpsert) UpdateUpdatedAt() *AppUpsert {
+	u.SetExcluded(app.FieldUpdatedAt)
+	return u
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (u *AppUpsert) ClearUpdatedAt() *AppUpsert {
+	u.SetNull(app.FieldUpdatedAt)
+	return u
+}
 
 // SetName sets the "name" field.
 func (u *AppUpsert) SetName(v string) *AppUpsert {
@@ -779,6 +860,24 @@ func (u *AppUpsert) ClearAuthEmailVerify() *AppUpsert {
 	return u
 }
 
+// SetAdminUserID sets the "admin_user_id" field.
+func (u *AppUpsert) SetAdminUserID(v string) *AppUpsert {
+	u.Set(app.FieldAdminUserID, v)
+	return u
+}
+
+// UpdateAdminUserID sets the "admin_user_id" field to the value that was provided on create.
+func (u *AppUpsert) UpdateAdminUserID() *AppUpsert {
+	u.SetExcluded(app.FieldAdminUserID)
+	return u
+}
+
+// ClearAdminUserID clears the value of the "admin_user_id" field.
+func (u *AppUpsert) ClearAdminUserID() *AppUpsert {
+	u.SetNull(app.FieldAdminUserID)
+	return u
+}
+
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -795,6 +894,9 @@ func (u *AppUpsertOne) UpdateNewValues() *AppUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(app.FieldID)
+		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(app.FieldCreatedAt)
 		}
 	}))
 	return u
@@ -825,6 +927,27 @@ func (u *AppUpsertOne) Update(set func(*AppUpsert)) *AppUpsertOne {
 		set(&AppUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *AppUpsertOne) SetUpdatedAt(v time.Time) *AppUpsertOne {
+	return u.Update(func(s *AppUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *AppUpsertOne) UpdateUpdatedAt() *AppUpsertOne {
+	return u.Update(func(s *AppUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (u *AppUpsertOne) ClearUpdatedAt() *AppUpsertOne {
+	return u.Update(func(s *AppUpsert) {
+		s.ClearUpdatedAt()
+	})
 }
 
 // SetName sets the "name" field.
@@ -1184,6 +1307,27 @@ func (u *AppUpsertOne) ClearAuthEmailVerify() *AppUpsertOne {
 	})
 }
 
+// SetAdminUserID sets the "admin_user_id" field.
+func (u *AppUpsertOne) SetAdminUserID(v string) *AppUpsertOne {
+	return u.Update(func(s *AppUpsert) {
+		s.SetAdminUserID(v)
+	})
+}
+
+// UpdateAdminUserID sets the "admin_user_id" field to the value that was provided on create.
+func (u *AppUpsertOne) UpdateAdminUserID() *AppUpsertOne {
+	return u.Update(func(s *AppUpsert) {
+		s.UpdateAdminUserID()
+	})
+}
+
+// ClearAdminUserID clears the value of the "admin_user_id" field.
+func (u *AppUpsertOne) ClearAdminUserID() *AppUpsertOne {
+	return u.Update(func(s *AppUpsert) {
+		s.ClearAdminUserID()
+	})
+}
+
 // Exec executes the query.
 func (u *AppUpsertOne) Exec(ctx context.Context) error {
 	if len(u.create.conflict) == 0 {
@@ -1320,7 +1464,7 @@ func (acb *AppCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.AppUpsert) {
-//			SetName(v+v).
+//			SetCreatedAt(v+v).
 //		}).
 //		Exec(ctx)
 func (acb *AppCreateBulk) OnConflict(opts ...sql.ConflictOption) *AppUpsertBulk {
@@ -1367,6 +1511,9 @@ func (u *AppUpsertBulk) UpdateNewValues() *AppUpsertBulk {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(app.FieldID)
 			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(app.FieldCreatedAt)
+			}
 		}
 	}))
 	return u
@@ -1397,6 +1544,27 @@ func (u *AppUpsertBulk) Update(set func(*AppUpsert)) *AppUpsertBulk {
 		set(&AppUpsert{UpdateSet: update})
 	}))
 	return u
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (u *AppUpsertBulk) SetUpdatedAt(v time.Time) *AppUpsertBulk {
+	return u.Update(func(s *AppUpsert) {
+		s.SetUpdatedAt(v)
+	})
+}
+
+// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
+func (u *AppUpsertBulk) UpdateUpdatedAt() *AppUpsertBulk {
+	return u.Update(func(s *AppUpsert) {
+		s.UpdateUpdatedAt()
+	})
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (u *AppUpsertBulk) ClearUpdatedAt() *AppUpsertBulk {
+	return u.Update(func(s *AppUpsert) {
+		s.ClearUpdatedAt()
+	})
 }
 
 // SetName sets the "name" field.
@@ -1753,6 +1921,27 @@ func (u *AppUpsertBulk) UpdateAuthEmailVerify() *AppUpsertBulk {
 func (u *AppUpsertBulk) ClearAuthEmailVerify() *AppUpsertBulk {
 	return u.Update(func(s *AppUpsert) {
 		s.ClearAuthEmailVerify()
+	})
+}
+
+// SetAdminUserID sets the "admin_user_id" field.
+func (u *AppUpsertBulk) SetAdminUserID(v string) *AppUpsertBulk {
+	return u.Update(func(s *AppUpsert) {
+		s.SetAdminUserID(v)
+	})
+}
+
+// UpdateAdminUserID sets the "admin_user_id" field to the value that was provided on create.
+func (u *AppUpsertBulk) UpdateAdminUserID() *AppUpsertBulk {
+	return u.Update(func(s *AppUpsert) {
+		s.UpdateAdminUserID()
+	})
+}
+
+// ClearAdminUserID clears the value of the "admin_user_id" field.
+func (u *AppUpsertBulk) ClearAdminUserID() *AppUpsertBulk {
+	return u.Update(func(s *AppUpsert) {
+		s.ClearAdminUserID()
 	})
 }
 

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"saas/gen/ent/app"
 	"saas/gen/ent/predicate"
+	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -25,6 +26,18 @@ type AppUpdate struct {
 // Where appends a list predicates to the AppUpdate builder.
 func (au *AppUpdate) Where(ps ...predicate.App) *AppUpdate {
 	au.mutation.Where(ps...)
+	return au
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (au *AppUpdate) SetUpdatedAt(t time.Time) *AppUpdate {
+	au.mutation.SetUpdatedAt(t)
+	return au
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (au *AppUpdate) ClearUpdatedAt() *AppUpdate {
+	au.mutation.ClearUpdatedAt()
 	return au
 }
 
@@ -368,6 +381,26 @@ func (au *AppUpdate) ClearAuthEmailVerify() *AppUpdate {
 	return au
 }
 
+// SetAdminUserID sets the "admin_user_id" field.
+func (au *AppUpdate) SetAdminUserID(s string) *AppUpdate {
+	au.mutation.SetAdminUserID(s)
+	return au
+}
+
+// SetNillableAdminUserID sets the "admin_user_id" field if the given value is not nil.
+func (au *AppUpdate) SetNillableAdminUserID(s *string) *AppUpdate {
+	if s != nil {
+		au.SetAdminUserID(*s)
+	}
+	return au
+}
+
+// ClearAdminUserID clears the value of the "admin_user_id" field.
+func (au *AppUpdate) ClearAdminUserID() *AppUpdate {
+	au.mutation.ClearAdminUserID()
+	return au
+}
+
 // Mutation returns the AppMutation object of the builder.
 func (au *AppUpdate) Mutation() *AppMutation {
 	return au.mutation
@@ -375,6 +408,7 @@ func (au *AppUpdate) Mutation() *AppMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (au *AppUpdate) Save(ctx context.Context) (int, error) {
+	au.defaults()
 	return withHooks(ctx, au.sqlSave, au.mutation, au.hooks)
 }
 
@@ -400,6 +434,14 @@ func (au *AppUpdate) ExecX(ctx context.Context) {
 	}
 }
 
+// defaults sets the default values of the builder before save.
+func (au *AppUpdate) defaults() {
+	if _, ok := au.mutation.UpdatedAt(); !ok && !au.mutation.UpdatedAtCleared() {
+		v := app.UpdateDefaultUpdatedAt()
+		au.mutation.SetUpdatedAt(v)
+	}
+}
+
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
 func (au *AppUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *AppUpdate {
 	au.modifiers = append(au.modifiers, modifiers...)
@@ -414,6 +456,15 @@ func (au *AppUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if au.mutation.CreatedAtCleared() {
+		_spec.ClearField(app.FieldCreatedAt, field.TypeTime)
+	}
+	if value, ok := au.mutation.UpdatedAt(); ok {
+		_spec.SetField(app.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if au.mutation.UpdatedAtCleared() {
+		_spec.ClearField(app.FieldUpdatedAt, field.TypeTime)
 	}
 	if value, ok := au.mutation.Name(); ok {
 		_spec.SetField(app.FieldName, field.TypeString, value)
@@ -517,6 +568,12 @@ func (au *AppUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if au.mutation.AuthEmailVerifyCleared() {
 		_spec.ClearField(app.FieldAuthEmailVerify, field.TypeString)
 	}
+	if value, ok := au.mutation.AdminUserID(); ok {
+		_spec.SetField(app.FieldAdminUserID, field.TypeString, value)
+	}
+	if au.mutation.AdminUserIDCleared() {
+		_spec.ClearField(app.FieldAdminUserID, field.TypeString)
+	}
 	_spec.AddModifiers(au.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, au.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -537,6 +594,18 @@ type AppUpdateOne struct {
 	hooks     []Hook
 	mutation  *AppMutation
 	modifiers []func(*sql.UpdateBuilder)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (auo *AppUpdateOne) SetUpdatedAt(t time.Time) *AppUpdateOne {
+	auo.mutation.SetUpdatedAt(t)
+	return auo
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (auo *AppUpdateOne) ClearUpdatedAt() *AppUpdateOne {
+	auo.mutation.ClearUpdatedAt()
+	return auo
 }
 
 // SetName sets the "name" field.
@@ -879,6 +948,26 @@ func (auo *AppUpdateOne) ClearAuthEmailVerify() *AppUpdateOne {
 	return auo
 }
 
+// SetAdminUserID sets the "admin_user_id" field.
+func (auo *AppUpdateOne) SetAdminUserID(s string) *AppUpdateOne {
+	auo.mutation.SetAdminUserID(s)
+	return auo
+}
+
+// SetNillableAdminUserID sets the "admin_user_id" field if the given value is not nil.
+func (auo *AppUpdateOne) SetNillableAdminUserID(s *string) *AppUpdateOne {
+	if s != nil {
+		auo.SetAdminUserID(*s)
+	}
+	return auo
+}
+
+// ClearAdminUserID clears the value of the "admin_user_id" field.
+func (auo *AppUpdateOne) ClearAdminUserID() *AppUpdateOne {
+	auo.mutation.ClearAdminUserID()
+	return auo
+}
+
 // Mutation returns the AppMutation object of the builder.
 func (auo *AppUpdateOne) Mutation() *AppMutation {
 	return auo.mutation
@@ -899,6 +988,7 @@ func (auo *AppUpdateOne) Select(field string, fields ...string) *AppUpdateOne {
 
 // Save executes the query and returns the updated App entity.
 func (auo *AppUpdateOne) Save(ctx context.Context) (*App, error) {
+	auo.defaults()
 	return withHooks(ctx, auo.sqlSave, auo.mutation, auo.hooks)
 }
 
@@ -921,6 +1011,14 @@ func (auo *AppUpdateOne) Exec(ctx context.Context) error {
 func (auo *AppUpdateOne) ExecX(ctx context.Context) {
 	if err := auo.Exec(ctx); err != nil {
 		panic(err)
+	}
+}
+
+// defaults sets the default values of the builder before save.
+func (auo *AppUpdateOne) defaults() {
+	if _, ok := auo.mutation.UpdatedAt(); !ok && !auo.mutation.UpdatedAtCleared() {
+		v := app.UpdateDefaultUpdatedAt()
+		auo.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -955,6 +1053,15 @@ func (auo *AppUpdateOne) sqlSave(ctx context.Context) (_node *App, err error) {
 				ps[i](selector)
 			}
 		}
+	}
+	if auo.mutation.CreatedAtCleared() {
+		_spec.ClearField(app.FieldCreatedAt, field.TypeTime)
+	}
+	if value, ok := auo.mutation.UpdatedAt(); ok {
+		_spec.SetField(app.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if auo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(app.FieldUpdatedAt, field.TypeTime)
 	}
 	if value, ok := auo.mutation.Name(); ok {
 		_spec.SetField(app.FieldName, field.TypeString, value)
@@ -1057,6 +1164,12 @@ func (auo *AppUpdateOne) sqlSave(ctx context.Context) (_node *App, err error) {
 	}
 	if auo.mutation.AuthEmailVerifyCleared() {
 		_spec.ClearField(app.FieldAuthEmailVerify, field.TypeString)
+	}
+	if value, ok := auo.mutation.AdminUserID(); ok {
+		_spec.SetField(app.FieldAdminUserID, field.TypeString, value)
+	}
+	if auo.mutation.AdminUserIDCleared() {
+		_spec.ClearField(app.FieldAdminUserID, field.TypeString)
 	}
 	_spec.AddModifiers(auo.modifiers...)
 	_node = &App{config: auo.config}

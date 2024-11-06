@@ -42,6 +42,16 @@ func (a *AppQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphq
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+		case "createdAt":
+			if _, ok := fieldSeen[app.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, app.FieldCreatedAt)
+				fieldSeen[app.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[app.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, app.FieldUpdatedAt)
+				fieldSeen[app.FieldUpdatedAt] = struct{}{}
+			}
 		case "name":
 			if _, ok := fieldSeen[app.FieldName]; !ok {
 				selectedFields = append(selectedFields, app.FieldName)
@@ -127,6 +137,11 @@ func (a *AppQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphq
 				selectedFields = append(selectedFields, app.FieldAuthEmailVerify)
 				fieldSeen[app.FieldAuthEmailVerify] = struct{}{}
 			}
+		case "adminUserID":
+			if _, ok := fieldSeen[app.FieldAdminUserID]; !ok {
+				selectedFields = append(selectedFields, app.FieldAdminUserID)
+				fieldSeen[app.FieldAdminUserID] = struct{}{}
+			}
 		case "id":
 		case "__typename":
 		default:
@@ -161,6 +176,34 @@ func newAppPaginateArgs(rv map[string]any) *appPaginateArgs {
 	}
 	if v := rv[beforeField]; v != nil {
 		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[orderByField]; ok {
+		switch v := v.(type) {
+		case []*AppOrder:
+			args.opts = append(args.opts, WithAppOrder(v))
+		case []any:
+			var orders []*AppOrder
+			for i := range v {
+				mv, ok := v[i].(map[string]any)
+				if !ok {
+					continue
+				}
+				var (
+					err1, err2 error
+					order      = &AppOrder{Field: &AppOrderField{}, Direction: entgql.OrderDirectionAsc}
+				)
+				if d, ok := mv[directionField]; ok {
+					err1 = order.Direction.UnmarshalGQL(d)
+				}
+				if f, ok := mv[fieldField]; ok {
+					err2 = order.Field.UnmarshalGQL(f)
+				}
+				if err1 == nil && err2 == nil {
+					orders = append(orders, order)
+				}
+			}
+			args.opts = append(args.opts, WithAppOrder(orders))
+		}
 	}
 	if v, ok := rv[whereField].(*AppWhereInput); ok {
 		args.opts = append(args.opts, WithAppFilter(v.Filter))

@@ -40,6 +40,30 @@ type AppWhereInput struct {
 	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
 	IDContainsFold *string  `json:"idContainsFold,omitempty"`
 
+	// "created_at" field predicates.
+	CreatedAt       *time.Time  `json:"createdAt,omitempty"`
+	CreatedAtNEQ    *time.Time  `json:"createdAtNEQ,omitempty"`
+	CreatedAtIn     []time.Time `json:"createdAtIn,omitempty"`
+	CreatedAtNotIn  []time.Time `json:"createdAtNotIn,omitempty"`
+	CreatedAtGT     *time.Time  `json:"createdAtGT,omitempty"`
+	CreatedAtGTE    *time.Time  `json:"createdAtGTE,omitempty"`
+	CreatedAtLT     *time.Time  `json:"createdAtLT,omitempty"`
+	CreatedAtLTE    *time.Time  `json:"createdAtLTE,omitempty"`
+	CreatedAtIsNil  bool        `json:"createdAtIsNil,omitempty"`
+	CreatedAtNotNil bool        `json:"createdAtNotNil,omitempty"`
+
+	// "updated_at" field predicates.
+	UpdatedAt       *time.Time  `json:"updatedAt,omitempty"`
+	UpdatedAtNEQ    *time.Time  `json:"updatedAtNEQ,omitempty"`
+	UpdatedAtIn     []time.Time `json:"updatedAtIn,omitempty"`
+	UpdatedAtNotIn  []time.Time `json:"updatedAtNotIn,omitempty"`
+	UpdatedAtGT     *time.Time  `json:"updatedAtGT,omitempty"`
+	UpdatedAtGTE    *time.Time  `json:"updatedAtGTE,omitempty"`
+	UpdatedAtLT     *time.Time  `json:"updatedAtLT,omitempty"`
+	UpdatedAtLTE    *time.Time  `json:"updatedAtLTE,omitempty"`
+	UpdatedAtIsNil  bool        `json:"updatedAtIsNil,omitempty"`
+	UpdatedAtNotNil bool        `json:"updatedAtNotNil,omitempty"`
+
 	// "name" field predicates.
 	Name             *string  `json:"name,omitempty"`
 	NameNEQ          *string  `json:"nameNEQ,omitempty"`
@@ -328,6 +352,23 @@ type AppWhereInput struct {
 	AuthEmailVerifyNotNil       bool     `json:"authEmailVerifyNotNil,omitempty"`
 	AuthEmailVerifyEqualFold    *string  `json:"authEmailVerifyEqualFold,omitempty"`
 	AuthEmailVerifyContainsFold *string  `json:"authEmailVerifyContainsFold,omitempty"`
+
+	// "admin_user_id" field predicates.
+	AdminUserID             *string  `json:"adminUserID,omitempty"`
+	AdminUserIDNEQ          *string  `json:"adminUserIDNEQ,omitempty"`
+	AdminUserIDIn           []string `json:"adminUserIDIn,omitempty"`
+	AdminUserIDNotIn        []string `json:"adminUserIDNotIn,omitempty"`
+	AdminUserIDGT           *string  `json:"adminUserIDGT,omitempty"`
+	AdminUserIDGTE          *string  `json:"adminUserIDGTE,omitempty"`
+	AdminUserIDLT           *string  `json:"adminUserIDLT,omitempty"`
+	AdminUserIDLTE          *string  `json:"adminUserIDLTE,omitempty"`
+	AdminUserIDContains     *string  `json:"adminUserIDContains,omitempty"`
+	AdminUserIDHasPrefix    *string  `json:"adminUserIDHasPrefix,omitempty"`
+	AdminUserIDHasSuffix    *string  `json:"adminUserIDHasSuffix,omitempty"`
+	AdminUserIDIsNil        bool     `json:"adminUserIDIsNil,omitempty"`
+	AdminUserIDNotNil       bool     `json:"adminUserIDNotNil,omitempty"`
+	AdminUserIDEqualFold    *string  `json:"adminUserIDEqualFold,omitempty"`
+	AdminUserIDContainsFold *string  `json:"adminUserIDContainsFold,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -430,6 +471,66 @@ func (i *AppWhereInput) P() (predicate.App, error) {
 	}
 	if i.IDContainsFold != nil {
 		predicates = append(predicates, app.IDContainsFold(*i.IDContainsFold))
+	}
+	if i.CreatedAt != nil {
+		predicates = append(predicates, app.CreatedAtEQ(*i.CreatedAt))
+	}
+	if i.CreatedAtNEQ != nil {
+		predicates = append(predicates, app.CreatedAtNEQ(*i.CreatedAtNEQ))
+	}
+	if len(i.CreatedAtIn) > 0 {
+		predicates = append(predicates, app.CreatedAtIn(i.CreatedAtIn...))
+	}
+	if len(i.CreatedAtNotIn) > 0 {
+		predicates = append(predicates, app.CreatedAtNotIn(i.CreatedAtNotIn...))
+	}
+	if i.CreatedAtGT != nil {
+		predicates = append(predicates, app.CreatedAtGT(*i.CreatedAtGT))
+	}
+	if i.CreatedAtGTE != nil {
+		predicates = append(predicates, app.CreatedAtGTE(*i.CreatedAtGTE))
+	}
+	if i.CreatedAtLT != nil {
+		predicates = append(predicates, app.CreatedAtLT(*i.CreatedAtLT))
+	}
+	if i.CreatedAtLTE != nil {
+		predicates = append(predicates, app.CreatedAtLTE(*i.CreatedAtLTE))
+	}
+	if i.CreatedAtIsNil {
+		predicates = append(predicates, app.CreatedAtIsNil())
+	}
+	if i.CreatedAtNotNil {
+		predicates = append(predicates, app.CreatedAtNotNil())
+	}
+	if i.UpdatedAt != nil {
+		predicates = append(predicates, app.UpdatedAtEQ(*i.UpdatedAt))
+	}
+	if i.UpdatedAtNEQ != nil {
+		predicates = append(predicates, app.UpdatedAtNEQ(*i.UpdatedAtNEQ))
+	}
+	if len(i.UpdatedAtIn) > 0 {
+		predicates = append(predicates, app.UpdatedAtIn(i.UpdatedAtIn...))
+	}
+	if len(i.UpdatedAtNotIn) > 0 {
+		predicates = append(predicates, app.UpdatedAtNotIn(i.UpdatedAtNotIn...))
+	}
+	if i.UpdatedAtGT != nil {
+		predicates = append(predicates, app.UpdatedAtGT(*i.UpdatedAtGT))
+	}
+	if i.UpdatedAtGTE != nil {
+		predicates = append(predicates, app.UpdatedAtGTE(*i.UpdatedAtGTE))
+	}
+	if i.UpdatedAtLT != nil {
+		predicates = append(predicates, app.UpdatedAtLT(*i.UpdatedAtLT))
+	}
+	if i.UpdatedAtLTE != nil {
+		predicates = append(predicates, app.UpdatedAtLTE(*i.UpdatedAtLTE))
+	}
+	if i.UpdatedAtIsNil {
+		predicates = append(predicates, app.UpdatedAtIsNil())
+	}
+	if i.UpdatedAtNotNil {
+		predicates = append(predicates, app.UpdatedAtNotNil())
 	}
 	if i.Name != nil {
 		predicates = append(predicates, app.NameEQ(*i.Name))
@@ -1195,6 +1296,51 @@ func (i *AppWhereInput) P() (predicate.App, error) {
 	}
 	if i.AuthEmailVerifyContainsFold != nil {
 		predicates = append(predicates, app.AuthEmailVerifyContainsFold(*i.AuthEmailVerifyContainsFold))
+	}
+	if i.AdminUserID != nil {
+		predicates = append(predicates, app.AdminUserIDEQ(*i.AdminUserID))
+	}
+	if i.AdminUserIDNEQ != nil {
+		predicates = append(predicates, app.AdminUserIDNEQ(*i.AdminUserIDNEQ))
+	}
+	if len(i.AdminUserIDIn) > 0 {
+		predicates = append(predicates, app.AdminUserIDIn(i.AdminUserIDIn...))
+	}
+	if len(i.AdminUserIDNotIn) > 0 {
+		predicates = append(predicates, app.AdminUserIDNotIn(i.AdminUserIDNotIn...))
+	}
+	if i.AdminUserIDGT != nil {
+		predicates = append(predicates, app.AdminUserIDGT(*i.AdminUserIDGT))
+	}
+	if i.AdminUserIDGTE != nil {
+		predicates = append(predicates, app.AdminUserIDGTE(*i.AdminUserIDGTE))
+	}
+	if i.AdminUserIDLT != nil {
+		predicates = append(predicates, app.AdminUserIDLT(*i.AdminUserIDLT))
+	}
+	if i.AdminUserIDLTE != nil {
+		predicates = append(predicates, app.AdminUserIDLTE(*i.AdminUserIDLTE))
+	}
+	if i.AdminUserIDContains != nil {
+		predicates = append(predicates, app.AdminUserIDContains(*i.AdminUserIDContains))
+	}
+	if i.AdminUserIDHasPrefix != nil {
+		predicates = append(predicates, app.AdminUserIDHasPrefix(*i.AdminUserIDHasPrefix))
+	}
+	if i.AdminUserIDHasSuffix != nil {
+		predicates = append(predicates, app.AdminUserIDHasSuffix(*i.AdminUserIDHasSuffix))
+	}
+	if i.AdminUserIDIsNil {
+		predicates = append(predicates, app.AdminUserIDIsNil())
+	}
+	if i.AdminUserIDNotNil {
+		predicates = append(predicates, app.AdminUserIDNotNil())
+	}
+	if i.AdminUserIDEqualFold != nil {
+		predicates = append(predicates, app.AdminUserIDEqualFold(*i.AdminUserIDEqualFold))
+	}
+	if i.AdminUserIDContainsFold != nil {
+		predicates = append(predicates, app.AdminUserIDContainsFold(*i.AdminUserIDContainsFold))
 	}
 
 	switch len(predicates) {

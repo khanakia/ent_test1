@@ -9,6 +9,8 @@ import (
 
 // CreateAppInput represents a mutation input for creating apps.
 type CreateAppInput struct {
+	CreatedAt               *time.Time
+	UpdatedAt               *time.Time
 	Name                    *string
 	Copyright               *string
 	Email                   *string
@@ -26,10 +28,17 @@ type CreateAppInput struct {
 	AuthWelcomeEmailTemplID *string
 	AuthVerificationTemplID *string
 	AuthEmailVerify         *string
+	AdminUserID             *string
 }
 
 // Mutate applies the CreateAppInput on the AppMutation builder.
 func (i *CreateAppInput) Mutate(m *AppMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
 	if v := i.Name; v != nil {
 		m.SetName(*v)
 	}
@@ -81,6 +90,9 @@ func (i *CreateAppInput) Mutate(m *AppMutation) {
 	if v := i.AuthEmailVerify; v != nil {
 		m.SetAuthEmailVerify(*v)
 	}
+	if v := i.AdminUserID; v != nil {
+		m.SetAdminUserID(*v)
+	}
 }
 
 // SetInput applies the change-set in the CreateAppInput on the AppCreate builder.
@@ -91,6 +103,8 @@ func (c *AppCreate) SetInput(i CreateAppInput) *AppCreate {
 
 // UpdateAppInput represents a mutation input for updating apps.
 type UpdateAppInput struct {
+	ClearUpdatedAt               bool
+	UpdatedAt                    *time.Time
 	ClearName                    bool
 	Name                         *string
 	ClearCopyright               bool
@@ -125,10 +139,18 @@ type UpdateAppInput struct {
 	AuthVerificationTemplID      *string
 	ClearAuthEmailVerify         bool
 	AuthEmailVerify              *string
+	ClearAdminUserID             bool
+	AdminUserID                  *string
 }
 
 // Mutate applies the UpdateAppInput on the AppMutation builder.
 func (i *UpdateAppInput) Mutate(m *AppMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
 	if i.ClearName {
 		m.ClearName()
 	}
@@ -230,6 +252,12 @@ func (i *UpdateAppInput) Mutate(m *AppMutation) {
 	}
 	if v := i.AuthEmailVerify; v != nil {
 		m.SetAuthEmailVerify(*v)
+	}
+	if i.ClearAdminUserID {
+		m.ClearAdminUserID()
+	}
+	if v := i.AdminUserID; v != nil {
+		m.SetAdminUserID(*v)
 	}
 }
 

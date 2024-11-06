@@ -7,7 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"lace/jsontype"
-	"saas/gen/ent/admin"
+	"saas/gen/ent/adminuser"
 	"saas/gen/ent/app"
 	"saas/gen/ent/kache"
 	"saas/gen/ent/keyvalue"
@@ -45,7 +45,7 @@ const (
 	OpUpdateOne = ent.OpUpdateOne
 
 	// Node types.
-	TypeAdmin           = "Admin"
+	TypeAdminUser       = "AdminUser"
 	TypeApp             = "App"
 	TypeKache           = "Kache"
 	TypeKeyvalue        = "Keyvalue"
@@ -68,38 +68,43 @@ const (
 	TypeWorkspaceUser   = "WorkspaceUser"
 )
 
-// AdminMutation represents an operation that mutates the Admin nodes in the graph.
-type AdminMutation struct {
+// AdminUserMutation represents an operation that mutates the AdminUser nodes in the graph.
+type AdminUserMutation struct {
 	config
-	op            Op
-	typ           string
-	id            *string
-	created_at    *time.Time
-	updated_at    *time.Time
-	app_id        *string
-	email         *string
-	first_name    *string
-	last_name     *string
-	status        *bool
-	password      *string
-	secret        *string
-	clearedFields map[string]struct{}
-	done          bool
-	oldValue      func(context.Context) (*Admin, error)
-	predicates    []predicate.Admin
+	op                 Op
+	typ                string
+	id                 *string
+	created_at         *time.Time
+	updated_at         *time.Time
+	email              *string
+	phone              *string
+	first_name         *string
+	last_name          *string
+	company            *string
+	locale             *string
+	role_id            *string
+	status             *bool
+	password           *string
+	secret             *string
+	api_key            *string
+	welcome_email_sent *bool
+	clearedFields      map[string]struct{}
+	done               bool
+	oldValue           func(context.Context) (*AdminUser, error)
+	predicates         []predicate.AdminUser
 }
 
-var _ ent.Mutation = (*AdminMutation)(nil)
+var _ ent.Mutation = (*AdminUserMutation)(nil)
 
-// adminOption allows management of the mutation configuration using functional options.
-type adminOption func(*AdminMutation)
+// adminuserOption allows management of the mutation configuration using functional options.
+type adminuserOption func(*AdminUserMutation)
 
-// newAdminMutation creates new mutation for the Admin entity.
-func newAdminMutation(c config, op Op, opts ...adminOption) *AdminMutation {
-	m := &AdminMutation{
+// newAdminUserMutation creates new mutation for the AdminUser entity.
+func newAdminUserMutation(c config, op Op, opts ...adminuserOption) *AdminUserMutation {
+	m := &AdminUserMutation{
 		config:        c,
 		op:            op,
-		typ:           TypeAdmin,
+		typ:           TypeAdminUser,
 		clearedFields: make(map[string]struct{}),
 	}
 	for _, opt := range opts {
@@ -108,20 +113,20 @@ func newAdminMutation(c config, op Op, opts ...adminOption) *AdminMutation {
 	return m
 }
 
-// withAdminID sets the ID field of the mutation.
-func withAdminID(id string) adminOption {
-	return func(m *AdminMutation) {
+// withAdminUserID sets the ID field of the mutation.
+func withAdminUserID(id string) adminuserOption {
+	return func(m *AdminUserMutation) {
 		var (
 			err   error
 			once  sync.Once
-			value *Admin
+			value *AdminUser
 		)
-		m.oldValue = func(ctx context.Context) (*Admin, error) {
+		m.oldValue = func(ctx context.Context) (*AdminUser, error) {
 			once.Do(func() {
 				if m.done {
 					err = errors.New("querying old values post mutation is not allowed")
 				} else {
-					value, err = m.Client().Admin.Get(ctx, id)
+					value, err = m.Client().AdminUser.Get(ctx, id)
 				}
 			})
 			return value, err
@@ -130,10 +135,10 @@ func withAdminID(id string) adminOption {
 	}
 }
 
-// withAdmin sets the old Admin of the mutation.
-func withAdmin(node *Admin) adminOption {
-	return func(m *AdminMutation) {
-		m.oldValue = func(context.Context) (*Admin, error) {
+// withAdminUser sets the old AdminUser of the mutation.
+func withAdminUser(node *AdminUser) adminuserOption {
+	return func(m *AdminUserMutation) {
+		m.oldValue = func(context.Context) (*AdminUser, error) {
 			return node, nil
 		}
 		m.id = &node.ID
@@ -142,7 +147,7 @@ func withAdmin(node *Admin) adminOption {
 
 // Client returns a new `ent.Client` from the mutation. If the mutation was
 // executed in a transaction (ent.Tx), a transactional client is returned.
-func (m AdminMutation) Client() *Client {
+func (m AdminUserMutation) Client() *Client {
 	client := &Client{config: m.config}
 	client.init()
 	return client
@@ -150,7 +155,7 @@ func (m AdminMutation) Client() *Client {
 
 // Tx returns an `ent.Tx` for mutations that were executed in transactions;
 // it returns an error otherwise.
-func (m AdminMutation) Tx() (*Tx, error) {
+func (m AdminUserMutation) Tx() (*Tx, error) {
 	if _, ok := m.driver.(*txDriver); !ok {
 		return nil, errors.New("ent: mutation is not running in a transaction")
 	}
@@ -160,14 +165,14 @@ func (m AdminMutation) Tx() (*Tx, error) {
 }
 
 // SetID sets the value of the id field. Note that this
-// operation is only accepted on creation of Admin entities.
-func (m *AdminMutation) SetID(id string) {
+// operation is only accepted on creation of AdminUser entities.
+func (m *AdminUserMutation) SetID(id string) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *AdminMutation) ID() (id string, exists bool) {
+func (m *AdminUserMutation) ID() (id string, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -178,7 +183,7 @@ func (m *AdminMutation) ID() (id string, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *AdminMutation) IDs(ctx context.Context) ([]string, error) {
+func (m *AdminUserMutation) IDs(ctx context.Context) ([]string, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
@@ -187,19 +192,19 @@ func (m *AdminMutation) IDs(ctx context.Context) ([]string, error) {
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
-		return m.Client().Admin.Query().Where(m.predicates...).IDs(ctx)
+		return m.Client().AdminUser.Query().Where(m.predicates...).IDs(ctx)
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
 }
 
 // SetCreatedAt sets the "created_at" field.
-func (m *AdminMutation) SetCreatedAt(t time.Time) {
+func (m *AdminUserMutation) SetCreatedAt(t time.Time) {
 	m.created_at = &t
 }
 
 // CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *AdminMutation) CreatedAt() (r time.Time, exists bool) {
+func (m *AdminUserMutation) CreatedAt() (r time.Time, exists bool) {
 	v := m.created_at
 	if v == nil {
 		return
@@ -207,10 +212,10 @@ func (m *AdminMutation) CreatedAt() (r time.Time, exists bool) {
 	return *v, true
 }
 
-// OldCreatedAt returns the old "created_at" field's value of the Admin entity.
-// If the Admin object wasn't provided to the builder, the object is fetched from the database.
+// OldCreatedAt returns the old "created_at" field's value of the AdminUser entity.
+// If the AdminUser object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AdminMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+func (m *AdminUserMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
 	}
@@ -225,30 +230,30 @@ func (m *AdminMutation) OldCreatedAt(ctx context.Context) (v time.Time, err erro
 }
 
 // ClearCreatedAt clears the value of the "created_at" field.
-func (m *AdminMutation) ClearCreatedAt() {
+func (m *AdminUserMutation) ClearCreatedAt() {
 	m.created_at = nil
-	m.clearedFields[admin.FieldCreatedAt] = struct{}{}
+	m.clearedFields[adminuser.FieldCreatedAt] = struct{}{}
 }
 
 // CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
-func (m *AdminMutation) CreatedAtCleared() bool {
-	_, ok := m.clearedFields[admin.FieldCreatedAt]
+func (m *AdminUserMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[adminuser.FieldCreatedAt]
 	return ok
 }
 
 // ResetCreatedAt resets all changes to the "created_at" field.
-func (m *AdminMutation) ResetCreatedAt() {
+func (m *AdminUserMutation) ResetCreatedAt() {
 	m.created_at = nil
-	delete(m.clearedFields, admin.FieldCreatedAt)
+	delete(m.clearedFields, adminuser.FieldCreatedAt)
 }
 
 // SetUpdatedAt sets the "updated_at" field.
-func (m *AdminMutation) SetUpdatedAt(t time.Time) {
+func (m *AdminUserMutation) SetUpdatedAt(t time.Time) {
 	m.updated_at = &t
 }
 
 // UpdatedAt returns the value of the "updated_at" field in the mutation.
-func (m *AdminMutation) UpdatedAt() (r time.Time, exists bool) {
+func (m *AdminUserMutation) UpdatedAt() (r time.Time, exists bool) {
 	v := m.updated_at
 	if v == nil {
 		return
@@ -256,10 +261,10 @@ func (m *AdminMutation) UpdatedAt() (r time.Time, exists bool) {
 	return *v, true
 }
 
-// OldUpdatedAt returns the old "updated_at" field's value of the Admin entity.
-// If the Admin object wasn't provided to the builder, the object is fetched from the database.
+// OldUpdatedAt returns the old "updated_at" field's value of the AdminUser entity.
+// If the AdminUser object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AdminMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+func (m *AdminUserMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
 	}
@@ -274,79 +279,30 @@ func (m *AdminMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err erro
 }
 
 // ClearUpdatedAt clears the value of the "updated_at" field.
-func (m *AdminMutation) ClearUpdatedAt() {
+func (m *AdminUserMutation) ClearUpdatedAt() {
 	m.updated_at = nil
-	m.clearedFields[admin.FieldUpdatedAt] = struct{}{}
+	m.clearedFields[adminuser.FieldUpdatedAt] = struct{}{}
 }
 
 // UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
-func (m *AdminMutation) UpdatedAtCleared() bool {
-	_, ok := m.clearedFields[admin.FieldUpdatedAt]
+func (m *AdminUserMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[adminuser.FieldUpdatedAt]
 	return ok
 }
 
 // ResetUpdatedAt resets all changes to the "updated_at" field.
-func (m *AdminMutation) ResetUpdatedAt() {
+func (m *AdminUserMutation) ResetUpdatedAt() {
 	m.updated_at = nil
-	delete(m.clearedFields, admin.FieldUpdatedAt)
-}
-
-// SetAppID sets the "app_id" field.
-func (m *AdminMutation) SetAppID(s string) {
-	m.app_id = &s
-}
-
-// AppID returns the value of the "app_id" field in the mutation.
-func (m *AdminMutation) AppID() (r string, exists bool) {
-	v := m.app_id
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldAppID returns the old "app_id" field's value of the Admin entity.
-// If the Admin object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AdminMutation) OldAppID(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldAppID requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
-	}
-	return oldValue.AppID, nil
-}
-
-// ClearAppID clears the value of the "app_id" field.
-func (m *AdminMutation) ClearAppID() {
-	m.app_id = nil
-	m.clearedFields[admin.FieldAppID] = struct{}{}
-}
-
-// AppIDCleared returns if the "app_id" field was cleared in this mutation.
-func (m *AdminMutation) AppIDCleared() bool {
-	_, ok := m.clearedFields[admin.FieldAppID]
-	return ok
-}
-
-// ResetAppID resets all changes to the "app_id" field.
-func (m *AdminMutation) ResetAppID() {
-	m.app_id = nil
-	delete(m.clearedFields, admin.FieldAppID)
+	delete(m.clearedFields, adminuser.FieldUpdatedAt)
 }
 
 // SetEmail sets the "email" field.
-func (m *AdminMutation) SetEmail(s string) {
+func (m *AdminUserMutation) SetEmail(s string) {
 	m.email = &s
 }
 
 // Email returns the value of the "email" field in the mutation.
-func (m *AdminMutation) Email() (r string, exists bool) {
+func (m *AdminUserMutation) Email() (r string, exists bool) {
 	v := m.email
 	if v == nil {
 		return
@@ -354,10 +310,10 @@ func (m *AdminMutation) Email() (r string, exists bool) {
 	return *v, true
 }
 
-// OldEmail returns the old "email" field's value of the Admin entity.
-// If the Admin object wasn't provided to the builder, the object is fetched from the database.
+// OldEmail returns the old "email" field's value of the AdminUser entity.
+// If the AdminUser object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AdminMutation) OldEmail(ctx context.Context) (v string, err error) {
+func (m *AdminUserMutation) OldEmail(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldEmail is only allowed on UpdateOne operations")
 	}
@@ -372,17 +328,66 @@ func (m *AdminMutation) OldEmail(ctx context.Context) (v string, err error) {
 }
 
 // ResetEmail resets all changes to the "email" field.
-func (m *AdminMutation) ResetEmail() {
+func (m *AdminUserMutation) ResetEmail() {
 	m.email = nil
 }
 
+// SetPhone sets the "phone" field.
+func (m *AdminUserMutation) SetPhone(s string) {
+	m.phone = &s
+}
+
+// Phone returns the value of the "phone" field in the mutation.
+func (m *AdminUserMutation) Phone() (r string, exists bool) {
+	v := m.phone
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPhone returns the old "phone" field's value of the AdminUser entity.
+// If the AdminUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AdminUserMutation) OldPhone(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPhone is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPhone requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPhone: %w", err)
+	}
+	return oldValue.Phone, nil
+}
+
+// ClearPhone clears the value of the "phone" field.
+func (m *AdminUserMutation) ClearPhone() {
+	m.phone = nil
+	m.clearedFields[adminuser.FieldPhone] = struct{}{}
+}
+
+// PhoneCleared returns if the "phone" field was cleared in this mutation.
+func (m *AdminUserMutation) PhoneCleared() bool {
+	_, ok := m.clearedFields[adminuser.FieldPhone]
+	return ok
+}
+
+// ResetPhone resets all changes to the "phone" field.
+func (m *AdminUserMutation) ResetPhone() {
+	m.phone = nil
+	delete(m.clearedFields, adminuser.FieldPhone)
+}
+
 // SetFirstName sets the "first_name" field.
-func (m *AdminMutation) SetFirstName(s string) {
+func (m *AdminUserMutation) SetFirstName(s string) {
 	m.first_name = &s
 }
 
 // FirstName returns the value of the "first_name" field in the mutation.
-func (m *AdminMutation) FirstName() (r string, exists bool) {
+func (m *AdminUserMutation) FirstName() (r string, exists bool) {
 	v := m.first_name
 	if v == nil {
 		return
@@ -390,10 +395,10 @@ func (m *AdminMutation) FirstName() (r string, exists bool) {
 	return *v, true
 }
 
-// OldFirstName returns the old "first_name" field's value of the Admin entity.
-// If the Admin object wasn't provided to the builder, the object is fetched from the database.
+// OldFirstName returns the old "first_name" field's value of the AdminUser entity.
+// If the AdminUser object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AdminMutation) OldFirstName(ctx context.Context) (v string, err error) {
+func (m *AdminUserMutation) OldFirstName(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldFirstName is only allowed on UpdateOne operations")
 	}
@@ -408,30 +413,30 @@ func (m *AdminMutation) OldFirstName(ctx context.Context) (v string, err error) 
 }
 
 // ClearFirstName clears the value of the "first_name" field.
-func (m *AdminMutation) ClearFirstName() {
+func (m *AdminUserMutation) ClearFirstName() {
 	m.first_name = nil
-	m.clearedFields[admin.FieldFirstName] = struct{}{}
+	m.clearedFields[adminuser.FieldFirstName] = struct{}{}
 }
 
 // FirstNameCleared returns if the "first_name" field was cleared in this mutation.
-func (m *AdminMutation) FirstNameCleared() bool {
-	_, ok := m.clearedFields[admin.FieldFirstName]
+func (m *AdminUserMutation) FirstNameCleared() bool {
+	_, ok := m.clearedFields[adminuser.FieldFirstName]
 	return ok
 }
 
 // ResetFirstName resets all changes to the "first_name" field.
-func (m *AdminMutation) ResetFirstName() {
+func (m *AdminUserMutation) ResetFirstName() {
 	m.first_name = nil
-	delete(m.clearedFields, admin.FieldFirstName)
+	delete(m.clearedFields, adminuser.FieldFirstName)
 }
 
 // SetLastName sets the "last_name" field.
-func (m *AdminMutation) SetLastName(s string) {
+func (m *AdminUserMutation) SetLastName(s string) {
 	m.last_name = &s
 }
 
 // LastName returns the value of the "last_name" field in the mutation.
-func (m *AdminMutation) LastName() (r string, exists bool) {
+func (m *AdminUserMutation) LastName() (r string, exists bool) {
 	v := m.last_name
 	if v == nil {
 		return
@@ -439,10 +444,10 @@ func (m *AdminMutation) LastName() (r string, exists bool) {
 	return *v, true
 }
 
-// OldLastName returns the old "last_name" field's value of the Admin entity.
-// If the Admin object wasn't provided to the builder, the object is fetched from the database.
+// OldLastName returns the old "last_name" field's value of the AdminUser entity.
+// If the AdminUser object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AdminMutation) OldLastName(ctx context.Context) (v string, err error) {
+func (m *AdminUserMutation) OldLastName(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldLastName is only allowed on UpdateOne operations")
 	}
@@ -457,30 +462,177 @@ func (m *AdminMutation) OldLastName(ctx context.Context) (v string, err error) {
 }
 
 // ClearLastName clears the value of the "last_name" field.
-func (m *AdminMutation) ClearLastName() {
+func (m *AdminUserMutation) ClearLastName() {
 	m.last_name = nil
-	m.clearedFields[admin.FieldLastName] = struct{}{}
+	m.clearedFields[adminuser.FieldLastName] = struct{}{}
 }
 
 // LastNameCleared returns if the "last_name" field was cleared in this mutation.
-func (m *AdminMutation) LastNameCleared() bool {
-	_, ok := m.clearedFields[admin.FieldLastName]
+func (m *AdminUserMutation) LastNameCleared() bool {
+	_, ok := m.clearedFields[adminuser.FieldLastName]
 	return ok
 }
 
 // ResetLastName resets all changes to the "last_name" field.
-func (m *AdminMutation) ResetLastName() {
+func (m *AdminUserMutation) ResetLastName() {
 	m.last_name = nil
-	delete(m.clearedFields, admin.FieldLastName)
+	delete(m.clearedFields, adminuser.FieldLastName)
+}
+
+// SetCompany sets the "company" field.
+func (m *AdminUserMutation) SetCompany(s string) {
+	m.company = &s
+}
+
+// Company returns the value of the "company" field in the mutation.
+func (m *AdminUserMutation) Company() (r string, exists bool) {
+	v := m.company
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCompany returns the old "company" field's value of the AdminUser entity.
+// If the AdminUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AdminUserMutation) OldCompany(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCompany is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCompany requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCompany: %w", err)
+	}
+	return oldValue.Company, nil
+}
+
+// ClearCompany clears the value of the "company" field.
+func (m *AdminUserMutation) ClearCompany() {
+	m.company = nil
+	m.clearedFields[adminuser.FieldCompany] = struct{}{}
+}
+
+// CompanyCleared returns if the "company" field was cleared in this mutation.
+func (m *AdminUserMutation) CompanyCleared() bool {
+	_, ok := m.clearedFields[adminuser.FieldCompany]
+	return ok
+}
+
+// ResetCompany resets all changes to the "company" field.
+func (m *AdminUserMutation) ResetCompany() {
+	m.company = nil
+	delete(m.clearedFields, adminuser.FieldCompany)
+}
+
+// SetLocale sets the "locale" field.
+func (m *AdminUserMutation) SetLocale(s string) {
+	m.locale = &s
+}
+
+// Locale returns the value of the "locale" field in the mutation.
+func (m *AdminUserMutation) Locale() (r string, exists bool) {
+	v := m.locale
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLocale returns the old "locale" field's value of the AdminUser entity.
+// If the AdminUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AdminUserMutation) OldLocale(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLocale is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLocale requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLocale: %w", err)
+	}
+	return oldValue.Locale, nil
+}
+
+// ClearLocale clears the value of the "locale" field.
+func (m *AdminUserMutation) ClearLocale() {
+	m.locale = nil
+	m.clearedFields[adminuser.FieldLocale] = struct{}{}
+}
+
+// LocaleCleared returns if the "locale" field was cleared in this mutation.
+func (m *AdminUserMutation) LocaleCleared() bool {
+	_, ok := m.clearedFields[adminuser.FieldLocale]
+	return ok
+}
+
+// ResetLocale resets all changes to the "locale" field.
+func (m *AdminUserMutation) ResetLocale() {
+	m.locale = nil
+	delete(m.clearedFields, adminuser.FieldLocale)
+}
+
+// SetRoleID sets the "role_id" field.
+func (m *AdminUserMutation) SetRoleID(s string) {
+	m.role_id = &s
+}
+
+// RoleID returns the value of the "role_id" field in the mutation.
+func (m *AdminUserMutation) RoleID() (r string, exists bool) {
+	v := m.role_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldRoleID returns the old "role_id" field's value of the AdminUser entity.
+// If the AdminUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AdminUserMutation) OldRoleID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldRoleID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldRoleID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldRoleID: %w", err)
+	}
+	return oldValue.RoleID, nil
+}
+
+// ClearRoleID clears the value of the "role_id" field.
+func (m *AdminUserMutation) ClearRoleID() {
+	m.role_id = nil
+	m.clearedFields[adminuser.FieldRoleID] = struct{}{}
+}
+
+// RoleIDCleared returns if the "role_id" field was cleared in this mutation.
+func (m *AdminUserMutation) RoleIDCleared() bool {
+	_, ok := m.clearedFields[adminuser.FieldRoleID]
+	return ok
+}
+
+// ResetRoleID resets all changes to the "role_id" field.
+func (m *AdminUserMutation) ResetRoleID() {
+	m.role_id = nil
+	delete(m.clearedFields, adminuser.FieldRoleID)
 }
 
 // SetStatus sets the "status" field.
-func (m *AdminMutation) SetStatus(b bool) {
+func (m *AdminUserMutation) SetStatus(b bool) {
 	m.status = &b
 }
 
 // Status returns the value of the "status" field in the mutation.
-func (m *AdminMutation) Status() (r bool, exists bool) {
+func (m *AdminUserMutation) Status() (r bool, exists bool) {
 	v := m.status
 	if v == nil {
 		return
@@ -488,10 +640,10 @@ func (m *AdminMutation) Status() (r bool, exists bool) {
 	return *v, true
 }
 
-// OldStatus returns the old "status" field's value of the Admin entity.
-// If the Admin object wasn't provided to the builder, the object is fetched from the database.
+// OldStatus returns the old "status" field's value of the AdminUser entity.
+// If the AdminUser object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AdminMutation) OldStatus(ctx context.Context) (v bool, err error) {
+func (m *AdminUserMutation) OldStatus(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
 	}
@@ -506,30 +658,30 @@ func (m *AdminMutation) OldStatus(ctx context.Context) (v bool, err error) {
 }
 
 // ClearStatus clears the value of the "status" field.
-func (m *AdminMutation) ClearStatus() {
+func (m *AdminUserMutation) ClearStatus() {
 	m.status = nil
-	m.clearedFields[admin.FieldStatus] = struct{}{}
+	m.clearedFields[adminuser.FieldStatus] = struct{}{}
 }
 
 // StatusCleared returns if the "status" field was cleared in this mutation.
-func (m *AdminMutation) StatusCleared() bool {
-	_, ok := m.clearedFields[admin.FieldStatus]
+func (m *AdminUserMutation) StatusCleared() bool {
+	_, ok := m.clearedFields[adminuser.FieldStatus]
 	return ok
 }
 
 // ResetStatus resets all changes to the "status" field.
-func (m *AdminMutation) ResetStatus() {
+func (m *AdminUserMutation) ResetStatus() {
 	m.status = nil
-	delete(m.clearedFields, admin.FieldStatus)
+	delete(m.clearedFields, adminuser.FieldStatus)
 }
 
 // SetPassword sets the "password" field.
-func (m *AdminMutation) SetPassword(s string) {
+func (m *AdminUserMutation) SetPassword(s string) {
 	m.password = &s
 }
 
 // Password returns the value of the "password" field in the mutation.
-func (m *AdminMutation) Password() (r string, exists bool) {
+func (m *AdminUserMutation) Password() (r string, exists bool) {
 	v := m.password
 	if v == nil {
 		return
@@ -537,10 +689,10 @@ func (m *AdminMutation) Password() (r string, exists bool) {
 	return *v, true
 }
 
-// OldPassword returns the old "password" field's value of the Admin entity.
-// If the Admin object wasn't provided to the builder, the object is fetched from the database.
+// OldPassword returns the old "password" field's value of the AdminUser entity.
+// If the AdminUser object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AdminMutation) OldPassword(ctx context.Context) (v string, err error) {
+func (m *AdminUserMutation) OldPassword(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldPassword is only allowed on UpdateOne operations")
 	}
@@ -555,30 +707,30 @@ func (m *AdminMutation) OldPassword(ctx context.Context) (v string, err error) {
 }
 
 // ClearPassword clears the value of the "password" field.
-func (m *AdminMutation) ClearPassword() {
+func (m *AdminUserMutation) ClearPassword() {
 	m.password = nil
-	m.clearedFields[admin.FieldPassword] = struct{}{}
+	m.clearedFields[adminuser.FieldPassword] = struct{}{}
 }
 
 // PasswordCleared returns if the "password" field was cleared in this mutation.
-func (m *AdminMutation) PasswordCleared() bool {
-	_, ok := m.clearedFields[admin.FieldPassword]
+func (m *AdminUserMutation) PasswordCleared() bool {
+	_, ok := m.clearedFields[adminuser.FieldPassword]
 	return ok
 }
 
 // ResetPassword resets all changes to the "password" field.
-func (m *AdminMutation) ResetPassword() {
+func (m *AdminUserMutation) ResetPassword() {
 	m.password = nil
-	delete(m.clearedFields, admin.FieldPassword)
+	delete(m.clearedFields, adminuser.FieldPassword)
 }
 
 // SetSecret sets the "secret" field.
-func (m *AdminMutation) SetSecret(s string) {
+func (m *AdminUserMutation) SetSecret(s string) {
 	m.secret = &s
 }
 
 // Secret returns the value of the "secret" field in the mutation.
-func (m *AdminMutation) Secret() (r string, exists bool) {
+func (m *AdminUserMutation) Secret() (r string, exists bool) {
 	v := m.secret
 	if v == nil {
 		return
@@ -586,10 +738,10 @@ func (m *AdminMutation) Secret() (r string, exists bool) {
 	return *v, true
 }
 
-// OldSecret returns the old "secret" field's value of the Admin entity.
-// If the Admin object wasn't provided to the builder, the object is fetched from the database.
+// OldSecret returns the old "secret" field's value of the AdminUser entity.
+// If the AdminUser object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AdminMutation) OldSecret(ctx context.Context) (v string, err error) {
+func (m *AdminUserMutation) OldSecret(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldSecret is only allowed on UpdateOne operations")
 	}
@@ -604,32 +756,130 @@ func (m *AdminMutation) OldSecret(ctx context.Context) (v string, err error) {
 }
 
 // ClearSecret clears the value of the "secret" field.
-func (m *AdminMutation) ClearSecret() {
+func (m *AdminUserMutation) ClearSecret() {
 	m.secret = nil
-	m.clearedFields[admin.FieldSecret] = struct{}{}
+	m.clearedFields[adminuser.FieldSecret] = struct{}{}
 }
 
 // SecretCleared returns if the "secret" field was cleared in this mutation.
-func (m *AdminMutation) SecretCleared() bool {
-	_, ok := m.clearedFields[admin.FieldSecret]
+func (m *AdminUserMutation) SecretCleared() bool {
+	_, ok := m.clearedFields[adminuser.FieldSecret]
 	return ok
 }
 
 // ResetSecret resets all changes to the "secret" field.
-func (m *AdminMutation) ResetSecret() {
+func (m *AdminUserMutation) ResetSecret() {
 	m.secret = nil
-	delete(m.clearedFields, admin.FieldSecret)
+	delete(m.clearedFields, adminuser.FieldSecret)
 }
 
-// Where appends a list predicates to the AdminMutation builder.
-func (m *AdminMutation) Where(ps ...predicate.Admin) {
+// SetAPIKey sets the "api_key" field.
+func (m *AdminUserMutation) SetAPIKey(s string) {
+	m.api_key = &s
+}
+
+// APIKey returns the value of the "api_key" field in the mutation.
+func (m *AdminUserMutation) APIKey() (r string, exists bool) {
+	v := m.api_key
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAPIKey returns the old "api_key" field's value of the AdminUser entity.
+// If the AdminUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AdminUserMutation) OldAPIKey(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAPIKey is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAPIKey requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAPIKey: %w", err)
+	}
+	return oldValue.APIKey, nil
+}
+
+// ClearAPIKey clears the value of the "api_key" field.
+func (m *AdminUserMutation) ClearAPIKey() {
+	m.api_key = nil
+	m.clearedFields[adminuser.FieldAPIKey] = struct{}{}
+}
+
+// APIKeyCleared returns if the "api_key" field was cleared in this mutation.
+func (m *AdminUserMutation) APIKeyCleared() bool {
+	_, ok := m.clearedFields[adminuser.FieldAPIKey]
+	return ok
+}
+
+// ResetAPIKey resets all changes to the "api_key" field.
+func (m *AdminUserMutation) ResetAPIKey() {
+	m.api_key = nil
+	delete(m.clearedFields, adminuser.FieldAPIKey)
+}
+
+// SetWelcomeEmailSent sets the "welcome_email_sent" field.
+func (m *AdminUserMutation) SetWelcomeEmailSent(b bool) {
+	m.welcome_email_sent = &b
+}
+
+// WelcomeEmailSent returns the value of the "welcome_email_sent" field in the mutation.
+func (m *AdminUserMutation) WelcomeEmailSent() (r bool, exists bool) {
+	v := m.welcome_email_sent
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldWelcomeEmailSent returns the old "welcome_email_sent" field's value of the AdminUser entity.
+// If the AdminUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AdminUserMutation) OldWelcomeEmailSent(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldWelcomeEmailSent is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldWelcomeEmailSent requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldWelcomeEmailSent: %w", err)
+	}
+	return oldValue.WelcomeEmailSent, nil
+}
+
+// ClearWelcomeEmailSent clears the value of the "welcome_email_sent" field.
+func (m *AdminUserMutation) ClearWelcomeEmailSent() {
+	m.welcome_email_sent = nil
+	m.clearedFields[adminuser.FieldWelcomeEmailSent] = struct{}{}
+}
+
+// WelcomeEmailSentCleared returns if the "welcome_email_sent" field was cleared in this mutation.
+func (m *AdminUserMutation) WelcomeEmailSentCleared() bool {
+	_, ok := m.clearedFields[adminuser.FieldWelcomeEmailSent]
+	return ok
+}
+
+// ResetWelcomeEmailSent resets all changes to the "welcome_email_sent" field.
+func (m *AdminUserMutation) ResetWelcomeEmailSent() {
+	m.welcome_email_sent = nil
+	delete(m.clearedFields, adminuser.FieldWelcomeEmailSent)
+}
+
+// Where appends a list predicates to the AdminUserMutation builder.
+func (m *AdminUserMutation) Where(ps ...predicate.AdminUser) {
 	m.predicates = append(m.predicates, ps...)
 }
 
-// WhereP appends storage-level predicates to the AdminMutation builder. Using this method,
+// WhereP appends storage-level predicates to the AdminUserMutation builder. Using this method,
 // users can use type-assertion to append predicates that do not depend on any generated package.
-func (m *AdminMutation) WhereP(ps ...func(*sql.Selector)) {
-	p := make([]predicate.Admin, len(ps))
+func (m *AdminUserMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.AdminUser, len(ps))
 	for i := range ps {
 		p[i] = ps[i]
 	}
@@ -637,51 +887,66 @@ func (m *AdminMutation) WhereP(ps ...func(*sql.Selector)) {
 }
 
 // Op returns the operation name.
-func (m *AdminMutation) Op() Op {
+func (m *AdminUserMutation) Op() Op {
 	return m.op
 }
 
 // SetOp allows setting the mutation operation.
-func (m *AdminMutation) SetOp(op Op) {
+func (m *AdminUserMutation) SetOp(op Op) {
 	m.op = op
 }
 
-// Type returns the node type of this mutation (Admin).
-func (m *AdminMutation) Type() string {
+// Type returns the node type of this mutation (AdminUser).
+func (m *AdminUserMutation) Type() string {
 	return m.typ
 }
 
 // Fields returns all fields that were changed during this mutation. Note that in
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
-func (m *AdminMutation) Fields() []string {
-	fields := make([]string, 0, 9)
+func (m *AdminUserMutation) Fields() []string {
+	fields := make([]string, 0, 14)
 	if m.created_at != nil {
-		fields = append(fields, admin.FieldCreatedAt)
+		fields = append(fields, adminuser.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
-		fields = append(fields, admin.FieldUpdatedAt)
-	}
-	if m.app_id != nil {
-		fields = append(fields, admin.FieldAppID)
+		fields = append(fields, adminuser.FieldUpdatedAt)
 	}
 	if m.email != nil {
-		fields = append(fields, admin.FieldEmail)
+		fields = append(fields, adminuser.FieldEmail)
+	}
+	if m.phone != nil {
+		fields = append(fields, adminuser.FieldPhone)
 	}
 	if m.first_name != nil {
-		fields = append(fields, admin.FieldFirstName)
+		fields = append(fields, adminuser.FieldFirstName)
 	}
 	if m.last_name != nil {
-		fields = append(fields, admin.FieldLastName)
+		fields = append(fields, adminuser.FieldLastName)
+	}
+	if m.company != nil {
+		fields = append(fields, adminuser.FieldCompany)
+	}
+	if m.locale != nil {
+		fields = append(fields, adminuser.FieldLocale)
+	}
+	if m.role_id != nil {
+		fields = append(fields, adminuser.FieldRoleID)
 	}
 	if m.status != nil {
-		fields = append(fields, admin.FieldStatus)
+		fields = append(fields, adminuser.FieldStatus)
 	}
 	if m.password != nil {
-		fields = append(fields, admin.FieldPassword)
+		fields = append(fields, adminuser.FieldPassword)
 	}
 	if m.secret != nil {
-		fields = append(fields, admin.FieldSecret)
+		fields = append(fields, adminuser.FieldSecret)
+	}
+	if m.api_key != nil {
+		fields = append(fields, adminuser.FieldAPIKey)
+	}
+	if m.welcome_email_sent != nil {
+		fields = append(fields, adminuser.FieldWelcomeEmailSent)
 	}
 	return fields
 }
@@ -689,26 +954,36 @@ func (m *AdminMutation) Fields() []string {
 // Field returns the value of a field with the given name. The second boolean
 // return value indicates that this field was not set, or was not defined in the
 // schema.
-func (m *AdminMutation) Field(name string) (ent.Value, bool) {
+func (m *AdminUserMutation) Field(name string) (ent.Value, bool) {
 	switch name {
-	case admin.FieldCreatedAt:
+	case adminuser.FieldCreatedAt:
 		return m.CreatedAt()
-	case admin.FieldUpdatedAt:
+	case adminuser.FieldUpdatedAt:
 		return m.UpdatedAt()
-	case admin.FieldAppID:
-		return m.AppID()
-	case admin.FieldEmail:
+	case adminuser.FieldEmail:
 		return m.Email()
-	case admin.FieldFirstName:
+	case adminuser.FieldPhone:
+		return m.Phone()
+	case adminuser.FieldFirstName:
 		return m.FirstName()
-	case admin.FieldLastName:
+	case adminuser.FieldLastName:
 		return m.LastName()
-	case admin.FieldStatus:
+	case adminuser.FieldCompany:
+		return m.Company()
+	case adminuser.FieldLocale:
+		return m.Locale()
+	case adminuser.FieldRoleID:
+		return m.RoleID()
+	case adminuser.FieldStatus:
 		return m.Status()
-	case admin.FieldPassword:
+	case adminuser.FieldPassword:
 		return m.Password()
-	case admin.FieldSecret:
+	case adminuser.FieldSecret:
 		return m.Secret()
+	case adminuser.FieldAPIKey:
+		return m.APIKey()
+	case adminuser.FieldWelcomeEmailSent:
+		return m.WelcomeEmailSent()
 	}
 	return nil, false
 }
@@ -716,275 +991,365 @@ func (m *AdminMutation) Field(name string) (ent.Value, bool) {
 // OldField returns the old value of the field from the database. An error is
 // returned if the mutation operation is not UpdateOne, or the query to the
 // database failed.
-func (m *AdminMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+func (m *AdminUserMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
-	case admin.FieldCreatedAt:
+	case adminuser.FieldCreatedAt:
 		return m.OldCreatedAt(ctx)
-	case admin.FieldUpdatedAt:
+	case adminuser.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
-	case admin.FieldAppID:
-		return m.OldAppID(ctx)
-	case admin.FieldEmail:
+	case adminuser.FieldEmail:
 		return m.OldEmail(ctx)
-	case admin.FieldFirstName:
+	case adminuser.FieldPhone:
+		return m.OldPhone(ctx)
+	case adminuser.FieldFirstName:
 		return m.OldFirstName(ctx)
-	case admin.FieldLastName:
+	case adminuser.FieldLastName:
 		return m.OldLastName(ctx)
-	case admin.FieldStatus:
+	case adminuser.FieldCompany:
+		return m.OldCompany(ctx)
+	case adminuser.FieldLocale:
+		return m.OldLocale(ctx)
+	case adminuser.FieldRoleID:
+		return m.OldRoleID(ctx)
+	case adminuser.FieldStatus:
 		return m.OldStatus(ctx)
-	case admin.FieldPassword:
+	case adminuser.FieldPassword:
 		return m.OldPassword(ctx)
-	case admin.FieldSecret:
+	case adminuser.FieldSecret:
 		return m.OldSecret(ctx)
+	case adminuser.FieldAPIKey:
+		return m.OldAPIKey(ctx)
+	case adminuser.FieldWelcomeEmailSent:
+		return m.OldWelcomeEmailSent(ctx)
 	}
-	return nil, fmt.Errorf("unknown Admin field %s", name)
+	return nil, fmt.Errorf("unknown AdminUser field %s", name)
 }
 
 // SetField sets the value of a field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *AdminMutation) SetField(name string, value ent.Value) error {
+func (m *AdminUserMutation) SetField(name string, value ent.Value) error {
 	switch name {
-	case admin.FieldCreatedAt:
+	case adminuser.FieldCreatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetCreatedAt(v)
 		return nil
-	case admin.FieldUpdatedAt:
+	case adminuser.FieldUpdatedAt:
 		v, ok := value.(time.Time)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
 		return nil
-	case admin.FieldAppID:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetAppID(v)
-		return nil
-	case admin.FieldEmail:
+	case adminuser.FieldEmail:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetEmail(v)
 		return nil
-	case admin.FieldFirstName:
+	case adminuser.FieldPhone:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPhone(v)
+		return nil
+	case adminuser.FieldFirstName:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetFirstName(v)
 		return nil
-	case admin.FieldLastName:
+	case adminuser.FieldLastName:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetLastName(v)
 		return nil
-	case admin.FieldStatus:
+	case adminuser.FieldCompany:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCompany(v)
+		return nil
+	case adminuser.FieldLocale:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLocale(v)
+		return nil
+	case adminuser.FieldRoleID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetRoleID(v)
+		return nil
+	case adminuser.FieldStatus:
 		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetStatus(v)
 		return nil
-	case admin.FieldPassword:
+	case adminuser.FieldPassword:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetPassword(v)
 		return nil
-	case admin.FieldSecret:
+	case adminuser.FieldSecret:
 		v, ok := value.(string)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetSecret(v)
 		return nil
+	case adminuser.FieldAPIKey:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAPIKey(v)
+		return nil
+	case adminuser.FieldWelcomeEmailSent:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetWelcomeEmailSent(v)
+		return nil
 	}
-	return fmt.Errorf("unknown Admin field %s", name)
+	return fmt.Errorf("unknown AdminUser field %s", name)
 }
 
 // AddedFields returns all numeric fields that were incremented/decremented during
 // this mutation.
-func (m *AdminMutation) AddedFields() []string {
+func (m *AdminUserMutation) AddedFields() []string {
 	return nil
 }
 
 // AddedField returns the numeric value that was incremented/decremented on a field
 // with the given name. The second boolean return value indicates that this field
 // was not set, or was not defined in the schema.
-func (m *AdminMutation) AddedField(name string) (ent.Value, bool) {
+func (m *AdminUserMutation) AddedField(name string) (ent.Value, bool) {
 	return nil, false
 }
 
 // AddField adds the value to the field with the given name. It returns an error if
 // the field is not defined in the schema, or if the type mismatched the field
 // type.
-func (m *AdminMutation) AddField(name string, value ent.Value) error {
+func (m *AdminUserMutation) AddField(name string, value ent.Value) error {
 	switch name {
 	}
-	return fmt.Errorf("unknown Admin numeric field %s", name)
+	return fmt.Errorf("unknown AdminUser numeric field %s", name)
 }
 
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
-func (m *AdminMutation) ClearedFields() []string {
+func (m *AdminUserMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(admin.FieldCreatedAt) {
-		fields = append(fields, admin.FieldCreatedAt)
+	if m.FieldCleared(adminuser.FieldCreatedAt) {
+		fields = append(fields, adminuser.FieldCreatedAt)
 	}
-	if m.FieldCleared(admin.FieldUpdatedAt) {
-		fields = append(fields, admin.FieldUpdatedAt)
+	if m.FieldCleared(adminuser.FieldUpdatedAt) {
+		fields = append(fields, adminuser.FieldUpdatedAt)
 	}
-	if m.FieldCleared(admin.FieldAppID) {
-		fields = append(fields, admin.FieldAppID)
+	if m.FieldCleared(adminuser.FieldPhone) {
+		fields = append(fields, adminuser.FieldPhone)
 	}
-	if m.FieldCleared(admin.FieldFirstName) {
-		fields = append(fields, admin.FieldFirstName)
+	if m.FieldCleared(adminuser.FieldFirstName) {
+		fields = append(fields, adminuser.FieldFirstName)
 	}
-	if m.FieldCleared(admin.FieldLastName) {
-		fields = append(fields, admin.FieldLastName)
+	if m.FieldCleared(adminuser.FieldLastName) {
+		fields = append(fields, adminuser.FieldLastName)
 	}
-	if m.FieldCleared(admin.FieldStatus) {
-		fields = append(fields, admin.FieldStatus)
+	if m.FieldCleared(adminuser.FieldCompany) {
+		fields = append(fields, adminuser.FieldCompany)
 	}
-	if m.FieldCleared(admin.FieldPassword) {
-		fields = append(fields, admin.FieldPassword)
+	if m.FieldCleared(adminuser.FieldLocale) {
+		fields = append(fields, adminuser.FieldLocale)
 	}
-	if m.FieldCleared(admin.FieldSecret) {
-		fields = append(fields, admin.FieldSecret)
+	if m.FieldCleared(adminuser.FieldRoleID) {
+		fields = append(fields, adminuser.FieldRoleID)
+	}
+	if m.FieldCleared(adminuser.FieldStatus) {
+		fields = append(fields, adminuser.FieldStatus)
+	}
+	if m.FieldCleared(adminuser.FieldPassword) {
+		fields = append(fields, adminuser.FieldPassword)
+	}
+	if m.FieldCleared(adminuser.FieldSecret) {
+		fields = append(fields, adminuser.FieldSecret)
+	}
+	if m.FieldCleared(adminuser.FieldAPIKey) {
+		fields = append(fields, adminuser.FieldAPIKey)
+	}
+	if m.FieldCleared(adminuser.FieldWelcomeEmailSent) {
+		fields = append(fields, adminuser.FieldWelcomeEmailSent)
 	}
 	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
 // cleared in this mutation.
-func (m *AdminMutation) FieldCleared(name string) bool {
+func (m *AdminUserMutation) FieldCleared(name string) bool {
 	_, ok := m.clearedFields[name]
 	return ok
 }
 
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
-func (m *AdminMutation) ClearField(name string) error {
+func (m *AdminUserMutation) ClearField(name string) error {
 	switch name {
-	case admin.FieldCreatedAt:
+	case adminuser.FieldCreatedAt:
 		m.ClearCreatedAt()
 		return nil
-	case admin.FieldUpdatedAt:
+	case adminuser.FieldUpdatedAt:
 		m.ClearUpdatedAt()
 		return nil
-	case admin.FieldAppID:
-		m.ClearAppID()
+	case adminuser.FieldPhone:
+		m.ClearPhone()
 		return nil
-	case admin.FieldFirstName:
+	case adminuser.FieldFirstName:
 		m.ClearFirstName()
 		return nil
-	case admin.FieldLastName:
+	case adminuser.FieldLastName:
 		m.ClearLastName()
 		return nil
-	case admin.FieldStatus:
+	case adminuser.FieldCompany:
+		m.ClearCompany()
+		return nil
+	case adminuser.FieldLocale:
+		m.ClearLocale()
+		return nil
+	case adminuser.FieldRoleID:
+		m.ClearRoleID()
+		return nil
+	case adminuser.FieldStatus:
 		m.ClearStatus()
 		return nil
-	case admin.FieldPassword:
+	case adminuser.FieldPassword:
 		m.ClearPassword()
 		return nil
-	case admin.FieldSecret:
+	case adminuser.FieldSecret:
 		m.ClearSecret()
 		return nil
+	case adminuser.FieldAPIKey:
+		m.ClearAPIKey()
+		return nil
+	case adminuser.FieldWelcomeEmailSent:
+		m.ClearWelcomeEmailSent()
+		return nil
 	}
-	return fmt.Errorf("unknown Admin nullable field %s", name)
+	return fmt.Errorf("unknown AdminUser nullable field %s", name)
 }
 
 // ResetField resets all changes in the mutation for the field with the given name.
 // It returns an error if the field is not defined in the schema.
-func (m *AdminMutation) ResetField(name string) error {
+func (m *AdminUserMutation) ResetField(name string) error {
 	switch name {
-	case admin.FieldCreatedAt:
+	case adminuser.FieldCreatedAt:
 		m.ResetCreatedAt()
 		return nil
-	case admin.FieldUpdatedAt:
+	case adminuser.FieldUpdatedAt:
 		m.ResetUpdatedAt()
 		return nil
-	case admin.FieldAppID:
-		m.ResetAppID()
-		return nil
-	case admin.FieldEmail:
+	case adminuser.FieldEmail:
 		m.ResetEmail()
 		return nil
-	case admin.FieldFirstName:
+	case adminuser.FieldPhone:
+		m.ResetPhone()
+		return nil
+	case adminuser.FieldFirstName:
 		m.ResetFirstName()
 		return nil
-	case admin.FieldLastName:
+	case adminuser.FieldLastName:
 		m.ResetLastName()
 		return nil
-	case admin.FieldStatus:
+	case adminuser.FieldCompany:
+		m.ResetCompany()
+		return nil
+	case adminuser.FieldLocale:
+		m.ResetLocale()
+		return nil
+	case adminuser.FieldRoleID:
+		m.ResetRoleID()
+		return nil
+	case adminuser.FieldStatus:
 		m.ResetStatus()
 		return nil
-	case admin.FieldPassword:
+	case adminuser.FieldPassword:
 		m.ResetPassword()
 		return nil
-	case admin.FieldSecret:
+	case adminuser.FieldSecret:
 		m.ResetSecret()
 		return nil
+	case adminuser.FieldAPIKey:
+		m.ResetAPIKey()
+		return nil
+	case adminuser.FieldWelcomeEmailSent:
+		m.ResetWelcomeEmailSent()
+		return nil
 	}
-	return fmt.Errorf("unknown Admin field %s", name)
+	return fmt.Errorf("unknown AdminUser field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
-func (m *AdminMutation) AddedEdges() []string {
+func (m *AdminUserMutation) AddedEdges() []string {
 	edges := make([]string, 0, 0)
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
-func (m *AdminMutation) AddedIDs(name string) []ent.Value {
+func (m *AdminUserMutation) AddedIDs(name string) []ent.Value {
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
-func (m *AdminMutation) RemovedEdges() []string {
+func (m *AdminUserMutation) RemovedEdges() []string {
 	edges := make([]string, 0, 0)
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
-func (m *AdminMutation) RemovedIDs(name string) []ent.Value {
+func (m *AdminUserMutation) RemovedIDs(name string) []ent.Value {
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
-func (m *AdminMutation) ClearedEdges() []string {
+func (m *AdminUserMutation) ClearedEdges() []string {
 	edges := make([]string, 0, 0)
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
-func (m *AdminMutation) EdgeCleared(name string) bool {
+func (m *AdminUserMutation) EdgeCleared(name string) bool {
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
-func (m *AdminMutation) ClearEdge(name string) error {
-	return fmt.Errorf("unknown Admin unique edge %s", name)
+func (m *AdminUserMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown AdminUser unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
-func (m *AdminMutation) ResetEdge(name string) error {
-	return fmt.Errorf("unknown Admin edge %s", name)
+func (m *AdminUserMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown AdminUser edge %s", name)
 }
 
 // AppMutation represents an operation that mutates the App nodes in the graph.
@@ -993,6 +1358,8 @@ type AppMutation struct {
 	op                          Op
 	typ                         string
 	id                          *string
+	created_at                  *time.Time
+	updated_at                  *time.Time
 	name                        *string
 	copyright                   *string
 	email                       *string
@@ -1010,6 +1377,7 @@ type AppMutation struct {
 	auth_welcome_email_templ_id *string
 	auth_verification_templ_id  *string
 	auth_email_verify           *string
+	admin_user_id               *string
 	clearedFields               map[string]struct{}
 	done                        bool
 	oldValue                    func(context.Context) (*App, error)
@@ -1118,6 +1486,104 @@ func (m *AppMutation) IDs(ctx context.Context) ([]string, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *AppMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *AppMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the App entity.
+// If the App object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *AppMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[app.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *AppMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[app.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *AppMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, app.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *AppMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *AppMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the App entity.
+// If the App object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *AppMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[app.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *AppMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[app.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *AppMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, app.FieldUpdatedAt)
 }
 
 // SetName sets the "name" field.
@@ -1953,6 +2419,55 @@ func (m *AppMutation) ResetAuthEmailVerify() {
 	delete(m.clearedFields, app.FieldAuthEmailVerify)
 }
 
+// SetAdminUserID sets the "admin_user_id" field.
+func (m *AppMutation) SetAdminUserID(s string) {
+	m.admin_user_id = &s
+}
+
+// AdminUserID returns the value of the "admin_user_id" field in the mutation.
+func (m *AppMutation) AdminUserID() (r string, exists bool) {
+	v := m.admin_user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAdminUserID returns the old "admin_user_id" field's value of the App entity.
+// If the App object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppMutation) OldAdminUserID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAdminUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAdminUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAdminUserID: %w", err)
+	}
+	return oldValue.AdminUserID, nil
+}
+
+// ClearAdminUserID clears the value of the "admin_user_id" field.
+func (m *AppMutation) ClearAdminUserID() {
+	m.admin_user_id = nil
+	m.clearedFields[app.FieldAdminUserID] = struct{}{}
+}
+
+// AdminUserIDCleared returns if the "admin_user_id" field was cleared in this mutation.
+func (m *AppMutation) AdminUserIDCleared() bool {
+	_, ok := m.clearedFields[app.FieldAdminUserID]
+	return ok
+}
+
+// ResetAdminUserID resets all changes to the "admin_user_id" field.
+func (m *AppMutation) ResetAdminUserID() {
+	m.admin_user_id = nil
+	delete(m.clearedFields, app.FieldAdminUserID)
+}
+
 // Where appends a list predicates to the AppMutation builder.
 func (m *AppMutation) Where(ps ...predicate.App) {
 	m.predicates = append(m.predicates, ps...)
@@ -1987,7 +2502,13 @@ func (m *AppMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AppMutation) Fields() []string {
-	fields := make([]string, 0, 17)
+	fields := make([]string, 0, 20)
+	if m.created_at != nil {
+		fields = append(fields, app.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, app.FieldUpdatedAt)
+	}
 	if m.name != nil {
 		fields = append(fields, app.FieldName)
 	}
@@ -2039,6 +2560,9 @@ func (m *AppMutation) Fields() []string {
 	if m.auth_email_verify != nil {
 		fields = append(fields, app.FieldAuthEmailVerify)
 	}
+	if m.admin_user_id != nil {
+		fields = append(fields, app.FieldAdminUserID)
+	}
 	return fields
 }
 
@@ -2047,6 +2571,10 @@ func (m *AppMutation) Fields() []string {
 // schema.
 func (m *AppMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case app.FieldCreatedAt:
+		return m.CreatedAt()
+	case app.FieldUpdatedAt:
+		return m.UpdatedAt()
 	case app.FieldName:
 		return m.Name()
 	case app.FieldCopyright:
@@ -2081,6 +2609,8 @@ func (m *AppMutation) Field(name string) (ent.Value, bool) {
 		return m.AuthVerificationTemplID()
 	case app.FieldAuthEmailVerify:
 		return m.AuthEmailVerify()
+	case app.FieldAdminUserID:
+		return m.AdminUserID()
 	}
 	return nil, false
 }
@@ -2090,6 +2620,10 @@ func (m *AppMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *AppMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case app.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case app.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
 	case app.FieldName:
 		return m.OldName(ctx)
 	case app.FieldCopyright:
@@ -2124,6 +2658,8 @@ func (m *AppMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldAuthVerificationTemplID(ctx)
 	case app.FieldAuthEmailVerify:
 		return m.OldAuthEmailVerify(ctx)
+	case app.FieldAdminUserID:
+		return m.OldAdminUserID(ctx)
 	}
 	return nil, fmt.Errorf("unknown App field %s", name)
 }
@@ -2133,6 +2669,20 @@ func (m *AppMutation) OldField(ctx context.Context, name string) (ent.Value, err
 // type.
 func (m *AppMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case app.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case app.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
 	case app.FieldName:
 		v, ok := value.(string)
 		if !ok {
@@ -2252,6 +2802,13 @@ func (m *AppMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetAuthEmailVerify(v)
 		return nil
+	case app.FieldAdminUserID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAdminUserID(v)
+		return nil
 	}
 	return fmt.Errorf("unknown App field %s", name)
 }
@@ -2282,6 +2839,12 @@ func (m *AppMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *AppMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(app.FieldCreatedAt) {
+		fields = append(fields, app.FieldCreatedAt)
+	}
+	if m.FieldCleared(app.FieldUpdatedAt) {
+		fields = append(fields, app.FieldUpdatedAt)
+	}
 	if m.FieldCleared(app.FieldName) {
 		fields = append(fields, app.FieldName)
 	}
@@ -2333,6 +2896,9 @@ func (m *AppMutation) ClearedFields() []string {
 	if m.FieldCleared(app.FieldAuthEmailVerify) {
 		fields = append(fields, app.FieldAuthEmailVerify)
 	}
+	if m.FieldCleared(app.FieldAdminUserID) {
+		fields = append(fields, app.FieldAdminUserID)
+	}
 	return fields
 }
 
@@ -2347,6 +2913,12 @@ func (m *AppMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *AppMutation) ClearField(name string) error {
 	switch name {
+	case app.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case app.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
 	case app.FieldName:
 		m.ClearName()
 		return nil
@@ -2398,6 +2970,9 @@ func (m *AppMutation) ClearField(name string) error {
 	case app.FieldAuthEmailVerify:
 		m.ClearAuthEmailVerify()
 		return nil
+	case app.FieldAdminUserID:
+		m.ClearAdminUserID()
+		return nil
 	}
 	return fmt.Errorf("unknown App nullable field %s", name)
 }
@@ -2406,6 +2981,12 @@ func (m *AppMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *AppMutation) ResetField(name string) error {
 	switch name {
+	case app.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case app.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
 	case app.FieldName:
 		m.ResetName()
 		return nil
@@ -2456,6 +3037,9 @@ func (m *AppMutation) ResetField(name string) error {
 		return nil
 	case app.FieldAuthEmailVerify:
 		m.ResetAuthEmailVerify()
+		return nil
+	case app.FieldAdminUserID:
+		m.ResetAdminUserID()
 		return nil
 	}
 	return fmt.Errorf("unknown App field %s", name)
@@ -14664,6 +15248,7 @@ type SessionMutation struct {
 	id            *string
 	created_at    *time.Time
 	updated_at    *time.Time
+	app_id        *string
 	ip            *string
 	user_agent    *string
 	payload       *string
@@ -14876,6 +15461,55 @@ func (m *SessionMutation) UpdatedAtCleared() bool {
 func (m *SessionMutation) ResetUpdatedAt() {
 	m.updated_at = nil
 	delete(m.clearedFields, session.FieldUpdatedAt)
+}
+
+// SetAppID sets the "app_id" field.
+func (m *SessionMutation) SetAppID(s string) {
+	m.app_id = &s
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *SessionMutation) AppID() (r string, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the Session entity.
+// If the Session object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *SessionMutation) OldAppID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *SessionMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[session.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *SessionMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[session.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *SessionMutation) ResetAppID() {
+	m.app_id = nil
+	delete(m.clearedFields, session.FieldAppID)
 }
 
 // SetUserID sets the "user_id" field.
@@ -15184,12 +15818,15 @@ func (m *SessionMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *SessionMutation) Fields() []string {
-	fields := make([]string, 0, 7)
+	fields := make([]string, 0, 8)
 	if m.created_at != nil {
 		fields = append(fields, session.FieldCreatedAt)
 	}
 	if m.updated_at != nil {
 		fields = append(fields, session.FieldUpdatedAt)
+	}
+	if m.app_id != nil {
+		fields = append(fields, session.FieldAppID)
 	}
 	if m.user != nil {
 		fields = append(fields, session.FieldUserID)
@@ -15218,6 +15855,8 @@ func (m *SessionMutation) Field(name string) (ent.Value, bool) {
 		return m.CreatedAt()
 	case session.FieldUpdatedAt:
 		return m.UpdatedAt()
+	case session.FieldAppID:
+		return m.AppID()
 	case session.FieldUserID:
 		return m.UserID()
 	case session.FieldIP:
@@ -15241,6 +15880,8 @@ func (m *SessionMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldCreatedAt(ctx)
 	case session.FieldUpdatedAt:
 		return m.OldUpdatedAt(ctx)
+	case session.FieldAppID:
+		return m.OldAppID(ctx)
 	case session.FieldUserID:
 		return m.OldUserID(ctx)
 	case session.FieldIP:
@@ -15273,6 +15914,13 @@ func (m *SessionMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetUpdatedAt(v)
+		return nil
+	case session.FieldAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
 		return nil
 	case session.FieldUserID:
 		v, ok := value.(string)
@@ -15345,6 +15993,9 @@ func (m *SessionMutation) ClearedFields() []string {
 	if m.FieldCleared(session.FieldUpdatedAt) {
 		fields = append(fields, session.FieldUpdatedAt)
 	}
+	if m.FieldCleared(session.FieldAppID) {
+		fields = append(fields, session.FieldAppID)
+	}
 	if m.FieldCleared(session.FieldUserID) {
 		fields = append(fields, session.FieldUserID)
 	}
@@ -15380,6 +16031,9 @@ func (m *SessionMutation) ClearField(name string) error {
 	case session.FieldUpdatedAt:
 		m.ClearUpdatedAt()
 		return nil
+	case session.FieldAppID:
+		m.ClearAppID()
+		return nil
 	case session.FieldUserID:
 		m.ClearUserID()
 		return nil
@@ -15408,6 +16062,9 @@ func (m *SessionMutation) ResetField(name string) error {
 		return nil
 	case session.FieldUpdatedAt:
 		m.ResetUpdatedAt()
+		return nil
+	case session.FieldAppID:
+		m.ResetAppID()
 		return nil
 	case session.FieldUserID:
 		m.ResetUserID()

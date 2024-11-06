@@ -7,7 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
-	"saas/gen/ent/admin"
+	"saas/gen/ent/adminuser"
 	"saas/gen/ent/app"
 	"saas/gen/ent/kache"
 	"saas/gen/ent/keyvalue"
@@ -93,7 +93,7 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			admin.Table:           admin.ValidColumn,
+			adminuser.Table:       adminuser.ValidColumn,
 			app.Table:             app.ValidColumn,
 			kache.Table:           kache.ValidColumn,
 			keyvalue.Table:        keyvalue.ValidColumn,

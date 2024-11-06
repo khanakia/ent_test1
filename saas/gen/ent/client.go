@@ -11,7 +11,7 @@ import (
 
 	"saas/gen/ent/migrate"
 
-	"saas/gen/ent/admin"
+	"saas/gen/ent/adminuser"
 	"saas/gen/ent/app"
 	"saas/gen/ent/kache"
 	"saas/gen/ent/keyvalue"
@@ -46,8 +46,8 @@ type Client struct {
 	config
 	// Schema is the client for creating, migrating and dropping schema.
 	Schema *migrate.Schema
-	// Admin is the client for interacting with the Admin builders.
-	Admin *AdminClient
+	// AdminUser is the client for interacting with the AdminUser builders.
+	AdminUser *AdminUserClient
 	// App is the client for interacting with the App builders.
 	App *AppClient
 	// Kache is the client for interacting with the Kache builders.
@@ -99,7 +99,7 @@ func NewClient(opts ...Option) *Client {
 
 func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
-	c.Admin = NewAdminClient(c.config)
+	c.AdminUser = NewAdminUserClient(c.config)
 	c.App = NewAppClient(c.config)
 	c.Kache = NewKacheClient(c.config)
 	c.Keyvalue = NewKeyvalueClient(c.config)
@@ -212,7 +212,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 	return &Tx{
 		ctx:             ctx,
 		config:          cfg,
-		Admin:           NewAdminClient(cfg),
+		AdminUser:       NewAdminUserClient(cfg),
 		App:             NewAppClient(cfg),
 		Kache:           NewKacheClient(cfg),
 		Keyvalue:        NewKeyvalueClient(cfg),
@@ -252,7 +252,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 	return &Tx{
 		ctx:             ctx,
 		config:          cfg,
-		Admin:           NewAdminClient(cfg),
+		AdminUser:       NewAdminUserClient(cfg),
 		App:             NewAppClient(cfg),
 		Kache:           NewKacheClient(cfg),
 		Keyvalue:        NewKeyvalueClient(cfg),
@@ -279,7 +279,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 // Debug returns a new debug-client. It's used to get verbose logging on specific operations.
 //
 //	client.Debug().
-//		Admin.
+//		AdminUser.
 //		Query().
 //		Count(ctx)
 func (c *Client) Debug() *Client {
@@ -302,7 +302,7 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.Admin, c.App, c.Kache, c.Keyvalue, c.MailConn, c.Media, c.OauthConnection,
+		c.AdminUser, c.App, c.Kache, c.Keyvalue, c.MailConn, c.Media, c.OauthConnection,
 		c.Plan, c.Post, c.PostCategory, c.PostStatus, c.PostTag, c.PostType, c.Session,
 		c.Temp, c.Templ, c.Todo, c.User, c.Workspace, c.WorkspaceInvite,
 		c.WorkspaceUser,
@@ -315,7 +315,7 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.Admin, c.App, c.Kache, c.Keyvalue, c.MailConn, c.Media, c.OauthConnection,
+		c.AdminUser, c.App, c.Kache, c.Keyvalue, c.MailConn, c.Media, c.OauthConnection,
 		c.Plan, c.Post, c.PostCategory, c.PostStatus, c.PostTag, c.PostType, c.Session,
 		c.Temp, c.Templ, c.Todo, c.User, c.Workspace, c.WorkspaceInvite,
 		c.WorkspaceUser,
@@ -327,8 +327,8 @@ func (c *Client) Intercept(interceptors ...Interceptor) {
 // Mutate implements the ent.Mutator interface.
 func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	switch m := m.(type) {
-	case *AdminMutation:
-		return c.Admin.mutate(ctx, m)
+	case *AdminUserMutation:
+		return c.AdminUser.mutate(ctx, m)
 	case *AppMutation:
 		return c.App.mutate(ctx, m)
 	case *KacheMutation:
@@ -374,107 +374,107 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 	}
 }
 
-// AdminClient is a client for the Admin schema.
-type AdminClient struct {
+// AdminUserClient is a client for the AdminUser schema.
+type AdminUserClient struct {
 	config
 }
 
-// NewAdminClient returns a client for the Admin from the given config.
-func NewAdminClient(c config) *AdminClient {
-	return &AdminClient{config: c}
+// NewAdminUserClient returns a client for the AdminUser from the given config.
+func NewAdminUserClient(c config) *AdminUserClient {
+	return &AdminUserClient{config: c}
 }
 
 // Use adds a list of mutation hooks to the hooks stack.
-// A call to `Use(f, g, h)` equals to `admin.Hooks(f(g(h())))`.
-func (c *AdminClient) Use(hooks ...Hook) {
-	c.hooks.Admin = append(c.hooks.Admin, hooks...)
+// A call to `Use(f, g, h)` equals to `adminuser.Hooks(f(g(h())))`.
+func (c *AdminUserClient) Use(hooks ...Hook) {
+	c.hooks.AdminUser = append(c.hooks.AdminUser, hooks...)
 }
 
 // Intercept adds a list of query interceptors to the interceptors stack.
-// A call to `Intercept(f, g, h)` equals to `admin.Intercept(f(g(h())))`.
-func (c *AdminClient) Intercept(interceptors ...Interceptor) {
-	c.inters.Admin = append(c.inters.Admin, interceptors...)
+// A call to `Intercept(f, g, h)` equals to `adminuser.Intercept(f(g(h())))`.
+func (c *AdminUserClient) Intercept(interceptors ...Interceptor) {
+	c.inters.AdminUser = append(c.inters.AdminUser, interceptors...)
 }
 
-// Create returns a builder for creating a Admin entity.
-func (c *AdminClient) Create() *AdminCreate {
-	mutation := newAdminMutation(c.config, OpCreate)
-	return &AdminCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Create returns a builder for creating a AdminUser entity.
+func (c *AdminUserClient) Create() *AdminUserCreate {
+	mutation := newAdminUserMutation(c.config, OpCreate)
+	return &AdminUserCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// CreateBulk returns a builder for creating a bulk of Admin entities.
-func (c *AdminClient) CreateBulk(builders ...*AdminCreate) *AdminCreateBulk {
-	return &AdminCreateBulk{config: c.config, builders: builders}
+// CreateBulk returns a builder for creating a bulk of AdminUser entities.
+func (c *AdminUserClient) CreateBulk(builders ...*AdminUserCreate) *AdminUserCreateBulk {
+	return &AdminUserCreateBulk{config: c.config, builders: builders}
 }
 
 // MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
 // a builder and applies setFunc on it.
-func (c *AdminClient) MapCreateBulk(slice any, setFunc func(*AdminCreate, int)) *AdminCreateBulk {
+func (c *AdminUserClient) MapCreateBulk(slice any, setFunc func(*AdminUserCreate, int)) *AdminUserCreateBulk {
 	rv := reflect.ValueOf(slice)
 	if rv.Kind() != reflect.Slice {
-		return &AdminCreateBulk{err: fmt.Errorf("calling to AdminClient.MapCreateBulk with wrong type %T, need slice", slice)}
+		return &AdminUserCreateBulk{err: fmt.Errorf("calling to AdminUserClient.MapCreateBulk with wrong type %T, need slice", slice)}
 	}
-	builders := make([]*AdminCreate, rv.Len())
+	builders := make([]*AdminUserCreate, rv.Len())
 	for i := 0; i < rv.Len(); i++ {
 		builders[i] = c.Create()
 		setFunc(builders[i], i)
 	}
-	return &AdminCreateBulk{config: c.config, builders: builders}
+	return &AdminUserCreateBulk{config: c.config, builders: builders}
 }
 
-// Update returns an update builder for Admin.
-func (c *AdminClient) Update() *AdminUpdate {
-	mutation := newAdminMutation(c.config, OpUpdate)
-	return &AdminUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Update returns an update builder for AdminUser.
+func (c *AdminUserClient) Update() *AdminUserUpdate {
+	mutation := newAdminUserMutation(c.config, OpUpdate)
+	return &AdminUserUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOne returns an update builder for the given entity.
-func (c *AdminClient) UpdateOne(a *Admin) *AdminUpdateOne {
-	mutation := newAdminMutation(c.config, OpUpdateOne, withAdmin(a))
-	return &AdminUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *AdminUserClient) UpdateOne(au *AdminUser) *AdminUserUpdateOne {
+	mutation := newAdminUserMutation(c.config, OpUpdateOne, withAdminUser(au))
+	return &AdminUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *AdminClient) UpdateOneID(id string) *AdminUpdateOne {
-	mutation := newAdminMutation(c.config, OpUpdateOne, withAdminID(id))
-	return &AdminUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+func (c *AdminUserClient) UpdateOneID(id string) *AdminUserUpdateOne {
+	mutation := newAdminUserMutation(c.config, OpUpdateOne, withAdminUserID(id))
+	return &AdminUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
-// Delete returns a delete builder for Admin.
-func (c *AdminClient) Delete() *AdminDelete {
-	mutation := newAdminMutation(c.config, OpDelete)
-	return &AdminDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+// Delete returns a delete builder for AdminUser.
+func (c *AdminUserClient) Delete() *AdminUserDelete {
+	mutation := newAdminUserMutation(c.config, OpDelete)
+	return &AdminUserDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
 
 // DeleteOne returns a builder for deleting the given entity.
-func (c *AdminClient) DeleteOne(a *Admin) *AdminDeleteOne {
-	return c.DeleteOneID(a.ID)
+func (c *AdminUserClient) DeleteOne(au *AdminUser) *AdminUserDeleteOne {
+	return c.DeleteOneID(au.ID)
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *AdminClient) DeleteOneID(id string) *AdminDeleteOne {
-	builder := c.Delete().Where(admin.ID(id))
+func (c *AdminUserClient) DeleteOneID(id string) *AdminUserDeleteOne {
+	builder := c.Delete().Where(adminuser.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
-	return &AdminDeleteOne{builder}
+	return &AdminUserDeleteOne{builder}
 }
 
-// Query returns a query builder for Admin.
-func (c *AdminClient) Query() *AdminQuery {
-	return &AdminQuery{
+// Query returns a query builder for AdminUser.
+func (c *AdminUserClient) Query() *AdminUserQuery {
+	return &AdminUserQuery{
 		config: c.config,
-		ctx:    &QueryContext{Type: TypeAdmin},
+		ctx:    &QueryContext{Type: TypeAdminUser},
 		inters: c.Interceptors(),
 	}
 }
 
-// Get returns a Admin entity by its id.
-func (c *AdminClient) Get(ctx context.Context, id string) (*Admin, error) {
-	return c.Query().Where(admin.ID(id)).Only(ctx)
+// Get returns a AdminUser entity by its id.
+func (c *AdminUserClient) Get(ctx context.Context, id string) (*AdminUser, error) {
+	return c.Query().Where(adminuser.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *AdminClient) GetX(ctx context.Context, id string) *Admin {
+func (c *AdminUserClient) GetX(ctx context.Context, id string) *AdminUser {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
@@ -483,27 +483,27 @@ func (c *AdminClient) GetX(ctx context.Context, id string) *Admin {
 }
 
 // Hooks returns the client hooks.
-func (c *AdminClient) Hooks() []Hook {
-	return c.hooks.Admin
+func (c *AdminUserClient) Hooks() []Hook {
+	return c.hooks.AdminUser
 }
 
 // Interceptors returns the client interceptors.
-func (c *AdminClient) Interceptors() []Interceptor {
-	return c.inters.Admin
+func (c *AdminUserClient) Interceptors() []Interceptor {
+	return c.inters.AdminUser
 }
 
-func (c *AdminClient) mutate(ctx context.Context, m *AdminMutation) (Value, error) {
+func (c *AdminUserClient) mutate(ctx context.Context, m *AdminUserMutation) (Value, error) {
 	switch m.Op() {
 	case OpCreate:
-		return (&AdminCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&AdminUserCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdate:
-		return (&AdminUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&AdminUserUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpUpdateOne:
-		return (&AdminUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+		return (&AdminUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
 	case OpDelete, OpDeleteOne:
-		return (&AdminDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+		return (&AdminUserDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
-		return nil, fmt.Errorf("ent: unknown Admin mutation op: %q", m.Op())
+		return nil, fmt.Errorf("ent: unknown AdminUser mutation op: %q", m.Op())
 	}
 }
 
@@ -3490,12 +3490,12 @@ func (c *WorkspaceUserClient) mutate(ctx context.Context, m *WorkspaceUserMutati
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		Admin, App, Kache, Keyvalue, MailConn, Media, OauthConnection, Plan, Post,
+		AdminUser, App, Kache, Keyvalue, MailConn, Media, OauthConnection, Plan, Post,
 		PostCategory, PostStatus, PostTag, PostType, Session, Temp, Templ, Todo, User,
 		Workspace, WorkspaceInvite, WorkspaceUser []ent.Hook
 	}
 	inters struct {
-		Admin, App, Kache, Keyvalue, MailConn, Media, OauthConnection, Plan, Post,
+		AdminUser, App, Kache, Keyvalue, MailConn, Media, OauthConnection, Plan, Post,
 		PostCategory, PostStatus, PostTag, PostType, Session, Temp, Templ, Todo, User,
 		Workspace, WorkspaceInvite, WorkspaceUser []ent.Interceptor
 	}

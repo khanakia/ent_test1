@@ -52,6 +52,20 @@ func (sc *SessionCreate) SetNillableUpdatedAt(t *time.Time) *SessionCreate {
 	return sc
 }
 
+// SetAppID sets the "app_id" field.
+func (sc *SessionCreate) SetAppID(s string) *SessionCreate {
+	sc.mutation.SetAppID(s)
+	return sc
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (sc *SessionCreate) SetNillableAppID(s *string) *SessionCreate {
+	if s != nil {
+		sc.SetAppID(*s)
+	}
+	return sc
+}
+
 // SetUserID sets the "user_id" field.
 func (sc *SessionCreate) SetUserID(s string) *SessionCreate {
 	sc.mutation.SetUserID(s)
@@ -236,6 +250,10 @@ func (sc *SessionCreate) createSpec() (*Session, *sqlgraph.CreateSpec) {
 		_spec.SetField(session.FieldUpdatedAt, field.TypeTime, value)
 		_node.UpdatedAt = value
 	}
+	if value, ok := sc.mutation.AppID(); ok {
+		_spec.SetField(session.FieldAppID, field.TypeString, value)
+		_node.AppID = value
+	}
 	if value, ok := sc.mutation.IP(); ok {
 		_spec.SetField(session.FieldIP, field.TypeString, value)
 		_node.IP = value
@@ -321,24 +339,6 @@ type (
 	}
 )
 
-// SetCreatedAt sets the "created_at" field.
-func (u *SessionUpsert) SetCreatedAt(v time.Time) *SessionUpsert {
-	u.Set(session.FieldCreatedAt, v)
-	return u
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *SessionUpsert) UpdateCreatedAt() *SessionUpsert {
-	u.SetExcluded(session.FieldCreatedAt)
-	return u
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *SessionUpsert) ClearCreatedAt() *SessionUpsert {
-	u.SetNull(session.FieldCreatedAt)
-	return u
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (u *SessionUpsert) SetUpdatedAt(v time.Time) *SessionUpsert {
 	u.Set(session.FieldUpdatedAt, v)
@@ -354,6 +354,24 @@ func (u *SessionUpsert) UpdateUpdatedAt() *SessionUpsert {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (u *SessionUpsert) ClearUpdatedAt() *SessionUpsert {
 	u.SetNull(session.FieldUpdatedAt)
+	return u
+}
+
+// SetAppID sets the "app_id" field.
+func (u *SessionUpsert) SetAppID(v string) *SessionUpsert {
+	u.Set(session.FieldAppID, v)
+	return u
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *SessionUpsert) UpdateAppID() *SessionUpsert {
+	u.SetExcluded(session.FieldAppID)
+	return u
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *SessionUpsert) ClearAppID() *SessionUpsert {
+	u.SetNull(session.FieldAppID)
 	return u
 }
 
@@ -464,6 +482,9 @@ func (u *SessionUpsertOne) UpdateNewValues() *SessionUpsertOne {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(session.FieldID)
 		}
+		if _, exists := u.create.mutation.CreatedAt(); exists {
+			s.SetIgnore(session.FieldCreatedAt)
+		}
 	}))
 	return u
 }
@@ -495,27 +516,6 @@ func (u *SessionUpsertOne) Update(set func(*SessionUpsert)) *SessionUpsertOne {
 	return u
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (u *SessionUpsertOne) SetCreatedAt(v time.Time) *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.SetCreatedAt(v)
-	})
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *SessionUpsertOne) UpdateCreatedAt() *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.UpdateCreatedAt()
-	})
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *SessionUpsertOne) ClearCreatedAt() *SessionUpsertOne {
-	return u.Update(func(s *SessionUpsert) {
-		s.ClearCreatedAt()
-	})
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (u *SessionUpsertOne) SetUpdatedAt(v time.Time) *SessionUpsertOne {
 	return u.Update(func(s *SessionUpsert) {
@@ -534,6 +534,27 @@ func (u *SessionUpsertOne) UpdateUpdatedAt() *SessionUpsertOne {
 func (u *SessionUpsertOne) ClearUpdatedAt() *SessionUpsertOne {
 	return u.Update(func(s *SessionUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *SessionUpsertOne) SetAppID(v string) *SessionUpsertOne {
+	return u.Update(func(s *SessionUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *SessionUpsertOne) UpdateAppID() *SessionUpsertOne {
+	return u.Update(func(s *SessionUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *SessionUpsertOne) ClearAppID() *SessionUpsertOne {
+	return u.Update(func(s *SessionUpsert) {
+		s.ClearAppID()
 	})
 }
 
@@ -825,6 +846,9 @@ func (u *SessionUpsertBulk) UpdateNewValues() *SessionUpsertBulk {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(session.FieldID)
 			}
+			if _, exists := b.mutation.CreatedAt(); exists {
+				s.SetIgnore(session.FieldCreatedAt)
+			}
 		}
 	}))
 	return u
@@ -857,27 +881,6 @@ func (u *SessionUpsertBulk) Update(set func(*SessionUpsert)) *SessionUpsertBulk 
 	return u
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (u *SessionUpsertBulk) SetCreatedAt(v time.Time) *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.SetCreatedAt(v)
-	})
-}
-
-// UpdateCreatedAt sets the "created_at" field to the value that was provided on create.
-func (u *SessionUpsertBulk) UpdateCreatedAt() *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.UpdateCreatedAt()
-	})
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (u *SessionUpsertBulk) ClearCreatedAt() *SessionUpsertBulk {
-	return u.Update(func(s *SessionUpsert) {
-		s.ClearCreatedAt()
-	})
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (u *SessionUpsertBulk) SetUpdatedAt(v time.Time) *SessionUpsertBulk {
 	return u.Update(func(s *SessionUpsert) {
@@ -896,6 +899,27 @@ func (u *SessionUpsertBulk) UpdateUpdatedAt() *SessionUpsertBulk {
 func (u *SessionUpsertBulk) ClearUpdatedAt() *SessionUpsertBulk {
 	return u.Update(func(s *SessionUpsert) {
 		s.ClearUpdatedAt()
+	})
+}
+
+// SetAppID sets the "app_id" field.
+func (u *SessionUpsertBulk) SetAppID(v string) *SessionUpsertBulk {
+	return u.Update(func(s *SessionUpsert) {
+		s.SetAppID(v)
+	})
+}
+
+// UpdateAppID sets the "app_id" field to the value that was provided on create.
+func (u *SessionUpsertBulk) UpdateAppID() *SessionUpsertBulk {
+	return u.Update(func(s *SessionUpsert) {
+		s.UpdateAppID()
+	})
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (u *SessionUpsertBulk) ClearAppID() *SessionUpsertBulk {
+	return u.Update(func(s *SessionUpsert) {
+		s.ClearAppID()
 	})
 }
 

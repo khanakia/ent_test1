@@ -353,6 +353,53 @@ func (a *AppQuery) Paginate(
 	return conn, nil
 }
 
+var (
+	// AppOrderFieldCreatedAt orders App by created_at.
+	AppOrderFieldCreatedAt = &AppOrderField{
+		Value: func(a *App) (ent.Value, error) {
+			return a.CreatedAt, nil
+		},
+		column: app.FieldCreatedAt,
+		toTerm: app.ByCreatedAt,
+		toCursor: func(a *App) Cursor {
+			return Cursor{
+				ID:    a.ID,
+				Value: a.CreatedAt,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f AppOrderField) String() string {
+	var str string
+	switch f.column {
+	case AppOrderFieldCreatedAt.column:
+		str = "CREATED_AT"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f AppOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *AppOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("AppOrderField %T must be a string", v)
+	}
+	switch str {
+	case "CREATED_AT":
+		*f = *AppOrderFieldCreatedAt
+	default:
+		return fmt.Errorf("%s is not a valid AppOrderField", str)
+	}
+	return nil
+}
+
 // AppOrderField defines the ordering field of App.
 type AppOrderField struct {
 	// Value extracts the ordering value from the given App.

@@ -30,26 +30,6 @@ func (su *SessionUpdate) Where(ps ...predicate.Session) *SessionUpdate {
 	return su
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (su *SessionUpdate) SetCreatedAt(t time.Time) *SessionUpdate {
-	su.mutation.SetCreatedAt(t)
-	return su
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (su *SessionUpdate) SetNillableCreatedAt(t *time.Time) *SessionUpdate {
-	if t != nil {
-		su.SetCreatedAt(*t)
-	}
-	return su
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (su *SessionUpdate) ClearCreatedAt() *SessionUpdate {
-	su.mutation.ClearCreatedAt()
-	return su
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (su *SessionUpdate) SetUpdatedAt(t time.Time) *SessionUpdate {
 	su.mutation.SetUpdatedAt(t)
@@ -59,6 +39,26 @@ func (su *SessionUpdate) SetUpdatedAt(t time.Time) *SessionUpdate {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (su *SessionUpdate) ClearUpdatedAt() *SessionUpdate {
 	su.mutation.ClearUpdatedAt()
+	return su
+}
+
+// SetAppID sets the "app_id" field.
+func (su *SessionUpdate) SetAppID(s string) *SessionUpdate {
+	su.mutation.SetAppID(s)
+	return su
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (su *SessionUpdate) SetNillableAppID(s *string) *SessionUpdate {
+	if s != nil {
+		su.SetAppID(*s)
+	}
+	return su
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (su *SessionUpdate) ClearAppID() *SessionUpdate {
+	su.mutation.ClearAppID()
 	return su
 }
 
@@ -229,9 +229,6 @@ func (su *SessionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
-	if value, ok := su.mutation.CreatedAt(); ok {
-		_spec.SetField(session.FieldCreatedAt, field.TypeTime, value)
-	}
 	if su.mutation.CreatedAtCleared() {
 		_spec.ClearField(session.FieldCreatedAt, field.TypeTime)
 	}
@@ -240,6 +237,12 @@ func (su *SessionUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if su.mutation.UpdatedAtCleared() {
 		_spec.ClearField(session.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := su.mutation.AppID(); ok {
+		_spec.SetField(session.FieldAppID, field.TypeString, value)
+	}
+	if su.mutation.AppIDCleared() {
+		_spec.ClearField(session.FieldAppID, field.TypeString)
 	}
 	if value, ok := su.mutation.IP(); ok {
 		_spec.SetField(session.FieldIP, field.TypeString, value)
@@ -316,26 +319,6 @@ type SessionUpdateOne struct {
 	modifiers []func(*sql.UpdateBuilder)
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (suo *SessionUpdateOne) SetCreatedAt(t time.Time) *SessionUpdateOne {
-	suo.mutation.SetCreatedAt(t)
-	return suo
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (suo *SessionUpdateOne) SetNillableCreatedAt(t *time.Time) *SessionUpdateOne {
-	if t != nil {
-		suo.SetCreatedAt(*t)
-	}
-	return suo
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (suo *SessionUpdateOne) ClearCreatedAt() *SessionUpdateOne {
-	suo.mutation.ClearCreatedAt()
-	return suo
-}
-
 // SetUpdatedAt sets the "updated_at" field.
 func (suo *SessionUpdateOne) SetUpdatedAt(t time.Time) *SessionUpdateOne {
 	suo.mutation.SetUpdatedAt(t)
@@ -345,6 +328,26 @@ func (suo *SessionUpdateOne) SetUpdatedAt(t time.Time) *SessionUpdateOne {
 // ClearUpdatedAt clears the value of the "updated_at" field.
 func (suo *SessionUpdateOne) ClearUpdatedAt() *SessionUpdateOne {
 	suo.mutation.ClearUpdatedAt()
+	return suo
+}
+
+// SetAppID sets the "app_id" field.
+func (suo *SessionUpdateOne) SetAppID(s string) *SessionUpdateOne {
+	suo.mutation.SetAppID(s)
+	return suo
+}
+
+// SetNillableAppID sets the "app_id" field if the given value is not nil.
+func (suo *SessionUpdateOne) SetNillableAppID(s *string) *SessionUpdateOne {
+	if s != nil {
+		suo.SetAppID(*s)
+	}
+	return suo
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (suo *SessionUpdateOne) ClearAppID() *SessionUpdateOne {
+	suo.mutation.ClearAppID()
 	return suo
 }
 
@@ -545,9 +548,6 @@ func (suo *SessionUpdateOne) sqlSave(ctx context.Context) (_node *Session, err e
 			}
 		}
 	}
-	if value, ok := suo.mutation.CreatedAt(); ok {
-		_spec.SetField(session.FieldCreatedAt, field.TypeTime, value)
-	}
 	if suo.mutation.CreatedAtCleared() {
 		_spec.ClearField(session.FieldCreatedAt, field.TypeTime)
 	}
@@ -556,6 +556,12 @@ func (suo *SessionUpdateOne) sqlSave(ctx context.Context) (_node *Session, err e
 	}
 	if suo.mutation.UpdatedAtCleared() {
 		_spec.ClearField(session.FieldUpdatedAt, field.TypeTime)
+	}
+	if value, ok := suo.mutation.AppID(); ok {
+		_spec.SetField(session.FieldAppID, field.TypeString, value)
+	}
+	if suo.mutation.AppIDCleared() {
+		_spec.ClearField(session.FieldAppID, field.TypeString)
 	}
 	if value, ok := suo.mutation.IP(); ok {
 		_spec.SetField(session.FieldIP, field.TypeString, value)
