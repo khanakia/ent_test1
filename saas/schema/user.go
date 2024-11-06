@@ -65,7 +65,7 @@ func (User) Indexes() []ent.Index {
 func (User) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.RelayConnection(),
-		entgql.QueryField().Directives(entgql.Directive{Name: constants.DirectiveCanAdmin}),
+		entgql.QueryField().Directives(entgql.Directive{Name: constants.DirectiveCanApp}),
 		entgql.MultiOrder(),
 		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 	}
@@ -74,5 +74,6 @@ func (User) Annotations() []schema.Annotation {
 func (User) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+		BaseApp{},
 	}
 }

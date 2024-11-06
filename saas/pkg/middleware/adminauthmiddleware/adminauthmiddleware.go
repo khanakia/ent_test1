@@ -1,4 +1,4 @@
-package appmiddleware
+package adminauthmiddleware
 
 import (
 	"context"
@@ -7,98 +7,85 @@ import (
 	"lace/gqlgenfn"
 	"net/http"
 	"saas/gen/ent"
-	"saas/gen/ent/app"
+	"saas/pkg/adminauth"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
 const (
-	AppKey   = "app"
-	AppError = "apperror"
+	User      = "user"
+	UserError = "usererror"
 )
 
 // Get user from the gin gonic context actions
-func GetAppFromGinCtx(c *gin.Context) (*ent.App, error) {
+func GetUserFromGinCtx(c *gin.Context) (*ent.AdminUser, error) {
 	// return the actual error not just generic error e.g. `access_denied` as setUserHandler is silent
 	// for all the gql request so we will have to send the error in context
-	userError, _ := c.Get(AppError)
+	userError, _ := c.Get(UserError)
 
 	if userError != nil {
 		return nil, fmt.Errorf(userError.(string))
 	}
 
-	record, _ := c.Get(AppKey)
+	userc, _ := c.Get(User)
 
-	if record == nil {
+	if userc == nil {
 		return nil, errors.New("user-not-found/invalid-token on auth context")
 	}
 
-	apRecord, ok := record.(*ent.App)
+	user, ok := userc.(*ent.AdminUser)
 	if !ok {
 		return nil, errors.New("something went wrong auth context")
 	}
 
-	return apRecord, nil
+	return user, nil
 }
 
 // this is for graphql only and will retrive the gin ctx first and the user from the gin ctx
 // so we can get the current user info in the resolvers
 // Ref: https://github.com/99designs/gqlgen/blob/master/docs/content/recipes/gin.md
-func GetAppFromGqlCtx(ctx context.Context) (*ent.App, error) {
+func GetUserFromGqlCtx(ctx context.Context) (*ent.AdminUser, error) {
 	gc, err := gqlgenfn.GinContextFromContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	appRecord, err := GetAppFromGinCtx(gc)
+	user, err := GetUserFromGinCtx(gc)
 
-	if err != nil || appRecord == nil {
+	if err != nil || user == nil {
 		return nil, err
 	}
-	return appRecord, nil
-}
-
-func MustGetAppFromGqlCtx(ctx context.Context) *ent.App {
-
-	app, err := GetAppFromGqlCtx(ctx)
-	if err != nil {
-		panic(err)
-	}
-
-	return app
+	return user, nil
 }
 
 // get the token from query or header and set the user to context
-func setAppHandler(c *gin.Context, client *ent.Client) error {
+func setUserHandler(c *gin.Context, client *ent.Client) error {
 
-	appid := c.Query("app")
+	token := c.Query("token")
 
-	xat := c.Request.Header.Get("x-app")
+	xat := c.Request.Header.Get("token")
 	if len(xat) > 0 {
-		appid = xat
+		token = xat
 	}
 
-	appid = strings.TrimSpace(appid)
+	token = strings.TrimSpace(token)
 
-	if len(appid) == 0 {
-		return fmt.Errorf("no appid provided")
+	if len(token) == 0 {
+		return fmt.Errorf("no token provided")
 	}
 
-	appRec, err := client.App.
-		Query().
-		Where(app.ID(appid)).
-		Only(context.Background())
+	user, err := adminauth.ValidateSession(token, client)
 
 	if err != nil {
 		// capture the error so we can pass the same to gql handler cuser, err := middleware.GetUserFromGqlCtx(ctx)
 		// and show the actual error not just generic error i.e. `access_denied`
-		c.Set(AppError, err.Error())
+		c.Set(UserError, err.Error())
 
 		return err
 	}
 
-	c.Set(AppKey, appRec)
+	c.Set(User, user)
 
 	return nil
 }
@@ -109,22 +96,23 @@ func setAppHandler(c *gin.Context, client *ent.Client) error {
 func MiddlewareSilent(client *ent.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
-		setAppHandler(c, client)
+		setUserHandler(c, client)
 
 		c.Next()
 	}
 }
 
-func CheckAppMiddleware(client *ent.Client) gin.HandlerFunc {
+// for some routes we need to validate the authorization and fail if auth is not valid
+func CheckAuthMiddleware(client *ent.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
-
 		isPlayground := gqlgenfn.IsPlaygroundGinCtx(c)
+
 		if isPlayground {
 			c.Next()
 			return
 		}
 
-		err := setAppHandler(c, client)
+		err := setUserHandler(c, client)
 		if err != nil {
 			c.JSON(http.StatusUnauthorized, gin.H{
 				"error": gin.H{

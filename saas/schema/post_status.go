@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"saas/pkg/constants"
+
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
@@ -41,13 +43,14 @@ func (PostStatus) Edges() []ent.Edge {
 func (PostStatus) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+		BaseApp{},
 	}
 }
 
 func (PostStatus) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.RelayConnection(),
-		entgql.QueryField("postStatuses").Directives(entgql.Directive{Name: "canAdmin"}),
+		entgql.QueryField("postStatuses").Directives(entgql.Directive{Name: constants.DirectiveCanApp}),
 		entgql.MultiOrder(),
 		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 	}

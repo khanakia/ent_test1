@@ -6,36 +6,28 @@ package gqlsaresolver
 
 import (
 	"context"
-	"fmt"
 	"gqlsa/graph/generated"
 	"saas/gen/ent"
-	"saas/pkg/appfn"
-	"saas/pkg/middleware"
+	"saas/pkg/middleware/adminauthmiddleware"
 )
 
 // CreateTodo is the resolver for the createTodo field.
 func (r *mutationResolver) CreateTodo(ctx context.Context, input ent.CreateTodoInput) (*ent.Todo, error) {
-	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 	if cuser == nil {
 		return nil, err
 	}
 
-	if !appfn.IsUserSA(cuser) {
-		return nil, fmt.Errorf("unauthorized access")
-	}
 	return r.Plugin.EntDB.Client().Todo.Create().SetInput(input).Save(ctx)
 }
 
 // UpdateTodo is the resolver for the updateTodo field.
 func (r *mutationResolver) UpdateTodo(ctx context.Context, id string, input ent.UpdateTodoInput) (*ent.Todo, error) {
-	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 	if cuser == nil {
 		return nil, err
 	}
 
-	if !appfn.IsUserSA(cuser) {
-		return nil, fmt.Errorf("unauthorized access")
-	}
 	return r.Plugin.EntDB.Client().Todo.UpdateOneID(id).SetInput(input).Save(ctx)
 }
 

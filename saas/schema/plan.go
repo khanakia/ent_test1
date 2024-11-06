@@ -37,5 +37,6 @@ func (Plan) Annotations() []schema.Annotation {
 func (Plan) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+		BaseApp{},
 	}
 }

@@ -47,5 +47,6 @@ func (Media) Annotations() []schema.Annotation {
 func (Media) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+		BaseApp{},
 	}
 }

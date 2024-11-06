@@ -2,6 +2,20 @@
 
 package model
 
+import (
+	"saas/gen/ent"
+)
+
+type LoginInput struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type LoginResponse struct {
+	Token string         `json:"token"`
+	Me    *ent.AdminUser `json:"me"`
+}
+
 type Student struct {
 	Name string `json:"name"`
 }

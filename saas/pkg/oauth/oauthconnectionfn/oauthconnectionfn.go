@@ -17,6 +17,7 @@ import (
 )
 
 type OauthRequestCache struct {
+	AppID             string                 `json:"appId"`
 	RedirectURL       string                 `json:"redirectUrl"`
 	OauthConnectionID string                 `json:"oauthConnectionId"`
 	Metadata          map[string]interface{} `json:"metadata"`
@@ -44,8 +45,8 @@ const (
 	ProviderFacebook = "facebook"
 )
 
-func NewOauthRequester(oatconnId string, client *ent.Client) (*OauthRequester, error) {
-	oauthConnection, err := client.OauthConnection.Query().Where(oauthconnection.ID(oatconnId), oauthconnection.Status(true)).First(context.Background())
+func NewOauthRequester(appID, oatconnId string, client *ent.Client) (*OauthRequester, error) {
+	oauthConnection, err := client.OauthConnection.Query().Where(oauthconnection.AppID(appID), oauthconnection.ID(oatconnId), oauthconnection.Status(true)).First(context.Background())
 
 	if err != nil {
 		return nil, err

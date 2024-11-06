@@ -41,13 +41,14 @@ func (WorkspaceInvite) Indexes() []ent.Index {
 func (WorkspaceInvite) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+		BaseApp{},
 	}
 }
 
 func (WorkspaceInvite) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.RelayConnection(),
-		entgql.QueryField().Directives(entgql.Directive{Name: constants.DirectiveCanAdmin}),
+		entgql.QueryField().Directives(entgql.Directive{Name: constants.DirectiveCanApp}),
 		entgql.MultiOrder(),
 		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 	}

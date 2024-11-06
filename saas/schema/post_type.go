@@ -59,16 +59,15 @@ func (PostType) Indexes() []ent.Index {
 
 func (PostType) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		BaseMixin{
-			Prefix: constants.PrefixPostType,
-		},
+		BaseMixin{},
+		BaseApp{},
 	}
 }
 
 func (PostType) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		entgql.RelayConnection(),
-		entgql.QueryField().Directives(entgql.Directive{Name: constants.DirectiveCanAdmin}),
+		entgql.QueryField().Directives(entgql.Directive{Name: constants.DirectiveCanApp}),
 		entgql.MultiOrder(),
 		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 	}

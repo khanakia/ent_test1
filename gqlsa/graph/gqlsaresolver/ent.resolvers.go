@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"gqlsa/graph/generated"
 	"saas/gen/ent"
+	"saas/gen/ent/app"
 	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/post"
 	"saas/gen/ent/postcategory"
@@ -20,8 +21,7 @@ import (
 	"saas/gen/ent/workspace"
 	"saas/gen/ent/workspaceinvite"
 	"saas/gen/ent/workspaceuser"
-	"saas/pkg/appfn"
-	"saas/pkg/middleware"
+	"saas/pkg/middleware/adminauthmiddleware"
 	"saas/pkg/middleware/appmiddleware"
 	"strings"
 
@@ -73,16 +73,13 @@ func (r *queryResolver) Nodes(ctx context.Context, ids []string) ([]ent.Noder, e
 
 // Apps is the resolver for the apps field.
 func (r *queryResolver) Apps(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, where *ent.AppWhereInput) (*ent.AppConnection, error) {
-	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 	if cuser == nil {
 		return nil, err
 	}
 
-	if !appfn.IsUserSA(cuser) {
-		return nil, fmt.Errorf("unauthorized access")
-	}
-
 	return r.Plugin.EntDB.Client().App.Query().
+		Where(app.AdminUserID(cuser.ID)).
 		Paginate(ctx, after, first, before, last,
 			// ent.WithAppOrder(orderBy),
 			ent.WithAppFilter(where.Filter),
@@ -91,13 +88,9 @@ func (r *queryResolver) Apps(ctx context.Context, after *entgql.Cursor[string], 
 
 // OauthConnections is the resolver for the oauthConnections field.
 func (r *queryResolver) OauthConnections(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.OauthConnectionOrder, where *ent.OauthConnectionWhereInput) (*ent.OauthConnectionConnection, error) {
-	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 	if cuser == nil {
 		return nil, err
-	}
-
-	if !appfn.IsUserSA(cuser) {
-		return nil, fmt.Errorf("unauthorized access")
 	}
 	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
 
@@ -111,13 +104,9 @@ func (r *queryResolver) OauthConnections(ctx context.Context, after *entgql.Curs
 
 // Posts is the resolver for the posts field.
 func (r *queryResolver) Posts(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostOrder, where *ent.PostWhereInput) (*ent.PostConnection, error) {
-	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 	if cuser == nil {
 		return nil, err
-	}
-
-	if !appfn.IsUserSA(cuser) {
-		return nil, fmt.Errorf("unauthorized access")
 	}
 
 	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
@@ -132,13 +121,9 @@ func (r *queryResolver) Posts(ctx context.Context, after *entgql.Cursor[string],
 
 // PostCategories is the resolver for the postCategories field.
 func (r *queryResolver) PostCategories(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostCategoryOrder, where *ent.PostCategoryWhereInput) (*ent.PostCategoryConnection, error) {
-	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 	if cuser == nil {
 		return nil, err
-	}
-
-	if !appfn.IsUserSA(cuser) {
-		return nil, fmt.Errorf("unauthorized access")
 	}
 
 	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
@@ -153,13 +138,9 @@ func (r *queryResolver) PostCategories(ctx context.Context, after *entgql.Cursor
 
 // PostStatuses is the resolver for the postStatuses field.
 func (r *queryResolver) PostStatuses(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostStatusOrder, where *ent.PostStatusWhereInput) (*ent.PostStatusConnection, error) {
-	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 	if cuser == nil {
 		return nil, err
-	}
-
-	if !appfn.IsUserSA(cuser) {
-		return nil, fmt.Errorf("unauthorized access")
 	}
 
 	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
@@ -174,13 +155,9 @@ func (r *queryResolver) PostStatuses(ctx context.Context, after *entgql.Cursor[s
 
 // PostTypes is the resolver for the postTypes field.
 func (r *queryResolver) PostTypes(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostTypeOrder, where *ent.PostTypeWhereInput) (*ent.PostTypeConnection, error) {
-	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 	if cuser == nil {
 		return nil, err
-	}
-
-	if !appfn.IsUserSA(cuser) {
-		return nil, fmt.Errorf("unauthorized access")
 	}
 
 	// time.Sleep(4 * time.Second)
@@ -197,13 +174,9 @@ func (r *queryResolver) PostTypes(ctx context.Context, after *entgql.Cursor[stri
 
 // Todos is the resolver for the todos field.
 func (r *queryResolver) Todos(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *ent.TodoOrder, where *ent.TodoWhereInput) (*ent.TodoConnection, error) {
-	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 	if cuser == nil {
 		return nil, err
-	}
-
-	if !appfn.IsUserSA(cuser) {
-		return nil, fmt.Errorf("unauthorized access")
 	}
 
 	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
@@ -218,13 +191,9 @@ func (r *queryResolver) Todos(ctx context.Context, after *entgql.Cursor[string],
 
 // Users is the resolver for the users field.
 func (r *queryResolver) Users(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.UserOrder, where *ent.UserWhereInput) (*ent.UserConnection, error) {
-	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 	if cuser == nil {
 		return nil, err
-	}
-
-	if !appfn.IsUserSA(cuser) {
-		return nil, fmt.Errorf("unauthorized access")
 	}
 
 	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
@@ -239,13 +208,9 @@ func (r *queryResolver) Users(ctx context.Context, after *entgql.Cursor[string],
 
 // Workspaces is the resolver for the workspaces field.
 func (r *queryResolver) Workspaces(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.WorkspaceOrder, where *ent.WorkspaceWhereInput) (*ent.WorkspaceConnection, error) {
-	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 	if cuser == nil {
 		return nil, err
-	}
-
-	if !appfn.IsUserSA(cuser) {
-		return nil, fmt.Errorf("unauthorized access")
 	}
 
 	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
@@ -260,13 +225,9 @@ func (r *queryResolver) Workspaces(ctx context.Context, after *entgql.Cursor[str
 
 // WorkspaceInvites is the resolver for the workspaceInvites field.
 func (r *queryResolver) WorkspaceInvites(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.WorkspaceInviteOrder, where *ent.WorkspaceInviteWhereInput) (*ent.WorkspaceInviteConnection, error) {
-	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 	if cuser == nil {
 		return nil, err
-	}
-
-	if !appfn.IsUserSA(cuser) {
-		return nil, fmt.Errorf("unauthorized access")
 	}
 
 	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
@@ -281,13 +242,9 @@ func (r *queryResolver) WorkspaceInvites(ctx context.Context, after *entgql.Curs
 
 // WorkspaceUsers is the resolver for the workspaceUsers field.
 func (r *queryResolver) WorkspaceUsers(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.WorkspaceUserOrder, where *ent.WorkspaceUserWhereInput) (*ent.WorkspaceUserConnection, error) {
-	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 	if cuser == nil {
 		return nil, err
-	}
-
-	if !appfn.IsUserSA(cuser) {
-		return nil, fmt.Errorf("unauthorized access")
 	}
 
 	app := appmiddleware.MustGetAppFromGqlCtx(ctx)

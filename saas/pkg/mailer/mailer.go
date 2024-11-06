@@ -29,10 +29,10 @@ type Mailer struct {
 // 	return nil
 // }
 
-func (cls *Mailer) SendFromTempl(toEmail, subject, templID string, templParams map[string]interface{}) error {
+func (cls *Mailer) SendFromTempl(appID, toEmail, subject, templID string, templParams map[string]interface{}) error {
 	var err error
 
-	templRender, err := NewTemplRender(templID, cls.client)
+	templRender, err := NewTemplRender(appID, templID, cls.client)
 	if err != nil {
 		return err
 	}
@@ -114,8 +114,8 @@ func NewMailer(mailConnID string, client *ent.Client) (*Mailer, error) {
 	return mailr, nil
 }
 
-func NewDefaultMailer(client *ent.Client) (*Mailer, error) {
-	appSetting, err := appfn.GetAppSettings(client)
+func NewDefaultMailer(appID string, client *ent.Client) (*Mailer, error) {
+	appSetting, err := appfn.GetAppSettings(appID, client)
 
 	if err != nil {
 		return nil, err
@@ -189,13 +189,13 @@ func (cls *TemplRender) Render(data map[string]interface{}) (string, error) {
 	return body, nil
 }
 
-func NewTemplRender(id string, client *ent.Client) (*TemplRender, error) {
+func NewTemplRender(appID, id string, client *ent.Client) (*TemplRender, error) {
 	templ, err := client.Templ.Get(context.Background(), id)
 	if err != nil {
 		return nil, err
 	}
 
-	appSetting, err := appfn.GetAppSettings(client)
+	appSetting, err := appfn.GetAppSettings(appID, client)
 	if err != nil {
 		log.Println("Error getting app settings", err)
 		return nil, err

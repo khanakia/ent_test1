@@ -15,6 +15,7 @@ import (
 type BaseMixin struct {
 	mixin.Schema
 	Prefix string
+	Length int
 }
 
 // Fields of the BaseMixin.
@@ -23,10 +24,16 @@ func (cls BaseMixin) Fields() []ent.Field {
 	if len(cls.Prefix) > 0 {
 		prefix = cls.Prefix + "_"
 	}
+
+	var length int = 17
+	if cls.Length > 17 {
+		length = cls.Length
+	}
+
 	return []ent.Field{
 		field.String("id").
 			DefaultFunc(func() string {
-				return prefix + gonanoid.MustGenerate("0123456789abcdefghijklmnopqrstuvwxyz", 10)
+				return prefix + gonanoid.MustGenerate("0123456789abcdefghijklmnopqrstuvwxyz", length)
 			}).Unique(),
 
 		field.Time("created_at").
@@ -41,8 +48,5 @@ func (cls BaseMixin) Fields() []ent.Field {
 			Optional().
 			Default(time.Now).
 			UpdateDefault(time.Now),
-		field.String("app_id").Optional().Annotations(
-			entgql.Skip(),
-		),
 	}
 }

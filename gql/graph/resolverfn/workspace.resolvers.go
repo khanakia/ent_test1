@@ -93,7 +93,7 @@ func (r *queryResolver) Workspaces(ctx context.Context) ([]*ent.Workspace, error
 		return nil, err
 	}
 
-	return r.Plugin.EntDB.Client().Workspace.Query().Where(workspace.HasWorkspaceUsersWith(workspaceuser.UserID(cuser.ID))).All(ctx)
+	return r.Plugin.EntDB.Client().Workspace.Query().Where(workspace.AppID(cuser.AppID), workspace.HasWorkspaceUsersWith(workspaceuser.UserID(cuser.ID))).All(ctx)
 	// panic(fmt.Errorf("not implemented: Workspaces - workspaces"))
 }
 
@@ -113,5 +113,5 @@ func (r *queryResolver) WorkspaceUsers(ctx context.Context, workspaceID string) 
 	if cuser == nil {
 		return nil, err
 	}
-	return handlerfn.WorkspaceUsersHandler(workspaceID, r.Plugin.EntDB.Client(), ctx)
+	return handlerfn.WorkspaceUsersHandler(cuser.AppID, workspaceID, r.Plugin.EntDB.Client(), ctx)
 }

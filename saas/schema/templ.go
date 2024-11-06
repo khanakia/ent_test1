@@ -29,6 +29,7 @@ func (Templ) Edges() []ent.Edge {
 func (Templ) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+		BaseApp{},
 	}
 }
 

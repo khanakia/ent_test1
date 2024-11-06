@@ -14,6 +14,7 @@ import (
 	"saas/pkg/handler/handlerfn"
 	"saas/pkg/handler/handlertypes"
 	"saas/pkg/middleware"
+	"saas/pkg/middleware/appmiddleware"
 	"saas/pkg/oauth/oauthconnectionfn"
 	"saas/pkg/oauth/oauthuserinfo"
 
@@ -23,6 +24,8 @@ import (
 
 // AuthLoginViaOauth is the resolver for the authLoginViaOauth field.
 func (r *mutationResolver) AuthLoginViaOauth(ctx context.Context, cacheID string) (*handlertypes.LoginResponse, error) {
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
 	// panic(fmt.Errorf("not implemented: AuthLoginViaOauth - authLoginViaOauth"))
 	oauthRespCacheAny := r.Plugin.Cache.Get(cacheID)
 	// goutil.PrintToJSON(oauthRespCacheAny)
@@ -58,6 +61,7 @@ func (r *mutationResolver) AuthLoginViaOauth(ctx context.Context, cacheID string
 	// return nil, nil
 
 	user, session, err := authfn.Login(authfn.LoginParams{
+		AppID: app.ID,
 		Email: userinfo.Email,
 	}, false, r.Plugin.EntDB.Client())
 
@@ -80,7 +84,10 @@ func (r *mutationResolver) AuthRegisterViaOauth(ctx context.Context, cacheID str
 
 // AuthRegister is the resolver for the authRegister field.
 func (r *mutationResolver) AuthRegister(ctx context.Context, input authfn.RegisterInput) (bool, error) {
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
 	err := handlerfn.RegisterHandler(authfn.RegisterInput{
+		AppID:     app.ID,
 		Email:     input.Email,
 		Password:  input.Password,
 		Phone:     cast.ToString(input.Phone),
@@ -98,7 +105,10 @@ func (r *mutationResolver) AuthRegister(ctx context.Context, input authfn.Regist
 
 // AuthRegisterVerify is the resolver for the authRegisterVerify field.
 func (r *mutationResolver) AuthRegisterVerify(ctx context.Context, input handlertypes.RegisterVerifyInput) (*handlertypes.LoginResponse, error) {
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
 	result, err := handlerfn.RegisterVerify(handlertypes.RegisterVerifyInput{
+		AppID: app.ID,
 		Email: input.Email,
 		Token: input.Token,
 	}, r.Plugin.EntDB.Client(), ctx)
@@ -112,6 +122,10 @@ func (r *mutationResolver) AuthRegisterVerify(ctx context.Context, input handler
 
 // AuthLogin is the resolver for the authLogin field.
 func (r *mutationResolver) AuthLogin(ctx context.Context, input authfn.LoginParams) (*handlertypes.LoginResponse, error) {
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	input.AppID = app.ID
+
 	user, session, err := authfn.Login(input, true, r.Plugin.EntDB.Client())
 
 	if err != nil {
@@ -126,7 +140,9 @@ func (r *mutationResolver) AuthLogin(ctx context.Context, input authfn.LoginPara
 
 // AuthForgotPassword is the resolver for the authForgotPassword field.
 func (r *mutationResolver) AuthForgotPassword(ctx context.Context, userName string) (bool, error) {
-	err := authfn.ForgotPassword(userName, r.Plugin.EntDB.Client(), r.Plugin.Cache)
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	err := authfn.ForgotPassword(app.ID, userName, r.Plugin.EntDB.Client(), r.Plugin.Cache)
 
 	if err != nil {
 		return false, err

@@ -30,5 +30,6 @@ func (PostTag) Edges() []ent.Edge {
 func (PostTag) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+		BaseApp{},
 	}
 }

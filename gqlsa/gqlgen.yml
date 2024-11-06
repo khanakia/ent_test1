@@ -70,15 +70,15 @@ resolver:
 # gqlgen will search for any type names in the schema in these go packages
 # if they match it will use them, otherwise it will generate them.
 autobind:
-#  - "gql/graph/model"
+  #  - "gql/graph/model"
   - github.com/99designs/gqlgen/graphql/introspection
-  - saas/gen/ent 
+  - saas/gen/ent
   - saas/gen/ent/user
   - saas/gen/ent/session
   - saas/gen/ent/workspace
   - saas/gen/ent/workspaceinvite
   - saas/gen/ent/workspaceuser
-  - saas/pkg/handler/handlertypes
+  # - saas/pkg/handler/handlertypes
   # - saas/pkg/auth/authfn.RegisterInput
 
 # This section declares type mapping between the GraphQL and go type systems
@@ -101,15 +101,14 @@ models:
   Int64:
     model:
       - github.com/99designs/gqlgen/graphql.Int64
-  
+
   Uint64:
     model:
       - github.com/99designs/gqlgen/graphql.Uint64
 
   Date:
-    model: lace/gqlmodel.Date 
+    model: lace/gqlmodel.Date
 
   Node:
     model:
       - saas/gen/ent.Noder
-  

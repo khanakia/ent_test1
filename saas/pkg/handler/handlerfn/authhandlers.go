@@ -12,13 +12,13 @@ import (
 	"saas/pkg/handler/handlertypes"
 )
 
-func RegisterHandler(userInput authfn.RegisterInput, client *ent.Client, ctx context.Context) error {
-	err := authfn.RegisterValidate(userInput)
+func RegisterHandler(input authfn.RegisterInput, client *ent.Client, ctx context.Context) error {
+	err := authfn.RegisterValidate(input)
 	if err != nil {
 		return err
 	}
 
-	exists, err := authfn.CheckEmailExists(userInput.Email, client)
+	exists, err := authfn.CheckEmailExists(input.Email, client)
 	if err != nil {
 		return err
 	}
@@ -28,8 +28,9 @@ func RegisterHandler(userInput authfn.RegisterInput, client *ent.Client, ctx con
 	}
 
 	tempRec, err := client.Temp.Create().
+		SetAppID(input.AppID).
 		SetType("register").
-		SetBody(util.MustMarshalData(userInput)).
+		SetBody(util.MustMarshalData(input)).
 		Save(ctx)
 
 	if err != nil {
@@ -37,13 +38,13 @@ func RegisterHandler(userInput authfn.RegisterInput, client *ent.Client, ctx con
 	}
 
 	// YTD - send email
-	emailfn.RegisterVerify(userInput.Email, tempRec.ID, client)
+	emailfn.RegisterVerify(input.AppID, input.Email, tempRec.ID, client)
 
 	return err
 }
 
 func RegisterVerify(input handlertypes.RegisterVerifyInput, client *ent.Client, ctx context.Context) (*handlertypes.LoginResponse, error) {
-	temp, err := client.Temp.Query().Where(temp.ID(input.Token)).First(ctx)
+	temp, err := client.Temp.Query().Where(temp.AppID(input.AppID), temp.ID(input.Token)).First(ctx)
 
 	if err != nil {
 		return nil, err
@@ -72,6 +73,7 @@ func RegisterVerify(input handlertypes.RegisterVerifyInput, client *ent.Client, 
 	// return user, err
 
 	session, err := authfn.CreateSession(authfn.CreateSessionParams{
+		AppID:  user.AppID,
 		UserID: user.ID,
 		// IP:        params.IP,
 		// UserAgent: params.UserAgent,

@@ -11,6 +11,7 @@ import (
 	"lace/publicid"
 	"lace/util"
 	"net/url"
+	"saas/pkg/middleware/appmiddleware"
 	"saas/pkg/oauth/oauthconnectionfn"
 
 	"github.com/ubgo/goutil"
@@ -18,7 +19,9 @@ import (
 
 // OauthRequest is the resolver for the oauthRequest field.
 func (r *mutationResolver) OauthRequest(ctx context.Context, input *model.OauthRequestInput) (string, error) {
-	oauthRequester, err := oauthconnectionfn.NewOauthRequester(input.OatConnectionID, r.Plugin.EntDB.Client())
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	oauthRequester, err := oauthconnectionfn.NewOauthRequester(app.ID, input.OatConnectionID, r.Plugin.EntDB.Client())
 
 	if err != nil {
 		return "", fmt.Errorf("something went wrong")
@@ -33,6 +36,7 @@ func (r *mutationResolver) OauthRequest(ctx context.Context, input *model.OauthR
 	oauthRequester.SetState(uid)
 
 	r.Plugin.Cache.Put(uid, oauthconnectionfn.OauthRequestCache{
+		AppID:             app.ID,
 		OauthConnectionID: input.OatConnectionID,
 		Metadata:          input.Metadata,
 		RedirectURL:       oauthRequester.GetRedirectURL(),
@@ -45,6 +49,8 @@ func (r *mutationResolver) OauthRequest(ctx context.Context, input *model.OauthR
 
 // OauthCallback is the resolver for the oauthCallback field.
 func (r *mutationResolver) OauthCallback(ctx context.Context, callbackURL string) (*model.OauthCallbackResponse, error) {
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
 	myUrl, _ := url.Parse(callbackURL)
 	params, _ := url.ParseQuery(myUrl.RawQuery)
 	// fmt.Println(params)
@@ -62,7 +68,7 @@ func (r *mutationResolver) OauthCallback(ctx context.Context, callbackURL string
 		return nil, fmt.Errorf("something went wrong")
 	}
 
-	oauthRequester, err := oauthconnectionfn.NewOauthRequester(oauthReqCache.OauthConnectionID, r.Plugin.EntDB.Client())
+	oauthRequester, err := oauthconnectionfn.NewOauthRequester(app.ID, oauthReqCache.OauthConnectionID, r.Plugin.EntDB.Client())
 
 	if err != nil {
 		return nil, fmt.Errorf("something went wrong")

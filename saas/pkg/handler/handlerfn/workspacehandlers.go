@@ -191,13 +191,13 @@ func WorkspaceGetHandler(id string, cuser *ent.User, client *ent.Client, ctx con
 		return nil, fmt.Errorf("access denied")
 	}
 
-	workspace, err := client.Workspace.Query().Where(workspace.ID(id)).First(ctx)
+	workspace, err := client.Workspace.Query().Where(workspace.AppID(cuser.AppID), workspace.ID(id)).First(ctx)
 
 	return workspace, err
 }
 
-func WorkspaceUsersHandler(workspaceID string, client *ent.Client, ctx context.Context) ([]*ent.WorkspaceUser, error) {
-	return client.WorkspaceUser.Query().WithWorkspace().WithUser().Where(workspaceuser.WorkspaceID(workspaceID)).Limit(100).All(ctx)
+func WorkspaceUsersHandler(appID, workspaceID string, client *ent.Client, ctx context.Context) ([]*ent.WorkspaceUser, error) {
+	return client.WorkspaceUser.Query().WithWorkspace().WithUser().Where(workspaceuser.AppID(appID), workspaceuser.WorkspaceID(workspaceID)).Limit(100).All(ctx)
 }
 
 func WorkspaceInvitesHandler(workspaceID string, cuser *ent.User, client *ent.Client, ctx context.Context) ([]*ent.WorkspaceInvite, error) {

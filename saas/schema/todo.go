@@ -47,9 +47,8 @@ func (Todo) Fields() []ent.Field {
 
 func (Todo) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		BaseMixin{
-			Prefix: "todo",
-		},
+		BaseMixin{},
+		BaseApp{},
 	}
 }
 

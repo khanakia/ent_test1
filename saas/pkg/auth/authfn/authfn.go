@@ -42,9 +42,9 @@ func CheckEmailExists(email string, client *ent.Client) (bool, error) {
 	return false, nil
 }
 
-func FindByEmail(email string, client *ent.Client) (*ent.User, error) {
+func FindByEmail(appID, email string, client *ent.Client) (*ent.User, error) {
 	email = strings.ToLower(email)
-	user, err := client.User.Query().Where(user.Email(email)).First(context.Background())
+	user, err := client.User.Query().Where(user.AppID(appID), user.Email(email)).First(context.Background())
 	fmt.Println(err)
 
 	if ent.IsNotFound(err) {
@@ -59,6 +59,7 @@ func FindByEmail(email string, client *ent.Client) (*ent.User, error) {
 }
 
 type RegisterInput struct {
+	AppID     string
 	Email     string `json:"email"`
 	FirstName string `json:"firstName,omitempty"`
 	LastName  string `json:"lastName,omitempty"`
@@ -69,6 +70,7 @@ type RegisterInput struct {
 
 func RegisterValidate(userInput RegisterInput) error {
 	val := valgo.Is(
+		valgo.String(userInput.AppID, "appId").Not().Blank().OfLengthBetween(2, 20),
 		valgo.String(userInput.Email, "email").Not().Blank().OfLengthBetween(4, 20),
 		valgo.String(userInput.Password, "password").Not().Blank().OfLengthBetween(4, 20),
 		// valgo.Number(17, "age").GreaterThan(18),
@@ -105,6 +107,7 @@ func Register(userInput RegisterInput, client *ent.Client, ctx context.Context) 
 	hashed := (Hash(userInput.Password))
 
 	creator := client.User.Create().
+		SetAppID(userInput.AppID).
 		SetEmail(userInput.Email).
 		SetFirstName(cast.ToString(userInput.FirstName)).
 		SetLastName(cast.ToString(userInput.LastName)).
@@ -117,7 +120,7 @@ func Register(userInput RegisterInput, client *ent.Client, ctx context.Context) 
 		return nil, err
 	}
 
-	err = appfn.CreateDefaultWorkspaceForUser(user.ID, client, ctx)
+	err = appfn.CreateDefaultWorkspaceForUser(user, client, ctx)
 
 	if err != nil {
 		return nil, err
@@ -127,6 +130,7 @@ func Register(userInput RegisterInput, client *ent.Client, ctx context.Context) 
 }
 
 type LoginParams struct {
+	AppID     string
 	Email     string
 	Password  string
 	IP        string
@@ -137,6 +141,7 @@ type LoginParams struct {
 
 func LoginValidate(params LoginParams, matchPass bool) error {
 	val := valgo.Is(
+		valgo.String(params.AppID, "appId").Not().Blank().OfLengthBetween(2, 255),
 		valgo.String(params.Email, "email").Not().Blank().OfLengthBetween(4, 20),
 	)
 
@@ -159,7 +164,7 @@ func Login(params LoginParams, matchPass bool, client *ent.Client) (*ent.User, *
 		return nil, nil, err
 	}
 
-	user, err := FindByEmail(params.Email, client)
+	user, err := FindByEmail(params.AppID, params.Email, client)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -177,6 +182,7 @@ func Login(params LoginParams, matchPass bool, client *ent.Client) (*ent.User, *
 	}
 
 	session, err := CreateSession(CreateSessionParams{
+		AppID:     user.AppID,
 		UserID:    user.ID,
 		IP:        params.IP,
 		UserAgent: params.UserAgent,
@@ -192,6 +198,7 @@ func Login(params LoginParams, matchPass bool, client *ent.Client) (*ent.User, *
 }
 
 type CreateSessionParams struct {
+	AppID     string
 	UserID    string
 	IP        string
 	UserAgent string
@@ -206,6 +213,7 @@ func CreateSession(params CreateSessionParams, client *ent.Client) (*ent.Session
 	}
 
 	session, err := client.Session.Create().
+		SetAppID(params.AppID).
 		SetUserID(params.UserID).
 		SetUserAgent(params.UserAgent).
 		SetIP(params.IP).
@@ -220,13 +228,13 @@ func CreateSession(params CreateSessionParams, client *ent.Client) (*ent.Session
 	return session, nil
 }
 
-func ForgotPassword(email string, client *ent.Client, cache cache.Store) error {
+func ForgotPassword(appID, email string, client *ent.Client, cache cache.Store) error {
 
 	if len(email) == 0 {
 		return fmt.Errorf("email must not be empty")
 	}
 
-	user, err := FindByEmail(email, client)
+	user, err := FindByEmail(appID, email, client)
 	if err != nil {
 		return err
 	}
@@ -244,7 +252,7 @@ func ForgotPassword(email string, client *ent.Client, cache cache.Store) error {
 		return err
 	}
 
-	emailfn.SendForgotPassword(email, secret, client)
+	emailfn.SendForgotPassword(appID, email, secret, client)
 
 	return nil
 }
@@ -256,7 +264,32 @@ type ResetPasswordParams struct {
 	PasswordConfirm string `json:"passwordConfirm"`
 }
 
+func ResetPasswordValidate(params ResetPasswordParams, matchPass bool) error {
+	val := valgo.Is(
+		valgo.String(params.Email, "email").Not().Blank().OfLengthBetween(4, 20),
+		valgo.String(params.Token, "Token").Not().Blank().OfLengthBetween(4, 20),
+		valgo.String(params.Password, "Password").Not().Blank().OfLengthBetween(4, 20),
+		valgo.String(params.PasswordConfirm, "PasswordConfirm").Not().Blank().OfLengthBetween(4, 20),
+	)
+
+	if matchPass {
+		val.Is(
+			valgo.String(params.Password, "password").Not().Blank().OfLengthBetween(4, 20),
+		)
+	}
+
+	if !val.Valid() {
+		return val.Error()
+	}
+
+	return nil
+}
+
 func ResetPassword(params ResetPasswordParams, client *ent.Client, cache cache.Store) (*ent.User, error) {
+	err := ResetPasswordValidate(params, true)
+	if err != nil {
+		return nil, err
+	}
 
 	if params.Password != params.PasswordConfirm {
 		return nil, fmt.Errorf("passwords don't match")

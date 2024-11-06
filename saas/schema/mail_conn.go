@@ -34,6 +34,7 @@ func (MailConn) Edges() []ent.Edge {
 func (MailConn) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+		BaseApp{},
 	}
 }
 

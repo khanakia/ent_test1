@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"saas/gen/ent"
+	entapp "saas/gen/ent/app"
 	"saas/gen/ent/workspaceuser"
 	"saas/pkg/app"
 	"saas/pkg/constants"
@@ -43,35 +44,36 @@ func CanAccessWorkspace(workspaceID, userID string, client *ent.Client, ctx cont
 }
 
 // we will use this functio to create default workspace for the new user registered
-func CreateDefaultWorkspaceForUser(userID string, client *ent.Client, ctx context.Context) error {
-	workspace, err := client.Workspace.Create().SetName("Personal").SetIsPersonal(true).SetUserID(userID).Save(ctx)
+func CreateDefaultWorkspaceForUser(user *ent.User, client *ent.Client, ctx context.Context) error {
+	workspace, err := client.Workspace.Create().SetAppID(user.AppID).SetName("Personal").SetIsPersonal(true).SetUserID(user.ID).Save(ctx)
 	if err != nil {
 		return err
 	}
 
 	_, err = client.WorkspaceUser.Create().
+		SetAppID(user.AppID).
 		SetWorkspaceID(workspace.ID).
-		SetUserID(userID).
+		SetUserID(user.ID).
 		SetRole(constants.WorkspaceRoleOwner).
 		Save(ctx)
 
 	return err
 }
 
-func GetAppSettings(client *ent.Client) (*ent.App, error) {
-	return client.App.Query().First(context.Background())
+func GetAppSettings(id string, client *ent.Client) (*ent.App, error) {
+	return client.App.Query().Where(entapp.ID(id)).First(context.Background())
 }
 
-func MustGetAppSettings() *ent.App {
+func MustGetAppSettings(id string) *ent.App {
 	client := app.GetPlugins().EntDB.Client()
-	record, err := client.App.Query().First(context.Background())
+	record, err := client.App.Query().Where(entapp.ID(id)).First(context.Background())
 	if err != nil {
 		panic(err)
 	}
 	return record
 }
 
-func IsUserSA(user *ent.User) bool {
-	return user.CanAdmin
-	// return user.RoleID == constants.UserRoleSa
-}
+// func IsUserSA(user *ent.User) bool {
+// 	return user.CanAdmin
+// 	// return user.RoleID == constants.UserRoleSa
+// }

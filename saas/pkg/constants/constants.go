@@ -8,6 +8,7 @@ const (
 	UserRoleSa = "sa"
 
 	DirectiveCanAdmin = "canAdmin"
+	DirectiveCanApp   = "canApp"
 
 	_ = iota
 	LockReadonly

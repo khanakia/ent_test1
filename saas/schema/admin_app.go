@@ -7,7 +7,6 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/field"
-	gonanoid "github.com/matoous/go-nanoid/v2"
 )
 
 // App holds the settings for the whole App actually there is no team system there will be only one
@@ -18,10 +17,6 @@ type App struct {
 
 func (App) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("id").
-			DefaultFunc(func() string {
-				return "a" + gonanoid.MustGenerate("0123456789abcdefghijklmnopqrstuvwxyz", 10)
-			}).Unique(),
 		field.String("name").Optional(),      // will need on many places e.g email templates
 		field.String("copyright").Optional(), // need on many places e.g email templates
 		field.String("email").Optional(),     // support email
@@ -42,6 +37,8 @@ func (App) Fields() []ent.Field {
 
 		// if enabled then user must verify their email otherwise not
 		field.Text("auth_email_verify").Optional(),
+
+		field.String("admin_user_id").Optional(),
 	}
 }
 
@@ -51,7 +48,7 @@ func (App) Edges() []ent.Edge {
 
 func (App) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		// BaseMixin{},
+		BaseMixin{},
 	}
 }
 

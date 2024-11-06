@@ -40,5 +40,6 @@ func (Temp) Annotations() []schema.Annotation {
 func (Temp) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+		BaseApp{},
 	}
 }

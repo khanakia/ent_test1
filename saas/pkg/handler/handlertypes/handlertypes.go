@@ -29,6 +29,7 @@ type WorkspaceUpdateInput struct {
 }
 
 type RegisterVerifyInput struct {
+	AppID string
 	Token string `json:"token"` // temp.id
 	Email string `json:"email"`
 

@@ -1,14 +1,11 @@
 package schema
 
 import (
-	"time"
-
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
-	gonanoid "github.com/matoous/go-nanoid/v2"
 )
 
 type Session struct {
@@ -17,19 +14,6 @@ type Session struct {
 
 func (Session) Fields() []ent.Field {
 	return []ent.Field{
-		field.String("id").
-			DefaultFunc(func() string {
-				return "u" + gonanoid.MustGenerate("0123456789abcdefghijklmnopqrstuvwxyz", 32)
-			}).Unique(),
-
-		field.Time("created_at").
-			Optional().
-			Default(time.Now),
-
-		field.Time("updated_at").
-			Optional().
-			Default(time.Now).
-			UpdateDefault(time.Now),
 		field.String("user_id").Optional(),
 		field.String("ip").Optional(),
 		field.String("user_agent").Optional(),
@@ -54,6 +38,7 @@ func (Session) Annotations() []schema.Annotation {
 }
 func (Session) Mixin() []ent.Mixin {
 	return []ent.Mixin{
-		// BaseMixin{},
+		BaseMixin{Length: 32},
+		BaseApp{},
 	}
 }

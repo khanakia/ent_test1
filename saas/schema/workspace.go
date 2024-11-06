@@ -36,7 +36,7 @@ func (Workspace) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		// entgql.Skip(entgql.SkipAll),
 		entgql.RelayConnection(),
-		entgql.QueryField().Directives(entgql.Directive{Name: constants.DirectiveCanAdmin}),
+		entgql.QueryField().Directives(entgql.Directive{Name: constants.DirectiveCanApp}),
 		entgql.MultiOrder(),
 		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 	}
@@ -45,5 +45,6 @@ func (Workspace) Annotations() []schema.Annotation {
 func (Workspace) Mixin() []ent.Mixin {
 	return []ent.Mixin{
 		BaseMixin{},
+		BaseApp{},
 	}
 }

@@ -7,8 +7,7 @@ import (
 	"gqlsa/graph/gqlsaresolver"
 	"lace/gqlgin"
 	"reflect"
-	"saas/pkg/appfn"
-	"saas/pkg/middleware"
+	"saas/pkg/middleware/adminauthmiddleware"
 	"saas/pkg/middleware/appmiddleware"
 
 	"github.com/99designs/gqlgen/graphql"
@@ -18,24 +17,50 @@ import (
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
-func Boot(ginEngine *gin.Engine, resolver *gqlsaresolver.Resolver) {
-	prefix := "/sa"
-	rg := ginEngine.Group(prefix)
-
-	c := generated.Config{Resolvers: resolver}
+func setDirectives(c *generated.Config) {
 	c.Directives.CanAdmin = func(ctx context.Context, obj interface{}, next graphql.Resolver) (interface{}, error) {
-		cuser, _ := middleware.GetUserFromGqlCtx(ctx)
+		cuser, _ := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 		if cuser == nil {
 			return nil, fmt.Errorf("access denied")
 		}
 
-		if !appfn.IsUserSA(cuser) {
+		if !cuser.Status {
 			return nil, fmt.Errorf("access denied")
+		}
+
+		return next(ctx)
+	}
+
+	c.Directives.CanApp = func(ctx context.Context, obj interface{}, next graphql.Resolver) (interface{}, error) {
+		cuser, _ := adminauthmiddleware.GetUserFromGqlCtx(ctx)
+		if cuser == nil {
+			return nil, fmt.Errorf("user not found")
+		}
+
+		if !cuser.Status {
+			return nil, fmt.Errorf("access denied")
+		}
+
+		app, _ := appmiddleware.GetAppFromGqlCtx(ctx)
+		if app == nil {
+			return nil, fmt.Errorf("app not found")
+		}
+
+		if app.AdminUserID != cuser.ID {
+			return nil, fmt.Errorf("app access denied")
 		}
 
 		// or let it pass through
 		return next(ctx)
 	}
+}
+
+func Boot(ginEngine *gin.Engine, resolver *gqlsaresolver.Resolver) {
+	prefix := "/sa"
+	rg := ginEngine.Group(prefix)
+
+	c := generated.Config{Resolvers: resolver}
+	setDirectives(&c)
 
 	schm := generated.NewExecutableSchema(c)
 	// extendSchema(&schm)
@@ -47,8 +72,8 @@ func Boot(ginEngine *gin.Engine, resolver *gqlsaresolver.Resolver) {
 		PlaygroundKey:    resolver.AppConfig.Graphql.Key,
 		RouteGroupPrefix: prefix,
 		Middleware: []gin.HandlerFunc{
-			middleware.CheckAuthMiddleware(resolver.Plugin.EntDB.Client()),
-			appmiddleware.CheckAppMiddleware(resolver.Plugin.EntDB.Client()),
+			adminauthmiddleware.MiddlewareSilent(resolver.Plugin.EntDB.Client()),
+			appmiddleware.MiddlewareSilent(resolver.Plugin.EntDB.Client()),
 		},
 	})
 	fmt.Println("boot gqlsa")

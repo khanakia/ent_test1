@@ -6,22 +6,16 @@ package gqlsaresolver
 
 import (
 	"context"
-	"fmt"
 	"saas/gen/ent"
-	"saas/pkg/appfn"
-	"saas/pkg/middleware"
+	"saas/pkg/middleware/adminauthmiddleware"
 	"saas/pkg/middleware/appmiddleware"
 )
 
 // CreatePostType is the resolver for the createPostType field.
 func (r *mutationResolver) CreatePostType(ctx context.Context, input ent.CreatePostTypeInput) (*ent.PostType, error) {
-	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 	if cuser == nil {
 		return nil, err
-	}
-
-	if !appfn.IsUserSA(cuser) {
-		return nil, fmt.Errorf("unauthorized access")
 	}
 
 	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
@@ -31,13 +25,9 @@ func (r *mutationResolver) CreatePostType(ctx context.Context, input ent.CreateP
 
 // UpdatePostType is the resolver for the updatePostType field.
 func (r *mutationResolver) UpdatePostType(ctx context.Context, id string, input ent.UpdatePostTypeInput) (*ent.PostType, error) {
-	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 	if cuser == nil {
 		return nil, err
-	}
-
-	if !appfn.IsUserSA(cuser) {
-		return nil, fmt.Errorf("unauthorized access")
 	}
 
 	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
@@ -47,13 +37,9 @@ func (r *mutationResolver) UpdatePostType(ctx context.Context, id string, input 
 
 // CreatePostStatus is the resolver for the createPostStatus field.
 func (r *mutationResolver) CreatePostStatus(ctx context.Context, input ent.CreatePostStatusInput) (*ent.PostStatus, error) {
-	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 	if cuser == nil {
 		return nil, err
-	}
-
-	if !appfn.IsUserSA(cuser) {
-		return nil, fmt.Errorf("unauthorized access")
 	}
 
 	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
@@ -63,13 +49,9 @@ func (r *mutationResolver) CreatePostStatus(ctx context.Context, input ent.Creat
 
 // UpdatePostStatus is the resolver for the updatePostStatus field.
 func (r *mutationResolver) UpdatePostStatus(ctx context.Context, id string, input ent.UpdatePostStatusInput) (*ent.PostStatus, error) {
-	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 	if cuser == nil {
 		return nil, err
-	}
-
-	if !appfn.IsUserSA(cuser) {
-		return nil, fmt.Errorf("unauthorized access")
 	}
 
 	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
@@ -79,13 +61,9 @@ func (r *mutationResolver) UpdatePostStatus(ctx context.Context, id string, inpu
 
 // CreatePostCategory is the resolver for the createPostCategory field.
 func (r *mutationResolver) CreatePostCategory(ctx context.Context, input ent.CreatePostCategoryInput) (*ent.PostCategory, error) {
-	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 	if cuser == nil {
 		return nil, err
-	}
-
-	if !appfn.IsUserSA(cuser) {
-		return nil, fmt.Errorf("unauthorized access")
 	}
 
 	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
@@ -95,13 +73,9 @@ func (r *mutationResolver) CreatePostCategory(ctx context.Context, input ent.Cre
 
 // UpdatePostCategory is the resolver for the updatePostCategory field.
 func (r *mutationResolver) UpdatePostCategory(ctx context.Context, id string, input ent.UpdatePostCategoryInput) (*ent.PostCategory, error) {
-	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 	if cuser == nil {
 		return nil, err
-	}
-
-	if !appfn.IsUserSA(cuser) {
-		return nil, fmt.Errorf("unauthorized access")
 	}
 
 	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
@@ -111,13 +85,9 @@ func (r *mutationResolver) UpdatePostCategory(ctx context.Context, id string, in
 
 // CreatePost is the resolver for the createPost field.
 func (r *mutationResolver) CreatePost(ctx context.Context, input ent.CreatePostInput) (*ent.Post, error) {
-	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 	if cuser == nil {
 		return nil, err
-	}
-
-	if !appfn.IsUserSA(cuser) {
-		return nil, fmt.Errorf("unauthorized access")
 	}
 
 	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
@@ -127,13 +97,9 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input ent.CreatePostI
 
 // UpdatePost is the resolver for the updatePost field.
 func (r *mutationResolver) UpdatePost(ctx context.Context, id string, input ent.UpdatePostInput) (*ent.Post, error) {
-	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 	if cuser == nil {
 		return nil, err
-	}
-
-	if !appfn.IsUserSA(cuser) {
-		return nil, fmt.Errorf("unauthorized access")
 	}
 
 	app := appmiddleware.MustGetAppFromGqlCtx(ctx)

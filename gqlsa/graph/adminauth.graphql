@@ -1,0 +1,22 @@
+type AdminUser {
+  id: String!
+  email: String!
+  firstName: String
+  lastName: String
+  company: String
+  phone: String
+}
+
+type LoginResponse {
+  token: String!
+  me: AdminUser!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+}
+
+extend type Mutation {
+  adminAuthLogin(input: LoginInput!): LoginResponse!
+}

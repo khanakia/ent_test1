@@ -6,34 +6,25 @@ package gqlsaresolver
 
 import (
 	"context"
-	"fmt"
 	"saas/gen/ent"
-	"saas/pkg/appfn"
-	"saas/pkg/middleware"
+	"saas/pkg/middleware/adminauthmiddleware"
 )
 
 // CreateOauthConnection is the resolver for the createOauthConnection field.
 func (r *mutationResolver) CreateOauthConnection(ctx context.Context, input ent.CreateOauthConnectionInput) (*ent.OauthConnection, error) {
-	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 	if cuser == nil {
 		return nil, err
 	}
 
-	if !appfn.IsUserSA(cuser) {
-		return nil, fmt.Errorf("unauthorized access")
-	}
 	return r.Plugin.EntDB.Client().OauthConnection.Create().SetInput(input).Save(ctx)
 }
 
 // UpdateOauthConnection is the resolver for the updateOauthConnection field.
 func (r *mutationResolver) UpdateOauthConnection(ctx context.Context, id string, input ent.UpdateOauthConnectionInput) (*ent.OauthConnection, error) {
-	cuser, err := middleware.GetUserFromGqlCtx(ctx)
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
 	if cuser == nil {
 		return nil, err
-	}
-
-	if !appfn.IsUserSA(cuser) {
-		return nil, fmt.Errorf("unauthorized access")
 	}
 
 	return r.Plugin.EntDB.Client().OauthConnection.UpdateOneID(id).SetInput(input).Save(ctx)
