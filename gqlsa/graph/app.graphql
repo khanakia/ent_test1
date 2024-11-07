@@ -1,0 +1,4 @@
+extend type Mutation {
+  createApp(input: CreateAppInput!): App! @canAdmin
+  updateApp(id: ID!, input: UpdateAppInput!): App! @canAdmin
+}

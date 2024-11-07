@@ -12,6 +12,7 @@ import (
 	"saas/gen/ent"
 	"saas/gen/ent/app"
 	"saas/gen/ent/mailconn"
+	"saas/gen/ent/media"
 	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/post"
 	"saas/gen/ent/postcategory"
@@ -137,6 +138,23 @@ func (r *queryResolver) MailConns(ctx context.Context, after *entgql.Cursor[stri
 		Paginate(ctx, after, first, before, last,
 			ent.WithMailConnOrder(orderBy),
 			ent.WithMailConnFilter(where.Filter),
+		)
+}
+
+// Medias is the resolver for the medias field.
+func (r *queryResolver) Medias(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.MediaOrder, where *ent.MediaWhereInput) (*ent.MediaConnection, error) {
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
+	if cuser == nil {
+		return nil, err
+	}
+
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	return r.Plugin.EntDB.Client().Media.Query().
+		Where(media.AppID(app.ID)).
+		Paginate(ctx, after, first, before, last,
+			ent.WithMediaOrder(orderBy),
+			ent.WithMediaFilter(where.Filter),
 		)
 }
 

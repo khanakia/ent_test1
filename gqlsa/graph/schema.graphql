@@ -2,6 +2,7 @@ directive @canAdmin on FIELD_DEFINITION
 directive @canApp on FIELD_DEFINITION
 
 scalar Time
+scalar Uint
 scalar Uint64
 scalar Map
 scalar JSON

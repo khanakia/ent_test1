@@ -6,6 +6,7 @@ package gqlsaresolver
 
 import (
 	"context"
+	"gqlsa/graph/generated"
 	"saas/gen/ent"
 	"saas/gen/ent/post"
 	"saas/gen/ent/postcategory"
@@ -110,3 +111,8 @@ func (r *mutationResolver) UpdatePost(ctx context.Context, id string, input ent.
 
 	return r.Plugin.EntDB.Client().Post.UpdateOneID(id).SetInput(input).Where(post.AppID(app.ID)).Save(ctx)
 }
+
+// Mutation returns generated.MutationResolver implementation.
+func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
+
+type mutationResolver struct{ *Resolver }

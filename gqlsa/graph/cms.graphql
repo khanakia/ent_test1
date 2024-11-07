@@ -1,4 +1,4 @@
-extend type Mutation {
+type Mutation {
   createPostType(input: CreatePostTypeInput!): PostType! @canApp
   updatePostType(id: ID!, input: UpdatePostTypeInput!): PostType! @canApp
   createPostStatus(input: CreatePostStatusInput!): PostStatus! @canApp

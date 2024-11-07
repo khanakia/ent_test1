@@ -102,6 +102,10 @@ models:
     model:
       - github.com/99designs/gqlgen/graphql.Int64
 
+  Uint:
+    model:
+      - github.com/99designs/gqlgen/graphql.Uint
+
   Uint64:
     model:
       - github.com/99designs/gqlgen/graphql.Uint64
