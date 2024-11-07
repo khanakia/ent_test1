@@ -128,8 +128,44 @@ type ComplexityRoot struct {
 		Node   func(childComplexity int) int
 	}
 
+	Media struct {
+		AggregateType   func(childComplexity int) int
+		Alt             func(childComplexity int) int
+		AppID           func(childComplexity int) int
+		Checksum        func(childComplexity int) int
+		CreatedAt       func(childComplexity int) int
+		Description     func(childComplexity int) int
+		Directory       func(childComplexity int) int
+		Disk            func(childComplexity int) int
+		Extension       func(childComplexity int) int
+		ID              func(childComplexity int) int
+		IsVariant       func(childComplexity int) int
+		MimeType        func(childComplexity int) int
+		Name            func(childComplexity int) int
+		OriginalMediaID func(childComplexity int) int
+		OriginalName    func(childComplexity int) int
+		Size            func(childComplexity int) int
+		Status          func(childComplexity int) int
+		UID             func(childComplexity int) int
+		UpdatedAt       func(childComplexity int) int
+		VariantName     func(childComplexity int) int
+		WorkspaceID     func(childComplexity int) int
+	}
+
+	MediaConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	MediaEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	Mutation struct {
 		AdminAuthLogin        func(childComplexity int, input model.LoginInput) int
+		CreateApp             func(childComplexity int, input ent.CreateAppInput) int
 		CreateMailConn        func(childComplexity int, input ent.CreateMailConnInput) int
 		CreateOauthConnection func(childComplexity int, input ent.CreateOauthConnectionInput) int
 		CreatePost            func(childComplexity int, input ent.CreatePostInput) int
@@ -137,8 +173,8 @@ type ComplexityRoot struct {
 		CreatePostStatus      func(childComplexity int, input ent.CreatePostStatusInput) int
 		CreatePostType        func(childComplexity int, input ent.CreatePostTypeInput) int
 		CreateTempl           func(childComplexity int, input ent.CreateTemplInput) int
-		CreateTodo            func(childComplexity int, input ent.CreateTodoInput) int
 		Ping                  func(childComplexity int) int
+		UpdateApp             func(childComplexity int, id string, input ent.UpdateAppInput) int
 		UpdateMailConn        func(childComplexity int, id string, input ent.UpdateMailConnInput) int
 		UpdateOauthConnection func(childComplexity int, id string, input ent.UpdateOauthConnectionInput) int
 		UpdatePost            func(childComplexity int, id string, input ent.UpdatePostInput) int
@@ -146,7 +182,6 @@ type ComplexityRoot struct {
 		UpdatePostStatus      func(childComplexity int, id string, input ent.UpdatePostStatusInput) int
 		UpdatePostType        func(childComplexity int, id string, input ent.UpdatePostTypeInput) int
 		UpdateTempl           func(childComplexity int, id string, input ent.UpdateTemplInput) int
-		UpdateTodo            func(childComplexity int, id string, input ent.UpdateTodoInput) int
 	}
 
 	OauthConnection struct {
@@ -316,6 +351,7 @@ type ComplexityRoot struct {
 	Query struct {
 		Apps             func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.AppOrder, where *ent.AppWhereInput) int
 		MailConns        func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.MailConnOrder, where *ent.MailConnWhereInput) int
+		Medias           func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.MediaOrder, where *ent.MediaWhereInput) int
 		Node             func(childComplexity int, id string) int
 		Nodes            func(childComplexity int, ids []string) int
 		OauthConnections func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.OauthConnectionOrder, where *ent.OauthConnectionWhereInput) int
@@ -914,6 +950,188 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.MailConnEdge.Node(childComplexity), true
 
+	case "Media.aggregateType":
+		if e.complexity.Media.AggregateType == nil {
+			break
+		}
+
+		return e.complexity.Media.AggregateType(childComplexity), true
+
+	case "Media.alt":
+		if e.complexity.Media.Alt == nil {
+			break
+		}
+
+		return e.complexity.Media.Alt(childComplexity), true
+
+	case "Media.appID":
+		if e.complexity.Media.AppID == nil {
+			break
+		}
+
+		return e.complexity.Media.AppID(childComplexity), true
+
+	case "Media.checksum":
+		if e.complexity.Media.Checksum == nil {
+			break
+		}
+
+		return e.complexity.Media.Checksum(childComplexity), true
+
+	case "Media.createdAt":
+		if e.complexity.Media.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.Media.CreatedAt(childComplexity), true
+
+	case "Media.description":
+		if e.complexity.Media.Description == nil {
+			break
+		}
+
+		return e.complexity.Media.Description(childComplexity), true
+
+	case "Media.directory":
+		if e.complexity.Media.Directory == nil {
+			break
+		}
+
+		return e.complexity.Media.Directory(childComplexity), true
+
+	case "Media.disk":
+		if e.complexity.Media.Disk == nil {
+			break
+		}
+
+		return e.complexity.Media.Disk(childComplexity), true
+
+	case "Media.extension":
+		if e.complexity.Media.Extension == nil {
+			break
+		}
+
+		return e.complexity.Media.Extension(childComplexity), true
+
+	case "Media.id":
+		if e.complexity.Media.ID == nil {
+			break
+		}
+
+		return e.complexity.Media.ID(childComplexity), true
+
+	case "Media.isVariant":
+		if e.complexity.Media.IsVariant == nil {
+			break
+		}
+
+		return e.complexity.Media.IsVariant(childComplexity), true
+
+	case "Media.mimeType":
+		if e.complexity.Media.MimeType == nil {
+			break
+		}
+
+		return e.complexity.Media.MimeType(childComplexity), true
+
+	case "Media.name":
+		if e.complexity.Media.Name == nil {
+			break
+		}
+
+		return e.complexity.Media.Name(childComplexity), true
+
+	case "Media.originalMediaID":
+		if e.complexity.Media.OriginalMediaID == nil {
+			break
+		}
+
+		return e.complexity.Media.OriginalMediaID(childComplexity), true
+
+	case "Media.originalName":
+		if e.complexity.Media.OriginalName == nil {
+			break
+		}
+
+		return e.complexity.Media.OriginalName(childComplexity), true
+
+	case "Media.size":
+		if e.complexity.Media.Size == nil {
+			break
+		}
+
+		return e.complexity.Media.Size(childComplexity), true
+
+	case "Media.status":
+		if e.complexity.Media.Status == nil {
+			break
+		}
+
+		return e.complexity.Media.Status(childComplexity), true
+
+	case "Media.uid":
+		if e.complexity.Media.UID == nil {
+			break
+		}
+
+		return e.complexity.Media.UID(childComplexity), true
+
+	case "Media.updatedAt":
+		if e.complexity.Media.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.Media.UpdatedAt(childComplexity), true
+
+	case "Media.variantName":
+		if e.complexity.Media.VariantName == nil {
+			break
+		}
+
+		return e.complexity.Media.VariantName(childComplexity), true
+
+	case "Media.workspaceID":
+		if e.complexity.Media.WorkspaceID == nil {
+			break
+		}
+
+		return e.complexity.Media.WorkspaceID(childComplexity), true
+
+	case "MediaConnection.edges":
+		if e.complexity.MediaConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.MediaConnection.Edges(childComplexity), true
+
+	case "MediaConnection.pageInfo":
+		if e.complexity.MediaConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.MediaConnection.PageInfo(childComplexity), true
+
+	case "MediaConnection.totalCount":
+		if e.complexity.MediaConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.MediaConnection.TotalCount(childComplexity), true
+
+	case "MediaEdge.cursor":
+		if e.complexity.MediaEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.MediaEdge.Cursor(childComplexity), true
+
+	case "MediaEdge.node":
+		if e.complexity.MediaEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.MediaEdge.Node(childComplexity), true
+
 	case "Mutation.adminAuthLogin":
 		if e.complexity.Mutation.AdminAuthLogin == nil {
 			break
@@ -925,6 +1143,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.AdminAuthLogin(childComplexity, args["input"].(model.LoginInput)), true
+
+	case "Mutation.createApp":
+		if e.complexity.Mutation.CreateApp == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createApp_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateApp(childComplexity, args["input"].(ent.CreateAppInput)), true
 
 	case "Mutation.createMailConn":
 		if e.complexity.Mutation.CreateMailConn == nil {
@@ -1010,24 +1240,24 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateTempl(childComplexity, args["input"].(ent.CreateTemplInput)), true
 
-	case "Mutation.createTodo":
-		if e.complexity.Mutation.CreateTodo == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_createTodo_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.CreateTodo(childComplexity, args["input"].(ent.CreateTodoInput)), true
-
 	case "Mutation.ping":
 		if e.complexity.Mutation.Ping == nil {
 			break
 		}
 
 		return e.complexity.Mutation.Ping(childComplexity), true
+
+	case "Mutation.updateApp":
+		if e.complexity.Mutation.UpdateApp == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updateApp_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdateApp(childComplexity, args["id"].(string), args["input"].(ent.UpdateAppInput)), true
 
 	case "Mutation.updateMailConn":
 		if e.complexity.Mutation.UpdateMailConn == nil {
@@ -1112,18 +1342,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdateTempl(childComplexity, args["id"].(string), args["input"].(ent.UpdateTemplInput)), true
-
-	case "Mutation.updateTodo":
-		if e.complexity.Mutation.UpdateTodo == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_updateTodo_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.UpdateTodo(childComplexity, args["id"].(string), args["input"].(ent.UpdateTodoInput)), true
 
 	case "OauthConnection.appID":
 		if e.complexity.OauthConnection.AppID == nil {
@@ -1939,6 +2157,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.MailConns(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].([]*ent.MailConnOrder), args["where"].(*ent.MailConnWhereInput)), true
+
+	case "Query.medias":
+		if e.complexity.Query.Medias == nil {
+			break
+		}
+
+		args, err := ec.field_Query_medias_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.Medias(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].([]*ent.MediaOrder), args["where"].(*ent.MediaWhereInput)), true
 
 	case "Query.node":
 		if e.complexity.Query.Node == nil {
@@ -2773,6 +3003,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputLoginInput,
 		ec.unmarshalInputMailConnOrder,
 		ec.unmarshalInputMailConnWhereInput,
+		ec.unmarshalInputMediaOrder,
+		ec.unmarshalInputMediaWhereInput,
 		ec.unmarshalInputOauthConnectionOrder,
 		ec.unmarshalInputOauthConnectionWhereInput,
 		ec.unmarshalInputPostCategoryOrder,
@@ -2930,7 +3162,12 @@ extend type Mutation {
   adminAuthLogin(input: LoginInput!): LoginResponse!
 }
 `, BuiltIn: false},
-	{Name: "../cms.graphql", Input: `extend type Mutation {
+	{Name: "../app.graphql", Input: `extend type Mutation {
+  createApp(input: CreateAppInput!): App! @canAdmin
+  updateApp(id: ID!, input: UpdateAppInput!): App! @canAdmin
+}
+`, BuiltIn: false},
+	{Name: "../cms.graphql", Input: `type Mutation {
   createPostType(input: CreatePostTypeInput!): PostType! @canApp
   updatePostType(id: ID!, input: UpdatePostTypeInput!): PostType! @canApp
   createPostStatus(input: CreatePostStatusInput!): PostStatus! @canApp
@@ -3907,6 +4144,421 @@ input MailConnWhereInput {
   fromEmailNotNil: Boolean
   fromEmailEqualFold: String
   fromEmailContainsFold: String
+  """
+  status field predicates
+  """
+  status: Boolean
+  statusNEQ: Boolean
+  statusIsNil: Boolean
+  statusNotNil: Boolean
+}
+type Media implements Node {
+  id: ID!
+  createdAt: Time
+  updatedAt: Time
+  appID: String
+  disk: String
+  directory: String
+  name: String
+  originalName: String
+  extension: String
+  mimeType: String
+  aggregateType: String
+  size: Uint
+  description: String
+  isVariant: Boolean
+  variantName: String
+  originalMediaID: String
+  checksum: String
+  workspaceID: String!
+  alt: String
+  uid: String
+  status: Boolean
+}
+"""
+A connection to a list of items.
+"""
+type MediaConnection {
+  """
+  A list of edges.
+  """
+  edges: [MediaEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type MediaEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: Media
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+Ordering options for Media connections
+"""
+input MediaOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection! = ASC
+  """
+  The field by which to order MediaSlice.
+  """
+  field: MediaOrderField!
+}
+"""
+Properties by which Media connections can be ordered.
+"""
+enum MediaOrderField {
+  CREATED_AT
+}
+"""
+MediaWhereInput is used for filtering Media objects.
+Input was generated by ent.
+"""
+input MediaWhereInput {
+  not: MediaWhereInput
+  and: [MediaWhereInput!]
+  or: [MediaWhereInput!]
+  """
+  id field predicates
+  """
+  id: ID
+  idNEQ: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+  idGT: ID
+  idGTE: ID
+  idLT: ID
+  idLTE: ID
+  idEqualFold: ID
+  idContainsFold: ID
+  """
+  created_at field predicates
+  """
+  createdAt: Time
+  createdAtNEQ: Time
+  createdAtIn: [Time!]
+  createdAtNotIn: [Time!]
+  createdAtGT: Time
+  createdAtGTE: Time
+  createdAtLT: Time
+  createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
+  """
+  updated_at field predicates
+  """
+  updatedAt: Time
+  updatedAtNEQ: Time
+  updatedAtIn: [Time!]
+  updatedAtNotIn: [Time!]
+  updatedAtGT: Time
+  updatedAtGTE: Time
+  updatedAtLT: Time
+  updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
+  """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
+  """
+  disk field predicates
+  """
+  disk: String
+  diskNEQ: String
+  diskIn: [String!]
+  diskNotIn: [String!]
+  diskGT: String
+  diskGTE: String
+  diskLT: String
+  diskLTE: String
+  diskContains: String
+  diskHasPrefix: String
+  diskHasSuffix: String
+  diskIsNil: Boolean
+  diskNotNil: Boolean
+  diskEqualFold: String
+  diskContainsFold: String
+  """
+  directory field predicates
+  """
+  directory: String
+  directoryNEQ: String
+  directoryIn: [String!]
+  directoryNotIn: [String!]
+  directoryGT: String
+  directoryGTE: String
+  directoryLT: String
+  directoryLTE: String
+  directoryContains: String
+  directoryHasPrefix: String
+  directoryHasSuffix: String
+  directoryIsNil: Boolean
+  directoryNotNil: Boolean
+  directoryEqualFold: String
+  directoryContainsFold: String
+  """
+  name field predicates
+  """
+  name: String
+  nameNEQ: String
+  nameIn: [String!]
+  nameNotIn: [String!]
+  nameGT: String
+  nameGTE: String
+  nameLT: String
+  nameLTE: String
+  nameContains: String
+  nameHasPrefix: String
+  nameHasSuffix: String
+  nameIsNil: Boolean
+  nameNotNil: Boolean
+  nameEqualFold: String
+  nameContainsFold: String
+  """
+  original_name field predicates
+  """
+  originalName: String
+  originalNameNEQ: String
+  originalNameIn: [String!]
+  originalNameNotIn: [String!]
+  originalNameGT: String
+  originalNameGTE: String
+  originalNameLT: String
+  originalNameLTE: String
+  originalNameContains: String
+  originalNameHasPrefix: String
+  originalNameHasSuffix: String
+  originalNameIsNil: Boolean
+  originalNameNotNil: Boolean
+  originalNameEqualFold: String
+  originalNameContainsFold: String
+  """
+  extension field predicates
+  """
+  extension: String
+  extensionNEQ: String
+  extensionIn: [String!]
+  extensionNotIn: [String!]
+  extensionGT: String
+  extensionGTE: String
+  extensionLT: String
+  extensionLTE: String
+  extensionContains: String
+  extensionHasPrefix: String
+  extensionHasSuffix: String
+  extensionIsNil: Boolean
+  extensionNotNil: Boolean
+  extensionEqualFold: String
+  extensionContainsFold: String
+  """
+  mime_type field predicates
+  """
+  mimeType: String
+  mimeTypeNEQ: String
+  mimeTypeIn: [String!]
+  mimeTypeNotIn: [String!]
+  mimeTypeGT: String
+  mimeTypeGTE: String
+  mimeTypeLT: String
+  mimeTypeLTE: String
+  mimeTypeContains: String
+  mimeTypeHasPrefix: String
+  mimeTypeHasSuffix: String
+  mimeTypeIsNil: Boolean
+  mimeTypeNotNil: Boolean
+  mimeTypeEqualFold: String
+  mimeTypeContainsFold: String
+  """
+  aggregate_type field predicates
+  """
+  aggregateType: String
+  aggregateTypeNEQ: String
+  aggregateTypeIn: [String!]
+  aggregateTypeNotIn: [String!]
+  aggregateTypeGT: String
+  aggregateTypeGTE: String
+  aggregateTypeLT: String
+  aggregateTypeLTE: String
+  aggregateTypeContains: String
+  aggregateTypeHasPrefix: String
+  aggregateTypeHasSuffix: String
+  aggregateTypeIsNil: Boolean
+  aggregateTypeNotNil: Boolean
+  aggregateTypeEqualFold: String
+  aggregateTypeContainsFold: String
+  """
+  size field predicates
+  """
+  size: Uint
+  sizeNEQ: Uint
+  sizeIn: [Uint!]
+  sizeNotIn: [Uint!]
+  sizeGT: Uint
+  sizeGTE: Uint
+  sizeLT: Uint
+  sizeLTE: Uint
+  sizeIsNil: Boolean
+  sizeNotNil: Boolean
+  """
+  description field predicates
+  """
+  description: String
+  descriptionNEQ: String
+  descriptionIn: [String!]
+  descriptionNotIn: [String!]
+  descriptionGT: String
+  descriptionGTE: String
+  descriptionLT: String
+  descriptionLTE: String
+  descriptionContains: String
+  descriptionHasPrefix: String
+  descriptionHasSuffix: String
+  descriptionIsNil: Boolean
+  descriptionNotNil: Boolean
+  descriptionEqualFold: String
+  descriptionContainsFold: String
+  """
+  is_variant field predicates
+  """
+  isVariant: Boolean
+  isVariantNEQ: Boolean
+  isVariantIsNil: Boolean
+  isVariantNotNil: Boolean
+  """
+  variant_name field predicates
+  """
+  variantName: String
+  variantNameNEQ: String
+  variantNameIn: [String!]
+  variantNameNotIn: [String!]
+  variantNameGT: String
+  variantNameGTE: String
+  variantNameLT: String
+  variantNameLTE: String
+  variantNameContains: String
+  variantNameHasPrefix: String
+  variantNameHasSuffix: String
+  variantNameIsNil: Boolean
+  variantNameNotNil: Boolean
+  variantNameEqualFold: String
+  variantNameContainsFold: String
+  """
+  original_media_id field predicates
+  """
+  originalMediaID: String
+  originalMediaIDNEQ: String
+  originalMediaIDIn: [String!]
+  originalMediaIDNotIn: [String!]
+  originalMediaIDGT: String
+  originalMediaIDGTE: String
+  originalMediaIDLT: String
+  originalMediaIDLTE: String
+  originalMediaIDContains: String
+  originalMediaIDHasPrefix: String
+  originalMediaIDHasSuffix: String
+  originalMediaIDIsNil: Boolean
+  originalMediaIDNotNil: Boolean
+  originalMediaIDEqualFold: String
+  originalMediaIDContainsFold: String
+  """
+  checksum field predicates
+  """
+  checksum: String
+  checksumNEQ: String
+  checksumIn: [String!]
+  checksumNotIn: [String!]
+  checksumGT: String
+  checksumGTE: String
+  checksumLT: String
+  checksumLTE: String
+  checksumContains: String
+  checksumHasPrefix: String
+  checksumHasSuffix: String
+  checksumIsNil: Boolean
+  checksumNotNil: Boolean
+  checksumEqualFold: String
+  checksumContainsFold: String
+  """
+  workspace_id field predicates
+  """
+  workspaceID: String
+  workspaceIDNEQ: String
+  workspaceIDIn: [String!]
+  workspaceIDNotIn: [String!]
+  workspaceIDGT: String
+  workspaceIDGTE: String
+  workspaceIDLT: String
+  workspaceIDLTE: String
+  workspaceIDContains: String
+  workspaceIDHasPrefix: String
+  workspaceIDHasSuffix: String
+  workspaceIDEqualFold: String
+  workspaceIDContainsFold: String
+  """
+  alt field predicates
+  """
+  alt: String
+  altNEQ: String
+  altIn: [String!]
+  altNotIn: [String!]
+  altGT: String
+  altGTE: String
+  altLT: String
+  altLTE: String
+  altContains: String
+  altHasPrefix: String
+  altHasSuffix: String
+  altIsNil: Boolean
+  altNotNil: Boolean
+  altEqualFold: String
+  altContainsFold: String
+  """
+  uid field predicates
+  """
+  uid: String
+  uidNEQ: String
+  uidIn: [String!]
+  uidNotIn: [String!]
+  uidGT: String
+  uidGTE: String
+  uidLT: String
+  uidLTE: String
+  uidContains: String
+  uidHasPrefix: String
+  uidHasSuffix: String
+  uidIsNil: Boolean
+  uidNotNil: Boolean
+  uidEqualFold: String
+  uidContainsFold: String
   """
   status field predicates
   """
@@ -5756,6 +6408,37 @@ type Query {
     """
     where: MailConnWhereInput
   ): MailConnConnection! @canAdmin
+  medias(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for MediaSlice returned from the connection.
+    """
+    orderBy: [MediaOrder!]
+
+    """
+    Filtering options for MediaSlice returned from the connection.
+    """
+    where: MediaWhereInput
+  ): MediaConnection! @canApp
   oauthConnections(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -7644,6 +8327,7 @@ input WorkspaceWhereInput {
 directive @canApp on FIELD_DEFINITION
 
 scalar Time
+scalar Uint
 scalar Uint64
 scalar Map
 scalar JSON
@@ -7660,9 +8344,5 @@ extend type Mutation {
   ping: String!
 }
 `, BuiltIn: false},
-	{Name: "../todo.graphql", Input: `type Mutation {
-  createTodo(input: CreateTodoInput!): Todo!
-  updateTodo(id: ID!, input: UpdateTodoInput!): Todo!
-}`, BuiltIn: false},
 }
 var parsedSchema = gqlparser.MustLoadSchema(sources...)

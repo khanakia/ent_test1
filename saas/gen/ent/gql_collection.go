@@ -6,6 +6,7 @@ import (
 	"context"
 	"saas/gen/ent/app"
 	"saas/gen/ent/mailconn"
+	"saas/gen/ent/media"
 	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/post"
 	"saas/gen/ent/postcategory"
@@ -464,6 +465,196 @@ func newMailConnPaginateArgs(rv map[string]any) *mailconnPaginateArgs {
 	}
 	if v, ok := rv[whereField].(*MailConnWhereInput); ok {
 		args.opts = append(args.opts, WithMailConnFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (m *MediaQuery) CollectFields(ctx context.Context, satisfies ...string) (*MediaQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return m, nil
+	}
+	if err := m.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (m *MediaQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(media.Columns))
+		selectedFields = []string{media.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+		case "createdAt":
+			if _, ok := fieldSeen[media.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, media.FieldCreatedAt)
+				fieldSeen[media.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[media.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, media.FieldUpdatedAt)
+				fieldSeen[media.FieldUpdatedAt] = struct{}{}
+			}
+		case "appID":
+			if _, ok := fieldSeen[media.FieldAppID]; !ok {
+				selectedFields = append(selectedFields, media.FieldAppID)
+				fieldSeen[media.FieldAppID] = struct{}{}
+			}
+		case "disk":
+			if _, ok := fieldSeen[media.FieldDisk]; !ok {
+				selectedFields = append(selectedFields, media.FieldDisk)
+				fieldSeen[media.FieldDisk] = struct{}{}
+			}
+		case "directory":
+			if _, ok := fieldSeen[media.FieldDirectory]; !ok {
+				selectedFields = append(selectedFields, media.FieldDirectory)
+				fieldSeen[media.FieldDirectory] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[media.FieldName]; !ok {
+				selectedFields = append(selectedFields, media.FieldName)
+				fieldSeen[media.FieldName] = struct{}{}
+			}
+		case "originalName":
+			if _, ok := fieldSeen[media.FieldOriginalName]; !ok {
+				selectedFields = append(selectedFields, media.FieldOriginalName)
+				fieldSeen[media.FieldOriginalName] = struct{}{}
+			}
+		case "extension":
+			if _, ok := fieldSeen[media.FieldExtension]; !ok {
+				selectedFields = append(selectedFields, media.FieldExtension)
+				fieldSeen[media.FieldExtension] = struct{}{}
+			}
+		case "mimeType":
+			if _, ok := fieldSeen[media.FieldMimeType]; !ok {
+				selectedFields = append(selectedFields, media.FieldMimeType)
+				fieldSeen[media.FieldMimeType] = struct{}{}
+			}
+		case "aggregateType":
+			if _, ok := fieldSeen[media.FieldAggregateType]; !ok {
+				selectedFields = append(selectedFields, media.FieldAggregateType)
+				fieldSeen[media.FieldAggregateType] = struct{}{}
+			}
+		case "size":
+			if _, ok := fieldSeen[media.FieldSize]; !ok {
+				selectedFields = append(selectedFields, media.FieldSize)
+				fieldSeen[media.FieldSize] = struct{}{}
+			}
+		case "description":
+			if _, ok := fieldSeen[media.FieldDescription]; !ok {
+				selectedFields = append(selectedFields, media.FieldDescription)
+				fieldSeen[media.FieldDescription] = struct{}{}
+			}
+		case "isVariant":
+			if _, ok := fieldSeen[media.FieldIsVariant]; !ok {
+				selectedFields = append(selectedFields, media.FieldIsVariant)
+				fieldSeen[media.FieldIsVariant] = struct{}{}
+			}
+		case "variantName":
+			if _, ok := fieldSeen[media.FieldVariantName]; !ok {
+				selectedFields = append(selectedFields, media.FieldVariantName)
+				fieldSeen[media.FieldVariantName] = struct{}{}
+			}
+		case "originalMediaID":
+			if _, ok := fieldSeen[media.FieldOriginalMediaID]; !ok {
+				selectedFields = append(selectedFields, media.FieldOriginalMediaID)
+				fieldSeen[media.FieldOriginalMediaID] = struct{}{}
+			}
+		case "checksum":
+			if _, ok := fieldSeen[media.FieldChecksum]; !ok {
+				selectedFields = append(selectedFields, media.FieldChecksum)
+				fieldSeen[media.FieldChecksum] = struct{}{}
+			}
+		case "workspaceID":
+			if _, ok := fieldSeen[media.FieldWorkspaceID]; !ok {
+				selectedFields = append(selectedFields, media.FieldWorkspaceID)
+				fieldSeen[media.FieldWorkspaceID] = struct{}{}
+			}
+		case "alt":
+			if _, ok := fieldSeen[media.FieldAlt]; !ok {
+				selectedFields = append(selectedFields, media.FieldAlt)
+				fieldSeen[media.FieldAlt] = struct{}{}
+			}
+		case "uid":
+			if _, ok := fieldSeen[media.FieldUID]; !ok {
+				selectedFields = append(selectedFields, media.FieldUID)
+				fieldSeen[media.FieldUID] = struct{}{}
+			}
+		case "status":
+			if _, ok := fieldSeen[media.FieldStatus]; !ok {
+				selectedFields = append(selectedFields, media.FieldStatus)
+				fieldSeen[media.FieldStatus] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		m.Select(selectedFields...)
+	}
+	return nil
+}
+
+type mediaPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []MediaPaginateOption
+}
+
+func newMediaPaginateArgs(rv map[string]any) *mediaPaginateArgs {
+	args := &mediaPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[orderByField]; ok {
+		switch v := v.(type) {
+		case []*MediaOrder:
+			args.opts = append(args.opts, WithMediaOrder(v))
+		case []any:
+			var orders []*MediaOrder
+			for i := range v {
+				mv, ok := v[i].(map[string]any)
+				if !ok {
+					continue
+				}
+				var (
+					err1, err2 error
+					order      = &MediaOrder{Field: &MediaOrderField{}, Direction: entgql.OrderDirectionAsc}
+				)
+				if d, ok := mv[directionField]; ok {
+					err1 = order.Direction.UnmarshalGQL(d)
+				}
+				if f, ok := mv[fieldField]; ok {
+					err2 = order.Field.UnmarshalGQL(f)
+				}
+				if err1 == nil && err2 == nil {
+					orders = append(orders, order)
+				}
+			}
+			args.opts = append(args.opts, WithMediaOrder(orders))
+		}
+	}
+	if v, ok := rv[whereField].(*MediaWhereInput); ok {
+		args.opts = append(args.opts, WithMediaFilter(v.Filter))
 	}
 	return args
 }

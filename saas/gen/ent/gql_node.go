@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"saas/gen/ent/app"
 	"saas/gen/ent/mailconn"
+	"saas/gen/ent/media"
 	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/post"
 	"saas/gen/ent/postcategory"
@@ -39,6 +40,11 @@ var mailconnImplementors = []string{"MailConn", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
 func (*MailConn) IsNode() {}
+
+var mediaImplementors = []string{"Media", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*Media) IsNode() {}
 
 var oauthconnectionImplementors = []string{"OauthConnection", "Node"}
 
@@ -172,6 +178,15 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			Where(mailconn.ID(id))
 		if fc := graphql.GetFieldContext(ctx); fc != nil {
 			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, mailconnImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case media.Table:
+		query := c.Media.Query().
+			Where(media.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, mediaImplementors...); err != nil {
 				return nil, err
 			}
 		}
@@ -377,6 +392,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		query := c.MailConn.Query().
 			Where(mailconn.IDIn(ids...))
 		query, err := query.CollectFields(ctx, mailconnImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case media.Table:
+		query := c.Media.Query().
+			Where(media.IDIn(ids...))
+		query, err := query.CollectFields(ctx, mediaImplementors...)
 		if err != nil {
 			return nil, err
 		}
