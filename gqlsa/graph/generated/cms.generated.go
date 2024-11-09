@@ -1385,6 +1385,10 @@ func (ec *executionContext) fieldContext_Mutation_createApp(ctx context.Context,
 				return ec.fieldContext_App_authVerificationTemplID(ctx, field)
 			case "authEmailVerify":
 				return ec.fieldContext_App_authEmailVerify(ctx, field)
+			case "oauthSigninCanSignup":
+				return ec.fieldContext_App_oauthSigninCanSignup(ctx, field)
+			case "authEnablePasswordLogin":
+				return ec.fieldContext_App_authEnablePasswordLogin(ctx, field)
 			case "adminUserID":
 				return ec.fieldContext_App_adminUserID(ctx, field)
 			case "defaultMailConn":
@@ -1518,6 +1522,10 @@ func (ec *executionContext) fieldContext_Mutation_updateApp(ctx context.Context,
 				return ec.fieldContext_App_authVerificationTemplID(ctx, field)
 			case "authEmailVerify":
 				return ec.fieldContext_App_authEmailVerify(ctx, field)
+			case "oauthSigninCanSignup":
+				return ec.fieldContext_App_oauthSigninCanSignup(ctx, field)
+			case "authEnablePasswordLogin":
+				return ec.fieldContext_App_authEnablePasswordLogin(ctx, field)
 			case "adminUserID":
 				return ec.fieldContext_App_adminUserID(ctx, field)
 			case "defaultMailConn":

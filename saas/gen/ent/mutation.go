@@ -1369,7 +1369,9 @@ type AppMutation struct {
 	social_in                       *string
 	logo_url                        *string
 	site_url                        *string
-	auth_email_verify               *string
+	auth_email_verify               *bool
+	oauth_signin_can_signup         *bool
+	auth_enable_password_login      *bool
 	admin_user_id                   *string
 	clearedFields                   map[string]struct{}
 	default_mail_conn               *string
@@ -2378,12 +2380,12 @@ func (m *AppMutation) ResetAuthVerificationTemplID() {
 }
 
 // SetAuthEmailVerify sets the "auth_email_verify" field.
-func (m *AppMutation) SetAuthEmailVerify(s string) {
-	m.auth_email_verify = &s
+func (m *AppMutation) SetAuthEmailVerify(b bool) {
+	m.auth_email_verify = &b
 }
 
 // AuthEmailVerify returns the value of the "auth_email_verify" field in the mutation.
-func (m *AppMutation) AuthEmailVerify() (r string, exists bool) {
+func (m *AppMutation) AuthEmailVerify() (r bool, exists bool) {
 	v := m.auth_email_verify
 	if v == nil {
 		return
@@ -2394,7 +2396,7 @@ func (m *AppMutation) AuthEmailVerify() (r string, exists bool) {
 // OldAuthEmailVerify returns the old "auth_email_verify" field's value of the App entity.
 // If the App object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *AppMutation) OldAuthEmailVerify(ctx context.Context) (v string, err error) {
+func (m *AppMutation) OldAuthEmailVerify(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldAuthEmailVerify is only allowed on UpdateOne operations")
 	}
@@ -2424,6 +2426,104 @@ func (m *AppMutation) AuthEmailVerifyCleared() bool {
 func (m *AppMutation) ResetAuthEmailVerify() {
 	m.auth_email_verify = nil
 	delete(m.clearedFields, app.FieldAuthEmailVerify)
+}
+
+// SetOauthSigninCanSignup sets the "oauth_signin_can_signup" field.
+func (m *AppMutation) SetOauthSigninCanSignup(b bool) {
+	m.oauth_signin_can_signup = &b
+}
+
+// OauthSigninCanSignup returns the value of the "oauth_signin_can_signup" field in the mutation.
+func (m *AppMutation) OauthSigninCanSignup() (r bool, exists bool) {
+	v := m.oauth_signin_can_signup
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOauthSigninCanSignup returns the old "oauth_signin_can_signup" field's value of the App entity.
+// If the App object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppMutation) OldOauthSigninCanSignup(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOauthSigninCanSignup is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOauthSigninCanSignup requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOauthSigninCanSignup: %w", err)
+	}
+	return oldValue.OauthSigninCanSignup, nil
+}
+
+// ClearOauthSigninCanSignup clears the value of the "oauth_signin_can_signup" field.
+func (m *AppMutation) ClearOauthSigninCanSignup() {
+	m.oauth_signin_can_signup = nil
+	m.clearedFields[app.FieldOauthSigninCanSignup] = struct{}{}
+}
+
+// OauthSigninCanSignupCleared returns if the "oauth_signin_can_signup" field was cleared in this mutation.
+func (m *AppMutation) OauthSigninCanSignupCleared() bool {
+	_, ok := m.clearedFields[app.FieldOauthSigninCanSignup]
+	return ok
+}
+
+// ResetOauthSigninCanSignup resets all changes to the "oauth_signin_can_signup" field.
+func (m *AppMutation) ResetOauthSigninCanSignup() {
+	m.oauth_signin_can_signup = nil
+	delete(m.clearedFields, app.FieldOauthSigninCanSignup)
+}
+
+// SetAuthEnablePasswordLogin sets the "auth_enable_password_login" field.
+func (m *AppMutation) SetAuthEnablePasswordLogin(b bool) {
+	m.auth_enable_password_login = &b
+}
+
+// AuthEnablePasswordLogin returns the value of the "auth_enable_password_login" field in the mutation.
+func (m *AppMutation) AuthEnablePasswordLogin() (r bool, exists bool) {
+	v := m.auth_enable_password_login
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAuthEnablePasswordLogin returns the old "auth_enable_password_login" field's value of the App entity.
+// If the App object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppMutation) OldAuthEnablePasswordLogin(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAuthEnablePasswordLogin is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAuthEnablePasswordLogin requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAuthEnablePasswordLogin: %w", err)
+	}
+	return oldValue.AuthEnablePasswordLogin, nil
+}
+
+// ClearAuthEnablePasswordLogin clears the value of the "auth_enable_password_login" field.
+func (m *AppMutation) ClearAuthEnablePasswordLogin() {
+	m.auth_enable_password_login = nil
+	m.clearedFields[app.FieldAuthEnablePasswordLogin] = struct{}{}
+}
+
+// AuthEnablePasswordLoginCleared returns if the "auth_enable_password_login" field was cleared in this mutation.
+func (m *AppMutation) AuthEnablePasswordLoginCleared() bool {
+	_, ok := m.clearedFields[app.FieldAuthEnablePasswordLogin]
+	return ok
+}
+
+// ResetAuthEnablePasswordLogin resets all changes to the "auth_enable_password_login" field.
+func (m *AppMutation) ResetAuthEnablePasswordLogin() {
+	m.auth_enable_password_login = nil
+	delete(m.clearedFields, app.FieldAuthEnablePasswordLogin)
 }
 
 // SetAdminUserID sets the "admin_user_id" field.
@@ -2698,7 +2798,7 @@ func (m *AppMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *AppMutation) Fields() []string {
-	fields := make([]string, 0, 20)
+	fields := make([]string, 0, 22)
 	if m.created_at != nil {
 		fields = append(fields, app.FieldCreatedAt)
 	}
@@ -2756,6 +2856,12 @@ func (m *AppMutation) Fields() []string {
 	if m.auth_email_verify != nil {
 		fields = append(fields, app.FieldAuthEmailVerify)
 	}
+	if m.oauth_signin_can_signup != nil {
+		fields = append(fields, app.FieldOauthSigninCanSignup)
+	}
+	if m.auth_enable_password_login != nil {
+		fields = append(fields, app.FieldAuthEnablePasswordLogin)
+	}
 	if m.admin_user_id != nil {
 		fields = append(fields, app.FieldAdminUserID)
 	}
@@ -2805,6 +2911,10 @@ func (m *AppMutation) Field(name string) (ent.Value, bool) {
 		return m.AuthVerificationTemplID()
 	case app.FieldAuthEmailVerify:
 		return m.AuthEmailVerify()
+	case app.FieldOauthSigninCanSignup:
+		return m.OauthSigninCanSignup()
+	case app.FieldAuthEnablePasswordLogin:
+		return m.AuthEnablePasswordLogin()
 	case app.FieldAdminUserID:
 		return m.AdminUserID()
 	}
@@ -2854,6 +2964,10 @@ func (m *AppMutation) OldField(ctx context.Context, name string) (ent.Value, err
 		return m.OldAuthVerificationTemplID(ctx)
 	case app.FieldAuthEmailVerify:
 		return m.OldAuthEmailVerify(ctx)
+	case app.FieldOauthSigninCanSignup:
+		return m.OldOauthSigninCanSignup(ctx)
+	case app.FieldAuthEnablePasswordLogin:
+		return m.OldAuthEnablePasswordLogin(ctx)
 	case app.FieldAdminUserID:
 		return m.OldAdminUserID(ctx)
 	}
@@ -2992,11 +3106,25 @@ func (m *AppMutation) SetField(name string, value ent.Value) error {
 		m.SetAuthVerificationTemplID(v)
 		return nil
 	case app.FieldAuthEmailVerify:
-		v, ok := value.(string)
+		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAuthEmailVerify(v)
+		return nil
+	case app.FieldOauthSigninCanSignup:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOauthSigninCanSignup(v)
+		return nil
+	case app.FieldAuthEnablePasswordLogin:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAuthEnablePasswordLogin(v)
 		return nil
 	case app.FieldAdminUserID:
 		v, ok := value.(string)
@@ -3092,6 +3220,12 @@ func (m *AppMutation) ClearedFields() []string {
 	if m.FieldCleared(app.FieldAuthEmailVerify) {
 		fields = append(fields, app.FieldAuthEmailVerify)
 	}
+	if m.FieldCleared(app.FieldOauthSigninCanSignup) {
+		fields = append(fields, app.FieldOauthSigninCanSignup)
+	}
+	if m.FieldCleared(app.FieldAuthEnablePasswordLogin) {
+		fields = append(fields, app.FieldAuthEnablePasswordLogin)
+	}
 	if m.FieldCleared(app.FieldAdminUserID) {
 		fields = append(fields, app.FieldAdminUserID)
 	}
@@ -3166,6 +3300,12 @@ func (m *AppMutation) ClearField(name string) error {
 	case app.FieldAuthEmailVerify:
 		m.ClearAuthEmailVerify()
 		return nil
+	case app.FieldOauthSigninCanSignup:
+		m.ClearOauthSigninCanSignup()
+		return nil
+	case app.FieldAuthEnablePasswordLogin:
+		m.ClearAuthEnablePasswordLogin()
+		return nil
 	case app.FieldAdminUserID:
 		m.ClearAdminUserID()
 		return nil
@@ -3233,6 +3373,12 @@ func (m *AppMutation) ResetField(name string) error {
 		return nil
 	case app.FieldAuthEmailVerify:
 		m.ResetAuthEmailVerify()
+		return nil
+	case app.FieldOauthSigninCanSignup:
+		m.ResetOauthSigninCanSignup()
+		return nil
+	case app.FieldAuthEnablePasswordLogin:
+		m.ResetAuthEnablePasswordLogin()
 		return nil
 	case app.FieldAdminUserID:
 		m.ResetAdminUserID()

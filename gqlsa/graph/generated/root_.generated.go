@@ -58,6 +58,7 @@ type ComplexityRoot struct {
 		Address                 func(childComplexity int) int
 		AdminUserID             func(childComplexity int) int
 		AuthEmailVerify         func(childComplexity int) int
+		AuthEnablePasswordLogin func(childComplexity int) int
 		AuthFpTempl             func(childComplexity int) int
 		AuthFpTemplID           func(childComplexity int) int
 		AuthVerificationTempl   func(childComplexity int) int
@@ -74,6 +75,7 @@ type ComplexityRoot struct {
 		MailLayoutTempl         func(childComplexity int) int
 		MailLayoutTemplID       func(childComplexity int) int
 		Name                    func(childComplexity int) int
+		OauthSigninCanSignup    func(childComplexity int) int
 		SiteURL                 func(childComplexity int) int
 		SocialFb                func(childComplexity int) int
 		SocialIn                func(childComplexity int) int
@@ -600,6 +602,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.App.AuthEmailVerify(childComplexity), true
 
+	case "App.authEnablePasswordLogin":
+		if e.complexity.App.AuthEnablePasswordLogin == nil {
+			break
+		}
+
+		return e.complexity.App.AuthEnablePasswordLogin(childComplexity), true
+
 	case "App.authFpTempl":
 		if e.complexity.App.AuthFpTempl == nil {
 			break
@@ -711,6 +720,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.App.Name(childComplexity), true
+
+	case "App.oauthSigninCanSignup":
+		if e.complexity.App.OauthSigninCanSignup == nil {
+			break
+		}
+
+		return e.complexity.App.OauthSigninCanSignup(childComplexity), true
 
 	case "App.siteURL":
 		if e.complexity.App.SiteURL == nil {
@@ -3200,7 +3216,9 @@ type App implements Node {
   authFpTemplID: ID
   authWelcomeEmailTemplID: ID
   authVerificationTemplID: ID
-  authEmailVerify: String
+  authEmailVerify: Boolean
+  oauthSigninCanSignup: Boolean
+  authEnablePasswordLogin: Boolean
   adminUserID: String
   defaultMailConn: MailConn
   mailLayoutTempl: Templ
@@ -3597,21 +3615,24 @@ input AppWhereInput {
   """
   auth_email_verify field predicates
   """
-  authEmailVerify: String
-  authEmailVerifyNEQ: String
-  authEmailVerifyIn: [String!]
-  authEmailVerifyNotIn: [String!]
-  authEmailVerifyGT: String
-  authEmailVerifyGTE: String
-  authEmailVerifyLT: String
-  authEmailVerifyLTE: String
-  authEmailVerifyContains: String
-  authEmailVerifyHasPrefix: String
-  authEmailVerifyHasSuffix: String
+  authEmailVerify: Boolean
+  authEmailVerifyNEQ: Boolean
   authEmailVerifyIsNil: Boolean
   authEmailVerifyNotNil: Boolean
-  authEmailVerifyEqualFold: String
-  authEmailVerifyContainsFold: String
+  """
+  oauth_signin_can_signup field predicates
+  """
+  oauthSigninCanSignup: Boolean
+  oauthSigninCanSignupNEQ: Boolean
+  oauthSigninCanSignupIsNil: Boolean
+  oauthSigninCanSignupNotNil: Boolean
+  """
+  auth_enable_password_login field predicates
+  """
+  authEnablePasswordLogin: Boolean
+  authEnablePasswordLoginNEQ: Boolean
+  authEnablePasswordLoginIsNil: Boolean
+  authEnablePasswordLoginNotNil: Boolean
   """
   admin_user_id field predicates
   """
@@ -3682,7 +3703,9 @@ input CreateAppInput {
   socialIn: String
   logoURL: String
   siteURL: String
-  authEmailVerify: String
+  authEmailVerify: Boolean
+  oauthSigninCanSignup: Boolean
+  authEnablePasswordLogin: Boolean
   adminUserID: String
   defaultMailConnID: ID
   mailLayoutTemplID: ID
@@ -7172,8 +7195,12 @@ input UpdateAppInput {
   clearLogoURL: Boolean
   siteURL: String
   clearSiteURL: Boolean
-  authEmailVerify: String
+  authEmailVerify: Boolean
   clearAuthEmailVerify: Boolean
+  oauthSigninCanSignup: Boolean
+  clearOauthSigninCanSignup: Boolean
+  authEnablePasswordLogin: Boolean
+  clearAuthEnablePasswordLogin: Boolean
   adminUserID: String
   clearAdminUserID: Boolean
   defaultMailConnID: ID

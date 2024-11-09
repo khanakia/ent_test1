@@ -340,21 +340,22 @@ type AppWhereInput struct {
 	AuthVerificationTemplIDContainsFold *string  `json:"authVerificationTemplIDContainsFold,omitempty"`
 
 	// "auth_email_verify" field predicates.
-	AuthEmailVerify             *string  `json:"authEmailVerify,omitempty"`
-	AuthEmailVerifyNEQ          *string  `json:"authEmailVerifyNEQ,omitempty"`
-	AuthEmailVerifyIn           []string `json:"authEmailVerifyIn,omitempty"`
-	AuthEmailVerifyNotIn        []string `json:"authEmailVerifyNotIn,omitempty"`
-	AuthEmailVerifyGT           *string  `json:"authEmailVerifyGT,omitempty"`
-	AuthEmailVerifyGTE          *string  `json:"authEmailVerifyGTE,omitempty"`
-	AuthEmailVerifyLT           *string  `json:"authEmailVerifyLT,omitempty"`
-	AuthEmailVerifyLTE          *string  `json:"authEmailVerifyLTE,omitempty"`
-	AuthEmailVerifyContains     *string  `json:"authEmailVerifyContains,omitempty"`
-	AuthEmailVerifyHasPrefix    *string  `json:"authEmailVerifyHasPrefix,omitempty"`
-	AuthEmailVerifyHasSuffix    *string  `json:"authEmailVerifyHasSuffix,omitempty"`
-	AuthEmailVerifyIsNil        bool     `json:"authEmailVerifyIsNil,omitempty"`
-	AuthEmailVerifyNotNil       bool     `json:"authEmailVerifyNotNil,omitempty"`
-	AuthEmailVerifyEqualFold    *string  `json:"authEmailVerifyEqualFold,omitempty"`
-	AuthEmailVerifyContainsFold *string  `json:"authEmailVerifyContainsFold,omitempty"`
+	AuthEmailVerify       *bool `json:"authEmailVerify,omitempty"`
+	AuthEmailVerifyNEQ    *bool `json:"authEmailVerifyNEQ,omitempty"`
+	AuthEmailVerifyIsNil  bool  `json:"authEmailVerifyIsNil,omitempty"`
+	AuthEmailVerifyNotNil bool  `json:"authEmailVerifyNotNil,omitempty"`
+
+	// "oauth_signin_can_signup" field predicates.
+	OauthSigninCanSignup       *bool `json:"oauthSigninCanSignup,omitempty"`
+	OauthSigninCanSignupNEQ    *bool `json:"oauthSigninCanSignupNEQ,omitempty"`
+	OauthSigninCanSignupIsNil  bool  `json:"oauthSigninCanSignupIsNil,omitempty"`
+	OauthSigninCanSignupNotNil bool  `json:"oauthSigninCanSignupNotNil,omitempty"`
+
+	// "auth_enable_password_login" field predicates.
+	AuthEnablePasswordLogin       *bool `json:"authEnablePasswordLogin,omitempty"`
+	AuthEnablePasswordLoginNEQ    *bool `json:"authEnablePasswordLoginNEQ,omitempty"`
+	AuthEnablePasswordLoginIsNil  bool  `json:"authEnablePasswordLoginIsNil,omitempty"`
+	AuthEnablePasswordLoginNotNil bool  `json:"authEnablePasswordLoginNotNil,omitempty"`
 
 	// "admin_user_id" field predicates.
 	AdminUserID             *string  `json:"adminUserID,omitempty"`
@@ -1289,44 +1290,35 @@ func (i *AppWhereInput) P() (predicate.App, error) {
 	if i.AuthEmailVerifyNEQ != nil {
 		predicates = append(predicates, app.AuthEmailVerifyNEQ(*i.AuthEmailVerifyNEQ))
 	}
-	if len(i.AuthEmailVerifyIn) > 0 {
-		predicates = append(predicates, app.AuthEmailVerifyIn(i.AuthEmailVerifyIn...))
-	}
-	if len(i.AuthEmailVerifyNotIn) > 0 {
-		predicates = append(predicates, app.AuthEmailVerifyNotIn(i.AuthEmailVerifyNotIn...))
-	}
-	if i.AuthEmailVerifyGT != nil {
-		predicates = append(predicates, app.AuthEmailVerifyGT(*i.AuthEmailVerifyGT))
-	}
-	if i.AuthEmailVerifyGTE != nil {
-		predicates = append(predicates, app.AuthEmailVerifyGTE(*i.AuthEmailVerifyGTE))
-	}
-	if i.AuthEmailVerifyLT != nil {
-		predicates = append(predicates, app.AuthEmailVerifyLT(*i.AuthEmailVerifyLT))
-	}
-	if i.AuthEmailVerifyLTE != nil {
-		predicates = append(predicates, app.AuthEmailVerifyLTE(*i.AuthEmailVerifyLTE))
-	}
-	if i.AuthEmailVerifyContains != nil {
-		predicates = append(predicates, app.AuthEmailVerifyContains(*i.AuthEmailVerifyContains))
-	}
-	if i.AuthEmailVerifyHasPrefix != nil {
-		predicates = append(predicates, app.AuthEmailVerifyHasPrefix(*i.AuthEmailVerifyHasPrefix))
-	}
-	if i.AuthEmailVerifyHasSuffix != nil {
-		predicates = append(predicates, app.AuthEmailVerifyHasSuffix(*i.AuthEmailVerifyHasSuffix))
-	}
 	if i.AuthEmailVerifyIsNil {
 		predicates = append(predicates, app.AuthEmailVerifyIsNil())
 	}
 	if i.AuthEmailVerifyNotNil {
 		predicates = append(predicates, app.AuthEmailVerifyNotNil())
 	}
-	if i.AuthEmailVerifyEqualFold != nil {
-		predicates = append(predicates, app.AuthEmailVerifyEqualFold(*i.AuthEmailVerifyEqualFold))
+	if i.OauthSigninCanSignup != nil {
+		predicates = append(predicates, app.OauthSigninCanSignupEQ(*i.OauthSigninCanSignup))
 	}
-	if i.AuthEmailVerifyContainsFold != nil {
-		predicates = append(predicates, app.AuthEmailVerifyContainsFold(*i.AuthEmailVerifyContainsFold))
+	if i.OauthSigninCanSignupNEQ != nil {
+		predicates = append(predicates, app.OauthSigninCanSignupNEQ(*i.OauthSigninCanSignupNEQ))
+	}
+	if i.OauthSigninCanSignupIsNil {
+		predicates = append(predicates, app.OauthSigninCanSignupIsNil())
+	}
+	if i.OauthSigninCanSignupNotNil {
+		predicates = append(predicates, app.OauthSigninCanSignupNotNil())
+	}
+	if i.AuthEnablePasswordLogin != nil {
+		predicates = append(predicates, app.AuthEnablePasswordLoginEQ(*i.AuthEnablePasswordLogin))
+	}
+	if i.AuthEnablePasswordLoginNEQ != nil {
+		predicates = append(predicates, app.AuthEnablePasswordLoginNEQ(*i.AuthEnablePasswordLoginNEQ))
+	}
+	if i.AuthEnablePasswordLoginIsNil {
+		predicates = append(predicates, app.AuthEnablePasswordLoginIsNil())
+	}
+	if i.AuthEnablePasswordLoginNotNil {
+		predicates = append(predicates, app.AuthEnablePasswordLoginNotNil())
 	}
 	if i.AdminUserID != nil {
 		predicates = append(predicates, app.AdminUserIDEQ(*i.AdminUserID))

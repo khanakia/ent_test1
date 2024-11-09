@@ -245,6 +245,16 @@ func (a *AppQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphq
 				selectedFields = append(selectedFields, app.FieldAuthEmailVerify)
 				fieldSeen[app.FieldAuthEmailVerify] = struct{}{}
 			}
+		case "oauthSigninCanSignup":
+			if _, ok := fieldSeen[app.FieldOauthSigninCanSignup]; !ok {
+				selectedFields = append(selectedFields, app.FieldOauthSigninCanSignup)
+				fieldSeen[app.FieldOauthSigninCanSignup] = struct{}{}
+			}
+		case "authEnablePasswordLogin":
+			if _, ok := fieldSeen[app.FieldAuthEnablePasswordLogin]; !ok {
+				selectedFields = append(selectedFields, app.FieldAuthEnablePasswordLogin)
+				fieldSeen[app.FieldAuthEnablePasswordLogin] = struct{}{}
+			}
 		case "adminUserID":
 			if _, ok := fieldSeen[app.FieldAdminUserID]; !ok {
 				selectedFields = append(selectedFields, app.FieldAdminUserID)

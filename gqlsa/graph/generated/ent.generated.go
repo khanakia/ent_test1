@@ -1743,9 +1743,9 @@ func (ec *executionContext) _App_authEmailVerify(ctx context.Context, field grap
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(bool)
 	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_App_authEmailVerify(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1755,7 +1755,89 @@ func (ec *executionContext) fieldContext_App_authEmailVerify(_ context.Context, 
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _App_oauthSigninCanSignup(ctx context.Context, field graphql.CollectedField, obj *ent.App) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_App_oauthSigninCanSignup(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OauthSigninCanSignup, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_App_oauthSigninCanSignup(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "App",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _App_authEnablePasswordLogin(ctx context.Context, field graphql.CollectedField, obj *ent.App) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_App_authEnablePasswordLogin(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AuthEnablePasswordLogin, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_App_authEnablePasswordLogin(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "App",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	return fc, nil
@@ -2446,6 +2528,10 @@ func (ec *executionContext) fieldContext_AppEdge_node(_ context.Context, field g
 				return ec.fieldContext_App_authVerificationTemplID(ctx, field)
 			case "authEmailVerify":
 				return ec.fieldContext_App_authEmailVerify(ctx, field)
+			case "oauthSigninCanSignup":
+				return ec.fieldContext_App_oauthSigninCanSignup(ctx, field)
+			case "authEnablePasswordLogin":
+				return ec.fieldContext_App_authEnablePasswordLogin(ctx, field)
 			case "adminUserID":
 				return ec.fieldContext_App_adminUserID(ctx, field)
 			case "defaultMailConn":
@@ -15444,7 +15530,7 @@ func (ec *executionContext) unmarshalInputAppWhereInput(ctx context.Context, obj
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameIsNil", "nameNotNil", "nameEqualFold", "nameContainsFold", "copyright", "copyrightNEQ", "copyrightIn", "copyrightNotIn", "copyrightGT", "copyrightGTE", "copyrightLT", "copyrightLTE", "copyrightContains", "copyrightHasPrefix", "copyrightHasSuffix", "copyrightIsNil", "copyrightNotNil", "copyrightEqualFold", "copyrightContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailIsNil", "emailNotNil", "emailEqualFold", "emailContainsFold", "address", "addressNEQ", "addressIn", "addressNotIn", "addressGT", "addressGTE", "addressLT", "addressLTE", "addressContains", "addressHasPrefix", "addressHasSuffix", "addressIsNil", "addressNotNil", "addressEqualFold", "addressContainsFold", "socialTw", "socialTwNEQ", "socialTwIn", "socialTwNotIn", "socialTwGT", "socialTwGTE", "socialTwLT", "socialTwLTE", "socialTwContains", "socialTwHasPrefix", "socialTwHasSuffix", "socialTwIsNil", "socialTwNotNil", "socialTwEqualFold", "socialTwContainsFold", "socialFb", "socialFbNEQ", "socialFbIn", "socialFbNotIn", "socialFbGT", "socialFbGTE", "socialFbLT", "socialFbLTE", "socialFbContains", "socialFbHasPrefix", "socialFbHasSuffix", "socialFbIsNil", "socialFbNotNil", "socialFbEqualFold", "socialFbContainsFold", "socialIn", "socialInNEQ", "socialInIn", "socialInNotIn", "socialInGT", "socialInGTE", "socialInLT", "socialInLTE", "socialInContains", "socialInHasPrefix", "socialInHasSuffix", "socialInIsNil", "socialInNotNil", "socialInEqualFold", "socialInContainsFold", "logoURL", "logoURLNEQ", "logoURLIn", "logoURLNotIn", "logoURLGT", "logoURLGTE", "logoURLLT", "logoURLLTE", "logoURLContains", "logoURLHasPrefix", "logoURLHasSuffix", "logoURLIsNil", "logoURLNotNil", "logoURLEqualFold", "logoURLContainsFold", "siteURL", "siteURLNEQ", "siteURLIn", "siteURLNotIn", "siteURLGT", "siteURLGTE", "siteURLLT", "siteURLLTE", "siteURLContains", "siteURLHasPrefix", "siteURLHasSuffix", "siteURLIsNil", "siteURLNotNil", "siteURLEqualFold", "siteURLContainsFold", "defaultMailConnID", "defaultMailConnIDNEQ", "defaultMailConnIDIn", "defaultMailConnIDNotIn", "defaultMailConnIDGT", "defaultMailConnIDGTE", "defaultMailConnIDLT", "defaultMailConnIDLTE", "defaultMailConnIDContains", "defaultMailConnIDHasPrefix", "defaultMailConnIDHasSuffix", "defaultMailConnIDIsNil", "defaultMailConnIDNotNil", "defaultMailConnIDEqualFold", "defaultMailConnIDContainsFold", "mailLayoutTemplID", "mailLayoutTemplIDNEQ", "mailLayoutTemplIDIn", "mailLayoutTemplIDNotIn", "mailLayoutTemplIDGT", "mailLayoutTemplIDGTE", "mailLayoutTemplIDLT", "mailLayoutTemplIDLTE", "mailLayoutTemplIDContains", "mailLayoutTemplIDHasPrefix", "mailLayoutTemplIDHasSuffix", "mailLayoutTemplIDIsNil", "mailLayoutTemplIDNotNil", "mailLayoutTemplIDEqualFold", "mailLayoutTemplIDContainsFold", "wsapceInviteTemplID", "wsapceInviteTemplIDNEQ", "wsapceInviteTemplIDIn", "wsapceInviteTemplIDNotIn", "wsapceInviteTemplIDGT", "wsapceInviteTemplIDGTE", "wsapceInviteTemplIDLT", "wsapceInviteTemplIDLTE", "wsapceInviteTemplIDContains", "wsapceInviteTemplIDHasPrefix", "wsapceInviteTemplIDHasSuffix", "wsapceInviteTemplIDIsNil", "wsapceInviteTemplIDNotNil", "wsapceInviteTemplIDEqualFold", "wsapceInviteTemplIDContainsFold", "wsapceSuccessTemplID", "wsapceSuccessTemplIDNEQ", "wsapceSuccessTemplIDIn", "wsapceSuccessTemplIDNotIn", "wsapceSuccessTemplIDGT", "wsapceSuccessTemplIDGTE", "wsapceSuccessTemplIDLT", "wsapceSuccessTemplIDLTE", "wsapceSuccessTemplIDContains", "wsapceSuccessTemplIDHasPrefix", "wsapceSuccessTemplIDHasSuffix", "wsapceSuccessTemplIDIsNil", "wsapceSuccessTemplIDNotNil", "wsapceSuccessTemplIDEqualFold", "wsapceSuccessTemplIDContainsFold", "authFpTemplID", "authFpTemplIDNEQ", "authFpTemplIDIn", "authFpTemplIDNotIn", "authFpTemplIDGT", "authFpTemplIDGTE", "authFpTemplIDLT", "authFpTemplIDLTE", "authFpTemplIDContains", "authFpTemplIDHasPrefix", "authFpTemplIDHasSuffix", "authFpTemplIDIsNil", "authFpTemplIDNotNil", "authFpTemplIDEqualFold", "authFpTemplIDContainsFold", "authWelcomeEmailTemplID", "authWelcomeEmailTemplIDNEQ", "authWelcomeEmailTemplIDIn", "authWelcomeEmailTemplIDNotIn", "authWelcomeEmailTemplIDGT", "authWelcomeEmailTemplIDGTE", "authWelcomeEmailTemplIDLT", "authWelcomeEmailTemplIDLTE", "authWelcomeEmailTemplIDContains", "authWelcomeEmailTemplIDHasPrefix", "authWelcomeEmailTemplIDHasSuffix", "authWelcomeEmailTemplIDIsNil", "authWelcomeEmailTemplIDNotNil", "authWelcomeEmailTemplIDEqualFold", "authWelcomeEmailTemplIDContainsFold", "authVerificationTemplID", "authVerificationTemplIDNEQ", "authVerificationTemplIDIn", "authVerificationTemplIDNotIn", "authVerificationTemplIDGT", "authVerificationTemplIDGTE", "authVerificationTemplIDLT", "authVerificationTemplIDLTE", "authVerificationTemplIDContains", "authVerificationTemplIDHasPrefix", "authVerificationTemplIDHasSuffix", "authVerificationTemplIDIsNil", "authVerificationTemplIDNotNil", "authVerificationTemplIDEqualFold", "authVerificationTemplIDContainsFold", "authEmailVerify", "authEmailVerifyNEQ", "authEmailVerifyIn", "authEmailVerifyNotIn", "authEmailVerifyGT", "authEmailVerifyGTE", "authEmailVerifyLT", "authEmailVerifyLTE", "authEmailVerifyContains", "authEmailVerifyHasPrefix", "authEmailVerifyHasSuffix", "authEmailVerifyIsNil", "authEmailVerifyNotNil", "authEmailVerifyEqualFold", "authEmailVerifyContainsFold", "adminUserID", "adminUserIDNEQ", "adminUserIDIn", "adminUserIDNotIn", "adminUserIDGT", "adminUserIDGTE", "adminUserIDLT", "adminUserIDLTE", "adminUserIDContains", "adminUserIDHasPrefix", "adminUserIDHasSuffix", "adminUserIDIsNil", "adminUserIDNotNil", "adminUserIDEqualFold", "adminUserIDContainsFold", "hasDefaultMailConn", "hasDefaultMailConnWith", "hasMailLayoutTempl", "hasMailLayoutTemplWith", "hasWsapceInviteTempl", "hasWsapceInviteTemplWith", "hasWsapceSuccessTempl", "hasWsapceSuccessTemplWith", "hasAuthFpTempl", "hasAuthFpTemplWith", "hasAuthWelcomeEmailTempl", "hasAuthWelcomeEmailTemplWith", "hasAuthVerificationTempl", "hasAuthVerificationTemplWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameIsNil", "nameNotNil", "nameEqualFold", "nameContainsFold", "copyright", "copyrightNEQ", "copyrightIn", "copyrightNotIn", "copyrightGT", "copyrightGTE", "copyrightLT", "copyrightLTE", "copyrightContains", "copyrightHasPrefix", "copyrightHasSuffix", "copyrightIsNil", "copyrightNotNil", "copyrightEqualFold", "copyrightContainsFold", "email", "emailNEQ", "emailIn", "emailNotIn", "emailGT", "emailGTE", "emailLT", "emailLTE", "emailContains", "emailHasPrefix", "emailHasSuffix", "emailIsNil", "emailNotNil", "emailEqualFold", "emailContainsFold", "address", "addressNEQ", "addressIn", "addressNotIn", "addressGT", "addressGTE", "addressLT", "addressLTE", "addressContains", "addressHasPrefix", "addressHasSuffix", "addressIsNil", "addressNotNil", "addressEqualFold", "addressContainsFold", "socialTw", "socialTwNEQ", "socialTwIn", "socialTwNotIn", "socialTwGT", "socialTwGTE", "socialTwLT", "socialTwLTE", "socialTwContains", "socialTwHasPrefix", "socialTwHasSuffix", "socialTwIsNil", "socialTwNotNil", "socialTwEqualFold", "socialTwContainsFold", "socialFb", "socialFbNEQ", "socialFbIn", "socialFbNotIn", "socialFbGT", "socialFbGTE", "socialFbLT", "socialFbLTE", "socialFbContains", "socialFbHasPrefix", "socialFbHasSuffix", "socialFbIsNil", "socialFbNotNil", "socialFbEqualFold", "socialFbContainsFold", "socialIn", "socialInNEQ", "socialInIn", "socialInNotIn", "socialInGT", "socialInGTE", "socialInLT", "socialInLTE", "socialInContains", "socialInHasPrefix", "socialInHasSuffix", "socialInIsNil", "socialInNotNil", "socialInEqualFold", "socialInContainsFold", "logoURL", "logoURLNEQ", "logoURLIn", "logoURLNotIn", "logoURLGT", "logoURLGTE", "logoURLLT", "logoURLLTE", "logoURLContains", "logoURLHasPrefix", "logoURLHasSuffix", "logoURLIsNil", "logoURLNotNil", "logoURLEqualFold", "logoURLContainsFold", "siteURL", "siteURLNEQ", "siteURLIn", "siteURLNotIn", "siteURLGT", "siteURLGTE", "siteURLLT", "siteURLLTE", "siteURLContains", "siteURLHasPrefix", "siteURLHasSuffix", "siteURLIsNil", "siteURLNotNil", "siteURLEqualFold", "siteURLContainsFold", "defaultMailConnID", "defaultMailConnIDNEQ", "defaultMailConnIDIn", "defaultMailConnIDNotIn", "defaultMailConnIDGT", "defaultMailConnIDGTE", "defaultMailConnIDLT", "defaultMailConnIDLTE", "defaultMailConnIDContains", "defaultMailConnIDHasPrefix", "defaultMailConnIDHasSuffix", "defaultMailConnIDIsNil", "defaultMailConnIDNotNil", "defaultMailConnIDEqualFold", "defaultMailConnIDContainsFold", "mailLayoutTemplID", "mailLayoutTemplIDNEQ", "mailLayoutTemplIDIn", "mailLayoutTemplIDNotIn", "mailLayoutTemplIDGT", "mailLayoutTemplIDGTE", "mailLayoutTemplIDLT", "mailLayoutTemplIDLTE", "mailLayoutTemplIDContains", "mailLayoutTemplIDHasPrefix", "mailLayoutTemplIDHasSuffix", "mailLayoutTemplIDIsNil", "mailLayoutTemplIDNotNil", "mailLayoutTemplIDEqualFold", "mailLayoutTemplIDContainsFold", "wsapceInviteTemplID", "wsapceInviteTemplIDNEQ", "wsapceInviteTemplIDIn", "wsapceInviteTemplIDNotIn", "wsapceInviteTemplIDGT", "wsapceInviteTemplIDGTE", "wsapceInviteTemplIDLT", "wsapceInviteTemplIDLTE", "wsapceInviteTemplIDContains", "wsapceInviteTemplIDHasPrefix", "wsapceInviteTemplIDHasSuffix", "wsapceInviteTemplIDIsNil", "wsapceInviteTemplIDNotNil", "wsapceInviteTemplIDEqualFold", "wsapceInviteTemplIDContainsFold", "wsapceSuccessTemplID", "wsapceSuccessTemplIDNEQ", "wsapceSuccessTemplIDIn", "wsapceSuccessTemplIDNotIn", "wsapceSuccessTemplIDGT", "wsapceSuccessTemplIDGTE", "wsapceSuccessTemplIDLT", "wsapceSuccessTemplIDLTE", "wsapceSuccessTemplIDContains", "wsapceSuccessTemplIDHasPrefix", "wsapceSuccessTemplIDHasSuffix", "wsapceSuccessTemplIDIsNil", "wsapceSuccessTemplIDNotNil", "wsapceSuccessTemplIDEqualFold", "wsapceSuccessTemplIDContainsFold", "authFpTemplID", "authFpTemplIDNEQ", "authFpTemplIDIn", "authFpTemplIDNotIn", "authFpTemplIDGT", "authFpTemplIDGTE", "authFpTemplIDLT", "authFpTemplIDLTE", "authFpTemplIDContains", "authFpTemplIDHasPrefix", "authFpTemplIDHasSuffix", "authFpTemplIDIsNil", "authFpTemplIDNotNil", "authFpTemplIDEqualFold", "authFpTemplIDContainsFold", "authWelcomeEmailTemplID", "authWelcomeEmailTemplIDNEQ", "authWelcomeEmailTemplIDIn", "authWelcomeEmailTemplIDNotIn", "authWelcomeEmailTemplIDGT", "authWelcomeEmailTemplIDGTE", "authWelcomeEmailTemplIDLT", "authWelcomeEmailTemplIDLTE", "authWelcomeEmailTemplIDContains", "authWelcomeEmailTemplIDHasPrefix", "authWelcomeEmailTemplIDHasSuffix", "authWelcomeEmailTemplIDIsNil", "authWelcomeEmailTemplIDNotNil", "authWelcomeEmailTemplIDEqualFold", "authWelcomeEmailTemplIDContainsFold", "authVerificationTemplID", "authVerificationTemplIDNEQ", "authVerificationTemplIDIn", "authVerificationTemplIDNotIn", "authVerificationTemplIDGT", "authVerificationTemplIDGTE", "authVerificationTemplIDLT", "authVerificationTemplIDLTE", "authVerificationTemplIDContains", "authVerificationTemplIDHasPrefix", "authVerificationTemplIDHasSuffix", "authVerificationTemplIDIsNil", "authVerificationTemplIDNotNil", "authVerificationTemplIDEqualFold", "authVerificationTemplIDContainsFold", "authEmailVerify", "authEmailVerifyNEQ", "authEmailVerifyIsNil", "authEmailVerifyNotNil", "oauthSigninCanSignup", "oauthSigninCanSignupNEQ", "oauthSigninCanSignupIsNil", "oauthSigninCanSignupNotNil", "authEnablePasswordLogin", "authEnablePasswordLoginNEQ", "authEnablePasswordLoginIsNil", "authEnablePasswordLoginNotNil", "adminUserID", "adminUserIDNEQ", "adminUserIDIn", "adminUserIDNotIn", "adminUserIDGT", "adminUserIDGTE", "adminUserIDLT", "adminUserIDLTE", "adminUserIDContains", "adminUserIDHasPrefix", "adminUserIDHasSuffix", "adminUserIDIsNil", "adminUserIDNotNil", "adminUserIDEqualFold", "adminUserIDContainsFold", "hasDefaultMailConn", "hasDefaultMailConnWith", "hasMailLayoutTempl", "hasMailLayoutTemplWith", "hasWsapceInviteTempl", "hasWsapceInviteTemplWith", "hasWsapceSuccessTempl", "hasWsapceSuccessTemplWith", "hasAuthFpTempl", "hasAuthFpTemplWith", "hasAuthWelcomeEmailTempl", "hasAuthWelcomeEmailTemplWith", "hasAuthVerificationTempl", "hasAuthVerificationTemplWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -17364,81 +17450,18 @@ func (ec *executionContext) unmarshalInputAppWhereInput(ctx context.Context, obj
 			it.AuthVerificationTemplIDContainsFold = data
 		case "authEmailVerify":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authEmailVerify"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.AuthEmailVerify = data
 		case "authEmailVerifyNEQ":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authEmailVerifyNEQ"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.AuthEmailVerifyNEQ = data
-		case "authEmailVerifyIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authEmailVerifyIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AuthEmailVerifyIn = data
-		case "authEmailVerifyNotIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authEmailVerifyNotIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AuthEmailVerifyNotIn = data
-		case "authEmailVerifyGT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authEmailVerifyGT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AuthEmailVerifyGT = data
-		case "authEmailVerifyGTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authEmailVerifyGTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AuthEmailVerifyGTE = data
-		case "authEmailVerifyLT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authEmailVerifyLT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AuthEmailVerifyLT = data
-		case "authEmailVerifyLTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authEmailVerifyLTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AuthEmailVerifyLTE = data
-		case "authEmailVerifyContains":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authEmailVerifyContains"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AuthEmailVerifyContains = data
-		case "authEmailVerifyHasPrefix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authEmailVerifyHasPrefix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AuthEmailVerifyHasPrefix = data
-		case "authEmailVerifyHasSuffix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authEmailVerifyHasSuffix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AuthEmailVerifyHasSuffix = data
 		case "authEmailVerifyIsNil":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authEmailVerifyIsNil"))
 			data, err := ec.unmarshalOBoolean2bool(ctx, v)
@@ -17453,20 +17476,62 @@ func (ec *executionContext) unmarshalInputAppWhereInput(ctx context.Context, obj
 				return it, err
 			}
 			it.AuthEmailVerifyNotNil = data
-		case "authEmailVerifyEqualFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authEmailVerifyEqualFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+		case "oauthSigninCanSignup":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("oauthSigninCanSignup"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.AuthEmailVerifyEqualFold = data
-		case "authEmailVerifyContainsFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authEmailVerifyContainsFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			it.OauthSigninCanSignup = data
+		case "oauthSigninCanSignupNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("oauthSigninCanSignupNEQ"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.AuthEmailVerifyContainsFold = data
+			it.OauthSigninCanSignupNEQ = data
+		case "oauthSigninCanSignupIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("oauthSigninCanSignupIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OauthSigninCanSignupIsNil = data
+		case "oauthSigninCanSignupNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("oauthSigninCanSignupNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OauthSigninCanSignupNotNil = data
+		case "authEnablePasswordLogin":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authEnablePasswordLogin"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AuthEnablePasswordLogin = data
+		case "authEnablePasswordLoginNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authEnablePasswordLoginNEQ"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AuthEnablePasswordLoginNEQ = data
+		case "authEnablePasswordLoginIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authEnablePasswordLoginIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AuthEnablePasswordLoginIsNil = data
+		case "authEnablePasswordLoginNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authEnablePasswordLoginNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AuthEnablePasswordLoginNotNil = data
 		case "adminUserID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("adminUserID"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -17683,7 +17748,7 @@ func (ec *executionContext) unmarshalInputCreateAppInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "name", "copyright", "email", "address", "socialTw", "socialFb", "socialIn", "logoURL", "siteURL", "authEmailVerify", "adminUserID", "defaultMailConnID", "mailLayoutTemplID", "wsapceInviteTemplID", "wsapceSuccessTemplID", "authFpTemplID", "authWelcomeEmailTemplID", "authVerificationTemplID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "name", "copyright", "email", "address", "socialTw", "socialFb", "socialIn", "logoURL", "siteURL", "authEmailVerify", "oauthSigninCanSignup", "authEnablePasswordLogin", "adminUserID", "defaultMailConnID", "mailLayoutTemplID", "wsapceInviteTemplID", "wsapceSuccessTemplID", "authFpTemplID", "authWelcomeEmailTemplID", "authVerificationTemplID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -17769,11 +17834,25 @@ func (ec *executionContext) unmarshalInputCreateAppInput(ctx context.Context, ob
 			it.SiteURL = data
 		case "authEmailVerify":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authEmailVerify"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.AuthEmailVerify = data
+		case "oauthSigninCanSignup":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("oauthSigninCanSignup"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OauthSigninCanSignup = data
+		case "authEnablePasswordLogin":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authEnablePasswordLogin"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AuthEnablePasswordLogin = data
 		case "adminUserID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("adminUserID"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -31151,7 +31230,7 @@ func (ec *executionContext) unmarshalInputUpdateAppInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "name", "clearName", "copyright", "clearCopyright", "email", "clearEmail", "address", "clearAddress", "socialTw", "clearSocialTw", "socialFb", "clearSocialFb", "socialIn", "clearSocialIn", "logoURL", "clearLogoURL", "siteURL", "clearSiteURL", "authEmailVerify", "clearAuthEmailVerify", "adminUserID", "clearAdminUserID", "defaultMailConnID", "clearDefaultMailConn", "mailLayoutTemplID", "clearMailLayoutTempl", "wsapceInviteTemplID", "clearWsapceInviteTempl", "wsapceSuccessTemplID", "clearWsapceSuccessTempl", "authFpTemplID", "clearAuthFpTempl", "authWelcomeEmailTemplID", "clearAuthWelcomeEmailTempl", "authVerificationTemplID", "clearAuthVerificationTempl"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "name", "clearName", "copyright", "clearCopyright", "email", "clearEmail", "address", "clearAddress", "socialTw", "clearSocialTw", "socialFb", "clearSocialFb", "socialIn", "clearSocialIn", "logoURL", "clearLogoURL", "siteURL", "clearSiteURL", "authEmailVerify", "clearAuthEmailVerify", "oauthSigninCanSignup", "clearOauthSigninCanSignup", "authEnablePasswordLogin", "clearAuthEnablePasswordLogin", "adminUserID", "clearAdminUserID", "defaultMailConnID", "clearDefaultMailConn", "mailLayoutTemplID", "clearMailLayoutTempl", "wsapceInviteTemplID", "clearWsapceInviteTempl", "wsapceSuccessTemplID", "clearWsapceSuccessTempl", "authFpTemplID", "clearAuthFpTempl", "authWelcomeEmailTemplID", "clearAuthWelcomeEmailTempl", "authVerificationTemplID", "clearAuthVerificationTempl"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -31300,7 +31379,7 @@ func (ec *executionContext) unmarshalInputUpdateAppInput(ctx context.Context, ob
 			it.ClearSiteURL = data
 		case "authEmailVerify":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authEmailVerify"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -31312,6 +31391,34 @@ func (ec *executionContext) unmarshalInputUpdateAppInput(ctx context.Context, ob
 				return it, err
 			}
 			it.ClearAuthEmailVerify = data
+		case "oauthSigninCanSignup":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("oauthSigninCanSignup"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OauthSigninCanSignup = data
+		case "clearOauthSigninCanSignup":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearOauthSigninCanSignup"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearOauthSigninCanSignup = data
+		case "authEnablePasswordLogin":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("authEnablePasswordLogin"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AuthEnablePasswordLogin = data
+		case "clearAuthEnablePasswordLogin":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearAuthEnablePasswordLogin"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearAuthEnablePasswordLogin = data
 		case "adminUserID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("adminUserID"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -36612,6 +36719,10 @@ func (ec *executionContext) _App(ctx context.Context, sel ast.SelectionSet, obj 
 			out.Values[i] = ec._App_authVerificationTemplID(ctx, field, obj)
 		case "authEmailVerify":
 			out.Values[i] = ec._App_authEmailVerify(ctx, field, obj)
+		case "oauthSigninCanSignup":
+			out.Values[i] = ec._App_oauthSigninCanSignup(ctx, field, obj)
+		case "authEnablePasswordLogin":
+			out.Values[i] = ec._App_authEnablePasswordLogin(ctx, field, obj)
 		case "adminUserID":
 			out.Values[i] = ec._App_adminUserID(ctx, field, obj)
 		case "defaultMailConn":

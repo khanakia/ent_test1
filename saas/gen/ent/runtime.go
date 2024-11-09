@@ -74,6 +74,18 @@ func init() {
 	app.DefaultUpdatedAt = appDescUpdatedAt.Default.(func() time.Time)
 	// app.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	app.UpdateDefaultUpdatedAt = appDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// appDescAuthEmailVerify is the schema descriptor for auth_email_verify field.
+	appDescAuthEmailVerify := appFields[16].Descriptor()
+	// app.DefaultAuthEmailVerify holds the default value on creation for the auth_email_verify field.
+	app.DefaultAuthEmailVerify = appDescAuthEmailVerify.Default.(bool)
+	// appDescOauthSigninCanSignup is the schema descriptor for oauth_signin_can_signup field.
+	appDescOauthSigninCanSignup := appFields[17].Descriptor()
+	// app.DefaultOauthSigninCanSignup holds the default value on creation for the oauth_signin_can_signup field.
+	app.DefaultOauthSigninCanSignup = appDescOauthSigninCanSignup.Default.(bool)
+	// appDescAuthEnablePasswordLogin is the schema descriptor for auth_enable_password_login field.
+	appDescAuthEnablePasswordLogin := appFields[18].Descriptor()
+	// app.DefaultAuthEnablePasswordLogin holds the default value on creation for the auth_enable_password_login field.
+	app.DefaultAuthEnablePasswordLogin = appDescAuthEnablePasswordLogin.Default.(bool)
 	// appDescID is the schema descriptor for id field.
 	appDescID := appMixinFields0[0].Descriptor()
 	// app.DefaultID holds the default value on creation for the id field.

@@ -56,7 +56,11 @@ type App struct {
 	// AuthVerificationTemplID holds the value of the "auth_verification_templ_id" field.
 	AuthVerificationTemplID string `json:"auth_verification_templ_id,omitempty"`
 	// AuthEmailVerify holds the value of the "auth_email_verify" field.
-	AuthEmailVerify string `json:"auth_email_verify,omitempty"`
+	AuthEmailVerify bool `json:"auth_email_verify,omitempty"`
+	// OauthSigninCanSignup holds the value of the "oauth_signin_can_signup" field.
+	OauthSigninCanSignup bool `json:"oauth_signin_can_signup,omitempty"`
+	// AuthEnablePasswordLogin holds the value of the "auth_enable_password_login" field.
+	AuthEnablePasswordLogin bool `json:"auth_enable_password_login,omitempty"`
 	// AdminUserID holds the value of the "admin_user_id" field.
 	AdminUserID string `json:"admin_user_id,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
@@ -184,7 +188,9 @@ func (*App) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case app.FieldID, app.FieldName, app.FieldCopyright, app.FieldEmail, app.FieldAddress, app.FieldSocialTw, app.FieldSocialFb, app.FieldSocialIn, app.FieldLogoURL, app.FieldSiteURL, app.FieldDefaultMailConnID, app.FieldMailLayoutTemplID, app.FieldWsapceInviteTemplID, app.FieldWsapceSuccessTemplID, app.FieldAuthFpTemplID, app.FieldAuthWelcomeEmailTemplID, app.FieldAuthVerificationTemplID, app.FieldAuthEmailVerify, app.FieldAdminUserID:
+		case app.FieldAuthEmailVerify, app.FieldOauthSigninCanSignup, app.FieldAuthEnablePasswordLogin:
+			values[i] = new(sql.NullBool)
+		case app.FieldID, app.FieldName, app.FieldCopyright, app.FieldEmail, app.FieldAddress, app.FieldSocialTw, app.FieldSocialFb, app.FieldSocialIn, app.FieldLogoURL, app.FieldSiteURL, app.FieldDefaultMailConnID, app.FieldMailLayoutTemplID, app.FieldWsapceInviteTemplID, app.FieldWsapceSuccessTemplID, app.FieldAuthFpTemplID, app.FieldAuthWelcomeEmailTemplID, app.FieldAuthVerificationTemplID, app.FieldAdminUserID:
 			values[i] = new(sql.NullString)
 		case app.FieldCreatedAt, app.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -318,10 +324,22 @@ func (a *App) assignValues(columns []string, values []any) error {
 				a.AuthVerificationTemplID = value.String
 			}
 		case app.FieldAuthEmailVerify:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field auth_email_verify", values[i])
 			} else if value.Valid {
-				a.AuthEmailVerify = value.String
+				a.AuthEmailVerify = value.Bool
+			}
+		case app.FieldOauthSigninCanSignup:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field oauth_signin_can_signup", values[i])
+			} else if value.Valid {
+				a.OauthSigninCanSignup = value.Bool
+			}
+		case app.FieldAuthEnablePasswordLogin:
+			if value, ok := values[i].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field auth_enable_password_login", values[i])
+			} else if value.Valid {
+				a.AuthEnablePasswordLogin = value.Bool
 			}
 		case app.FieldAdminUserID:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -455,7 +473,13 @@ func (a *App) String() string {
 	builder.WriteString(a.AuthVerificationTemplID)
 	builder.WriteString(", ")
 	builder.WriteString("auth_email_verify=")
-	builder.WriteString(a.AuthEmailVerify)
+	builder.WriteString(fmt.Sprintf("%v", a.AuthEmailVerify))
+	builder.WriteString(", ")
+	builder.WriteString("oauth_signin_can_signup=")
+	builder.WriteString(fmt.Sprintf("%v", a.OauthSigninCanSignup))
+	builder.WriteString(", ")
+	builder.WriteString("auth_enable_password_login=")
+	builder.WriteString(fmt.Sprintf("%v", a.AuthEnablePasswordLogin))
 	builder.WriteString(", ")
 	builder.WriteString("admin_user_id=")
 	builder.WriteString(a.AdminUserID)

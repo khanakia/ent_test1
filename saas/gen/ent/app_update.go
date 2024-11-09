@@ -364,15 +364,15 @@ func (au *AppUpdate) ClearAuthVerificationTemplID() *AppUpdate {
 }
 
 // SetAuthEmailVerify sets the "auth_email_verify" field.
-func (au *AppUpdate) SetAuthEmailVerify(s string) *AppUpdate {
-	au.mutation.SetAuthEmailVerify(s)
+func (au *AppUpdate) SetAuthEmailVerify(b bool) *AppUpdate {
+	au.mutation.SetAuthEmailVerify(b)
 	return au
 }
 
 // SetNillableAuthEmailVerify sets the "auth_email_verify" field if the given value is not nil.
-func (au *AppUpdate) SetNillableAuthEmailVerify(s *string) *AppUpdate {
-	if s != nil {
-		au.SetAuthEmailVerify(*s)
+func (au *AppUpdate) SetNillableAuthEmailVerify(b *bool) *AppUpdate {
+	if b != nil {
+		au.SetAuthEmailVerify(*b)
 	}
 	return au
 }
@@ -380,6 +380,46 @@ func (au *AppUpdate) SetNillableAuthEmailVerify(s *string) *AppUpdate {
 // ClearAuthEmailVerify clears the value of the "auth_email_verify" field.
 func (au *AppUpdate) ClearAuthEmailVerify() *AppUpdate {
 	au.mutation.ClearAuthEmailVerify()
+	return au
+}
+
+// SetOauthSigninCanSignup sets the "oauth_signin_can_signup" field.
+func (au *AppUpdate) SetOauthSigninCanSignup(b bool) *AppUpdate {
+	au.mutation.SetOauthSigninCanSignup(b)
+	return au
+}
+
+// SetNillableOauthSigninCanSignup sets the "oauth_signin_can_signup" field if the given value is not nil.
+func (au *AppUpdate) SetNillableOauthSigninCanSignup(b *bool) *AppUpdate {
+	if b != nil {
+		au.SetOauthSigninCanSignup(*b)
+	}
+	return au
+}
+
+// ClearOauthSigninCanSignup clears the value of the "oauth_signin_can_signup" field.
+func (au *AppUpdate) ClearOauthSigninCanSignup() *AppUpdate {
+	au.mutation.ClearOauthSigninCanSignup()
+	return au
+}
+
+// SetAuthEnablePasswordLogin sets the "auth_enable_password_login" field.
+func (au *AppUpdate) SetAuthEnablePasswordLogin(b bool) *AppUpdate {
+	au.mutation.SetAuthEnablePasswordLogin(b)
+	return au
+}
+
+// SetNillableAuthEnablePasswordLogin sets the "auth_enable_password_login" field if the given value is not nil.
+func (au *AppUpdate) SetNillableAuthEnablePasswordLogin(b *bool) *AppUpdate {
+	if b != nil {
+		au.SetAuthEnablePasswordLogin(*b)
+	}
+	return au
+}
+
+// ClearAuthEnablePasswordLogin clears the value of the "auth_enable_password_login" field.
+func (au *AppUpdate) ClearAuthEnablePasswordLogin() *AppUpdate {
+	au.mutation.ClearAuthEnablePasswordLogin()
 	return au
 }
 
@@ -600,10 +640,22 @@ func (au *AppUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.ClearField(app.FieldSiteURL, field.TypeString)
 	}
 	if value, ok := au.mutation.AuthEmailVerify(); ok {
-		_spec.SetField(app.FieldAuthEmailVerify, field.TypeString, value)
+		_spec.SetField(app.FieldAuthEmailVerify, field.TypeBool, value)
 	}
 	if au.mutation.AuthEmailVerifyCleared() {
-		_spec.ClearField(app.FieldAuthEmailVerify, field.TypeString)
+		_spec.ClearField(app.FieldAuthEmailVerify, field.TypeBool)
+	}
+	if value, ok := au.mutation.OauthSigninCanSignup(); ok {
+		_spec.SetField(app.FieldOauthSigninCanSignup, field.TypeBool, value)
+	}
+	if au.mutation.OauthSigninCanSignupCleared() {
+		_spec.ClearField(app.FieldOauthSigninCanSignup, field.TypeBool)
+	}
+	if value, ok := au.mutation.AuthEnablePasswordLogin(); ok {
+		_spec.SetField(app.FieldAuthEnablePasswordLogin, field.TypeBool, value)
+	}
+	if au.mutation.AuthEnablePasswordLoginCleared() {
+		_spec.ClearField(app.FieldAuthEnablePasswordLogin, field.TypeBool)
 	}
 	if value, ok := au.mutation.AdminUserID(); ok {
 		_spec.SetField(app.FieldAdminUserID, field.TypeString, value)
@@ -1169,15 +1221,15 @@ func (auo *AppUpdateOne) ClearAuthVerificationTemplID() *AppUpdateOne {
 }
 
 // SetAuthEmailVerify sets the "auth_email_verify" field.
-func (auo *AppUpdateOne) SetAuthEmailVerify(s string) *AppUpdateOne {
-	auo.mutation.SetAuthEmailVerify(s)
+func (auo *AppUpdateOne) SetAuthEmailVerify(b bool) *AppUpdateOne {
+	auo.mutation.SetAuthEmailVerify(b)
 	return auo
 }
 
 // SetNillableAuthEmailVerify sets the "auth_email_verify" field if the given value is not nil.
-func (auo *AppUpdateOne) SetNillableAuthEmailVerify(s *string) *AppUpdateOne {
-	if s != nil {
-		auo.SetAuthEmailVerify(*s)
+func (auo *AppUpdateOne) SetNillableAuthEmailVerify(b *bool) *AppUpdateOne {
+	if b != nil {
+		auo.SetAuthEmailVerify(*b)
 	}
 	return auo
 }
@@ -1185,6 +1237,46 @@ func (auo *AppUpdateOne) SetNillableAuthEmailVerify(s *string) *AppUpdateOne {
 // ClearAuthEmailVerify clears the value of the "auth_email_verify" field.
 func (auo *AppUpdateOne) ClearAuthEmailVerify() *AppUpdateOne {
 	auo.mutation.ClearAuthEmailVerify()
+	return auo
+}
+
+// SetOauthSigninCanSignup sets the "oauth_signin_can_signup" field.
+func (auo *AppUpdateOne) SetOauthSigninCanSignup(b bool) *AppUpdateOne {
+	auo.mutation.SetOauthSigninCanSignup(b)
+	return auo
+}
+
+// SetNillableOauthSigninCanSignup sets the "oauth_signin_can_signup" field if the given value is not nil.
+func (auo *AppUpdateOne) SetNillableOauthSigninCanSignup(b *bool) *AppUpdateOne {
+	if b != nil {
+		auo.SetOauthSigninCanSignup(*b)
+	}
+	return auo
+}
+
+// ClearOauthSigninCanSignup clears the value of the "oauth_signin_can_signup" field.
+func (auo *AppUpdateOne) ClearOauthSigninCanSignup() *AppUpdateOne {
+	auo.mutation.ClearOauthSigninCanSignup()
+	return auo
+}
+
+// SetAuthEnablePasswordLogin sets the "auth_enable_password_login" field.
+func (auo *AppUpdateOne) SetAuthEnablePasswordLogin(b bool) *AppUpdateOne {
+	auo.mutation.SetAuthEnablePasswordLogin(b)
+	return auo
+}
+
+// SetNillableAuthEnablePasswordLogin sets the "auth_enable_password_login" field if the given value is not nil.
+func (auo *AppUpdateOne) SetNillableAuthEnablePasswordLogin(b *bool) *AppUpdateOne {
+	if b != nil {
+		auo.SetAuthEnablePasswordLogin(*b)
+	}
+	return auo
+}
+
+// ClearAuthEnablePasswordLogin clears the value of the "auth_enable_password_login" field.
+func (auo *AppUpdateOne) ClearAuthEnablePasswordLogin() *AppUpdateOne {
+	auo.mutation.ClearAuthEnablePasswordLogin()
 	return auo
 }
 
@@ -1435,10 +1527,22 @@ func (auo *AppUpdateOne) sqlSave(ctx context.Context) (_node *App, err error) {
 		_spec.ClearField(app.FieldSiteURL, field.TypeString)
 	}
 	if value, ok := auo.mutation.AuthEmailVerify(); ok {
-		_spec.SetField(app.FieldAuthEmailVerify, field.TypeString, value)
+		_spec.SetField(app.FieldAuthEmailVerify, field.TypeBool, value)
 	}
 	if auo.mutation.AuthEmailVerifyCleared() {
-		_spec.ClearField(app.FieldAuthEmailVerify, field.TypeString)
+		_spec.ClearField(app.FieldAuthEmailVerify, field.TypeBool)
+	}
+	if value, ok := auo.mutation.OauthSigninCanSignup(); ok {
+		_spec.SetField(app.FieldOauthSigninCanSignup, field.TypeBool, value)
+	}
+	if auo.mutation.OauthSigninCanSignupCleared() {
+		_spec.ClearField(app.FieldOauthSigninCanSignup, field.TypeBool)
+	}
+	if value, ok := auo.mutation.AuthEnablePasswordLogin(); ok {
+		_spec.SetField(app.FieldAuthEnablePasswordLogin, field.TypeBool, value)
+	}
+	if auo.mutation.AuthEnablePasswordLoginCleared() {
+		_spec.ClearField(app.FieldAuthEnablePasswordLogin, field.TypeBool)
 	}
 	if value, ok := auo.mutation.AdminUserID(); ok {
 		_spec.SetField(app.FieldAdminUserID, field.TypeString, value)

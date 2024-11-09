@@ -20,7 +20,9 @@ type CreateAppInput struct {
 	SocialIn                *string
 	LogoURL                 *string
 	SiteURL                 *string
-	AuthEmailVerify         *string
+	AuthEmailVerify         *bool
+	OauthSigninCanSignup    *bool
+	AuthEnablePasswordLogin *bool
 	AdminUserID             *string
 	DefaultMailConnID       *string
 	MailLayoutTemplID       *string
@@ -69,6 +71,12 @@ func (i *CreateAppInput) Mutate(m *AppMutation) {
 	if v := i.AuthEmailVerify; v != nil {
 		m.SetAuthEmailVerify(*v)
 	}
+	if v := i.OauthSigninCanSignup; v != nil {
+		m.SetOauthSigninCanSignup(*v)
+	}
+	if v := i.AuthEnablePasswordLogin; v != nil {
+		m.SetAuthEnablePasswordLogin(*v)
+	}
 	if v := i.AdminUserID; v != nil {
 		m.SetAdminUserID(*v)
 	}
@@ -103,44 +111,48 @@ func (c *AppCreate) SetInput(i CreateAppInput) *AppCreate {
 
 // UpdateAppInput represents a mutation input for updating apps.
 type UpdateAppInput struct {
-	ClearUpdatedAt             bool
-	UpdatedAt                  *time.Time
-	ClearName                  bool
-	Name                       *string
-	ClearCopyright             bool
-	Copyright                  *string
-	ClearEmail                 bool
-	Email                      *string
-	ClearAddress               bool
-	Address                    *string
-	ClearSocialTw              bool
-	SocialTw                   *string
-	ClearSocialFb              bool
-	SocialFb                   *string
-	ClearSocialIn              bool
-	SocialIn                   *string
-	ClearLogoURL               bool
-	LogoURL                    *string
-	ClearSiteURL               bool
-	SiteURL                    *string
-	ClearAuthEmailVerify       bool
-	AuthEmailVerify            *string
-	ClearAdminUserID           bool
-	AdminUserID                *string
-	ClearDefaultMailConn       bool
-	DefaultMailConnID          *string
-	ClearMailLayoutTempl       bool
-	MailLayoutTemplID          *string
-	ClearWsapceInviteTempl     bool
-	WsapceInviteTemplID        *string
-	ClearWsapceSuccessTempl    bool
-	WsapceSuccessTemplID       *string
-	ClearAuthFpTempl           bool
-	AuthFpTemplID              *string
-	ClearAuthWelcomeEmailTempl bool
-	AuthWelcomeEmailTemplID    *string
-	ClearAuthVerificationTempl bool
-	AuthVerificationTemplID    *string
+	ClearUpdatedAt               bool
+	UpdatedAt                    *time.Time
+	ClearName                    bool
+	Name                         *string
+	ClearCopyright               bool
+	Copyright                    *string
+	ClearEmail                   bool
+	Email                        *string
+	ClearAddress                 bool
+	Address                      *string
+	ClearSocialTw                bool
+	SocialTw                     *string
+	ClearSocialFb                bool
+	SocialFb                     *string
+	ClearSocialIn                bool
+	SocialIn                     *string
+	ClearLogoURL                 bool
+	LogoURL                      *string
+	ClearSiteURL                 bool
+	SiteURL                      *string
+	ClearAuthEmailVerify         bool
+	AuthEmailVerify              *bool
+	ClearOauthSigninCanSignup    bool
+	OauthSigninCanSignup         *bool
+	ClearAuthEnablePasswordLogin bool
+	AuthEnablePasswordLogin      *bool
+	ClearAdminUserID             bool
+	AdminUserID                  *string
+	ClearDefaultMailConn         bool
+	DefaultMailConnID            *string
+	ClearMailLayoutTempl         bool
+	MailLayoutTemplID            *string
+	ClearWsapceInviteTempl       bool
+	WsapceInviteTemplID          *string
+	ClearWsapceSuccessTempl      bool
+	WsapceSuccessTemplID         *string
+	ClearAuthFpTempl             bool
+	AuthFpTemplID                *string
+	ClearAuthWelcomeEmailTempl   bool
+	AuthWelcomeEmailTemplID      *string
+	ClearAuthVerificationTempl   bool
+	AuthVerificationTemplID      *string
 }
 
 // Mutate applies the UpdateAppInput on the AppMutation builder.
@@ -210,6 +222,18 @@ func (i *UpdateAppInput) Mutate(m *AppMutation) {
 	}
 	if v := i.AuthEmailVerify; v != nil {
 		m.SetAuthEmailVerify(*v)
+	}
+	if i.ClearOauthSigninCanSignup {
+		m.ClearOauthSigninCanSignup()
+	}
+	if v := i.OauthSigninCanSignup; v != nil {
+		m.SetOauthSigninCanSignup(*v)
+	}
+	if i.ClearAuthEnablePasswordLogin {
+		m.ClearAuthEnablePasswordLogin()
+	}
+	if v := i.AuthEnablePasswordLogin; v != nil {
+		m.SetAuthEnablePasswordLogin(*v)
 	}
 	if i.ClearAdminUserID {
 		m.ClearAdminUserID()

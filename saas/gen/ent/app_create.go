@@ -278,15 +278,43 @@ func (ac *AppCreate) SetNillableAuthVerificationTemplID(s *string) *AppCreate {
 }
 
 // SetAuthEmailVerify sets the "auth_email_verify" field.
-func (ac *AppCreate) SetAuthEmailVerify(s string) *AppCreate {
-	ac.mutation.SetAuthEmailVerify(s)
+func (ac *AppCreate) SetAuthEmailVerify(b bool) *AppCreate {
+	ac.mutation.SetAuthEmailVerify(b)
 	return ac
 }
 
 // SetNillableAuthEmailVerify sets the "auth_email_verify" field if the given value is not nil.
-func (ac *AppCreate) SetNillableAuthEmailVerify(s *string) *AppCreate {
-	if s != nil {
-		ac.SetAuthEmailVerify(*s)
+func (ac *AppCreate) SetNillableAuthEmailVerify(b *bool) *AppCreate {
+	if b != nil {
+		ac.SetAuthEmailVerify(*b)
+	}
+	return ac
+}
+
+// SetOauthSigninCanSignup sets the "oauth_signin_can_signup" field.
+func (ac *AppCreate) SetOauthSigninCanSignup(b bool) *AppCreate {
+	ac.mutation.SetOauthSigninCanSignup(b)
+	return ac
+}
+
+// SetNillableOauthSigninCanSignup sets the "oauth_signin_can_signup" field if the given value is not nil.
+func (ac *AppCreate) SetNillableOauthSigninCanSignup(b *bool) *AppCreate {
+	if b != nil {
+		ac.SetOauthSigninCanSignup(*b)
+	}
+	return ac
+}
+
+// SetAuthEnablePasswordLogin sets the "auth_enable_password_login" field.
+func (ac *AppCreate) SetAuthEnablePasswordLogin(b bool) *AppCreate {
+	ac.mutation.SetAuthEnablePasswordLogin(b)
+	return ac
+}
+
+// SetNillableAuthEnablePasswordLogin sets the "auth_enable_password_login" field if the given value is not nil.
+func (ac *AppCreate) SetNillableAuthEnablePasswordLogin(b *bool) *AppCreate {
+	if b != nil {
+		ac.SetAuthEnablePasswordLogin(*b)
 	}
 	return ac
 }
@@ -397,6 +425,18 @@ func (ac *AppCreate) defaults() {
 		v := app.DefaultUpdatedAt()
 		ac.mutation.SetUpdatedAt(v)
 	}
+	if _, ok := ac.mutation.AuthEmailVerify(); !ok {
+		v := app.DefaultAuthEmailVerify
+		ac.mutation.SetAuthEmailVerify(v)
+	}
+	if _, ok := ac.mutation.OauthSigninCanSignup(); !ok {
+		v := app.DefaultOauthSigninCanSignup
+		ac.mutation.SetOauthSigninCanSignup(v)
+	}
+	if _, ok := ac.mutation.AuthEnablePasswordLogin(); !ok {
+		v := app.DefaultAuthEnablePasswordLogin
+		ac.mutation.SetAuthEnablePasswordLogin(v)
+	}
 	if _, ok := ac.mutation.ID(); !ok {
 		v := app.DefaultID()
 		ac.mutation.SetID(v)
@@ -486,8 +526,16 @@ func (ac *AppCreate) createSpec() (*App, *sqlgraph.CreateSpec) {
 		_node.SiteURL = value
 	}
 	if value, ok := ac.mutation.AuthEmailVerify(); ok {
-		_spec.SetField(app.FieldAuthEmailVerify, field.TypeString, value)
+		_spec.SetField(app.FieldAuthEmailVerify, field.TypeBool, value)
 		_node.AuthEmailVerify = value
+	}
+	if value, ok := ac.mutation.OauthSigninCanSignup(); ok {
+		_spec.SetField(app.FieldOauthSigninCanSignup, field.TypeBool, value)
+		_node.OauthSigninCanSignup = value
+	}
+	if value, ok := ac.mutation.AuthEnablePasswordLogin(); ok {
+		_spec.SetField(app.FieldAuthEnablePasswordLogin, field.TypeBool, value)
+		_node.AuthEnablePasswordLogin = value
 	}
 	if value, ok := ac.mutation.AdminUserID(); ok {
 		_spec.SetField(app.FieldAdminUserID, field.TypeString, value)
@@ -971,7 +1019,7 @@ func (u *AppUpsert) ClearAuthVerificationTemplID() *AppUpsert {
 }
 
 // SetAuthEmailVerify sets the "auth_email_verify" field.
-func (u *AppUpsert) SetAuthEmailVerify(v string) *AppUpsert {
+func (u *AppUpsert) SetAuthEmailVerify(v bool) *AppUpsert {
 	u.Set(app.FieldAuthEmailVerify, v)
 	return u
 }
@@ -985,6 +1033,42 @@ func (u *AppUpsert) UpdateAuthEmailVerify() *AppUpsert {
 // ClearAuthEmailVerify clears the value of the "auth_email_verify" field.
 func (u *AppUpsert) ClearAuthEmailVerify() *AppUpsert {
 	u.SetNull(app.FieldAuthEmailVerify)
+	return u
+}
+
+// SetOauthSigninCanSignup sets the "oauth_signin_can_signup" field.
+func (u *AppUpsert) SetOauthSigninCanSignup(v bool) *AppUpsert {
+	u.Set(app.FieldOauthSigninCanSignup, v)
+	return u
+}
+
+// UpdateOauthSigninCanSignup sets the "oauth_signin_can_signup" field to the value that was provided on create.
+func (u *AppUpsert) UpdateOauthSigninCanSignup() *AppUpsert {
+	u.SetExcluded(app.FieldOauthSigninCanSignup)
+	return u
+}
+
+// ClearOauthSigninCanSignup clears the value of the "oauth_signin_can_signup" field.
+func (u *AppUpsert) ClearOauthSigninCanSignup() *AppUpsert {
+	u.SetNull(app.FieldOauthSigninCanSignup)
+	return u
+}
+
+// SetAuthEnablePasswordLogin sets the "auth_enable_password_login" field.
+func (u *AppUpsert) SetAuthEnablePasswordLogin(v bool) *AppUpsert {
+	u.Set(app.FieldAuthEnablePasswordLogin, v)
+	return u
+}
+
+// UpdateAuthEnablePasswordLogin sets the "auth_enable_password_login" field to the value that was provided on create.
+func (u *AppUpsert) UpdateAuthEnablePasswordLogin() *AppUpsert {
+	u.SetExcluded(app.FieldAuthEnablePasswordLogin)
+	return u
+}
+
+// ClearAuthEnablePasswordLogin clears the value of the "auth_enable_password_login" field.
+func (u *AppUpsert) ClearAuthEnablePasswordLogin() *AppUpsert {
+	u.SetNull(app.FieldAuthEnablePasswordLogin)
 	return u
 }
 
@@ -1415,7 +1499,7 @@ func (u *AppUpsertOne) ClearAuthVerificationTemplID() *AppUpsertOne {
 }
 
 // SetAuthEmailVerify sets the "auth_email_verify" field.
-func (u *AppUpsertOne) SetAuthEmailVerify(v string) *AppUpsertOne {
+func (u *AppUpsertOne) SetAuthEmailVerify(v bool) *AppUpsertOne {
 	return u.Update(func(s *AppUpsert) {
 		s.SetAuthEmailVerify(v)
 	})
@@ -1432,6 +1516,48 @@ func (u *AppUpsertOne) UpdateAuthEmailVerify() *AppUpsertOne {
 func (u *AppUpsertOne) ClearAuthEmailVerify() *AppUpsertOne {
 	return u.Update(func(s *AppUpsert) {
 		s.ClearAuthEmailVerify()
+	})
+}
+
+// SetOauthSigninCanSignup sets the "oauth_signin_can_signup" field.
+func (u *AppUpsertOne) SetOauthSigninCanSignup(v bool) *AppUpsertOne {
+	return u.Update(func(s *AppUpsert) {
+		s.SetOauthSigninCanSignup(v)
+	})
+}
+
+// UpdateOauthSigninCanSignup sets the "oauth_signin_can_signup" field to the value that was provided on create.
+func (u *AppUpsertOne) UpdateOauthSigninCanSignup() *AppUpsertOne {
+	return u.Update(func(s *AppUpsert) {
+		s.UpdateOauthSigninCanSignup()
+	})
+}
+
+// ClearOauthSigninCanSignup clears the value of the "oauth_signin_can_signup" field.
+func (u *AppUpsertOne) ClearOauthSigninCanSignup() *AppUpsertOne {
+	return u.Update(func(s *AppUpsert) {
+		s.ClearOauthSigninCanSignup()
+	})
+}
+
+// SetAuthEnablePasswordLogin sets the "auth_enable_password_login" field.
+func (u *AppUpsertOne) SetAuthEnablePasswordLogin(v bool) *AppUpsertOne {
+	return u.Update(func(s *AppUpsert) {
+		s.SetAuthEnablePasswordLogin(v)
+	})
+}
+
+// UpdateAuthEnablePasswordLogin sets the "auth_enable_password_login" field to the value that was provided on create.
+func (u *AppUpsertOne) UpdateAuthEnablePasswordLogin() *AppUpsertOne {
+	return u.Update(func(s *AppUpsert) {
+		s.UpdateAuthEnablePasswordLogin()
+	})
+}
+
+// ClearAuthEnablePasswordLogin clears the value of the "auth_enable_password_login" field.
+func (u *AppUpsertOne) ClearAuthEnablePasswordLogin() *AppUpsertOne {
+	return u.Update(func(s *AppUpsert) {
+		s.ClearAuthEnablePasswordLogin()
 	})
 }
 
@@ -2032,7 +2158,7 @@ func (u *AppUpsertBulk) ClearAuthVerificationTemplID() *AppUpsertBulk {
 }
 
 // SetAuthEmailVerify sets the "auth_email_verify" field.
-func (u *AppUpsertBulk) SetAuthEmailVerify(v string) *AppUpsertBulk {
+func (u *AppUpsertBulk) SetAuthEmailVerify(v bool) *AppUpsertBulk {
 	return u.Update(func(s *AppUpsert) {
 		s.SetAuthEmailVerify(v)
 	})
@@ -2049,6 +2175,48 @@ func (u *AppUpsertBulk) UpdateAuthEmailVerify() *AppUpsertBulk {
 func (u *AppUpsertBulk) ClearAuthEmailVerify() *AppUpsertBulk {
 	return u.Update(func(s *AppUpsert) {
 		s.ClearAuthEmailVerify()
+	})
+}
+
+// SetOauthSigninCanSignup sets the "oauth_signin_can_signup" field.
+func (u *AppUpsertBulk) SetOauthSigninCanSignup(v bool) *AppUpsertBulk {
+	return u.Update(func(s *AppUpsert) {
+		s.SetOauthSigninCanSignup(v)
+	})
+}
+
+// UpdateOauthSigninCanSignup sets the "oauth_signin_can_signup" field to the value that was provided on create.
+func (u *AppUpsertBulk) UpdateOauthSigninCanSignup() *AppUpsertBulk {
+	return u.Update(func(s *AppUpsert) {
+		s.UpdateOauthSigninCanSignup()
+	})
+}
+
+// ClearOauthSigninCanSignup clears the value of the "oauth_signin_can_signup" field.
+func (u *AppUpsertBulk) ClearOauthSigninCanSignup() *AppUpsertBulk {
+	return u.Update(func(s *AppUpsert) {
+		s.ClearOauthSigninCanSignup()
+	})
+}
+
+// SetAuthEnablePasswordLogin sets the "auth_enable_password_login" field.
+func (u *AppUpsertBulk) SetAuthEnablePasswordLogin(v bool) *AppUpsertBulk {
+	return u.Update(func(s *AppUpsert) {
+		s.SetAuthEnablePasswordLogin(v)
+	})
+}
+
+// UpdateAuthEnablePasswordLogin sets the "auth_enable_password_login" field to the value that was provided on create.
+func (u *AppUpsertBulk) UpdateAuthEnablePasswordLogin() *AppUpsertBulk {
+	return u.Update(func(s *AppUpsert) {
+		s.UpdateAuthEnablePasswordLogin()
+	})
+}
+
+// ClearAuthEnablePasswordLogin clears the value of the "auth_enable_password_login" field.
+func (u *AppUpsertBulk) ClearAuthEnablePasswordLogin() *AppUpsertBulk {
+	return u.Update(func(s *AppUpsert) {
+		s.ClearAuthEnablePasswordLogin()
 	})
 }
 

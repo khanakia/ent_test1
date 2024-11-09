@@ -156,8 +156,18 @@ func AuthVerificationTemplID(v string) predicate.App {
 }
 
 // AuthEmailVerify applies equality check predicate on the "auth_email_verify" field. It's identical to AuthEmailVerifyEQ.
-func AuthEmailVerify(v string) predicate.App {
+func AuthEmailVerify(v bool) predicate.App {
 	return predicate.App(sql.FieldEQ(FieldAuthEmailVerify, v))
+}
+
+// OauthSigninCanSignup applies equality check predicate on the "oauth_signin_can_signup" field. It's identical to OauthSigninCanSignupEQ.
+func OauthSigninCanSignup(v bool) predicate.App {
+	return predicate.App(sql.FieldEQ(FieldOauthSigninCanSignup, v))
+}
+
+// AuthEnablePasswordLogin applies equality check predicate on the "auth_enable_password_login" field. It's identical to AuthEnablePasswordLoginEQ.
+func AuthEnablePasswordLogin(v bool) predicate.App {
+	return predicate.App(sql.FieldEQ(FieldAuthEnablePasswordLogin, v))
 }
 
 // AdminUserID applies equality check predicate on the "admin_user_id" field. It's identical to AdminUserIDEQ.
@@ -1466,58 +1476,13 @@ func AuthVerificationTemplIDContainsFold(v string) predicate.App {
 }
 
 // AuthEmailVerifyEQ applies the EQ predicate on the "auth_email_verify" field.
-func AuthEmailVerifyEQ(v string) predicate.App {
+func AuthEmailVerifyEQ(v bool) predicate.App {
 	return predicate.App(sql.FieldEQ(FieldAuthEmailVerify, v))
 }
 
 // AuthEmailVerifyNEQ applies the NEQ predicate on the "auth_email_verify" field.
-func AuthEmailVerifyNEQ(v string) predicate.App {
+func AuthEmailVerifyNEQ(v bool) predicate.App {
 	return predicate.App(sql.FieldNEQ(FieldAuthEmailVerify, v))
-}
-
-// AuthEmailVerifyIn applies the In predicate on the "auth_email_verify" field.
-func AuthEmailVerifyIn(vs ...string) predicate.App {
-	return predicate.App(sql.FieldIn(FieldAuthEmailVerify, vs...))
-}
-
-// AuthEmailVerifyNotIn applies the NotIn predicate on the "auth_email_verify" field.
-func AuthEmailVerifyNotIn(vs ...string) predicate.App {
-	return predicate.App(sql.FieldNotIn(FieldAuthEmailVerify, vs...))
-}
-
-// AuthEmailVerifyGT applies the GT predicate on the "auth_email_verify" field.
-func AuthEmailVerifyGT(v string) predicate.App {
-	return predicate.App(sql.FieldGT(FieldAuthEmailVerify, v))
-}
-
-// AuthEmailVerifyGTE applies the GTE predicate on the "auth_email_verify" field.
-func AuthEmailVerifyGTE(v string) predicate.App {
-	return predicate.App(sql.FieldGTE(FieldAuthEmailVerify, v))
-}
-
-// AuthEmailVerifyLT applies the LT predicate on the "auth_email_verify" field.
-func AuthEmailVerifyLT(v string) predicate.App {
-	return predicate.App(sql.FieldLT(FieldAuthEmailVerify, v))
-}
-
-// AuthEmailVerifyLTE applies the LTE predicate on the "auth_email_verify" field.
-func AuthEmailVerifyLTE(v string) predicate.App {
-	return predicate.App(sql.FieldLTE(FieldAuthEmailVerify, v))
-}
-
-// AuthEmailVerifyContains applies the Contains predicate on the "auth_email_verify" field.
-func AuthEmailVerifyContains(v string) predicate.App {
-	return predicate.App(sql.FieldContains(FieldAuthEmailVerify, v))
-}
-
-// AuthEmailVerifyHasPrefix applies the HasPrefix predicate on the "auth_email_verify" field.
-func AuthEmailVerifyHasPrefix(v string) predicate.App {
-	return predicate.App(sql.FieldHasPrefix(FieldAuthEmailVerify, v))
-}
-
-// AuthEmailVerifyHasSuffix applies the HasSuffix predicate on the "auth_email_verify" field.
-func AuthEmailVerifyHasSuffix(v string) predicate.App {
-	return predicate.App(sql.FieldHasSuffix(FieldAuthEmailVerify, v))
 }
 
 // AuthEmailVerifyIsNil applies the IsNil predicate on the "auth_email_verify" field.
@@ -1530,14 +1495,44 @@ func AuthEmailVerifyNotNil() predicate.App {
 	return predicate.App(sql.FieldNotNull(FieldAuthEmailVerify))
 }
 
-// AuthEmailVerifyEqualFold applies the EqualFold predicate on the "auth_email_verify" field.
-func AuthEmailVerifyEqualFold(v string) predicate.App {
-	return predicate.App(sql.FieldEqualFold(FieldAuthEmailVerify, v))
+// OauthSigninCanSignupEQ applies the EQ predicate on the "oauth_signin_can_signup" field.
+func OauthSigninCanSignupEQ(v bool) predicate.App {
+	return predicate.App(sql.FieldEQ(FieldOauthSigninCanSignup, v))
 }
 
-// AuthEmailVerifyContainsFold applies the ContainsFold predicate on the "auth_email_verify" field.
-func AuthEmailVerifyContainsFold(v string) predicate.App {
-	return predicate.App(sql.FieldContainsFold(FieldAuthEmailVerify, v))
+// OauthSigninCanSignupNEQ applies the NEQ predicate on the "oauth_signin_can_signup" field.
+func OauthSigninCanSignupNEQ(v bool) predicate.App {
+	return predicate.App(sql.FieldNEQ(FieldOauthSigninCanSignup, v))
+}
+
+// OauthSigninCanSignupIsNil applies the IsNil predicate on the "oauth_signin_can_signup" field.
+func OauthSigninCanSignupIsNil() predicate.App {
+	return predicate.App(sql.FieldIsNull(FieldOauthSigninCanSignup))
+}
+
+// OauthSigninCanSignupNotNil applies the NotNil predicate on the "oauth_signin_can_signup" field.
+func OauthSigninCanSignupNotNil() predicate.App {
+	return predicate.App(sql.FieldNotNull(FieldOauthSigninCanSignup))
+}
+
+// AuthEnablePasswordLoginEQ applies the EQ predicate on the "auth_enable_password_login" field.
+func AuthEnablePasswordLoginEQ(v bool) predicate.App {
+	return predicate.App(sql.FieldEQ(FieldAuthEnablePasswordLogin, v))
+}
+
+// AuthEnablePasswordLoginNEQ applies the NEQ predicate on the "auth_enable_password_login" field.
+func AuthEnablePasswordLoginNEQ(v bool) predicate.App {
+	return predicate.App(sql.FieldNEQ(FieldAuthEnablePasswordLogin, v))
+}
+
+// AuthEnablePasswordLoginIsNil applies the IsNil predicate on the "auth_enable_password_login" field.
+func AuthEnablePasswordLoginIsNil() predicate.App {
+	return predicate.App(sql.FieldIsNull(FieldAuthEnablePasswordLogin))
+}
+
+// AuthEnablePasswordLoginNotNil applies the NotNil predicate on the "auth_enable_password_login" field.
+func AuthEnablePasswordLoginNotNil() predicate.App {
+	return predicate.App(sql.FieldNotNull(FieldAuthEnablePasswordLogin))
 }
 
 // AdminUserIDEQ applies the EQ predicate on the "admin_user_id" field.

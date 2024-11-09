@@ -52,6 +52,10 @@ const (
 	FieldAuthVerificationTemplID = "auth_verification_templ_id"
 	// FieldAuthEmailVerify holds the string denoting the auth_email_verify field in the database.
 	FieldAuthEmailVerify = "auth_email_verify"
+	// FieldOauthSigninCanSignup holds the string denoting the oauth_signin_can_signup field in the database.
+	FieldOauthSigninCanSignup = "oauth_signin_can_signup"
+	// FieldAuthEnablePasswordLogin holds the string denoting the auth_enable_password_login field in the database.
+	FieldAuthEnablePasswordLogin = "auth_enable_password_login"
 	// FieldAdminUserID holds the string denoting the admin_user_id field in the database.
 	FieldAdminUserID = "admin_user_id"
 	// EdgeDefaultMailConn holds the string denoting the default_mail_conn edge name in mutations.
@@ -143,6 +147,8 @@ var Columns = []string{
 	FieldAuthWelcomeEmailTemplID,
 	FieldAuthVerificationTemplID,
 	FieldAuthEmailVerify,
+	FieldOauthSigninCanSignup,
+	FieldAuthEnablePasswordLogin,
 	FieldAdminUserID,
 }
 
@@ -163,6 +169,12 @@ var (
 	DefaultUpdatedAt func() time.Time
 	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
 	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultAuthEmailVerify holds the default value on creation for the "auth_email_verify" field.
+	DefaultAuthEmailVerify bool
+	// DefaultOauthSigninCanSignup holds the default value on creation for the "oauth_signin_can_signup" field.
+	DefaultOauthSigninCanSignup bool
+	// DefaultAuthEnablePasswordLogin holds the default value on creation for the "auth_enable_password_login" field.
+	DefaultAuthEnablePasswordLogin bool
 	// DefaultID holds the default value on creation for the "id" field.
 	DefaultID func() string
 )
@@ -268,6 +280,16 @@ func ByAuthVerificationTemplID(opts ...sql.OrderTermOption) OrderOption {
 // ByAuthEmailVerify orders the results by the auth_email_verify field.
 func ByAuthEmailVerify(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAuthEmailVerify, opts...).ToFunc()
+}
+
+// ByOauthSigninCanSignup orders the results by the oauth_signin_can_signup field.
+func ByOauthSigninCanSignup(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldOauthSigninCanSignup, opts...).ToFunc()
+}
+
+// ByAuthEnablePasswordLogin orders the results by the auth_enable_password_login field.
+func ByAuthEnablePasswordLogin(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldAuthEnablePasswordLogin, opts...).ToFunc()
 }
 
 // ByAdminUserID orders the results by the admin_user_id field.
