@@ -1,7 +1,6 @@
 package gqlsa
 
 import (
-	"context"
 	"fmt"
 	"gqlsa/graph/generated"
 	"gqlsa/graph/gqlsaresolver"
@@ -9,6 +8,7 @@ import (
 	"reflect"
 	"saas/pkg/middleware/adminauthmiddleware"
 	"saas/pkg/middleware/appmiddleware"
+	"saas/pkg/middleware/gqldirectives"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
@@ -16,44 +16,6 @@ import (
 	"github.com/ubgo/goutil"
 	"github.com/vektah/gqlparser/v2/ast"
 )
-
-func setDirectives(c *generated.Config) {
-	c.Directives.CanAdmin = func(ctx context.Context, obj interface{}, next graphql.Resolver) (interface{}, error) {
-		cuser, _ := adminauthmiddleware.GetUserFromGqlCtx(ctx)
-		if cuser == nil {
-			return nil, fmt.Errorf("user not found")
-		}
-
-		if !cuser.Status {
-			return nil, fmt.Errorf("access denied")
-		}
-
-		return next(ctx)
-	}
-
-	c.Directives.CanApp = func(ctx context.Context, obj interface{}, next graphql.Resolver) (interface{}, error) {
-		cuser, _ := adminauthmiddleware.GetUserFromGqlCtx(ctx)
-		if cuser == nil {
-			return nil, fmt.Errorf("user not found")
-		}
-
-		if !cuser.Status {
-			return nil, fmt.Errorf("access denied")
-		}
-
-		app, _ := appmiddleware.GetAppFromGqlCtx(ctx)
-		if app == nil {
-			return nil, fmt.Errorf("app not found")
-		}
-
-		if app.AdminUserID != cuser.ID {
-			return nil, fmt.Errorf("app access denied")
-		}
-
-		// or let it pass through
-		return next(ctx)
-	}
-}
 
 func Boot(ginEngine *gin.Engine, resolver *gqlsaresolver.Resolver) {
 	prefix := "/sa"
@@ -77,6 +39,12 @@ func Boot(ginEngine *gin.Engine, resolver *gqlsaresolver.Resolver) {
 		},
 	})
 	fmt.Println("boot gqlsa")
+}
+
+func setDirectives(c *generated.Config) {
+	c.Directives.CanAdmin = gqldirectives.CanAdminDirective
+
+	c.Directives.CanApp = gqldirectives.CanAppDirective
 }
 
 // Custom schema extension

@@ -29,7 +29,7 @@ func (User) Fields() []ent.Field {
 		field.String("last_name").Optional(),
 		field.String("company").Optional(),
 		field.String("locale").Optional(), // en
-		field.String("role_id").Optional().Default(constants.UserRoleSa),
+		field.String("role_id").Optional().Default(constants.UserRoleMember),
 		field.Bool("status").Optional().Default(false),
 		field.String("password").
 			Sensitive().

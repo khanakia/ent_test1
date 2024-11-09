@@ -5,7 +5,8 @@ const (
 	// RoleMemberID = 2
 	WorkspaceRoleOwner = "owner"
 
-	UserRoleSa = "sa"
+	UserRoleMember = "member"
+	UserRoleSa     = "sa"
 
 	DirectiveCanAdmin = "canAdmin"
 	DirectiveCanApp   = "canApp"

@@ -25,6 +25,7 @@ type OauthRequestCache struct {
 }
 
 type OauthResponseCache struct {
+	AppID             string        `json:"appId"`             // retruned in callback url
 	Code              string        `json:"code"`              // retruned in callback url
 	OauthConnectionID string        `json:"oauthConnectionId"` // retruned in callback url as state
 	Token             *oauth2.Token `json:"token"`             // genertated token from code

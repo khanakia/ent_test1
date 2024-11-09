@@ -15,61 +15,19 @@ import (
 	"saas/pkg/handler/handlertypes"
 	"saas/pkg/middleware"
 	"saas/pkg/middleware/appmiddleware"
-	"saas/pkg/oauth/oauthconnectionfn"
-	"saas/pkg/oauth/oauthuserinfo"
 
 	"github.com/spf13/cast"
-	"github.com/ubgo/goutil"
 )
 
 // AuthLoginViaOauth is the resolver for the authLoginViaOauth field.
 func (r *mutationResolver) AuthLoginViaOauth(ctx context.Context, cacheID string) (*handlertypes.LoginResponse, error) {
 	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
 
-	// panic(fmt.Errorf("not implemented: AuthLoginViaOauth - authLoginViaOauth"))
-	oauthRespCacheAny := r.Plugin.Cache.Get(cacheID)
-	// goutil.PrintToJSON(oauthRespCacheAny)
-
-	var oauthRespCache oauthconnectionfn.OauthResponseCache
-	err := util.InterfaceToStruct(oauthRespCacheAny, &oauthRespCache)
-
-	if err != nil {
-		fmt.Println(err)
-		return nil, fmt.Errorf("something went wrong")
-	}
-
-	goutil.PrintToJSON(oauthRespCache)
-	// oauth2.StaticTokenSource()
-
-	oauth2Token, err := oauthconnectionfn.OauthTokenFromResponseCache(oauthRespCache)
-
-	if err != nil {
-		fmt.Println(err)
-		return nil, fmt.Errorf("something went wrong")
-	}
-	goutil.PrintToJSON(oauth2Token)
-
-	// tokenSource := oauth2.StaticTokenSource(oauth2Token)
-
-	userinfo, err := oauthuserinfo.UserInfoGet(oauthRespCache.Provider, oauth2Token)
-	goutil.PrintToJSON(userinfo)
-
-	if err != nil {
-		fmt.Println(err)
-		return nil, fmt.Errorf("something went wrong")
-	}
-	// return nil, nil
-
-	user, session, err := authfn.Login(authfn.LoginParams{
-		AppID: app.ID,
-		Email: userinfo.Email,
-	}, false, r.Plugin.EntDB.Client())
+	user, session, err := handlerfn.OauthLoginOrRegisterHandler(ctx, app.ID, cacheID, app.OauthSigninCanSignup, r.Plugin.EntDB.Client(), r.Plugin.Cache)
 
 	if err != nil {
 		return nil, util.ErrorToGqlError(err, ctx)
 	}
-
-	r.Plugin.Cache.Del(cacheID)
 
 	return &handlertypes.LoginResponse{
 		Token: session.ID,
@@ -79,7 +37,18 @@ func (r *mutationResolver) AuthLoginViaOauth(ctx context.Context, cacheID string
 
 // AuthRegisterViaOauth is the resolver for the authRegisterViaOauth field.
 func (r *mutationResolver) AuthRegisterViaOauth(ctx context.Context, cacheID string) (*handlertypes.LoginResponse, error) {
-	panic(fmt.Errorf("not implemented: AuthRegisterViaOauth - authRegisterViaOauth"))
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	user, session, err := handlerfn.OauthLoginOrRegisterHandler(ctx, app.ID, cacheID, true, r.Plugin.EntDB.Client(), r.Plugin.Cache)
+
+	if err != nil {
+		return nil, util.ErrorToGqlError(err, ctx)
+	}
+
+	return &handlertypes.LoginResponse{
+		Token: session.ID,
+		Me:    user,
+	}, err
 }
 
 // AuthRegister is the resolver for the authRegister field.
@@ -123,6 +92,10 @@ func (r *mutationResolver) AuthRegisterVerify(ctx context.Context, input handler
 // AuthLogin is the resolver for the authLogin field.
 func (r *mutationResolver) AuthLogin(ctx context.Context, input authfn.LoginParams) (*handlertypes.LoginResponse, error) {
 	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	if !app.AuthEnablePasswordLogin {
+		return nil, fmt.Errorf("password login is not enabled for this app")
+	}
 
 	input.AppID = app.ID
 

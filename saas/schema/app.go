@@ -37,7 +37,14 @@ func (App) Fields() []ent.Field {
 		field.Text("auth_verification_templ_id").Optional(),  // email template for auth register verification
 
 		// if enabled then user must verify their email otherwise not
-		field.Text("auth_email_verify").Optional(),
+		field.Bool("auth_email_verify").Optional().Default(true),
+
+		// allow new user to registere if not found during Oauth SignIn
+
+		field.Bool("oauth_signin_can_signup").Optional().Default(false),
+
+		// if disabled user cannot login with password they must use oauth or other method
+		field.Bool("auth_enable_password_login").Optional().Default(true),
 
 		field.String("admin_user_id").Optional(),
 	}

@@ -9,6 +9,7 @@ import (
 	"saas/gen/ent"
 	"saas/gen/ent/user"
 	"saas/pkg/appfn"
+	"saas/pkg/auth"
 	"saas/pkg/emailfn"
 	"strings"
 	"time"
@@ -48,7 +49,7 @@ func FindByEmail(appID, email string, client *ent.Client) (*ent.User, error) {
 	fmt.Println(err)
 
 	if ent.IsNotFound(err) {
-		return nil, errors.New("user not found")
+		return nil, err
 	}
 
 	if err != nil {
@@ -70,14 +71,13 @@ type RegisterInput struct {
 
 func RegisterValidate(userInput RegisterInput) error {
 	val := valgo.Is(
-		valgo.String(userInput.AppID, "appId").Not().Blank().OfLengthBetween(2, 20),
-		valgo.String(userInput.Email, "email").Not().Blank().OfLengthBetween(4, 20),
-		valgo.String(userInput.Password, "password").Not().Blank().OfLengthBetween(4, 20),
+		valgo.String(userInput.AppID, "appId").Not().Blank().OfLengthBetween(2, 100),
+		valgo.String(userInput.Email, "email").Not().Blank().OfLengthBetween(4, 100),
+		valgo.String(userInput.Password, "password").Not().Blank().OfLengthBetween(4, 100),
 		// valgo.Number(17, "age").GreaterThan(18),
 	)
 	if !val.Valid() {
-		out, _ := json.MarshalIndent(val.Error(), "", "  ")
-		fmt.Println(string(out))
+		json.MarshalIndent(val.Error(), "", "  ")
 		return val.Error()
 	}
 	return nil
@@ -114,6 +114,8 @@ func Register(userInput RegisterInput, client *ent.Client, ctx context.Context) 
 		SetPassword(hashed).
 		SetStatus(true).
 		SetWelcomeEmailSent(false)
+
+	auth.UserFillDefaults(creator.Mutation())
 
 	user, err := creator.Save(ctx)
 	if err != nil {

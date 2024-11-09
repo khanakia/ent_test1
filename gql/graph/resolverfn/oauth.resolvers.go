@@ -89,6 +89,7 @@ func (r *mutationResolver) OauthCallback(ctx context.Context, callbackURL string
 
 	uid := publicid.Must()
 	r.Plugin.Cache.Put(uid, oauthconnectionfn.OauthResponseCache{
+		AppID:             app.ID,
 		Code:              code,
 		OauthConnectionID: oauthReqCache.OauthConnectionID,
 		Token:             token,
