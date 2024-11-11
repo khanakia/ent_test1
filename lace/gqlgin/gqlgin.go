@@ -24,7 +24,6 @@ type Config struct {
 	Middleware       []gin.HandlerFunc
 	RouteGroupPrefix string
 	PlaygroundKey    string
-	// Resolver *resolverfn.Resolver
 }
 
 // Defining the Graphql handler
@@ -85,8 +84,6 @@ func New(config Config) Gql {
 
 	queryHandlers := append([]gin.HandlerFunc{
 		gqlgenfn.GinContextToContextMiddleware(),
-		// gqlgenfn.PlaygroundAccessMiddleware(config.PlaygroundKey),
-		// gqlgin.instrospectionMiddleware(config.GqlServer),
 	}, config.Middleware...)
 
 	rg.POST("/query", queryHandlers...)
