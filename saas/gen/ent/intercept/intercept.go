@@ -19,6 +19,7 @@ import (
 	"saas/gen/ent/poststatus"
 	"saas/gen/ent/posttag"
 	"saas/gen/ent/posttype"
+	"saas/gen/ent/posttypeform"
 	"saas/gen/ent/predicate"
 	"saas/gen/ent/session"
 	"saas/gen/ent/temp"
@@ -439,6 +440,33 @@ func (f TraversePostType) Traverse(ctx context.Context, q ent.Query) error {
 	return fmt.Errorf("unexpected query type %T. expect *ent.PostTypeQuery", q)
 }
 
+// The PostTypeFormFunc type is an adapter to allow the use of ordinary function as a Querier.
+type PostTypeFormFunc func(context.Context, *ent.PostTypeFormQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f PostTypeFormFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.PostTypeFormQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.PostTypeFormQuery", q)
+}
+
+// The TraversePostTypeForm type is an adapter to allow the use of ordinary function as Traverser.
+type TraversePostTypeForm func(context.Context, *ent.PostTypeFormQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraversePostTypeForm) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraversePostTypeForm) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.PostTypeFormQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.PostTypeFormQuery", q)
+}
+
 // The SessionFunc type is an adapter to allow the use of ordinary function as a Querier.
 type SessionFunc func(context.Context, *ent.SessionQuery) (ent.Value, error)
 
@@ -684,6 +712,8 @@ func NewQuery(q ent.Query) (Query, error) {
 		return &query[*ent.PostTagQuery, predicate.PostTag, posttag.OrderOption]{typ: ent.TypePostTag, tq: q}, nil
 	case *ent.PostTypeQuery:
 		return &query[*ent.PostTypeQuery, predicate.PostType, posttype.OrderOption]{typ: ent.TypePostType, tq: q}, nil
+	case *ent.PostTypeFormQuery:
+		return &query[*ent.PostTypeFormQuery, predicate.PostTypeForm, posttypeform.OrderOption]{typ: ent.TypePostTypeForm, tq: q}, nil
 	case *ent.SessionQuery:
 		return &query[*ent.SessionQuery, predicate.Session, session.OrderOption]{typ: ent.TypeSession, tq: q}, nil
 	case *ent.TempQuery:

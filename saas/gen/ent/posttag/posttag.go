@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -27,8 +28,6 @@ const (
 	FieldStatus = "status"
 	// FieldExcerpt holds the string denoting the excerpt field in the database.
 	FieldExcerpt = "excerpt"
-	// FieldContent holds the string denoting the content field in the database.
-	FieldContent = "content"
 	// FieldMetaTitle holds the string denoting the meta_title field in the database.
 	FieldMetaTitle = "meta_title"
 	// FieldMetaDescr holds the string denoting the meta_descr field in the database.
@@ -37,8 +36,15 @@ const (
 	FieldMetaCanonicalURL = "meta_canonical_url"
 	// FieldMetaRobots holds the string denoting the meta_robots field in the database.
 	FieldMetaRobots = "meta_robots"
+	// EdgePosts holds the string denoting the posts edge name in mutations.
+	EdgePosts = "posts"
 	// Table holds the table name of the posttag in the database.
 	Table = "post_tags"
+	// PostsTable is the table that holds the posts relation/edge. The primary key declared below.
+	PostsTable = "post_tag_posts"
+	// PostsInverseTable is the table name for the Post entity.
+	// It exists in this package in order to avoid circular dependency with the "post" package.
+	PostsInverseTable = "posts"
 )
 
 // Columns holds all SQL columns for posttag fields.
@@ -51,12 +57,17 @@ var Columns = []string{
 	FieldSlug,
 	FieldStatus,
 	FieldExcerpt,
-	FieldContent,
 	FieldMetaTitle,
 	FieldMetaDescr,
 	FieldMetaCanonicalURL,
 	FieldMetaRobots,
 }
+
+var (
+	// PostsPrimaryKey and PostsColumn2 are the table columns denoting the
+	// primary key for the posts relation (M2M).
+	PostsPrimaryKey = []string{"post_tag_id", "post_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -122,11 +133,6 @@ func ByExcerpt(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldExcerpt, opts...).ToFunc()
 }
 
-// ByContent orders the results by the content field.
-func ByContent(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldContent, opts...).ToFunc()
-}
-
 // ByMetaTitle orders the results by the meta_title field.
 func ByMetaTitle(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMetaTitle, opts...).ToFunc()
@@ -145,4 +151,25 @@ func ByMetaCanonicalURL(opts ...sql.OrderTermOption) OrderOption {
 // ByMetaRobots orders the results by the meta_robots field.
 func ByMetaRobots(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldMetaRobots, opts...).ToFunc()
+}
+
+// ByPostsCount orders the results by posts count.
+func ByPostsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newPostsStep(), opts...)
+	}
+}
+
+// ByPosts orders the results by posts terms.
+func ByPosts(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newPostsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newPostsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(PostsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, PostsTable, PostsPrimaryKey...),
+	)
 }

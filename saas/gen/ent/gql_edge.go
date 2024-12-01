@@ -88,6 +88,18 @@ func (po *Post) PrimaryCategory(ctx context.Context) (*PostCategory, error) {
 	return result, MaskNotFound(err)
 }
 
+func (po *Post) PostTags(ctx context.Context) (result []*PostTag, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = po.NamedPostTags(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = po.Edges.PostTagsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = po.QueryPostTags().All(ctx)
+	}
+	return result, err
+}
+
 func (pc *PostCategory) Posts(ctx context.Context) (result []*Post, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
 		result, err = pc.NamedPosts(graphql.GetFieldContext(ctx).Field.Alias)
@@ -120,6 +132,18 @@ func (ps *PostStatus) Posts(ctx context.Context) (result []*Post, err error) {
 	return result, err
 }
 
+func (pt *PostTag) Posts(ctx context.Context) (result []*Post, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = pt.NamedPosts(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = pt.Edges.PostsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = pt.QueryPosts().All(ctx)
+	}
+	return result, err
+}
+
 func (pt *PostType) Posts(ctx context.Context) (result []*Post, err error) {
 	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
 		result, err = pt.NamedPosts(graphql.GetFieldContext(ctx).Field.Alias)
@@ -142,6 +166,26 @@ func (pt *PostType) PostStatuses(ctx context.Context) (result []*PostStatus, err
 		result, err = pt.QueryPostStatuses().All(ctx)
 	}
 	return result, err
+}
+
+func (pt *PostType) PostTypeForms(ctx context.Context) (result []*PostTypeForm, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = pt.NamedPostTypeForms(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = pt.Edges.PostTypeFormsOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = pt.QueryPostTypeForms().All(ctx)
+	}
+	return result, err
+}
+
+func (ptf *PostTypeForm) PostType(ctx context.Context) (*PostType, error) {
+	result, err := ptf.Edges.PostTypeOrErr()
+	if IsNotLoaded(err) {
+		result, err = ptf.QueryPostType().Only(ctx)
+	}
+	return result, MaskNotFound(err)
 }
 
 func (t *Todo) Children(ctx context.Context) (result []*Todo, err error) {

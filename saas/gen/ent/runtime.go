@@ -16,6 +16,7 @@ import (
 	"saas/gen/ent/poststatus"
 	"saas/gen/ent/posttag"
 	"saas/gen/ent/posttype"
+	"saas/gen/ent/posttypeform"
 	"saas/gen/ent/session"
 	"saas/gen/ent/temp"
 	"saas/gen/ent/templ"
@@ -331,6 +332,25 @@ func init() {
 	posttypeDescID := posttypeMixinFields0[0].Descriptor()
 	// posttype.DefaultID holds the default value on creation for the id field.
 	posttype.DefaultID = posttypeDescID.Default.(func() string)
+	posttypeformMixin := schema.PostTypeForm{}.Mixin()
+	posttypeformMixinFields0 := posttypeformMixin[0].Fields()
+	_ = posttypeformMixinFields0
+	posttypeformFields := schema.PostTypeForm{}.Fields()
+	_ = posttypeformFields
+	// posttypeformDescCreatedAt is the schema descriptor for created_at field.
+	posttypeformDescCreatedAt := posttypeformMixinFields0[1].Descriptor()
+	// posttypeform.DefaultCreatedAt holds the default value on creation for the created_at field.
+	posttypeform.DefaultCreatedAt = posttypeformDescCreatedAt.Default.(func() time.Time)
+	// posttypeformDescUpdatedAt is the schema descriptor for updated_at field.
+	posttypeformDescUpdatedAt := posttypeformMixinFields0[2].Descriptor()
+	// posttypeform.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	posttypeform.DefaultUpdatedAt = posttypeformDescUpdatedAt.Default.(func() time.Time)
+	// posttypeform.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	posttypeform.UpdateDefaultUpdatedAt = posttypeformDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// posttypeformDescID is the schema descriptor for id field.
+	posttypeformDescID := posttypeformMixinFields0[0].Descriptor()
+	// posttypeform.DefaultID holds the default value on creation for the id field.
+	posttypeform.DefaultID = posttypeformDescID.Default.(func() string)
 	sessionMixin := schema.Session{}.Mixin()
 	sessionMixinFields0 := sessionMixin[0].Fields()
 	_ = sessionMixinFields0

@@ -1021,6 +1021,29 @@ func HasPostStatusesWith(preds ...predicate.PostStatus) predicate.PostType {
 	})
 }
 
+// HasPostTypeForms applies the HasEdge predicate on the "post_type_forms" edge.
+func HasPostTypeForms() predicate.PostType {
+	return predicate.PostType(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, PostTypeFormsTable, PostTypeFormsColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPostTypeFormsWith applies the HasEdge predicate on the "post_type_forms" edge with a given conditions (other predicates).
+func HasPostTypeFormsWith(preds ...predicate.PostTypeForm) predicate.PostType {
+	return predicate.PostType(func(s *sql.Selector) {
+		step := newPostTypeFormsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.PostType) predicate.PostType {
 	return predicate.PostType(sql.AndPredicates(predicates...))

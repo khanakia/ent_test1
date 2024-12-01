@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"encoding/json"
 	"fmt"
 	"saas/gen/ent/post"
 	"saas/gen/ent/postcategory"
@@ -50,6 +51,8 @@ type Post struct {
 	MetaCanonicalURL string `json:"meta_canonical_url,omitempty"`
 	// MetaRobots holds the value of the "meta_robots" field.
 	MetaRobots string `json:"meta_robots,omitempty"`
+	// Custom holds the value of the "custom" field.
+	Custom map[string]interface{} `json:"custom,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the PostQuery when eager-loading is set.
 	Edges        PostEdges `json:"edges"`
@@ -64,11 +67,15 @@ type PostEdges struct {
 	PostType *PostType `json:"post_type,omitempty"`
 	// PrimaryCategory holds the value of the primary_category edge.
 	PrimaryCategory *PostCategory `json:"primary_category,omitempty"`
+	// PostTags holds the value of the post_tags edge.
+	PostTags []*PostTag `json:"post_tags,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [3]bool
+	loadedTypes [4]bool
 	// totalCount holds the count of the edges above.
-	totalCount [3]map[string]int
+	totalCount [4]map[string]int
+
+	namedPostTags map[string][]*PostTag
 }
 
 // PostStatusOrErr returns the PostStatus value or an error if the edge
@@ -110,11 +117,22 @@ func (e PostEdges) PrimaryCategoryOrErr() (*PostCategory, error) {
 	return nil, &NotLoadedError{edge: "primary_category"}
 }
 
+// PostTagsOrErr returns the PostTags value or an error if the edge
+// was not loaded in eager-loading.
+func (e PostEdges) PostTagsOrErr() ([]*PostTag, error) {
+	if e.loadedTypes[3] {
+		return e.PostTags, nil
+	}
+	return nil, &NotLoadedError{edge: "post_tags"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*Post) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
+		case post.FieldCustom:
+			values[i] = new([]byte)
 		case post.FieldID, post.FieldAppID, post.FieldName, post.FieldSlug, post.FieldPostStatusID, post.FieldPostTypeID, post.FieldPrimaryCategoryID, post.FieldHeadline, post.FieldExcerpt, post.FieldContent, post.FieldMetaTitle, post.FieldMetaDescr, post.FieldMetaCanonicalURL, post.FieldMetaRobots:
 			values[i] = new(sql.NullString)
 		case post.FieldCreatedAt, post.FieldUpdatedAt:
@@ -230,6 +248,14 @@ func (po *Post) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				po.MetaRobots = value.String
 			}
+		case post.FieldCustom:
+			if value, ok := values[i].(*[]byte); !ok {
+				return fmt.Errorf("unexpected type %T for field custom", values[i])
+			} else if value != nil && len(*value) > 0 {
+				if err := json.Unmarshal(*value, &po.Custom); err != nil {
+					return fmt.Errorf("unmarshal field custom: %w", err)
+				}
+			}
 		default:
 			po.selectValues.Set(columns[i], values[i])
 		}
@@ -256,6 +282,11 @@ func (po *Post) QueryPostType() *PostTypeQuery {
 // QueryPrimaryCategory queries the "primary_category" edge of the Post entity.
 func (po *Post) QueryPrimaryCategory() *PostCategoryQuery {
 	return NewPostClient(po.config).QueryPrimaryCategory(po)
+}
+
+// QueryPostTags queries the "post_tags" edge of the Post entity.
+func (po *Post) QueryPostTags() *PostTagQuery {
+	return NewPostClient(po.config).QueryPostTags(po)
 }
 
 // Update returns a builder for updating this Post.
@@ -325,8 +356,35 @@ func (po *Post) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("meta_robots=")
 	builder.WriteString(po.MetaRobots)
+	builder.WriteString(", ")
+	builder.WriteString("custom=")
+	builder.WriteString(fmt.Sprintf("%v", po.Custom))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedPostTags returns the PostTags named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (po *Post) NamedPostTags(name string) ([]*PostTag, error) {
+	if po.Edges.namedPostTags == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := po.Edges.namedPostTags[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (po *Post) appendNamedPostTags(name string, edges ...*PostTag) {
+	if po.Edges.namedPostTags == nil {
+		po.Edges.namedPostTags = make(map[string][]*PostTag)
+	}
+	if len(edges) == 0 {
+		po.Edges.namedPostTags[name] = []*PostTag{}
+	} else {
+		po.Edges.namedPostTags[name] = append(po.Edges.namedPostTags[name], edges...)
+	}
 }
 
 // Posts is a parsable slice of Post.

@@ -53,14 +53,17 @@ type PostTypeEdges struct {
 	Posts []*Post `json:"posts,omitempty"`
 	// PostStatuses holds the value of the post_statuses edge.
 	PostStatuses []*PostStatus `json:"post_statuses,omitempty"`
+	// PostTypeForms holds the value of the post_type_forms edge.
+	PostTypeForms []*PostTypeForm `json:"post_type_forms,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
+	loadedTypes [3]bool
 	// totalCount holds the count of the edges above.
-	totalCount [2]map[string]int
+	totalCount [3]map[string]int
 
-	namedPosts        map[string][]*Post
-	namedPostStatuses map[string][]*PostStatus
+	namedPosts         map[string][]*Post
+	namedPostStatuses  map[string][]*PostStatus
+	namedPostTypeForms map[string][]*PostTypeForm
 }
 
 // PostsOrErr returns the Posts value or an error if the edge
@@ -79,6 +82,15 @@ func (e PostTypeEdges) PostStatusesOrErr() ([]*PostStatus, error) {
 		return e.PostStatuses, nil
 	}
 	return nil, &NotLoadedError{edge: "post_statuses"}
+}
+
+// PostTypeFormsOrErr returns the PostTypeForms value or an error if the edge
+// was not loaded in eager-loading.
+func (e PostTypeEdges) PostTypeFormsOrErr() ([]*PostTypeForm, error) {
+	if e.loadedTypes[2] {
+		return e.PostTypeForms, nil
+	}
+	return nil, &NotLoadedError{edge: "post_type_forms"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -206,6 +218,11 @@ func (pt *PostType) QueryPostStatuses() *PostStatusQuery {
 	return NewPostTypeClient(pt.config).QueryPostStatuses(pt)
 }
 
+// QueryPostTypeForms queries the "post_type_forms" edge of the PostType entity.
+func (pt *PostType) QueryPostTypeForms() *PostTypeFormQuery {
+	return NewPostTypeClient(pt.config).QueryPostTypeForms(pt)
+}
+
 // Update returns a builder for updating this PostType.
 // Note that you need to call PostType.Unwrap() before calling this method if this PostType
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -313,6 +330,30 @@ func (pt *PostType) appendNamedPostStatuses(name string, edges ...*PostStatus) {
 		pt.Edges.namedPostStatuses[name] = []*PostStatus{}
 	} else {
 		pt.Edges.namedPostStatuses[name] = append(pt.Edges.namedPostStatuses[name], edges...)
+	}
+}
+
+// NamedPostTypeForms returns the PostTypeForms named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (pt *PostType) NamedPostTypeForms(name string) ([]*PostTypeForm, error) {
+	if pt.Edges.namedPostTypeForms == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := pt.Edges.namedPostTypeForms[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (pt *PostType) appendNamedPostTypeForms(name string, edges ...*PostTypeForm) {
+	if pt.Edges.namedPostTypeForms == nil {
+		pt.Edges.namedPostTypeForms = make(map[string][]*PostTypeForm)
+	}
+	if len(edges) == 0 {
+		pt.Edges.namedPostTypeForms[name] = []*PostTypeForm{}
+	} else {
+		pt.Edges.namedPostTypeForms[name] = append(pt.Edges.namedPostTypeForms[name], edges...)
 	}
 }
 

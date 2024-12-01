@@ -3,6 +3,7 @@
 package ent
 
 import (
+	"lace/jsonslice"
 	"saas/gen/ent/todo"
 	"time"
 )
@@ -642,9 +643,11 @@ type CreatePostInput struct {
 	MetaDescr         *string
 	MetaCanonicalURL  *string
 	MetaRobots        *string
+	Custom            map[string]interface{}
 	PostStatusID      *string
 	PostTypeID        *string
 	PrimaryCategoryID *string
+	PostTagIDs        []string
 }
 
 // Mutate applies the CreatePostInput on the PostMutation builder.
@@ -682,6 +685,9 @@ func (i *CreatePostInput) Mutate(m *PostMutation) {
 	if v := i.MetaRobots; v != nil {
 		m.SetMetaRobots(*v)
 	}
+	if v := i.Custom; v != nil {
+		m.SetCustom(v)
+	}
 	if v := i.PostStatusID; v != nil {
 		m.SetPostStatusID(*v)
 	}
@@ -690,6 +696,9 @@ func (i *CreatePostInput) Mutate(m *PostMutation) {
 	}
 	if v := i.PrimaryCategoryID; v != nil {
 		m.SetPrimaryCategoryID(*v)
+	}
+	if v := i.PostTagIDs; len(v) > 0 {
+		m.AddPostTagIDs(v...)
 	}
 }
 
@@ -723,12 +732,17 @@ type UpdatePostInput struct {
 	MetaCanonicalURL      *string
 	ClearMetaRobots       bool
 	MetaRobots            *string
+	ClearCustom           bool
+	Custom                map[string]interface{}
 	ClearPostStatus       bool
 	PostStatusID          *string
 	ClearPostType         bool
 	PostTypeID            *string
 	ClearPrimaryCategory  bool
 	PrimaryCategoryID     *string
+	ClearPostTags         bool
+	AddPostTagIDs         []string
+	RemovePostTagIDs      []string
 }
 
 // Mutate applies the UpdatePostInput on the PostMutation builder.
@@ -799,6 +813,12 @@ func (i *UpdatePostInput) Mutate(m *PostMutation) {
 	if v := i.MetaRobots; v != nil {
 		m.SetMetaRobots(*v)
 	}
+	if i.ClearCustom {
+		m.ClearCustom()
+	}
+	if v := i.Custom; v != nil {
+		m.SetCustom(v)
+	}
 	if i.ClearPostStatus {
 		m.ClearPostStatus()
 	}
@@ -816,6 +836,15 @@ func (i *UpdatePostInput) Mutate(m *PostMutation) {
 	}
 	if v := i.PrimaryCategoryID; v != nil {
 		m.SetPrimaryCategoryID(*v)
+	}
+	if i.ClearPostTags {
+		m.ClearPostTags()
+	}
+	if v := i.AddPostTagIDs; len(v) > 0 {
+		m.AddPostTagIDs(v...)
+	}
+	if v := i.RemovePostTagIDs; len(v) > 0 {
+		m.RemovePostTagIDs(v...)
 	}
 }
 
@@ -1119,6 +1148,176 @@ func (c *PostStatusUpdateOne) SetInput(i UpdatePostStatusInput) *PostStatusUpdat
 	return c
 }
 
+// CreatePostTagInput represents a mutation input for creating posttags.
+type CreatePostTagInput struct {
+	CreatedAt        *time.Time
+	UpdatedAt        *time.Time
+	Name             *string
+	Slug             *string
+	Status           *string
+	Excerpt          *string
+	MetaTitle        *string
+	MetaDescr        *string
+	MetaCanonicalURL *string
+	MetaRobots       *string
+	PostIDs          []string
+}
+
+// Mutate applies the CreatePostTagInput on the PostTagMutation builder.
+func (i *CreatePostTagInput) Mutate(m *PostTagMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if v := i.Slug; v != nil {
+		m.SetSlug(*v)
+	}
+	if v := i.Status; v != nil {
+		m.SetStatus(*v)
+	}
+	if v := i.Excerpt; v != nil {
+		m.SetExcerpt(*v)
+	}
+	if v := i.MetaTitle; v != nil {
+		m.SetMetaTitle(*v)
+	}
+	if v := i.MetaDescr; v != nil {
+		m.SetMetaDescr(*v)
+	}
+	if v := i.MetaCanonicalURL; v != nil {
+		m.SetMetaCanonicalURL(*v)
+	}
+	if v := i.MetaRobots; v != nil {
+		m.SetMetaRobots(*v)
+	}
+	if v := i.PostIDs; len(v) > 0 {
+		m.AddPostIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the CreatePostTagInput on the PostTagCreate builder.
+func (c *PostTagCreate) SetInput(i CreatePostTagInput) *PostTagCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdatePostTagInput represents a mutation input for updating posttags.
+type UpdatePostTagInput struct {
+	ClearUpdatedAt        bool
+	UpdatedAt             *time.Time
+	ClearAppID            bool
+	AppID                 *string
+	ClearName             bool
+	Name                  *string
+	ClearSlug             bool
+	Slug                  *string
+	ClearStatus           bool
+	Status                *string
+	ClearExcerpt          bool
+	Excerpt               *string
+	ClearMetaTitle        bool
+	MetaTitle             *string
+	ClearMetaDescr        bool
+	MetaDescr             *string
+	ClearMetaCanonicalURL bool
+	MetaCanonicalURL      *string
+	ClearMetaRobots       bool
+	MetaRobots            *string
+	ClearPosts            bool
+	AddPostIDs            []string
+	RemovePostIDs         []string
+}
+
+// Mutate applies the UpdatePostTagInput on the PostTagMutation builder.
+func (i *UpdatePostTagInput) Mutate(m *PostTagMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearAppID {
+		m.ClearAppID()
+	}
+	if v := i.AppID; v != nil {
+		m.SetAppID(*v)
+	}
+	if i.ClearName {
+		m.ClearName()
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if i.ClearSlug {
+		m.ClearSlug()
+	}
+	if v := i.Slug; v != nil {
+		m.SetSlug(*v)
+	}
+	if i.ClearStatus {
+		m.ClearStatus()
+	}
+	if v := i.Status; v != nil {
+		m.SetStatus(*v)
+	}
+	if i.ClearExcerpt {
+		m.ClearExcerpt()
+	}
+	if v := i.Excerpt; v != nil {
+		m.SetExcerpt(*v)
+	}
+	if i.ClearMetaTitle {
+		m.ClearMetaTitle()
+	}
+	if v := i.MetaTitle; v != nil {
+		m.SetMetaTitle(*v)
+	}
+	if i.ClearMetaDescr {
+		m.ClearMetaDescr()
+	}
+	if v := i.MetaDescr; v != nil {
+		m.SetMetaDescr(*v)
+	}
+	if i.ClearMetaCanonicalURL {
+		m.ClearMetaCanonicalURL()
+	}
+	if v := i.MetaCanonicalURL; v != nil {
+		m.SetMetaCanonicalURL(*v)
+	}
+	if i.ClearMetaRobots {
+		m.ClearMetaRobots()
+	}
+	if v := i.MetaRobots; v != nil {
+		m.SetMetaRobots(*v)
+	}
+	if i.ClearPosts {
+		m.ClearPosts()
+	}
+	if v := i.AddPostIDs; len(v) > 0 {
+		m.AddPostIDs(v...)
+	}
+	if v := i.RemovePostIDs; len(v) > 0 {
+		m.RemovePostIDs(v...)
+	}
+}
+
+// SetInput applies the change-set in the UpdatePostTagInput on the PostTagUpdate builder.
+func (c *PostTagUpdate) SetInput(i UpdatePostTagInput) *PostTagUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdatePostTagInput on the PostTagUpdateOne builder.
+func (c *PostTagUpdateOne) SetInput(i UpdatePostTagInput) *PostTagUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
 // CreatePostTypeInput represents a mutation input for creating posttypes.
 type CreatePostTypeInput struct {
 	CreatedAt        *time.Time
@@ -1281,6 +1480,116 @@ func (c *PostTypeUpdate) SetInput(i UpdatePostTypeInput) *PostTypeUpdate {
 
 // SetInput applies the change-set in the UpdatePostTypeInput on the PostTypeUpdateOne builder.
 func (c *PostTypeUpdateOne) SetInput(i UpdatePostTypeInput) *PostTypeUpdateOne {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// CreatePostTypeFormInput represents a mutation input for creating posttypeforms.
+type CreatePostTypeFormInput struct {
+	CreatedAt  *time.Time
+	UpdatedAt  *time.Time
+	Name       *string
+	Status     *bool
+	Body       jsonslice.JsonSlice
+	PostTypeID *string
+}
+
+// Mutate applies the CreatePostTypeFormInput on the PostTypeFormMutation builder.
+func (i *CreatePostTypeFormInput) Mutate(m *PostTypeFormMutation) {
+	if v := i.CreatedAt; v != nil {
+		m.SetCreatedAt(*v)
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if v := i.Status; v != nil {
+		m.SetStatus(*v)
+	}
+	if v := i.Body; v != nil {
+		m.SetBody(v)
+	}
+	if v := i.PostTypeID; v != nil {
+		m.SetPostTypeID(*v)
+	}
+}
+
+// SetInput applies the change-set in the CreatePostTypeFormInput on the PostTypeFormCreate builder.
+func (c *PostTypeFormCreate) SetInput(i CreatePostTypeFormInput) *PostTypeFormCreate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// UpdatePostTypeFormInput represents a mutation input for updating posttypeforms.
+type UpdatePostTypeFormInput struct {
+	ClearUpdatedAt bool
+	UpdatedAt      *time.Time
+	ClearAppID     bool
+	AppID          *string
+	ClearName      bool
+	Name           *string
+	ClearStatus    bool
+	Status         *bool
+	ClearBody      bool
+	Body           jsonslice.JsonSlice
+	AppendBody     jsonslice.JsonSlice
+	ClearPostType  bool
+	PostTypeID     *string
+}
+
+// Mutate applies the UpdatePostTypeFormInput on the PostTypeFormMutation builder.
+func (i *UpdatePostTypeFormInput) Mutate(m *PostTypeFormMutation) {
+	if i.ClearUpdatedAt {
+		m.ClearUpdatedAt()
+	}
+	if v := i.UpdatedAt; v != nil {
+		m.SetUpdatedAt(*v)
+	}
+	if i.ClearAppID {
+		m.ClearAppID()
+	}
+	if v := i.AppID; v != nil {
+		m.SetAppID(*v)
+	}
+	if i.ClearName {
+		m.ClearName()
+	}
+	if v := i.Name; v != nil {
+		m.SetName(*v)
+	}
+	if i.ClearStatus {
+		m.ClearStatus()
+	}
+	if v := i.Status; v != nil {
+		m.SetStatus(*v)
+	}
+	if i.ClearBody {
+		m.ClearBody()
+	}
+	if v := i.Body; v != nil {
+		m.SetBody(v)
+	}
+	if i.AppendBody != nil {
+		m.AppendBody(i.Body)
+	}
+	if i.ClearPostType {
+		m.ClearPostType()
+	}
+	if v := i.PostTypeID; v != nil {
+		m.SetPostTypeID(*v)
+	}
+}
+
+// SetInput applies the change-set in the UpdatePostTypeFormInput on the PostTypeFormUpdate builder.
+func (c *PostTypeFormUpdate) SetInput(i UpdatePostTypeFormInput) *PostTypeFormUpdate {
+	i.Mutate(c.Mutation())
+	return c
+}
+
+// SetInput applies the change-set in the UpdatePostTypeFormInput on the PostTypeFormUpdateOne builder.
+func (c *PostTypeFormUpdateOne) SetInput(i UpdatePostTypeFormInput) *PostTypeFormUpdateOne {
 	i.Mutate(c.Mutation())
 	return c
 }

@@ -14,6 +14,7 @@ import (
 	"saas/gen/ent/poststatus"
 	"saas/gen/ent/posttag"
 	"saas/gen/ent/posttype"
+	"saas/gen/ent/posttypeform"
 	"saas/gen/ent/templ"
 	"saas/gen/ent/todo"
 	"saas/gen/ent/user"
@@ -75,6 +76,11 @@ var posttypeImplementors = []string{"PostType", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
 func (*PostType) IsNode() {}
+
+var posttypeformImplementors = []string{"PostTypeForm", "Node"}
+
+// IsNode implements the Node interface check for GQLGen.
+func (*PostTypeForm) IsNode() {}
 
 var templImplementors = []string{"Templ", "Node"}
 
@@ -241,6 +247,15 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			Where(posttype.ID(id))
 		if fc := graphql.GetFieldContext(ctx); fc != nil {
 			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, posttypeImplementors...); err != nil {
+				return nil, err
+			}
+		}
+		return query.Only(ctx)
+	case posttypeform.Table:
+		query := c.PostTypeForm.Query().
+			Where(posttypeform.ID(id))
+		if fc := graphql.GetFieldContext(ctx); fc != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, posttypeformImplementors...); err != nil {
 				return nil, err
 			}
 		}
@@ -504,6 +519,22 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		query := c.PostType.Query().
 			Where(posttype.IDIn(ids...))
 		query, err := query.CollectFields(ctx, posttypeImplementors...)
+		if err != nil {
+			return nil, err
+		}
+		nodes, err := query.All(ctx)
+		if err != nil {
+			return nil, err
+		}
+		for _, node := range nodes {
+			for _, noder := range idmap[node.ID] {
+				*noder = node
+			}
+		}
+	case posttypeform.Table:
+		query := c.PostTypeForm.Query().
+			Where(posttypeform.IDIn(ids...))
+		query, err := query.CollectFields(ctx, posttypeformImplementors...)
 		if err != nil {
 			return nil, err
 		}

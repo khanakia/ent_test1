@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"saas/gen/ent/post"
 	"saas/gen/ent/posttag"
 	"time"
 
@@ -121,20 +122,6 @@ func (ptc *PostTagCreate) SetNillableExcerpt(s *string) *PostTagCreate {
 	return ptc
 }
 
-// SetContent sets the "content" field.
-func (ptc *PostTagCreate) SetContent(s string) *PostTagCreate {
-	ptc.mutation.SetContent(s)
-	return ptc
-}
-
-// SetNillableContent sets the "content" field if the given value is not nil.
-func (ptc *PostTagCreate) SetNillableContent(s *string) *PostTagCreate {
-	if s != nil {
-		ptc.SetContent(*s)
-	}
-	return ptc
-}
-
 // SetMetaTitle sets the "meta_title" field.
 func (ptc *PostTagCreate) SetMetaTitle(s string) *PostTagCreate {
 	ptc.mutation.SetMetaTitle(s)
@@ -203,6 +190,21 @@ func (ptc *PostTagCreate) SetNillableID(s *string) *PostTagCreate {
 		ptc.SetID(*s)
 	}
 	return ptc
+}
+
+// AddPostIDs adds the "posts" edge to the Post entity by IDs.
+func (ptc *PostTagCreate) AddPostIDs(ids ...string) *PostTagCreate {
+	ptc.mutation.AddPostIDs(ids...)
+	return ptc
+}
+
+// AddPosts adds the "posts" edges to the Post entity.
+func (ptc *PostTagCreate) AddPosts(p ...*Post) *PostTagCreate {
+	ids := make([]string, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptc.AddPostIDs(ids...)
 }
 
 // Mutation returns the PostTagMutation object of the builder.
@@ -320,10 +322,6 @@ func (ptc *PostTagCreate) createSpec() (*PostTag, *sqlgraph.CreateSpec) {
 		_spec.SetField(posttag.FieldExcerpt, field.TypeString, value)
 		_node.Excerpt = value
 	}
-	if value, ok := ptc.mutation.Content(); ok {
-		_spec.SetField(posttag.FieldContent, field.TypeString, value)
-		_node.Content = value
-	}
 	if value, ok := ptc.mutation.MetaTitle(); ok {
 		_spec.SetField(posttag.FieldMetaTitle, field.TypeString, value)
 		_node.MetaTitle = value
@@ -339,6 +337,22 @@ func (ptc *PostTagCreate) createSpec() (*PostTag, *sqlgraph.CreateSpec) {
 	if value, ok := ptc.mutation.MetaRobots(); ok {
 		_spec.SetField(posttag.FieldMetaRobots, field.TypeString, value)
 		_node.MetaRobots = value
+	}
+	if nodes := ptc.mutation.PostsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   posttag.PostsTable,
+			Columns: posttag.PostsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(post.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }
@@ -497,24 +511,6 @@ func (u *PostTagUpsert) UpdateExcerpt() *PostTagUpsert {
 // ClearExcerpt clears the value of the "excerpt" field.
 func (u *PostTagUpsert) ClearExcerpt() *PostTagUpsert {
 	u.SetNull(posttag.FieldExcerpt)
-	return u
-}
-
-// SetContent sets the "content" field.
-func (u *PostTagUpsert) SetContent(v string) *PostTagUpsert {
-	u.Set(posttag.FieldContent, v)
-	return u
-}
-
-// UpdateContent sets the "content" field to the value that was provided on create.
-func (u *PostTagUpsert) UpdateContent() *PostTagUpsert {
-	u.SetExcluded(posttag.FieldContent)
-	return u
-}
-
-// ClearContent clears the value of the "content" field.
-func (u *PostTagUpsert) ClearContent() *PostTagUpsert {
-	u.SetNull(posttag.FieldContent)
 	return u
 }
 
@@ -764,27 +760,6 @@ func (u *PostTagUpsertOne) UpdateExcerpt() *PostTagUpsertOne {
 func (u *PostTagUpsertOne) ClearExcerpt() *PostTagUpsertOne {
 	return u.Update(func(s *PostTagUpsert) {
 		s.ClearExcerpt()
-	})
-}
-
-// SetContent sets the "content" field.
-func (u *PostTagUpsertOne) SetContent(v string) *PostTagUpsertOne {
-	return u.Update(func(s *PostTagUpsert) {
-		s.SetContent(v)
-	})
-}
-
-// UpdateContent sets the "content" field to the value that was provided on create.
-func (u *PostTagUpsertOne) UpdateContent() *PostTagUpsertOne {
-	return u.Update(func(s *PostTagUpsert) {
-		s.UpdateContent()
-	})
-}
-
-// ClearContent clears the value of the "content" field.
-func (u *PostTagUpsertOne) ClearContent() *PostTagUpsertOne {
-	return u.Update(func(s *PostTagUpsert) {
-		s.ClearContent()
 	})
 }
 
@@ -1213,27 +1188,6 @@ func (u *PostTagUpsertBulk) UpdateExcerpt() *PostTagUpsertBulk {
 func (u *PostTagUpsertBulk) ClearExcerpt() *PostTagUpsertBulk {
 	return u.Update(func(s *PostTagUpsert) {
 		s.ClearExcerpt()
-	})
-}
-
-// SetContent sets the "content" field.
-func (u *PostTagUpsertBulk) SetContent(v string) *PostTagUpsertBulk {
-	return u.Update(func(s *PostTagUpsert) {
-		s.SetContent(v)
-	})
-}
-
-// UpdateContent sets the "content" field to the value that was provided on create.
-func (u *PostTagUpsertBulk) UpdateContent() *PostTagUpsertBulk {
-	return u.Update(func(s *PostTagUpsert) {
-		s.UpdateContent()
-	})
-}
-
-// ClearContent clears the value of the "content" field.
-func (u *PostTagUpsertBulk) ClearContent() *PostTagUpsertBulk {
-	return u.Update(func(s *PostTagUpsert) {
-		s.ClearContent()
 	})
 }
 

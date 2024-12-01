@@ -9,6 +9,7 @@ import (
 	"saas/gen/ent/post"
 	"saas/gen/ent/poststatus"
 	"saas/gen/ent/posttype"
+	"saas/gen/ent/posttypeform"
 	"time"
 
 	"entgo.io/ent/dialect"
@@ -237,6 +238,21 @@ func (ptc *PostTypeCreate) AddPostStatuses(p ...*PostStatus) *PostTypeCreate {
 	return ptc.AddPostStatusIDs(ids...)
 }
 
+// AddPostTypeFormIDs adds the "post_type_forms" edge to the PostTypeForm entity by IDs.
+func (ptc *PostTypeCreate) AddPostTypeFormIDs(ids ...string) *PostTypeCreate {
+	ptc.mutation.AddPostTypeFormIDs(ids...)
+	return ptc
+}
+
+// AddPostTypeForms adds the "post_type_forms" edges to the PostTypeForm entity.
+func (ptc *PostTypeCreate) AddPostTypeForms(p ...*PostTypeForm) *PostTypeCreate {
+	ids := make([]string, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptc.AddPostTypeFormIDs(ids...)
+}
+
 // Mutation returns the PostTypeMutation object of the builder.
 func (ptc *PostTypeCreate) Mutation() *PostTypeMutation {
 	return ptc.mutation
@@ -406,6 +422,22 @@ func (ptc *PostTypeCreate) createSpec() (*PostType, *sqlgraph.CreateSpec) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(poststatus.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ptc.mutation.PostTypeFormsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   posttype.PostTypeFormsTable,
+			Columns: []string{posttype.PostTypeFormsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(posttypeform.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

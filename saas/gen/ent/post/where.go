@@ -1215,6 +1215,16 @@ func MetaRobotsContainsFold(v string) predicate.Post {
 	return predicate.Post(sql.FieldContainsFold(FieldMetaRobots, v))
 }
 
+// CustomIsNil applies the IsNil predicate on the "custom" field.
+func CustomIsNil() predicate.Post {
+	return predicate.Post(sql.FieldIsNull(FieldCustom))
+}
+
+// CustomNotNil applies the NotNil predicate on the "custom" field.
+func CustomNotNil() predicate.Post {
+	return predicate.Post(sql.FieldNotNull(FieldCustom))
+}
+
 // HasPostStatus applies the HasEdge predicate on the "post_status" edge.
 func HasPostStatus() predicate.Post {
 	return predicate.Post(func(s *sql.Selector) {
@@ -1276,6 +1286,29 @@ func HasPrimaryCategory() predicate.Post {
 func HasPrimaryCategoryWith(preds ...predicate.PostCategory) predicate.Post {
 	return predicate.Post(func(s *sql.Selector) {
 		step := newPrimaryCategoryStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasPostTags applies the HasEdge predicate on the "post_tags" edge.
+func HasPostTags() predicate.Post {
+	return predicate.Post(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, PostTagsTable, PostTagsPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPostTagsWith applies the HasEdge predicate on the "post_tags" edge with a given conditions (other predicates).
+func HasPostTagsWith(preds ...predicate.PostTag) predicate.Post {
+	return predicate.Post(func(s *sql.Selector) {
+		step := newPostTagsStep()
 		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
 			for _, p := range preds {
 				p(s)

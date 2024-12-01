@@ -48,7 +48,7 @@ var (
 		{Name: "site_url", Type: field.TypeString, Nullable: true},
 		{Name: "auth_email_verify", Type: field.TypeBool, Nullable: true, Default: true},
 		{Name: "oauth_signin_can_signup", Type: field.TypeBool, Nullable: true, Default: false},
-		{Name: "auth_enable_password_login", Type: field.TypeBool, Nullable: true, Default: false},
+		{Name: "auth_enable_password_login", Type: field.TypeBool, Nullable: true, Default: true},
 		{Name: "admin_user_id", Type: field.TypeString, Nullable: true},
 		{Name: "default_mail_conn_id", Type: field.TypeString, Nullable: true},
 		{Name: "mail_layout_templ_id", Type: field.TypeString, Nullable: true},
@@ -240,6 +240,7 @@ var (
 		{Name: "meta_descr", Type: field.TypeString, Nullable: true},
 		{Name: "meta_canonical_url", Type: field.TypeString, Nullable: true},
 		{Name: "meta_robots", Type: field.TypeString, Nullable: true},
+		{Name: "custom", Type: field.TypeJSON, Nullable: true},
 		{Name: "primary_category_id", Type: field.TypeString, Nullable: true},
 		{Name: "post_status_id", Type: field.TypeString, Nullable: true},
 		{Name: "post_type_id", Type: field.TypeString, Nullable: true},
@@ -252,19 +253,19 @@ var (
 		ForeignKeys: []*schema.ForeignKey{
 			{
 				Symbol:     "posts_post_categories_posts",
-				Columns:    []*schema.Column{PostsColumns[13]},
+				Columns:    []*schema.Column{PostsColumns[14]},
 				RefColumns: []*schema.Column{PostCategoriesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "posts_post_status_posts",
-				Columns:    []*schema.Column{PostsColumns[14]},
+				Columns:    []*schema.Column{PostsColumns[15]},
 				RefColumns: []*schema.Column{PostStatusColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 			{
 				Symbol:     "posts_post_types_posts",
-				Columns:    []*schema.Column{PostsColumns[15]},
+				Columns:    []*schema.Column{PostsColumns[16]},
 				RefColumns: []*schema.Column{PostTypesColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
@@ -334,7 +335,6 @@ var (
 		{Name: "slug", Type: field.TypeString, Nullable: true},
 		{Name: "status", Type: field.TypeString, Nullable: true},
 		{Name: "excerpt", Type: field.TypeString, Nullable: true},
-		{Name: "content", Type: field.TypeString, Nullable: true, Size: 2147483647},
 		{Name: "meta_title", Type: field.TypeString, Nullable: true},
 		{Name: "meta_descr", Type: field.TypeString, Nullable: true},
 		{Name: "meta_canonical_url", Type: field.TypeString, Nullable: true},
@@ -345,6 +345,13 @@ var (
 		Name:       "post_tags",
 		Columns:    PostTagsColumns,
 		PrimaryKey: []*schema.Column{PostTagsColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "posttag_app_id_slug",
+				Unique:  true,
+				Columns: []*schema.Column{PostTagsColumns[3], PostTagsColumns[5]},
+			},
+		},
 	}
 	// PostTypesColumns holds the columns for the "post_types" table.
 	PostTypesColumns = []*schema.Column{
@@ -372,6 +379,31 @@ var (
 				Name:    "posttype_app_id_slug",
 				Unique:  true,
 				Columns: []*schema.Column{PostTypesColumns[3], PostTypesColumns[5]},
+			},
+		},
+	}
+	// PostTypeFormsColumns holds the columns for the "post_type_forms" table.
+	PostTypeFormsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "app_id", Type: field.TypeString, Nullable: true},
+		{Name: "name", Type: field.TypeString, Nullable: true},
+		{Name: "status", Type: field.TypeBool, Nullable: true},
+		{Name: "body", Type: field.TypeJSON, Nullable: true},
+		{Name: "post_type_id", Type: field.TypeString, Nullable: true},
+	}
+	// PostTypeFormsTable holds the schema information for the "post_type_forms" table.
+	PostTypeFormsTable = &schema.Table{
+		Name:       "post_type_forms",
+		Columns:    PostTypeFormsColumns,
+		PrimaryKey: []*schema.Column{PostTypeFormsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "post_type_forms_post_types_post_type_forms",
+				Columns:    []*schema.Column{PostTypeFormsColumns[7]},
+				RefColumns: []*schema.Column{PostTypesColumns[0]},
+				OnDelete:   schema.SetNull,
 			},
 		},
 	}
@@ -582,6 +614,31 @@ var (
 			},
 		},
 	}
+	// PostTagPostsColumns holds the columns for the "post_tag_posts" table.
+	PostTagPostsColumns = []*schema.Column{
+		{Name: "post_tag_id", Type: field.TypeString},
+		{Name: "post_id", Type: field.TypeString},
+	}
+	// PostTagPostsTable holds the schema information for the "post_tag_posts" table.
+	PostTagPostsTable = &schema.Table{
+		Name:       "post_tag_posts",
+		Columns:    PostTagPostsColumns,
+		PrimaryKey: []*schema.Column{PostTagPostsColumns[0], PostTagPostsColumns[1]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "post_tag_posts_post_tag_id",
+				Columns:    []*schema.Column{PostTagPostsColumns[0]},
+				RefColumns: []*schema.Column{PostTagsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+			{
+				Symbol:     "post_tag_posts_post_id",
+				Columns:    []*schema.Column{PostTagPostsColumns[1]},
+				RefColumns: []*schema.Column{PostsColumns[0]},
+				OnDelete:   schema.Cascade,
+			},
+		},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		AdminUsersTable,
@@ -597,6 +654,7 @@ var (
 		PostStatusTable,
 		PostTagsTable,
 		PostTypesTable,
+		PostTypeFormsTable,
 		SessionsTable,
 		TempsTable,
 		TemplsTable,
@@ -605,6 +663,7 @@ var (
 		WorkspacesTable,
 		WorkspaceInvitesTable,
 		WorkspaceUsersTable,
+		PostTagPostsTable,
 	}
 )
 
@@ -620,9 +679,12 @@ func init() {
 	PostsTable.ForeignKeys[1].RefTable = PostStatusTable
 	PostsTable.ForeignKeys[2].RefTable = PostTypesTable
 	PostStatusTable.ForeignKeys[0].RefTable = PostTypesTable
+	PostTypeFormsTable.ForeignKeys[0].RefTable = PostTypesTable
 	SessionsTable.ForeignKeys[0].RefTable = UsersTable
 	TodosTable.ForeignKeys[0].RefTable = TodosTable
 	WorkspaceInvitesTable.ForeignKeys[0].RefTable = WorkspacesTable
 	WorkspaceUsersTable.ForeignKeys[0].RefTable = UsersTable
 	WorkspaceUsersTable.ForeignKeys[1].RefTable = WorkspacesTable
+	PostTagPostsTable.ForeignKeys[0].RefTable = PostTagsTable
+	PostTagPostsTable.ForeignKeys[1].RefTable = PostsTable
 }

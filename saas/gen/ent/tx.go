@@ -40,6 +40,8 @@ type Tx struct {
 	PostTag *PostTagClient
 	// PostType is the client for interacting with the PostType builders.
 	PostType *PostTypeClient
+	// PostTypeForm is the client for interacting with the PostTypeForm builders.
+	PostTypeForm *PostTypeFormClient
 	// Session is the client for interacting with the Session builders.
 	Session *SessionClient
 	// Temp is the client for interacting with the Temp builders.
@@ -200,6 +202,7 @@ func (tx *Tx) init() {
 	tx.PostStatus = NewPostStatusClient(tx.config)
 	tx.PostTag = NewPostTagClient(tx.config)
 	tx.PostType = NewPostTypeClient(tx.config)
+	tx.PostTypeForm = NewPostTypeFormClient(tx.config)
 	tx.Session = NewSessionClient(tx.config)
 	tx.Temp = NewTempClient(tx.config)
 	tx.Templ = NewTemplClient(tx.config)

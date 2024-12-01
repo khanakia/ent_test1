@@ -173,7 +173,9 @@ type ComplexityRoot struct {
 		CreatePost            func(childComplexity int, input ent.CreatePostInput) int
 		CreatePostCategory    func(childComplexity int, input ent.CreatePostCategoryInput) int
 		CreatePostStatus      func(childComplexity int, input ent.CreatePostStatusInput) int
+		CreatePostTag         func(childComplexity int, input ent.CreatePostTagInput) int
 		CreatePostType        func(childComplexity int, input ent.CreatePostTypeInput) int
+		CreatePostTypeForm    func(childComplexity int, input ent.CreatePostTypeFormInput) int
 		CreateTempl           func(childComplexity int, input ent.CreateTemplInput) int
 		Ping                  func(childComplexity int) int
 		UpdateApp             func(childComplexity int, id string, input ent.UpdateAppInput) int
@@ -182,7 +184,9 @@ type ComplexityRoot struct {
 		UpdatePost            func(childComplexity int, id string, input ent.UpdatePostInput) int
 		UpdatePostCategory    func(childComplexity int, id string, input ent.UpdatePostCategoryInput) int
 		UpdatePostStatus      func(childComplexity int, id string, input ent.UpdatePostStatusInput) int
+		UpdatePostTag         func(childComplexity int, id string, input ent.UpdatePostTagInput) int
 		UpdatePostType        func(childComplexity int, id string, input ent.UpdatePostTypeInput) int
+		UpdatePostTypeForm    func(childComplexity int, id string, input ent.UpdatePostTypeFormInput) int
 		UpdateTempl           func(childComplexity int, id string, input ent.UpdateTemplInput) int
 	}
 
@@ -224,6 +228,7 @@ type ComplexityRoot struct {
 		AppID             func(childComplexity int) int
 		Content           func(childComplexity int) int
 		CreatedAt         func(childComplexity int) int
+		Custom            func(childComplexity int) int
 		Excerpt           func(childComplexity int) int
 		Headline          func(childComplexity int) int
 		ID                func(childComplexity int) int
@@ -234,6 +239,7 @@ type ComplexityRoot struct {
 		Name              func(childComplexity int) int
 		PostStatus        func(childComplexity int) int
 		PostStatusID      func(childComplexity int) int
+		PostTags          func(childComplexity int) int
 		PostType          func(childComplexity int) int
 		PostTypeID        func(childComplexity int) int
 		PrimaryCategory   func(childComplexity int) int
@@ -307,7 +313,6 @@ type ComplexityRoot struct {
 
 	PostTag struct {
 		AppID            func(childComplexity int) int
-		Content          func(childComplexity int) int
 		CreatedAt        func(childComplexity int) int
 		Excerpt          func(childComplexity int) int
 		ID               func(childComplexity int) int
@@ -316,9 +321,21 @@ type ComplexityRoot struct {
 		MetaRobots       func(childComplexity int) int
 		MetaTitle        func(childComplexity int) int
 		Name             func(childComplexity int) int
+		Posts            func(childComplexity int) int
 		Slug             func(childComplexity int) int
 		Status           func(childComplexity int) int
 		UpdatedAt        func(childComplexity int) int
+	}
+
+	PostTagConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	PostTagEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
 	}
 
 	PostType struct {
@@ -333,6 +350,7 @@ type ComplexityRoot struct {
 		MetaTitle        func(childComplexity int) int
 		Name             func(childComplexity int) int
 		PostStatuses     func(childComplexity int) int
+		PostTypeForms    func(childComplexity int) int
 		Posts            func(childComplexity int) int
 		Slug             func(childComplexity int) int
 		Status           func(childComplexity int) int
@@ -350,6 +368,29 @@ type ComplexityRoot struct {
 		Node   func(childComplexity int) int
 	}
 
+	PostTypeForm struct {
+		AppID      func(childComplexity int) int
+		Body       func(childComplexity int) int
+		CreatedAt  func(childComplexity int) int
+		ID         func(childComplexity int) int
+		Name       func(childComplexity int) int
+		PostType   func(childComplexity int) int
+		PostTypeID func(childComplexity int) int
+		Status     func(childComplexity int) int
+		UpdatedAt  func(childComplexity int) int
+	}
+
+	PostTypeFormConnection struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	PostTypeFormEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
 	Query struct {
 		Apps             func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.AppOrder, where *ent.AppWhereInput) int
 		MailConns        func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.MailConnOrder, where *ent.MailConnWhereInput) int
@@ -360,6 +401,8 @@ type ComplexityRoot struct {
 		Ping             func(childComplexity int) int
 		PostCategories   func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostCategoryOrder, where *ent.PostCategoryWhereInput) int
 		PostStatuses     func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostStatusOrder, where *ent.PostStatusWhereInput) int
+		PostTags         func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostTagOrder, where *ent.PostTagWhereInput) int
+		PostTypeForms    func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostTypeFormOrder, where *ent.PostTypeFormWhereInput) int
 		PostTypes        func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostTypeOrder, where *ent.PostTypeWhereInput) int
 		Posts            func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostOrder, where *ent.PostWhereInput) int
 		Templs           func(childComplexity int, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.TemplOrder, where *ent.TemplWhereInput) int
@@ -1232,6 +1275,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreatePostStatus(childComplexity, args["input"].(ent.CreatePostStatusInput)), true
 
+	case "Mutation.createPostTag":
+		if e.complexity.Mutation.CreatePostTag == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createPostTag_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreatePostTag(childComplexity, args["input"].(ent.CreatePostTagInput)), true
+
 	case "Mutation.createPostType":
 		if e.complexity.Mutation.CreatePostType == nil {
 			break
@@ -1243,6 +1298,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CreatePostType(childComplexity, args["input"].(ent.CreatePostTypeInput)), true
+
+	case "Mutation.createPostTypeForm":
+		if e.complexity.Mutation.CreatePostTypeForm == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createPostTypeForm_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreatePostTypeForm(childComplexity, args["input"].(ent.CreatePostTypeFormInput)), true
 
 	case "Mutation.createTempl":
 		if e.complexity.Mutation.CreateTempl == nil {
@@ -1335,6 +1402,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.UpdatePostStatus(childComplexity, args["id"].(string), args["input"].(ent.UpdatePostStatusInput)), true
 
+	case "Mutation.updatePostTag":
+		if e.complexity.Mutation.UpdatePostTag == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updatePostTag_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdatePostTag(childComplexity, args["id"].(string), args["input"].(ent.UpdatePostTagInput)), true
+
 	case "Mutation.updatePostType":
 		if e.complexity.Mutation.UpdatePostType == nil {
 			break
@@ -1346,6 +1425,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.UpdatePostType(childComplexity, args["id"].(string), args["input"].(ent.UpdatePostTypeInput)), true
+
+	case "Mutation.updatePostTypeForm":
+		if e.complexity.Mutation.UpdatePostTypeForm == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_updatePostTypeForm_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.UpdatePostTypeForm(childComplexity, args["id"].(string), args["input"].(ent.UpdatePostTypeFormInput)), true
 
 	case "Mutation.updateTempl":
 		if e.complexity.Mutation.UpdateTempl == nil {
@@ -1534,6 +1625,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Post.CreatedAt(childComplexity), true
 
+	case "Post.custom":
+		if e.complexity.Post.Custom == nil {
+			break
+		}
+
+		return e.complexity.Post.Custom(childComplexity), true
+
 	case "Post.excerpt":
 		if e.complexity.Post.Excerpt == nil {
 			break
@@ -1603,6 +1701,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Post.PostStatusID(childComplexity), true
+
+	case "Post.postTags":
+		if e.complexity.Post.PostTags == nil {
+			break
+		}
+
+		return e.complexity.Post.PostTags(childComplexity), true
 
 	case "Post.postType":
 		if e.complexity.Post.PostType == nil {
@@ -1926,13 +2031,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PostTag.AppID(childComplexity), true
 
-	case "PostTag.content":
-		if e.complexity.PostTag.Content == nil {
-			break
-		}
-
-		return e.complexity.PostTag.Content(childComplexity), true
-
 	case "PostTag.createdAt":
 		if e.complexity.PostTag.CreatedAt == nil {
 			break
@@ -1989,6 +2087,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PostTag.Name(childComplexity), true
 
+	case "PostTag.posts":
+		if e.complexity.PostTag.Posts == nil {
+			break
+		}
+
+		return e.complexity.PostTag.Posts(childComplexity), true
+
 	case "PostTag.slug":
 		if e.complexity.PostTag.Slug == nil {
 			break
@@ -2009,6 +2114,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PostTag.UpdatedAt(childComplexity), true
+
+	case "PostTagConnection.edges":
+		if e.complexity.PostTagConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.PostTagConnection.Edges(childComplexity), true
+
+	case "PostTagConnection.pageInfo":
+		if e.complexity.PostTagConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.PostTagConnection.PageInfo(childComplexity), true
+
+	case "PostTagConnection.totalCount":
+		if e.complexity.PostTagConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.PostTagConnection.TotalCount(childComplexity), true
+
+	case "PostTagEdge.cursor":
+		if e.complexity.PostTagEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.PostTagEdge.Cursor(childComplexity), true
+
+	case "PostTagEdge.node":
+		if e.complexity.PostTagEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.PostTagEdge.Node(childComplexity), true
 
 	case "PostType.appID":
 		if e.complexity.PostType.AppID == nil {
@@ -2087,6 +2227,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PostType.PostStatuses(childComplexity), true
 
+	case "PostType.postTypeForms":
+		if e.complexity.PostType.PostTypeForms == nil {
+			break
+		}
+
+		return e.complexity.PostType.PostTypeForms(childComplexity), true
+
 	case "PostType.posts":
 		if e.complexity.PostType.Posts == nil {
 			break
@@ -2149,6 +2296,104 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PostTypeEdge.Node(childComplexity), true
+
+	case "PostTypeForm.appID":
+		if e.complexity.PostTypeForm.AppID == nil {
+			break
+		}
+
+		return e.complexity.PostTypeForm.AppID(childComplexity), true
+
+	case "PostTypeForm.body":
+		if e.complexity.PostTypeForm.Body == nil {
+			break
+		}
+
+		return e.complexity.PostTypeForm.Body(childComplexity), true
+
+	case "PostTypeForm.createdAt":
+		if e.complexity.PostTypeForm.CreatedAt == nil {
+			break
+		}
+
+		return e.complexity.PostTypeForm.CreatedAt(childComplexity), true
+
+	case "PostTypeForm.id":
+		if e.complexity.PostTypeForm.ID == nil {
+			break
+		}
+
+		return e.complexity.PostTypeForm.ID(childComplexity), true
+
+	case "PostTypeForm.name":
+		if e.complexity.PostTypeForm.Name == nil {
+			break
+		}
+
+		return e.complexity.PostTypeForm.Name(childComplexity), true
+
+	case "PostTypeForm.postType":
+		if e.complexity.PostTypeForm.PostType == nil {
+			break
+		}
+
+		return e.complexity.PostTypeForm.PostType(childComplexity), true
+
+	case "PostTypeForm.postTypeID":
+		if e.complexity.PostTypeForm.PostTypeID == nil {
+			break
+		}
+
+		return e.complexity.PostTypeForm.PostTypeID(childComplexity), true
+
+	case "PostTypeForm.status":
+		if e.complexity.PostTypeForm.Status == nil {
+			break
+		}
+
+		return e.complexity.PostTypeForm.Status(childComplexity), true
+
+	case "PostTypeForm.updatedAt":
+		if e.complexity.PostTypeForm.UpdatedAt == nil {
+			break
+		}
+
+		return e.complexity.PostTypeForm.UpdatedAt(childComplexity), true
+
+	case "PostTypeFormConnection.edges":
+		if e.complexity.PostTypeFormConnection.Edges == nil {
+			break
+		}
+
+		return e.complexity.PostTypeFormConnection.Edges(childComplexity), true
+
+	case "PostTypeFormConnection.pageInfo":
+		if e.complexity.PostTypeFormConnection.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.PostTypeFormConnection.PageInfo(childComplexity), true
+
+	case "PostTypeFormConnection.totalCount":
+		if e.complexity.PostTypeFormConnection.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.PostTypeFormConnection.TotalCount(childComplexity), true
+
+	case "PostTypeFormEdge.cursor":
+		if e.complexity.PostTypeFormEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.PostTypeFormEdge.Cursor(childComplexity), true
+
+	case "PostTypeFormEdge.node":
+		if e.complexity.PostTypeFormEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.PostTypeFormEdge.Node(childComplexity), true
 
 	case "Query.apps":
 		if e.complexity.Query.Apps == nil {
@@ -2252,6 +2497,30 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.PostStatuses(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].([]*ent.PostStatusOrder), args["where"].(*ent.PostStatusWhereInput)), true
+
+	case "Query.postTags":
+		if e.complexity.Query.PostTags == nil {
+			break
+		}
+
+		args, err := ec.field_Query_postTags_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.PostTags(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].([]*ent.PostTagOrder), args["where"].(*ent.PostTagWhereInput)), true
+
+	case "Query.postTypeForms":
+		if e.complexity.Query.PostTypeForms == nil {
+			break
+		}
+
+		args, err := ec.field_Query_postTypeForms_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.PostTypeForms(childComplexity, args["after"].(*entgql.Cursor[string]), args["first"].(*int), args["before"].(*entgql.Cursor[string]), args["last"].(*int), args["orderBy"].([]*ent.PostTypeFormOrder), args["where"].(*ent.PostTypeFormWhereInput)), true
 
 	case "Query.postTypes":
 		if e.complexity.Query.PostTypes == nil {
@@ -3009,6 +3278,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCreatePostCategoryInput,
 		ec.unmarshalInputCreatePostInput,
 		ec.unmarshalInputCreatePostStatusInput,
+		ec.unmarshalInputCreatePostTagInput,
+		ec.unmarshalInputCreatePostTypeFormInput,
 		ec.unmarshalInputCreatePostTypeInput,
 		ec.unmarshalInputCreateTemplInput,
 		ec.unmarshalInputCreateTodoInput,
@@ -3030,6 +3301,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputPostStatusWhereInput,
 		ec.unmarshalInputPostTagOrder,
 		ec.unmarshalInputPostTagWhereInput,
+		ec.unmarshalInputPostTypeFormOrder,
+		ec.unmarshalInputPostTypeFormWhereInput,
 		ec.unmarshalInputPostTypeOrder,
 		ec.unmarshalInputPostTypeWhereInput,
 		ec.unmarshalInputPostWhereInput,
@@ -3043,6 +3316,8 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputUpdatePostCategoryInput,
 		ec.unmarshalInputUpdatePostInput,
 		ec.unmarshalInputUpdatePostStatusInput,
+		ec.unmarshalInputUpdatePostTagInput,
+		ec.unmarshalInputUpdatePostTypeFormInput,
 		ec.unmarshalInputUpdatePostTypeInput,
 		ec.unmarshalInputUpdateTemplInput,
 		ec.unmarshalInputUpdateTodoInput,
@@ -3192,6 +3467,10 @@ extend type Mutation {
   updatePostCategory(id: ID!, input: UpdatePostCategoryInput!): PostCategory! @canApp
   createPost(input: CreatePostInput!): Post! @canApp
   updatePost(id: ID!, input: UpdatePostInput!): Post! @canApp
+  createPostTag(input: CreatePostTagInput!): PostTag! @canApp
+  updatePostTag(id: ID!, input: UpdatePostTagInput!): PostTag! @canApp
+  createPostTypeForm(input: CreatePostTypeFormInput!): PostTypeForm! @canApp
+  updatePostTypeForm(id: ID!, input: UpdatePostTypeFormInput!): PostTypeForm! @canApp
 }
 `, BuiltIn: false},
 	{Name: "../ent.graphql", Input: `directive @goField(forceResolver: Boolean, name: String, omittable: Boolean) on FIELD_DEFINITION | INPUT_FIELD_DEFINITION
@@ -3783,9 +4062,11 @@ input CreatePostInput {
   metaDescr: String
   metaCanonicalURL: String
   metaRobots: String
+  custom: Map
   postStatusID: ID
   postTypeID: ID
   primaryCategoryID: ID
+  postTagIDs: [ID!]
 }
 """
 CreatePostStatusInput is used for create PostStatus object.
@@ -3797,6 +4078,35 @@ input CreatePostStatusInput {
   name: String
   slug: String
   status: Boolean
+  postTypeID: ID
+}
+"""
+CreatePostTagInput is used for create PostTag object.
+Input was generated by ent.
+"""
+input CreatePostTagInput {
+  createdAt: Time
+  updatedAt: Time
+  name: String
+  slug: String
+  status: String
+  excerpt: String
+  metaTitle: String
+  metaDescr: String
+  metaCanonicalURL: String
+  metaRobots: String
+  postIDs: [ID!]
+}
+"""
+CreatePostTypeFormInput is used for create PostTypeForm object.
+Input was generated by ent.
+"""
+input CreatePostTypeFormInput {
+  createdAt: Time
+  updatedAt: Time
+  name: String
+  status: Boolean
+  body: JsonSlice
   postTypeID: ID
 }
 """
@@ -4933,9 +5243,11 @@ type Post implements Node {
   metaDescr: String
   metaCanonicalURL: String
   metaRobots: String
+  custom: Map
   postStatus: PostStatus
   postType: PostType
   primaryCategory: PostCategory
+  postTags: [PostTag!]
 }
 type PostCategory implements Node {
   id: ID!
@@ -5494,11 +5806,41 @@ type PostTag implements Node {
   slug: String
   status: String
   excerpt: String
-  content: String
   metaTitle: String
   metaDescr: String
   metaCanonicalURL: String
   metaRobots: String
+  posts: [Post!]
+}
+"""
+A connection to a list of items.
+"""
+type PostTagConnection {
+  """
+  A list of edges.
+  """
+  edges: [PostTagEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type PostTagEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: PostTag
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
 }
 """
 Ordering options for PostTag connections
@@ -5657,24 +5999,6 @@ input PostTagWhereInput {
   excerptEqualFold: String
   excerptContainsFold: String
   """
-  content field predicates
-  """
-  content: String
-  contentNEQ: String
-  contentIn: [String!]
-  contentNotIn: [String!]
-  contentGT: String
-  contentGTE: String
-  contentLT: String
-  contentLTE: String
-  contentContains: String
-  contentHasPrefix: String
-  contentHasSuffix: String
-  contentIsNil: Boolean
-  contentNotNil: Boolean
-  contentEqualFold: String
-  contentContainsFold: String
-  """
   meta_title field predicates
   """
   metaTitle: String
@@ -5746,6 +6070,11 @@ input PostTagWhereInput {
   metaRobotsNotNil: Boolean
   metaRobotsEqualFold: String
   metaRobotsContainsFold: String
+  """
+  posts edge predicates
+  """
+  hasPosts: Boolean
+  hasPostsWith: [PostWhereInput!]
 }
 type PostType implements Node {
   id: ID!
@@ -5763,6 +6092,7 @@ type PostType implements Node {
   metaRobots: String
   posts: [Post!]
   postStatuses: [PostStatus!]
+  postTypeForms: [PostTypeForm!]
 }
 """
 A connection to a list of items.
@@ -5793,6 +6123,183 @@ type PostTypeEdge {
   A cursor for use in pagination.
   """
   cursor: Cursor!
+}
+type PostTypeForm implements Node {
+  id: ID!
+  createdAt: Time
+  updatedAt: Time
+  appID: String
+  name: String
+  status: Boolean
+  postTypeID: ID
+  body: JsonSlice
+  postType: PostType
+}
+"""
+A connection to a list of items.
+"""
+type PostTypeFormConnection {
+  """
+  A list of edges.
+  """
+  edges: [PostTypeFormEdge]
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
+  """
+  Identifies the total count of items in the connection.
+  """
+  totalCount: Int!
+}
+"""
+An edge in a connection.
+"""
+type PostTypeFormEdge {
+  """
+  The item at the end of the edge.
+  """
+  node: PostTypeForm
+  """
+  A cursor for use in pagination.
+  """
+  cursor: Cursor!
+}
+"""
+Ordering options for PostTypeForm connections
+"""
+input PostTypeFormOrder {
+  """
+  The ordering direction.
+  """
+  direction: OrderDirection! = ASC
+  """
+  The field by which to order PostTypeForms.
+  """
+  field: PostTypeFormOrderField!
+}
+"""
+Properties by which PostTypeForm connections can be ordered.
+"""
+enum PostTypeFormOrderField {
+  CREATED_AT
+  NAME
+  STATUS
+  POST_TYPE_NAME
+}
+"""
+PostTypeFormWhereInput is used for filtering PostTypeForm objects.
+Input was generated by ent.
+"""
+input PostTypeFormWhereInput {
+  not: PostTypeFormWhereInput
+  and: [PostTypeFormWhereInput!]
+  or: [PostTypeFormWhereInput!]
+  """
+  id field predicates
+  """
+  id: ID
+  idNEQ: ID
+  idIn: [ID!]
+  idNotIn: [ID!]
+  idGT: ID
+  idGTE: ID
+  idLT: ID
+  idLTE: ID
+  idEqualFold: ID
+  idContainsFold: ID
+  """
+  created_at field predicates
+  """
+  createdAt: Time
+  createdAtNEQ: Time
+  createdAtIn: [Time!]
+  createdAtNotIn: [Time!]
+  createdAtGT: Time
+  createdAtGTE: Time
+  createdAtLT: Time
+  createdAtLTE: Time
+  createdAtIsNil: Boolean
+  createdAtNotNil: Boolean
+  """
+  updated_at field predicates
+  """
+  updatedAt: Time
+  updatedAtNEQ: Time
+  updatedAtIn: [Time!]
+  updatedAtNotIn: [Time!]
+  updatedAtGT: Time
+  updatedAtGTE: Time
+  updatedAtLT: Time
+  updatedAtLTE: Time
+  updatedAtIsNil: Boolean
+  updatedAtNotNil: Boolean
+  """
+  app_id field predicates
+  """
+  appID: String
+  appIDNEQ: String
+  appIDIn: [String!]
+  appIDNotIn: [String!]
+  appIDGT: String
+  appIDGTE: String
+  appIDLT: String
+  appIDLTE: String
+  appIDContains: String
+  appIDHasPrefix: String
+  appIDHasSuffix: String
+  appIDIsNil: Boolean
+  appIDNotNil: Boolean
+  appIDEqualFold: String
+  appIDContainsFold: String
+  """
+  name field predicates
+  """
+  name: String
+  nameNEQ: String
+  nameIn: [String!]
+  nameNotIn: [String!]
+  nameGT: String
+  nameGTE: String
+  nameLT: String
+  nameLTE: String
+  nameContains: String
+  nameHasPrefix: String
+  nameHasSuffix: String
+  nameIsNil: Boolean
+  nameNotNil: Boolean
+  nameEqualFold: String
+  nameContainsFold: String
+  """
+  status field predicates
+  """
+  status: Boolean
+  statusNEQ: Boolean
+  statusIsNil: Boolean
+  statusNotNil: Boolean
+  """
+  post_type_id field predicates
+  """
+  postTypeID: ID
+  postTypeIDNEQ: ID
+  postTypeIDIn: [ID!]
+  postTypeIDNotIn: [ID!]
+  postTypeIDGT: ID
+  postTypeIDGTE: ID
+  postTypeIDLT: ID
+  postTypeIDLTE: ID
+  postTypeIDContains: ID
+  postTypeIDHasPrefix: ID
+  postTypeIDHasSuffix: ID
+  postTypeIDIsNil: Boolean
+  postTypeIDNotNil: Boolean
+  postTypeIDEqualFold: ID
+  postTypeIDContainsFold: ID
+  """
+  post_type edge predicates
+  """
+  hasPostType: Boolean
+  hasPostTypeWith: [PostTypeWhereInput!]
 }
 """
 Ordering options for PostType connections
@@ -6052,6 +6559,11 @@ input PostTypeWhereInput {
   """
   hasPostStatuses: Boolean
   hasPostStatusesWith: [PostStatusWhereInput!]
+  """
+  post_type_forms edge predicates
+  """
+  hasPostTypeForms: Boolean
+  hasPostTypeFormsWith: [PostTypeFormWhereInput!]
 }
 """
 PostWhereInput is used for filtering Post objects.
@@ -6349,6 +6861,11 @@ input PostWhereInput {
   """
   hasPrimaryCategory: Boolean
   hasPrimaryCategoryWith: [PostCategoryWhereInput!]
+  """
+  post_tags edge predicates
+  """
+  hasPostTags: Boolean
+  hasPostTagsWith: [PostTagWhereInput!]
 }
 type Query {
   """
@@ -6586,6 +7103,37 @@ type Query {
     """
     where: PostStatusWhereInput
   ): PostStatusConnection! @canApp
+  postTags(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for PostTags returned from the connection.
+    """
+    orderBy: [PostTagOrder!]
+
+    """
+    Filtering options for PostTags returned from the connection.
+    """
+    where: PostTagWhereInput
+  ): PostTagConnection! @canApp
   postTypes(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -6617,6 +7165,37 @@ type Query {
     """
     where: PostTypeWhereInput
   ): PostTypeConnection! @canApp
+  postTypeForms(
+    """
+    Returns the elements in the list that come after the specified cursor.
+    """
+    after: Cursor
+
+    """
+    Returns the first _n_ elements from the list.
+    """
+    first: Int
+
+    """
+    Returns the elements in the list that come before the specified cursor.
+    """
+    before: Cursor
+
+    """
+    Returns the last _n_ elements from the list.
+    """
+    last: Int
+
+    """
+    Ordering options for PostTypeForms returned from the connection.
+    """
+    orderBy: [PostTypeFormOrder!]
+
+    """
+    Filtering options for PostTypeForms returned from the connection.
+    """
+    where: PostTypeFormWhereInput
+  ): PostTypeFormConnection! @canApp
   templs(
     """
     Returns the elements in the list that come after the specified cursor.
@@ -7332,12 +7911,17 @@ input UpdatePostInput {
   clearMetaCanonicalURL: Boolean
   metaRobots: String
   clearMetaRobots: Boolean
+  custom: Map
+  clearCustom: Boolean
   postStatusID: ID
   clearPostStatus: Boolean
   postTypeID: ID
   clearPostType: Boolean
   primaryCategoryID: ID
   clearPrimaryCategory: Boolean
+  addPostTagIDs: [ID!]
+  removePostTagIDs: [ID!]
+  clearPostTags: Boolean
 }
 """
 UpdatePostStatusInput is used for update PostStatus object.
@@ -7354,6 +7938,54 @@ input UpdatePostStatusInput {
   clearSlug: Boolean
   status: Boolean
   clearStatus: Boolean
+  postTypeID: ID
+  clearPostType: Boolean
+}
+"""
+UpdatePostTagInput is used for update PostTag object.
+Input was generated by ent.
+"""
+input UpdatePostTagInput {
+  updatedAt: Time
+  clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
+  name: String
+  clearName: Boolean
+  slug: String
+  clearSlug: Boolean
+  status: String
+  clearStatus: Boolean
+  excerpt: String
+  clearExcerpt: Boolean
+  metaTitle: String
+  clearMetaTitle: Boolean
+  metaDescr: String
+  clearMetaDescr: Boolean
+  metaCanonicalURL: String
+  clearMetaCanonicalURL: Boolean
+  metaRobots: String
+  clearMetaRobots: Boolean
+  addPostIDs: [ID!]
+  removePostIDs: [ID!]
+  clearPosts: Boolean
+}
+"""
+UpdatePostTypeFormInput is used for update PostTypeForm object.
+Input was generated by ent.
+"""
+input UpdatePostTypeFormInput {
+  updatedAt: Time
+  clearUpdatedAt: Boolean
+  appID: String
+  clearAppID: Boolean
+  name: String
+  clearName: Boolean
+  status: Boolean
+  clearStatus: Boolean
+  body: JsonSlice
+  appendBody: JsonSlice
+  clearBody: Boolean
   postTypeID: ID
   clearPostType: Boolean
 }
@@ -8358,6 +8990,7 @@ scalar Uint
 scalar Uint64
 scalar Map
 scalar JSON
+scalar JsonSlice
 
 type Student {
   name: String!

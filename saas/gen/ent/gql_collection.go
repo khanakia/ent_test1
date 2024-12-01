@@ -13,6 +13,7 @@ import (
 	"saas/gen/ent/poststatus"
 	"saas/gen/ent/posttag"
 	"saas/gen/ent/posttype"
+	"saas/gen/ent/posttypeform"
 	"saas/gen/ent/templ"
 	"saas/gen/ent/todo"
 	"saas/gen/ent/user"
@@ -885,6 +886,19 @@ func (po *PostQuery) collectField(ctx context.Context, oneNode bool, opCtx *grap
 				selectedFields = append(selectedFields, post.FieldPrimaryCategoryID)
 				fieldSeen[post.FieldPrimaryCategoryID] = struct{}{}
 			}
+
+		case "postTags":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&PostTagClient{config: po.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, posttagImplementors)...); err != nil {
+				return err
+			}
+			po.WithNamedPostTags(alias, func(wq *PostTagQuery) {
+				*wq = *query
+			})
 		case "createdAt":
 			if _, ok := fieldSeen[post.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, post.FieldCreatedAt)
@@ -959,6 +973,11 @@ func (po *PostQuery) collectField(ctx context.Context, oneNode bool, opCtx *grap
 			if _, ok := fieldSeen[post.FieldMetaRobots]; !ok {
 				selectedFields = append(selectedFields, post.FieldMetaRobots)
 				fieldSeen[post.FieldMetaRobots] = struct{}{}
+			}
+		case "custom":
+			if _, ok := fieldSeen[post.FieldCustom]; !ok {
+				selectedFields = append(selectedFields, post.FieldCustom)
+				fieldSeen[post.FieldCustom] = struct{}{}
 			}
 		case "id":
 		case "__typename":
@@ -1366,6 +1385,19 @@ func (pt *PostTagQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+
+		case "posts":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&PostClient{config: pt.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, postImplementors)...); err != nil {
+				return err
+			}
+			pt.WithNamedPosts(alias, func(wq *PostQuery) {
+				*wq = *query
+			})
 		case "createdAt":
 			if _, ok := fieldSeen[posttag.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, posttag.FieldCreatedAt)
@@ -1400,11 +1432,6 @@ func (pt *PostTagQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 			if _, ok := fieldSeen[posttag.FieldExcerpt]; !ok {
 				selectedFields = append(selectedFields, posttag.FieldExcerpt)
 				fieldSeen[posttag.FieldExcerpt] = struct{}{}
-			}
-		case "content":
-			if _, ok := fieldSeen[posttag.FieldContent]; !ok {
-				selectedFields = append(selectedFields, posttag.FieldContent)
-				fieldSeen[posttag.FieldContent] = struct{}{}
 			}
 		case "metaTitle":
 			if _, ok := fieldSeen[posttag.FieldMetaTitle]; !ok {
@@ -1463,24 +1490,30 @@ func newPostTagPaginateArgs(rv map[string]any) *posttagPaginateArgs {
 	}
 	if v, ok := rv[orderByField]; ok {
 		switch v := v.(type) {
-		case map[string]any:
-			var (
-				err1, err2 error
-				order      = &PostTagOrder{Field: &PostTagOrderField{}, Direction: entgql.OrderDirectionAsc}
-			)
-			if d, ok := v[directionField]; ok {
-				err1 = order.Direction.UnmarshalGQL(d)
+		case []*PostTagOrder:
+			args.opts = append(args.opts, WithPostTagOrder(v))
+		case []any:
+			var orders []*PostTagOrder
+			for i := range v {
+				mv, ok := v[i].(map[string]any)
+				if !ok {
+					continue
+				}
+				var (
+					err1, err2 error
+					order      = &PostTagOrder{Field: &PostTagOrderField{}, Direction: entgql.OrderDirectionAsc}
+				)
+				if d, ok := mv[directionField]; ok {
+					err1 = order.Direction.UnmarshalGQL(d)
+				}
+				if f, ok := mv[fieldField]; ok {
+					err2 = order.Field.UnmarshalGQL(f)
+				}
+				if err1 == nil && err2 == nil {
+					orders = append(orders, order)
+				}
 			}
-			if f, ok := v[fieldField]; ok {
-				err2 = order.Field.UnmarshalGQL(f)
-			}
-			if err1 == nil && err2 == nil {
-				args.opts = append(args.opts, WithPostTagOrder(order))
-			}
-		case *PostTagOrder:
-			if v != nil {
-				args.opts = append(args.opts, WithPostTagOrder(v))
-			}
+			args.opts = append(args.opts, WithPostTagOrder(orders))
 		}
 	}
 	if v, ok := rv[whereField].(*PostTagWhereInput); ok {
@@ -1534,6 +1567,19 @@ func (pt *PostTypeQuery) collectField(ctx context.Context, oneNode bool, opCtx *
 				return err
 			}
 			pt.WithNamedPostStatuses(alias, func(wq *PostStatusQuery) {
+				*wq = *query
+			})
+
+		case "postTypeForms":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&PostTypeFormClient{config: pt.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, posttypeformImplementors)...); err != nil {
+				return err
+			}
+			pt.WithNamedPostTypeForms(alias, func(wq *PostTypeFormQuery) {
 				*wq = *query
 			})
 		case "createdAt":
@@ -1661,6 +1707,146 @@ func newPostTypePaginateArgs(rv map[string]any) *posttypePaginateArgs {
 	}
 	if v, ok := rv[whereField].(*PostTypeWhereInput); ok {
 		args.opts = append(args.opts, WithPostTypeFilter(v.Filter))
+	}
+	return args
+}
+
+// CollectFields tells the query-builder to eagerly load connected nodes by resolver context.
+func (ptf *PostTypeFormQuery) CollectFields(ctx context.Context, satisfies ...string) (*PostTypeFormQuery, error) {
+	fc := graphql.GetFieldContext(ctx)
+	if fc == nil {
+		return ptf, nil
+	}
+	if err := ptf.collectField(ctx, false, graphql.GetOperationContext(ctx), fc.Field, nil, satisfies...); err != nil {
+		return nil, err
+	}
+	return ptf, nil
+}
+
+func (ptf *PostTypeFormQuery) collectField(ctx context.Context, oneNode bool, opCtx *graphql.OperationContext, collected graphql.CollectedField, path []string, satisfies ...string) error {
+	path = append([]string(nil), path...)
+	var (
+		unknownSeen    bool
+		fieldSeen      = make(map[string]struct{}, len(posttypeform.Columns))
+		selectedFields = []string{posttypeform.FieldID}
+	)
+	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
+		switch field.Name {
+
+		case "postType":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&PostTypeClient{config: ptf.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, posttypeImplementors)...); err != nil {
+				return err
+			}
+			ptf.withPostType = query
+			if _, ok := fieldSeen[posttypeform.FieldPostTypeID]; !ok {
+				selectedFields = append(selectedFields, posttypeform.FieldPostTypeID)
+				fieldSeen[posttypeform.FieldPostTypeID] = struct{}{}
+			}
+		case "createdAt":
+			if _, ok := fieldSeen[posttypeform.FieldCreatedAt]; !ok {
+				selectedFields = append(selectedFields, posttypeform.FieldCreatedAt)
+				fieldSeen[posttypeform.FieldCreatedAt] = struct{}{}
+			}
+		case "updatedAt":
+			if _, ok := fieldSeen[posttypeform.FieldUpdatedAt]; !ok {
+				selectedFields = append(selectedFields, posttypeform.FieldUpdatedAt)
+				fieldSeen[posttypeform.FieldUpdatedAt] = struct{}{}
+			}
+		case "appID":
+			if _, ok := fieldSeen[posttypeform.FieldAppID]; !ok {
+				selectedFields = append(selectedFields, posttypeform.FieldAppID)
+				fieldSeen[posttypeform.FieldAppID] = struct{}{}
+			}
+		case "name":
+			if _, ok := fieldSeen[posttypeform.FieldName]; !ok {
+				selectedFields = append(selectedFields, posttypeform.FieldName)
+				fieldSeen[posttypeform.FieldName] = struct{}{}
+			}
+		case "status":
+			if _, ok := fieldSeen[posttypeform.FieldStatus]; !ok {
+				selectedFields = append(selectedFields, posttypeform.FieldStatus)
+				fieldSeen[posttypeform.FieldStatus] = struct{}{}
+			}
+		case "postTypeID":
+			if _, ok := fieldSeen[posttypeform.FieldPostTypeID]; !ok {
+				selectedFields = append(selectedFields, posttypeform.FieldPostTypeID)
+				fieldSeen[posttypeform.FieldPostTypeID] = struct{}{}
+			}
+		case "body":
+			if _, ok := fieldSeen[posttypeform.FieldBody]; !ok {
+				selectedFields = append(selectedFields, posttypeform.FieldBody)
+				fieldSeen[posttypeform.FieldBody] = struct{}{}
+			}
+		case "id":
+		case "__typename":
+		default:
+			unknownSeen = true
+		}
+	}
+	if !unknownSeen {
+		ptf.Select(selectedFields...)
+	}
+	return nil
+}
+
+type posttypeformPaginateArgs struct {
+	first, last   *int
+	after, before *Cursor
+	opts          []PostTypeFormPaginateOption
+}
+
+func newPostTypeFormPaginateArgs(rv map[string]any) *posttypeformPaginateArgs {
+	args := &posttypeformPaginateArgs{}
+	if rv == nil {
+		return args
+	}
+	if v := rv[firstField]; v != nil {
+		args.first = v.(*int)
+	}
+	if v := rv[lastField]; v != nil {
+		args.last = v.(*int)
+	}
+	if v := rv[afterField]; v != nil {
+		args.after = v.(*Cursor)
+	}
+	if v := rv[beforeField]; v != nil {
+		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[orderByField]; ok {
+		switch v := v.(type) {
+		case []*PostTypeFormOrder:
+			args.opts = append(args.opts, WithPostTypeFormOrder(v))
+		case []any:
+			var orders []*PostTypeFormOrder
+			for i := range v {
+				mv, ok := v[i].(map[string]any)
+				if !ok {
+					continue
+				}
+				var (
+					err1, err2 error
+					order      = &PostTypeFormOrder{Field: &PostTypeFormOrderField{}, Direction: entgql.OrderDirectionAsc}
+				)
+				if d, ok := mv[directionField]; ok {
+					err1 = order.Direction.UnmarshalGQL(d)
+				}
+				if f, ok := mv[fieldField]; ok {
+					err2 = order.Field.UnmarshalGQL(f)
+				}
+				if err1 == nil && err2 == nil {
+					orders = append(orders, order)
+				}
+			}
+			args.opts = append(args.opts, WithPostTypeFormOrder(orders))
+		}
+	}
+	if v, ok := rv[whereField].(*PostTypeFormWhereInput); ok {
+		args.opts = append(args.opts, WithPostTypeFormFilter(v.Filter))
 	}
 	return args
 }

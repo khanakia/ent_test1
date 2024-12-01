@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -97,11 +98,6 @@ func Status(v string) predicate.PostTag {
 // Excerpt applies equality check predicate on the "excerpt" field. It's identical to ExcerptEQ.
 func Excerpt(v string) predicate.PostTag {
 	return predicate.PostTag(sql.FieldEQ(FieldExcerpt, v))
-}
-
-// Content applies equality check predicate on the "content" field. It's identical to ContentEQ.
-func Content(v string) predicate.PostTag {
-	return predicate.PostTag(sql.FieldEQ(FieldContent, v))
 }
 
 // MetaTitle applies equality check predicate on the "meta_title" field. It's identical to MetaTitleEQ.
@@ -599,81 +595,6 @@ func ExcerptContainsFold(v string) predicate.PostTag {
 	return predicate.PostTag(sql.FieldContainsFold(FieldExcerpt, v))
 }
 
-// ContentEQ applies the EQ predicate on the "content" field.
-func ContentEQ(v string) predicate.PostTag {
-	return predicate.PostTag(sql.FieldEQ(FieldContent, v))
-}
-
-// ContentNEQ applies the NEQ predicate on the "content" field.
-func ContentNEQ(v string) predicate.PostTag {
-	return predicate.PostTag(sql.FieldNEQ(FieldContent, v))
-}
-
-// ContentIn applies the In predicate on the "content" field.
-func ContentIn(vs ...string) predicate.PostTag {
-	return predicate.PostTag(sql.FieldIn(FieldContent, vs...))
-}
-
-// ContentNotIn applies the NotIn predicate on the "content" field.
-func ContentNotIn(vs ...string) predicate.PostTag {
-	return predicate.PostTag(sql.FieldNotIn(FieldContent, vs...))
-}
-
-// ContentGT applies the GT predicate on the "content" field.
-func ContentGT(v string) predicate.PostTag {
-	return predicate.PostTag(sql.FieldGT(FieldContent, v))
-}
-
-// ContentGTE applies the GTE predicate on the "content" field.
-func ContentGTE(v string) predicate.PostTag {
-	return predicate.PostTag(sql.FieldGTE(FieldContent, v))
-}
-
-// ContentLT applies the LT predicate on the "content" field.
-func ContentLT(v string) predicate.PostTag {
-	return predicate.PostTag(sql.FieldLT(FieldContent, v))
-}
-
-// ContentLTE applies the LTE predicate on the "content" field.
-func ContentLTE(v string) predicate.PostTag {
-	return predicate.PostTag(sql.FieldLTE(FieldContent, v))
-}
-
-// ContentContains applies the Contains predicate on the "content" field.
-func ContentContains(v string) predicate.PostTag {
-	return predicate.PostTag(sql.FieldContains(FieldContent, v))
-}
-
-// ContentHasPrefix applies the HasPrefix predicate on the "content" field.
-func ContentHasPrefix(v string) predicate.PostTag {
-	return predicate.PostTag(sql.FieldHasPrefix(FieldContent, v))
-}
-
-// ContentHasSuffix applies the HasSuffix predicate on the "content" field.
-func ContentHasSuffix(v string) predicate.PostTag {
-	return predicate.PostTag(sql.FieldHasSuffix(FieldContent, v))
-}
-
-// ContentIsNil applies the IsNil predicate on the "content" field.
-func ContentIsNil() predicate.PostTag {
-	return predicate.PostTag(sql.FieldIsNull(FieldContent))
-}
-
-// ContentNotNil applies the NotNil predicate on the "content" field.
-func ContentNotNil() predicate.PostTag {
-	return predicate.PostTag(sql.FieldNotNull(FieldContent))
-}
-
-// ContentEqualFold applies the EqualFold predicate on the "content" field.
-func ContentEqualFold(v string) predicate.PostTag {
-	return predicate.PostTag(sql.FieldEqualFold(FieldContent, v))
-}
-
-// ContentContainsFold applies the ContainsFold predicate on the "content" field.
-func ContentContainsFold(v string) predicate.PostTag {
-	return predicate.PostTag(sql.FieldContainsFold(FieldContent, v))
-}
-
 // MetaTitleEQ applies the EQ predicate on the "meta_title" field.
 func MetaTitleEQ(v string) predicate.PostTag {
 	return predicate.PostTag(sql.FieldEQ(FieldMetaTitle, v))
@@ -972,6 +893,29 @@ func MetaRobotsEqualFold(v string) predicate.PostTag {
 // MetaRobotsContainsFold applies the ContainsFold predicate on the "meta_robots" field.
 func MetaRobotsContainsFold(v string) predicate.PostTag {
 	return predicate.PostTag(sql.FieldContainsFold(FieldMetaRobots, v))
+}
+
+// HasPosts applies the HasEdge predicate on the "posts" edge.
+func HasPosts() predicate.PostTag {
+	return predicate.PostTag(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, PostsTable, PostsPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasPostsWith applies the HasEdge predicate on the "posts" edge with a given conditions (other predicates).
+func HasPostsWith(preds ...predicate.Post) predicate.PostTag {
+	return predicate.PostTag(func(s *sql.Selector) {
+		step := newPostsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

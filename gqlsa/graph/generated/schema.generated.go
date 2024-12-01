@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"gqlsa/graph/model"
+	"lace/jsonslice"
 	"strconv"
 	"sync/atomic"
 	"time"
@@ -154,6 +155,38 @@ func (ec *executionContext) marshalNUint2uint(ctx context.Context, sel ast.Selec
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 	}
+	return res
+}
+
+func (ec *executionContext) unmarshalOJsonSlice2laceᚋjsonsliceᚐJsonSlice(ctx context.Context, v interface{}) (jsonslice.JsonSlice, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := jsonslice.UnmarshalJsonSlice(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOJsonSlice2laceᚋjsonsliceᚐJsonSlice(ctx context.Context, sel ast.SelectionSet, v jsonslice.JsonSlice) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := jsonslice.MarshalJsonSlice(v)
+	return res
+}
+
+func (ec *executionContext) unmarshalOMap2map(ctx context.Context, v interface{}) (map[string]interface{}, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := graphql.UnmarshalMap(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOMap2map(ctx context.Context, sel ast.SelectionSet, v map[string]interface{}) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := graphql.MarshalMap(v)
 	return res
 }
 

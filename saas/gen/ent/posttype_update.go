@@ -9,6 +9,7 @@ import (
 	"saas/gen/ent/post"
 	"saas/gen/ent/poststatus"
 	"saas/gen/ent/posttype"
+	"saas/gen/ent/posttypeform"
 	"saas/gen/ent/predicate"
 	"time"
 
@@ -273,6 +274,21 @@ func (ptu *PostTypeUpdate) AddPostStatuses(p ...*PostStatus) *PostTypeUpdate {
 	return ptu.AddPostStatusIDs(ids...)
 }
 
+// AddPostTypeFormIDs adds the "post_type_forms" edge to the PostTypeForm entity by IDs.
+func (ptu *PostTypeUpdate) AddPostTypeFormIDs(ids ...string) *PostTypeUpdate {
+	ptu.mutation.AddPostTypeFormIDs(ids...)
+	return ptu
+}
+
+// AddPostTypeForms adds the "post_type_forms" edges to the PostTypeForm entity.
+func (ptu *PostTypeUpdate) AddPostTypeForms(p ...*PostTypeForm) *PostTypeUpdate {
+	ids := make([]string, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptu.AddPostTypeFormIDs(ids...)
+}
+
 // Mutation returns the PostTypeMutation object of the builder.
 func (ptu *PostTypeUpdate) Mutation() *PostTypeMutation {
 	return ptu.mutation
@@ -318,6 +334,27 @@ func (ptu *PostTypeUpdate) RemovePostStatuses(p ...*PostStatus) *PostTypeUpdate 
 		ids[i] = p[i].ID
 	}
 	return ptu.RemovePostStatusIDs(ids...)
+}
+
+// ClearPostTypeForms clears all "post_type_forms" edges to the PostTypeForm entity.
+func (ptu *PostTypeUpdate) ClearPostTypeForms() *PostTypeUpdate {
+	ptu.mutation.ClearPostTypeForms()
+	return ptu
+}
+
+// RemovePostTypeFormIDs removes the "post_type_forms" edge to PostTypeForm entities by IDs.
+func (ptu *PostTypeUpdate) RemovePostTypeFormIDs(ids ...string) *PostTypeUpdate {
+	ptu.mutation.RemovePostTypeFormIDs(ids...)
+	return ptu
+}
+
+// RemovePostTypeForms removes "post_type_forms" edges to PostTypeForm entities.
+func (ptu *PostTypeUpdate) RemovePostTypeForms(p ...*PostTypeForm) *PostTypeUpdate {
+	ids := make([]string, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptu.RemovePostTypeFormIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -536,6 +573,51 @@ func (ptu *PostTypeUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(poststatus.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ptu.mutation.PostTypeFormsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   posttype.PostTypeFormsTable,
+			Columns: []string{posttype.PostTypeFormsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(posttypeform.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptu.mutation.RemovedPostTypeFormsIDs(); len(nodes) > 0 && !ptu.mutation.PostTypeFormsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   posttype.PostTypeFormsTable,
+			Columns: []string{posttype.PostTypeFormsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(posttypeform.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptu.mutation.PostTypeFormsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   posttype.PostTypeFormsTable,
+			Columns: []string{posttype.PostTypeFormsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(posttypeform.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {
@@ -807,6 +889,21 @@ func (ptuo *PostTypeUpdateOne) AddPostStatuses(p ...*PostStatus) *PostTypeUpdate
 	return ptuo.AddPostStatusIDs(ids...)
 }
 
+// AddPostTypeFormIDs adds the "post_type_forms" edge to the PostTypeForm entity by IDs.
+func (ptuo *PostTypeUpdateOne) AddPostTypeFormIDs(ids ...string) *PostTypeUpdateOne {
+	ptuo.mutation.AddPostTypeFormIDs(ids...)
+	return ptuo
+}
+
+// AddPostTypeForms adds the "post_type_forms" edges to the PostTypeForm entity.
+func (ptuo *PostTypeUpdateOne) AddPostTypeForms(p ...*PostTypeForm) *PostTypeUpdateOne {
+	ids := make([]string, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptuo.AddPostTypeFormIDs(ids...)
+}
+
 // Mutation returns the PostTypeMutation object of the builder.
 func (ptuo *PostTypeUpdateOne) Mutation() *PostTypeMutation {
 	return ptuo.mutation
@@ -852,6 +949,27 @@ func (ptuo *PostTypeUpdateOne) RemovePostStatuses(p ...*PostStatus) *PostTypeUpd
 		ids[i] = p[i].ID
 	}
 	return ptuo.RemovePostStatusIDs(ids...)
+}
+
+// ClearPostTypeForms clears all "post_type_forms" edges to the PostTypeForm entity.
+func (ptuo *PostTypeUpdateOne) ClearPostTypeForms() *PostTypeUpdateOne {
+	ptuo.mutation.ClearPostTypeForms()
+	return ptuo
+}
+
+// RemovePostTypeFormIDs removes the "post_type_forms" edge to PostTypeForm entities by IDs.
+func (ptuo *PostTypeUpdateOne) RemovePostTypeFormIDs(ids ...string) *PostTypeUpdateOne {
+	ptuo.mutation.RemovePostTypeFormIDs(ids...)
+	return ptuo
+}
+
+// RemovePostTypeForms removes "post_type_forms" edges to PostTypeForm entities.
+func (ptuo *PostTypeUpdateOne) RemovePostTypeForms(p ...*PostTypeForm) *PostTypeUpdateOne {
+	ids := make([]string, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptuo.RemovePostTypeFormIDs(ids...)
 }
 
 // Where appends a list predicates to the PostTypeUpdate builder.
@@ -1100,6 +1218,51 @@ func (ptuo *PostTypeUpdateOne) sqlSave(ctx context.Context) (_node *PostType, er
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(poststatus.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if ptuo.mutation.PostTypeFormsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   posttype.PostTypeFormsTable,
+			Columns: []string{posttype.PostTypeFormsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(posttypeform.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptuo.mutation.RemovedPostTypeFormsIDs(); len(nodes) > 0 && !ptuo.mutation.PostTypeFormsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   posttype.PostTypeFormsTable,
+			Columns: []string{posttype.PostTypeFormsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(posttypeform.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptuo.mutation.PostTypeFormsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   posttype.PostTypeFormsTable,
+			Columns: []string{posttype.PostTypeFormsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(posttypeform.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

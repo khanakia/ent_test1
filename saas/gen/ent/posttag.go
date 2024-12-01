@@ -31,8 +31,6 @@ type PostTag struct {
 	Status string `json:"status,omitempty"`
 	// Excerpt holds the value of the "excerpt" field.
 	Excerpt string `json:"excerpt,omitempty"`
-	// Content holds the value of the "content" field.
-	Content string `json:"content,omitempty"`
 	// MetaTitle holds the value of the "meta_title" field.
 	MetaTitle string `json:"meta_title,omitempty"`
 	// MetaDescr holds the value of the "meta_descr" field.
@@ -40,8 +38,33 @@ type PostTag struct {
 	// MetaCanonicalURL holds the value of the "meta_canonical_url" field.
 	MetaCanonicalURL string `json:"meta_canonical_url,omitempty"`
 	// MetaRobots holds the value of the "meta_robots" field.
-	MetaRobots   string `json:"meta_robots,omitempty"`
+	MetaRobots string `json:"meta_robots,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the PostTagQuery when eager-loading is set.
+	Edges        PostTagEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// PostTagEdges holds the relations/edges for other nodes in the graph.
+type PostTagEdges struct {
+	// Posts holds the value of the posts edge.
+	Posts []*Post `json:"posts,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+	// totalCount holds the count of the edges above.
+	totalCount [1]map[string]int
+
+	namedPosts map[string][]*Post
+}
+
+// PostsOrErr returns the Posts value or an error if the edge
+// was not loaded in eager-loading.
+func (e PostTagEdges) PostsOrErr() ([]*Post, error) {
+	if e.loadedTypes[0] {
+		return e.Posts, nil
+	}
+	return nil, &NotLoadedError{edge: "posts"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -49,7 +72,7 @@ func (*PostTag) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case posttag.FieldID, posttag.FieldAppID, posttag.FieldName, posttag.FieldSlug, posttag.FieldStatus, posttag.FieldExcerpt, posttag.FieldContent, posttag.FieldMetaTitle, posttag.FieldMetaDescr, posttag.FieldMetaCanonicalURL, posttag.FieldMetaRobots:
+		case posttag.FieldID, posttag.FieldAppID, posttag.FieldName, posttag.FieldSlug, posttag.FieldStatus, posttag.FieldExcerpt, posttag.FieldMetaTitle, posttag.FieldMetaDescr, posttag.FieldMetaCanonicalURL, posttag.FieldMetaRobots:
 			values[i] = new(sql.NullString)
 		case posttag.FieldCreatedAt, posttag.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -116,12 +139,6 @@ func (pt *PostTag) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				pt.Excerpt = value.String
 			}
-		case posttag.FieldContent:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field content", values[i])
-			} else if value.Valid {
-				pt.Content = value.String
-			}
 		case posttag.FieldMetaTitle:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field meta_title", values[i])
@@ -157,6 +174,11 @@ func (pt *PostTag) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (pt *PostTag) Value(name string) (ent.Value, error) {
 	return pt.selectValues.Get(name)
+}
+
+// QueryPosts queries the "posts" edge of the PostTag entity.
+func (pt *PostTag) QueryPosts() *PostQuery {
+	return NewPostTagClient(pt.config).QueryPosts(pt)
 }
 
 // Update returns a builder for updating this PostTag.
@@ -203,9 +225,6 @@ func (pt *PostTag) String() string {
 	builder.WriteString("excerpt=")
 	builder.WriteString(pt.Excerpt)
 	builder.WriteString(", ")
-	builder.WriteString("content=")
-	builder.WriteString(pt.Content)
-	builder.WriteString(", ")
 	builder.WriteString("meta_title=")
 	builder.WriteString(pt.MetaTitle)
 	builder.WriteString(", ")
@@ -219,6 +238,30 @@ func (pt *PostTag) String() string {
 	builder.WriteString(pt.MetaRobots)
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedPosts returns the Posts named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (pt *PostTag) NamedPosts(name string) ([]*Post, error) {
+	if pt.Edges.namedPosts == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := pt.Edges.namedPosts[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (pt *PostTag) appendNamedPosts(name string, edges ...*Post) {
+	if pt.Edges.namedPosts == nil {
+		pt.Edges.namedPosts = make(map[string][]*Post)
+	}
+	if len(edges) == 0 {
+		pt.Edges.namedPosts[name] = []*Post{}
+	} else {
+		pt.Edges.namedPosts[name] = append(pt.Edges.namedPosts[name], edges...)
+	}
 }
 
 // PostTags is a parsable slice of PostTag.

@@ -26,6 +26,10 @@ type MutationResolver interface {
 	UpdatePostCategory(ctx context.Context, id string, input ent.UpdatePostCategoryInput) (*ent.PostCategory, error)
 	CreatePost(ctx context.Context, input ent.CreatePostInput) (*ent.Post, error)
 	UpdatePost(ctx context.Context, id string, input ent.UpdatePostInput) (*ent.Post, error)
+	CreatePostTag(ctx context.Context, input ent.CreatePostTagInput) (*ent.PostTag, error)
+	UpdatePostTag(ctx context.Context, id string, input ent.UpdatePostTagInput) (*ent.PostTag, error)
+	CreatePostTypeForm(ctx context.Context, input ent.CreatePostTypeFormInput) (*ent.PostTypeForm, error)
+	UpdatePostTypeForm(ctx context.Context, id string, input ent.UpdatePostTypeFormInput) (*ent.PostTypeForm, error)
 	AdminAuthLogin(ctx context.Context, input model.LoginInput) (*model.LoginResponse, error)
 	CreateApp(ctx context.Context, input ent.CreateAppInput) (*ent.App, error)
 	UpdateApp(ctx context.Context, id string, input ent.UpdateAppInput) (*ent.App, error)
@@ -124,6 +128,36 @@ func (ec *executionContext) field_Mutation_createPostStatus_args(ctx context.Con
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg0, err = ec.unmarshalNCreatePostStatusInput2saasᚋgenᚋentᚐCreatePostStatusInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createPostTag_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 ent.CreatePostTagInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNCreatePostTagInput2saasᚋgenᚋentᚐCreatePostTagInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createPostTypeForm_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 ent.CreatePostTypeFormInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg0, err = ec.unmarshalNCreatePostTypeFormInput2saasᚋgenᚋentᚐCreatePostTypeFormInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -289,6 +323,54 @@ func (ec *executionContext) field_Mutation_updatePostStatus_args(ctx context.Con
 	if tmp, ok := rawArgs["input"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
 		arg1, err = ec.unmarshalNUpdatePostStatusInput2saasᚋgenᚋentᚐUpdatePostStatusInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updatePostTag_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 ent.UpdatePostTagInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNUpdatePostTagInput2saasᚋgenᚋentᚐUpdatePostTagInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["input"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_updatePostTypeForm_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
+	var arg1 ent.UpdatePostTypeFormInput
+	if tmp, ok := rawArgs["input"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+		arg1, err = ec.unmarshalNUpdatePostTypeFormInput2saasᚋgenᚋentᚐUpdatePostTypeFormInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -466,6 +548,8 @@ func (ec *executionContext) fieldContext_Mutation_createPostType(ctx context.Con
 				return ec.fieldContext_PostType_posts(ctx, field)
 			case "postStatuses":
 				return ec.fieldContext_PostType_postStatuses(ctx, field)
+			case "postTypeForms":
+				return ec.fieldContext_PostType_postTypeForms(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PostType", field.Name)
 		},
@@ -573,6 +657,8 @@ func (ec *executionContext) fieldContext_Mutation_updatePostType(ctx context.Con
 				return ec.fieldContext_PostType_posts(ctx, field)
 			case "postStatuses":
 				return ec.fieldContext_PostType_postStatuses(ctx, field)
+			case "postTypeForms":
+				return ec.fieldContext_PostType_postTypeForms(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PostType", field.Name)
 		},
@@ -1086,12 +1172,16 @@ func (ec *executionContext) fieldContext_Mutation_createPost(ctx context.Context
 				return ec.fieldContext_Post_metaCanonicalURL(ctx, field)
 			case "metaRobots":
 				return ec.fieldContext_Post_metaRobots(ctx, field)
+			case "custom":
+				return ec.fieldContext_Post_custom(ctx, field)
 			case "postStatus":
 				return ec.fieldContext_Post_postStatus(ctx, field)
 			case "postType":
 				return ec.fieldContext_Post_postType(ctx, field)
 			case "primaryCategory":
 				return ec.fieldContext_Post_primaryCategory(ctx, field)
+			case "postTags":
+				return ec.fieldContext_Post_postTags(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Post", field.Name)
 		},
@@ -1201,12 +1291,16 @@ func (ec *executionContext) fieldContext_Mutation_updatePost(ctx context.Context
 				return ec.fieldContext_Post_metaCanonicalURL(ctx, field)
 			case "metaRobots":
 				return ec.fieldContext_Post_metaRobots(ctx, field)
+			case "custom":
+				return ec.fieldContext_Post_custom(ctx, field)
 			case "postStatus":
 				return ec.fieldContext_Post_postStatus(ctx, field)
 			case "postType":
 				return ec.fieldContext_Post_postType(ctx, field)
 			case "primaryCategory":
 				return ec.fieldContext_Post_primaryCategory(ctx, field)
+			case "postTags":
+				return ec.fieldContext_Post_postTags(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Post", field.Name)
 		},
@@ -1219,6 +1313,402 @@ func (ec *executionContext) fieldContext_Mutation_updatePost(ctx context.Context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updatePost_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createPostTag(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createPostTag(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CreatePostTag(rctx, fc.Args["input"].(ent.CreatePostTagInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
+			}
+			return ec.directives.CanApp(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*ent.PostTag); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *saas/gen/ent.PostTag`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.PostTag)
+	fc.Result = res
+	return ec.marshalNPostTag2ᚖsaasᚋgenᚋentᚐPostTag(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createPostTag(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_PostTag_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_PostTag_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_PostTag_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_PostTag_appID(ctx, field)
+			case "name":
+				return ec.fieldContext_PostTag_name(ctx, field)
+			case "slug":
+				return ec.fieldContext_PostTag_slug(ctx, field)
+			case "status":
+				return ec.fieldContext_PostTag_status(ctx, field)
+			case "excerpt":
+				return ec.fieldContext_PostTag_excerpt(ctx, field)
+			case "metaTitle":
+				return ec.fieldContext_PostTag_metaTitle(ctx, field)
+			case "metaDescr":
+				return ec.fieldContext_PostTag_metaDescr(ctx, field)
+			case "metaCanonicalURL":
+				return ec.fieldContext_PostTag_metaCanonicalURL(ctx, field)
+			case "metaRobots":
+				return ec.fieldContext_PostTag_metaRobots(ctx, field)
+			case "posts":
+				return ec.fieldContext_PostTag_posts(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PostTag", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createPostTag_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updatePostTag(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updatePostTag(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdatePostTag(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdatePostTagInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
+			}
+			return ec.directives.CanApp(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*ent.PostTag); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *saas/gen/ent.PostTag`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.PostTag)
+	fc.Result = res
+	return ec.marshalNPostTag2ᚖsaasᚋgenᚋentᚐPostTag(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updatePostTag(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_PostTag_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_PostTag_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_PostTag_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_PostTag_appID(ctx, field)
+			case "name":
+				return ec.fieldContext_PostTag_name(ctx, field)
+			case "slug":
+				return ec.fieldContext_PostTag_slug(ctx, field)
+			case "status":
+				return ec.fieldContext_PostTag_status(ctx, field)
+			case "excerpt":
+				return ec.fieldContext_PostTag_excerpt(ctx, field)
+			case "metaTitle":
+				return ec.fieldContext_PostTag_metaTitle(ctx, field)
+			case "metaDescr":
+				return ec.fieldContext_PostTag_metaDescr(ctx, field)
+			case "metaCanonicalURL":
+				return ec.fieldContext_PostTag_metaCanonicalURL(ctx, field)
+			case "metaRobots":
+				return ec.fieldContext_PostTag_metaRobots(ctx, field)
+			case "posts":
+				return ec.fieldContext_PostTag_posts(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PostTag", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updatePostTag_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_createPostTypeForm(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createPostTypeForm(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CreatePostTypeForm(rctx, fc.Args["input"].(ent.CreatePostTypeFormInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
+			}
+			return ec.directives.CanApp(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*ent.PostTypeForm); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *saas/gen/ent.PostTypeForm`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.PostTypeForm)
+	fc.Result = res
+	return ec.marshalNPostTypeForm2ᚖsaasᚋgenᚋentᚐPostTypeForm(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createPostTypeForm(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_PostTypeForm_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_PostTypeForm_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_PostTypeForm_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_PostTypeForm_appID(ctx, field)
+			case "name":
+				return ec.fieldContext_PostTypeForm_name(ctx, field)
+			case "status":
+				return ec.fieldContext_PostTypeForm_status(ctx, field)
+			case "postTypeID":
+				return ec.fieldContext_PostTypeForm_postTypeID(ctx, field)
+			case "body":
+				return ec.fieldContext_PostTypeForm_body(ctx, field)
+			case "postType":
+				return ec.fieldContext_PostTypeForm_postType(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PostTypeForm", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createPostTypeForm_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_updatePostTypeForm(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_updatePostTypeForm(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().UpdatePostTypeForm(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdatePostTypeFormInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
+			}
+			return ec.directives.CanApp(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*ent.PostTypeForm); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *saas/gen/ent.PostTypeForm`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.PostTypeForm)
+	fc.Result = res
+	return ec.marshalNPostTypeForm2ᚖsaasᚋgenᚋentᚐPostTypeForm(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_updatePostTypeForm(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_PostTypeForm_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_PostTypeForm_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_PostTypeForm_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_PostTypeForm_appID(ctx, field)
+			case "name":
+				return ec.fieldContext_PostTypeForm_name(ctx, field)
+			case "status":
+				return ec.fieldContext_PostTypeForm_status(ctx, field)
+			case "postTypeID":
+				return ec.fieldContext_PostTypeForm_postTypeID(ctx, field)
+			case "body":
+				return ec.fieldContext_PostTypeForm_body(ctx, field)
+			case "postType":
+				return ec.fieldContext_PostTypeForm_postType(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PostTypeForm", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_updatePostTypeForm_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -2285,6 +2775,34 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "updatePost":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updatePost(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createPostTag":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createPostTag(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updatePostTag":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updatePostTag(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "createPostTypeForm":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createPostTypeForm(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "updatePostTypeForm":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_updatePostTypeForm(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++

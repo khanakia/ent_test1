@@ -14,6 +14,7 @@ import (
 	"saas/gen/ent/poststatus"
 	"saas/gen/ent/posttag"
 	"saas/gen/ent/posttype"
+	"saas/gen/ent/posttypeform"
 	"saas/gen/ent/predicate"
 	"saas/gen/ent/templ"
 	"saas/gen/ent/todo"
@@ -4537,6 +4538,10 @@ type PostWhereInput struct {
 	// "primary_category" edge predicates.
 	HasPrimaryCategory     *bool                     `json:"hasPrimaryCategory,omitempty"`
 	HasPrimaryCategoryWith []*PostCategoryWhereInput `json:"hasPrimaryCategoryWith,omitempty"`
+
+	// "post_tags" edge predicates.
+	HasPostTags     *bool                `json:"hasPostTags,omitempty"`
+	HasPostTagsWith []*PostTagWhereInput `json:"hasPostTagsWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -5339,6 +5344,24 @@ func (i *PostWhereInput) P() (predicate.Post, error) {
 			with = append(with, p)
 		}
 		predicates = append(predicates, post.HasPrimaryCategoryWith(with...))
+	}
+	if i.HasPostTags != nil {
+		p := post.HasPostTags()
+		if !*i.HasPostTags {
+			p = post.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasPostTagsWith) > 0 {
+		with := make([]predicate.PostTag, 0, len(i.HasPostTagsWith))
+		for _, w := range i.HasPostTagsWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasPostTagsWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, post.HasPostTagsWith(with...))
 	}
 	switch len(predicates) {
 	case 0:
@@ -6862,23 +6885,6 @@ type PostTagWhereInput struct {
 	ExcerptEqualFold    *string  `json:"excerptEqualFold,omitempty"`
 	ExcerptContainsFold *string  `json:"excerptContainsFold,omitempty"`
 
-	// "content" field predicates.
-	Content             *string  `json:"content,omitempty"`
-	ContentNEQ          *string  `json:"contentNEQ,omitempty"`
-	ContentIn           []string `json:"contentIn,omitempty"`
-	ContentNotIn        []string `json:"contentNotIn,omitempty"`
-	ContentGT           *string  `json:"contentGT,omitempty"`
-	ContentGTE          *string  `json:"contentGTE,omitempty"`
-	ContentLT           *string  `json:"contentLT,omitempty"`
-	ContentLTE          *string  `json:"contentLTE,omitempty"`
-	ContentContains     *string  `json:"contentContains,omitempty"`
-	ContentHasPrefix    *string  `json:"contentHasPrefix,omitempty"`
-	ContentHasSuffix    *string  `json:"contentHasSuffix,omitempty"`
-	ContentIsNil        bool     `json:"contentIsNil,omitempty"`
-	ContentNotNil       bool     `json:"contentNotNil,omitempty"`
-	ContentEqualFold    *string  `json:"contentEqualFold,omitempty"`
-	ContentContainsFold *string  `json:"contentContainsFold,omitempty"`
-
 	// "meta_title" field predicates.
 	MetaTitle             *string  `json:"metaTitle,omitempty"`
 	MetaTitleNEQ          *string  `json:"metaTitleNEQ,omitempty"`
@@ -6946,6 +6952,10 @@ type PostTagWhereInput struct {
 	MetaRobotsNotNil       bool     `json:"metaRobotsNotNil,omitempty"`
 	MetaRobotsEqualFold    *string  `json:"metaRobotsEqualFold,omitempty"`
 	MetaRobotsContainsFold *string  `json:"metaRobotsContainsFold,omitempty"`
+
+	// "posts" edge predicates.
+	HasPosts     *bool             `json:"hasPosts,omitempty"`
+	HasPostsWith []*PostWhereInput `json:"hasPostsWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -7334,51 +7344,6 @@ func (i *PostTagWhereInput) P() (predicate.PostTag, error) {
 	if i.ExcerptContainsFold != nil {
 		predicates = append(predicates, posttag.ExcerptContainsFold(*i.ExcerptContainsFold))
 	}
-	if i.Content != nil {
-		predicates = append(predicates, posttag.ContentEQ(*i.Content))
-	}
-	if i.ContentNEQ != nil {
-		predicates = append(predicates, posttag.ContentNEQ(*i.ContentNEQ))
-	}
-	if len(i.ContentIn) > 0 {
-		predicates = append(predicates, posttag.ContentIn(i.ContentIn...))
-	}
-	if len(i.ContentNotIn) > 0 {
-		predicates = append(predicates, posttag.ContentNotIn(i.ContentNotIn...))
-	}
-	if i.ContentGT != nil {
-		predicates = append(predicates, posttag.ContentGT(*i.ContentGT))
-	}
-	if i.ContentGTE != nil {
-		predicates = append(predicates, posttag.ContentGTE(*i.ContentGTE))
-	}
-	if i.ContentLT != nil {
-		predicates = append(predicates, posttag.ContentLT(*i.ContentLT))
-	}
-	if i.ContentLTE != nil {
-		predicates = append(predicates, posttag.ContentLTE(*i.ContentLTE))
-	}
-	if i.ContentContains != nil {
-		predicates = append(predicates, posttag.ContentContains(*i.ContentContains))
-	}
-	if i.ContentHasPrefix != nil {
-		predicates = append(predicates, posttag.ContentHasPrefix(*i.ContentHasPrefix))
-	}
-	if i.ContentHasSuffix != nil {
-		predicates = append(predicates, posttag.ContentHasSuffix(*i.ContentHasSuffix))
-	}
-	if i.ContentIsNil {
-		predicates = append(predicates, posttag.ContentIsNil())
-	}
-	if i.ContentNotNil {
-		predicates = append(predicates, posttag.ContentNotNil())
-	}
-	if i.ContentEqualFold != nil {
-		predicates = append(predicates, posttag.ContentEqualFold(*i.ContentEqualFold))
-	}
-	if i.ContentContainsFold != nil {
-		predicates = append(predicates, posttag.ContentContainsFold(*i.ContentContainsFold))
-	}
 	if i.MetaTitle != nil {
 		predicates = append(predicates, posttag.MetaTitleEQ(*i.MetaTitle))
 	}
@@ -7560,6 +7525,24 @@ func (i *PostTagWhereInput) P() (predicate.PostTag, error) {
 		predicates = append(predicates, posttag.MetaRobotsContainsFold(*i.MetaRobotsContainsFold))
 	}
 
+	if i.HasPosts != nil {
+		p := posttag.HasPosts()
+		if !*i.HasPosts {
+			p = posttag.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasPostsWith) > 0 {
+		with := make([]predicate.Post, 0, len(i.HasPostsWith))
+		for _, w := range i.HasPostsWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasPostsWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, posttag.HasPostsWith(with...))
+	}
 	switch len(predicates) {
 	case 0:
 		return nil, ErrEmptyPostTagWhereInput
@@ -7790,6 +7773,10 @@ type PostTypeWhereInput struct {
 	// "post_statuses" edge predicates.
 	HasPostStatuses     *bool                   `json:"hasPostStatuses,omitempty"`
 	HasPostStatusesWith []*PostStatusWhereInput `json:"hasPostStatusesWith,omitempty"`
+
+	// "post_type_forms" edge predicates.
+	HasPostTypeForms     *bool                     `json:"hasPostTypeForms,omitempty"`
+	HasPostTypeFormsWith []*PostTypeFormWhereInput `json:"hasPostTypeFormsWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -8440,6 +8427,24 @@ func (i *PostTypeWhereInput) P() (predicate.PostType, error) {
 		}
 		predicates = append(predicates, posttype.HasPostStatusesWith(with...))
 	}
+	if i.HasPostTypeForms != nil {
+		p := posttype.HasPostTypeForms()
+		if !*i.HasPostTypeForms {
+			p = posttype.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasPostTypeFormsWith) > 0 {
+		with := make([]predicate.PostTypeForm, 0, len(i.HasPostTypeFormsWith))
+		for _, w := range i.HasPostTypeFormsWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasPostTypeFormsWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, posttype.HasPostTypeFormsWith(with...))
+	}
 	switch len(predicates) {
 	case 0:
 		return nil, ErrEmptyPostTypeWhereInput
@@ -8447,6 +8452,448 @@ func (i *PostTypeWhereInput) P() (predicate.PostType, error) {
 		return predicates[0], nil
 	default:
 		return posttype.And(predicates...), nil
+	}
+}
+
+// PostTypeFormWhereInput represents a where input for filtering PostTypeForm queries.
+type PostTypeFormWhereInput struct {
+	Predicates []predicate.PostTypeForm  `json:"-"`
+	Not        *PostTypeFormWhereInput   `json:"not,omitempty"`
+	Or         []*PostTypeFormWhereInput `json:"or,omitempty"`
+	And        []*PostTypeFormWhereInput `json:"and,omitempty"`
+
+	// "id" field predicates.
+	ID             *string  `json:"id,omitempty"`
+	IDNEQ          *string  `json:"idNEQ,omitempty"`
+	IDIn           []string `json:"idIn,omitempty"`
+	IDNotIn        []string `json:"idNotIn,omitempty"`
+	IDGT           *string  `json:"idGT,omitempty"`
+	IDGTE          *string  `json:"idGTE,omitempty"`
+	IDLT           *string  `json:"idLT,omitempty"`
+	IDLTE          *string  `json:"idLTE,omitempty"`
+	IDEqualFold    *string  `json:"idEqualFold,omitempty"`
+	IDContainsFold *string  `json:"idContainsFold,omitempty"`
+
+	// "created_at" field predicates.
+	CreatedAt       *time.Time  `json:"createdAt,omitempty"`
+	CreatedAtNEQ    *time.Time  `json:"createdAtNEQ,omitempty"`
+	CreatedAtIn     []time.Time `json:"createdAtIn,omitempty"`
+	CreatedAtNotIn  []time.Time `json:"createdAtNotIn,omitempty"`
+	CreatedAtGT     *time.Time  `json:"createdAtGT,omitempty"`
+	CreatedAtGTE    *time.Time  `json:"createdAtGTE,omitempty"`
+	CreatedAtLT     *time.Time  `json:"createdAtLT,omitempty"`
+	CreatedAtLTE    *time.Time  `json:"createdAtLTE,omitempty"`
+	CreatedAtIsNil  bool        `json:"createdAtIsNil,omitempty"`
+	CreatedAtNotNil bool        `json:"createdAtNotNil,omitempty"`
+
+	// "updated_at" field predicates.
+	UpdatedAt       *time.Time  `json:"updatedAt,omitempty"`
+	UpdatedAtNEQ    *time.Time  `json:"updatedAtNEQ,omitempty"`
+	UpdatedAtIn     []time.Time `json:"updatedAtIn,omitempty"`
+	UpdatedAtNotIn  []time.Time `json:"updatedAtNotIn,omitempty"`
+	UpdatedAtGT     *time.Time  `json:"updatedAtGT,omitempty"`
+	UpdatedAtGTE    *time.Time  `json:"updatedAtGTE,omitempty"`
+	UpdatedAtLT     *time.Time  `json:"updatedAtLT,omitempty"`
+	UpdatedAtLTE    *time.Time  `json:"updatedAtLTE,omitempty"`
+	UpdatedAtIsNil  bool        `json:"updatedAtIsNil,omitempty"`
+	UpdatedAtNotNil bool        `json:"updatedAtNotNil,omitempty"`
+
+	// "app_id" field predicates.
+	AppID             *string  `json:"appID,omitempty"`
+	AppIDNEQ          *string  `json:"appIDNEQ,omitempty"`
+	AppIDIn           []string `json:"appIDIn,omitempty"`
+	AppIDNotIn        []string `json:"appIDNotIn,omitempty"`
+	AppIDGT           *string  `json:"appIDGT,omitempty"`
+	AppIDGTE          *string  `json:"appIDGTE,omitempty"`
+	AppIDLT           *string  `json:"appIDLT,omitempty"`
+	AppIDLTE          *string  `json:"appIDLTE,omitempty"`
+	AppIDContains     *string  `json:"appIDContains,omitempty"`
+	AppIDHasPrefix    *string  `json:"appIDHasPrefix,omitempty"`
+	AppIDHasSuffix    *string  `json:"appIDHasSuffix,omitempty"`
+	AppIDIsNil        bool     `json:"appIDIsNil,omitempty"`
+	AppIDNotNil       bool     `json:"appIDNotNil,omitempty"`
+	AppIDEqualFold    *string  `json:"appIDEqualFold,omitempty"`
+	AppIDContainsFold *string  `json:"appIDContainsFold,omitempty"`
+
+	// "name" field predicates.
+	Name             *string  `json:"name,omitempty"`
+	NameNEQ          *string  `json:"nameNEQ,omitempty"`
+	NameIn           []string `json:"nameIn,omitempty"`
+	NameNotIn        []string `json:"nameNotIn,omitempty"`
+	NameGT           *string  `json:"nameGT,omitempty"`
+	NameGTE          *string  `json:"nameGTE,omitempty"`
+	NameLT           *string  `json:"nameLT,omitempty"`
+	NameLTE          *string  `json:"nameLTE,omitempty"`
+	NameContains     *string  `json:"nameContains,omitempty"`
+	NameHasPrefix    *string  `json:"nameHasPrefix,omitempty"`
+	NameHasSuffix    *string  `json:"nameHasSuffix,omitempty"`
+	NameIsNil        bool     `json:"nameIsNil,omitempty"`
+	NameNotNil       bool     `json:"nameNotNil,omitempty"`
+	NameEqualFold    *string  `json:"nameEqualFold,omitempty"`
+	NameContainsFold *string  `json:"nameContainsFold,omitempty"`
+
+	// "status" field predicates.
+	Status       *bool `json:"status,omitempty"`
+	StatusNEQ    *bool `json:"statusNEQ,omitempty"`
+	StatusIsNil  bool  `json:"statusIsNil,omitempty"`
+	StatusNotNil bool  `json:"statusNotNil,omitempty"`
+
+	// "post_type_id" field predicates.
+	PostTypeID             *string  `json:"postTypeID,omitempty"`
+	PostTypeIDNEQ          *string  `json:"postTypeIDNEQ,omitempty"`
+	PostTypeIDIn           []string `json:"postTypeIDIn,omitempty"`
+	PostTypeIDNotIn        []string `json:"postTypeIDNotIn,omitempty"`
+	PostTypeIDGT           *string  `json:"postTypeIDGT,omitempty"`
+	PostTypeIDGTE          *string  `json:"postTypeIDGTE,omitempty"`
+	PostTypeIDLT           *string  `json:"postTypeIDLT,omitempty"`
+	PostTypeIDLTE          *string  `json:"postTypeIDLTE,omitempty"`
+	PostTypeIDContains     *string  `json:"postTypeIDContains,omitempty"`
+	PostTypeIDHasPrefix    *string  `json:"postTypeIDHasPrefix,omitempty"`
+	PostTypeIDHasSuffix    *string  `json:"postTypeIDHasSuffix,omitempty"`
+	PostTypeIDIsNil        bool     `json:"postTypeIDIsNil,omitempty"`
+	PostTypeIDNotNil       bool     `json:"postTypeIDNotNil,omitempty"`
+	PostTypeIDEqualFold    *string  `json:"postTypeIDEqualFold,omitempty"`
+	PostTypeIDContainsFold *string  `json:"postTypeIDContainsFold,omitempty"`
+
+	// "post_type" edge predicates.
+	HasPostType     *bool                 `json:"hasPostType,omitempty"`
+	HasPostTypeWith []*PostTypeWhereInput `json:"hasPostTypeWith,omitempty"`
+}
+
+// AddPredicates adds custom predicates to the where input to be used during the filtering phase.
+func (i *PostTypeFormWhereInput) AddPredicates(predicates ...predicate.PostTypeForm) {
+	i.Predicates = append(i.Predicates, predicates...)
+}
+
+// Filter applies the PostTypeFormWhereInput filter on the PostTypeFormQuery builder.
+func (i *PostTypeFormWhereInput) Filter(q *PostTypeFormQuery) (*PostTypeFormQuery, error) {
+	if i == nil {
+		return q, nil
+	}
+	p, err := i.P()
+	if err != nil {
+		if err == ErrEmptyPostTypeFormWhereInput {
+			return q, nil
+		}
+		return nil, err
+	}
+	return q.Where(p), nil
+}
+
+// ErrEmptyPostTypeFormWhereInput is returned in case the PostTypeFormWhereInput is empty.
+var ErrEmptyPostTypeFormWhereInput = errors.New("ent: empty predicate PostTypeFormWhereInput")
+
+// P returns a predicate for filtering posttypeforms.
+// An error is returned if the input is empty or invalid.
+func (i *PostTypeFormWhereInput) P() (predicate.PostTypeForm, error) {
+	var predicates []predicate.PostTypeForm
+	if i.Not != nil {
+		p, err := i.Not.P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'not'", err)
+		}
+		predicates = append(predicates, posttypeform.Not(p))
+	}
+	switch n := len(i.Or); {
+	case n == 1:
+		p, err := i.Or[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'or'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		or := make([]predicate.PostTypeForm, 0, n)
+		for _, w := range i.Or {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'or'", err)
+			}
+			or = append(or, p)
+		}
+		predicates = append(predicates, posttypeform.Or(or...))
+	}
+	switch n := len(i.And); {
+	case n == 1:
+		p, err := i.And[0].P()
+		if err != nil {
+			return nil, fmt.Errorf("%w: field 'and'", err)
+		}
+		predicates = append(predicates, p)
+	case n > 1:
+		and := make([]predicate.PostTypeForm, 0, n)
+		for _, w := range i.And {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'and'", err)
+			}
+			and = append(and, p)
+		}
+		predicates = append(predicates, posttypeform.And(and...))
+	}
+	predicates = append(predicates, i.Predicates...)
+	if i.ID != nil {
+		predicates = append(predicates, posttypeform.IDEQ(*i.ID))
+	}
+	if i.IDNEQ != nil {
+		predicates = append(predicates, posttypeform.IDNEQ(*i.IDNEQ))
+	}
+	if len(i.IDIn) > 0 {
+		predicates = append(predicates, posttypeform.IDIn(i.IDIn...))
+	}
+	if len(i.IDNotIn) > 0 {
+		predicates = append(predicates, posttypeform.IDNotIn(i.IDNotIn...))
+	}
+	if i.IDGT != nil {
+		predicates = append(predicates, posttypeform.IDGT(*i.IDGT))
+	}
+	if i.IDGTE != nil {
+		predicates = append(predicates, posttypeform.IDGTE(*i.IDGTE))
+	}
+	if i.IDLT != nil {
+		predicates = append(predicates, posttypeform.IDLT(*i.IDLT))
+	}
+	if i.IDLTE != nil {
+		predicates = append(predicates, posttypeform.IDLTE(*i.IDLTE))
+	}
+	if i.IDEqualFold != nil {
+		predicates = append(predicates, posttypeform.IDEqualFold(*i.IDEqualFold))
+	}
+	if i.IDContainsFold != nil {
+		predicates = append(predicates, posttypeform.IDContainsFold(*i.IDContainsFold))
+	}
+	if i.CreatedAt != nil {
+		predicates = append(predicates, posttypeform.CreatedAtEQ(*i.CreatedAt))
+	}
+	if i.CreatedAtNEQ != nil {
+		predicates = append(predicates, posttypeform.CreatedAtNEQ(*i.CreatedAtNEQ))
+	}
+	if len(i.CreatedAtIn) > 0 {
+		predicates = append(predicates, posttypeform.CreatedAtIn(i.CreatedAtIn...))
+	}
+	if len(i.CreatedAtNotIn) > 0 {
+		predicates = append(predicates, posttypeform.CreatedAtNotIn(i.CreatedAtNotIn...))
+	}
+	if i.CreatedAtGT != nil {
+		predicates = append(predicates, posttypeform.CreatedAtGT(*i.CreatedAtGT))
+	}
+	if i.CreatedAtGTE != nil {
+		predicates = append(predicates, posttypeform.CreatedAtGTE(*i.CreatedAtGTE))
+	}
+	if i.CreatedAtLT != nil {
+		predicates = append(predicates, posttypeform.CreatedAtLT(*i.CreatedAtLT))
+	}
+	if i.CreatedAtLTE != nil {
+		predicates = append(predicates, posttypeform.CreatedAtLTE(*i.CreatedAtLTE))
+	}
+	if i.CreatedAtIsNil {
+		predicates = append(predicates, posttypeform.CreatedAtIsNil())
+	}
+	if i.CreatedAtNotNil {
+		predicates = append(predicates, posttypeform.CreatedAtNotNil())
+	}
+	if i.UpdatedAt != nil {
+		predicates = append(predicates, posttypeform.UpdatedAtEQ(*i.UpdatedAt))
+	}
+	if i.UpdatedAtNEQ != nil {
+		predicates = append(predicates, posttypeform.UpdatedAtNEQ(*i.UpdatedAtNEQ))
+	}
+	if len(i.UpdatedAtIn) > 0 {
+		predicates = append(predicates, posttypeform.UpdatedAtIn(i.UpdatedAtIn...))
+	}
+	if len(i.UpdatedAtNotIn) > 0 {
+		predicates = append(predicates, posttypeform.UpdatedAtNotIn(i.UpdatedAtNotIn...))
+	}
+	if i.UpdatedAtGT != nil {
+		predicates = append(predicates, posttypeform.UpdatedAtGT(*i.UpdatedAtGT))
+	}
+	if i.UpdatedAtGTE != nil {
+		predicates = append(predicates, posttypeform.UpdatedAtGTE(*i.UpdatedAtGTE))
+	}
+	if i.UpdatedAtLT != nil {
+		predicates = append(predicates, posttypeform.UpdatedAtLT(*i.UpdatedAtLT))
+	}
+	if i.UpdatedAtLTE != nil {
+		predicates = append(predicates, posttypeform.UpdatedAtLTE(*i.UpdatedAtLTE))
+	}
+	if i.UpdatedAtIsNil {
+		predicates = append(predicates, posttypeform.UpdatedAtIsNil())
+	}
+	if i.UpdatedAtNotNil {
+		predicates = append(predicates, posttypeform.UpdatedAtNotNil())
+	}
+	if i.AppID != nil {
+		predicates = append(predicates, posttypeform.AppIDEQ(*i.AppID))
+	}
+	if i.AppIDNEQ != nil {
+		predicates = append(predicates, posttypeform.AppIDNEQ(*i.AppIDNEQ))
+	}
+	if len(i.AppIDIn) > 0 {
+		predicates = append(predicates, posttypeform.AppIDIn(i.AppIDIn...))
+	}
+	if len(i.AppIDNotIn) > 0 {
+		predicates = append(predicates, posttypeform.AppIDNotIn(i.AppIDNotIn...))
+	}
+	if i.AppIDGT != nil {
+		predicates = append(predicates, posttypeform.AppIDGT(*i.AppIDGT))
+	}
+	if i.AppIDGTE != nil {
+		predicates = append(predicates, posttypeform.AppIDGTE(*i.AppIDGTE))
+	}
+	if i.AppIDLT != nil {
+		predicates = append(predicates, posttypeform.AppIDLT(*i.AppIDLT))
+	}
+	if i.AppIDLTE != nil {
+		predicates = append(predicates, posttypeform.AppIDLTE(*i.AppIDLTE))
+	}
+	if i.AppIDContains != nil {
+		predicates = append(predicates, posttypeform.AppIDContains(*i.AppIDContains))
+	}
+	if i.AppIDHasPrefix != nil {
+		predicates = append(predicates, posttypeform.AppIDHasPrefix(*i.AppIDHasPrefix))
+	}
+	if i.AppIDHasSuffix != nil {
+		predicates = append(predicates, posttypeform.AppIDHasSuffix(*i.AppIDHasSuffix))
+	}
+	if i.AppIDIsNil {
+		predicates = append(predicates, posttypeform.AppIDIsNil())
+	}
+	if i.AppIDNotNil {
+		predicates = append(predicates, posttypeform.AppIDNotNil())
+	}
+	if i.AppIDEqualFold != nil {
+		predicates = append(predicates, posttypeform.AppIDEqualFold(*i.AppIDEqualFold))
+	}
+	if i.AppIDContainsFold != nil {
+		predicates = append(predicates, posttypeform.AppIDContainsFold(*i.AppIDContainsFold))
+	}
+	if i.Name != nil {
+		predicates = append(predicates, posttypeform.NameEQ(*i.Name))
+	}
+	if i.NameNEQ != nil {
+		predicates = append(predicates, posttypeform.NameNEQ(*i.NameNEQ))
+	}
+	if len(i.NameIn) > 0 {
+		predicates = append(predicates, posttypeform.NameIn(i.NameIn...))
+	}
+	if len(i.NameNotIn) > 0 {
+		predicates = append(predicates, posttypeform.NameNotIn(i.NameNotIn...))
+	}
+	if i.NameGT != nil {
+		predicates = append(predicates, posttypeform.NameGT(*i.NameGT))
+	}
+	if i.NameGTE != nil {
+		predicates = append(predicates, posttypeform.NameGTE(*i.NameGTE))
+	}
+	if i.NameLT != nil {
+		predicates = append(predicates, posttypeform.NameLT(*i.NameLT))
+	}
+	if i.NameLTE != nil {
+		predicates = append(predicates, posttypeform.NameLTE(*i.NameLTE))
+	}
+	if i.NameContains != nil {
+		predicates = append(predicates, posttypeform.NameContains(*i.NameContains))
+	}
+	if i.NameHasPrefix != nil {
+		predicates = append(predicates, posttypeform.NameHasPrefix(*i.NameHasPrefix))
+	}
+	if i.NameHasSuffix != nil {
+		predicates = append(predicates, posttypeform.NameHasSuffix(*i.NameHasSuffix))
+	}
+	if i.NameIsNil {
+		predicates = append(predicates, posttypeform.NameIsNil())
+	}
+	if i.NameNotNil {
+		predicates = append(predicates, posttypeform.NameNotNil())
+	}
+	if i.NameEqualFold != nil {
+		predicates = append(predicates, posttypeform.NameEqualFold(*i.NameEqualFold))
+	}
+	if i.NameContainsFold != nil {
+		predicates = append(predicates, posttypeform.NameContainsFold(*i.NameContainsFold))
+	}
+	if i.Status != nil {
+		predicates = append(predicates, posttypeform.StatusEQ(*i.Status))
+	}
+	if i.StatusNEQ != nil {
+		predicates = append(predicates, posttypeform.StatusNEQ(*i.StatusNEQ))
+	}
+	if i.StatusIsNil {
+		predicates = append(predicates, posttypeform.StatusIsNil())
+	}
+	if i.StatusNotNil {
+		predicates = append(predicates, posttypeform.StatusNotNil())
+	}
+	if i.PostTypeID != nil {
+		predicates = append(predicates, posttypeform.PostTypeIDEQ(*i.PostTypeID))
+	}
+	if i.PostTypeIDNEQ != nil {
+		predicates = append(predicates, posttypeform.PostTypeIDNEQ(*i.PostTypeIDNEQ))
+	}
+	if len(i.PostTypeIDIn) > 0 {
+		predicates = append(predicates, posttypeform.PostTypeIDIn(i.PostTypeIDIn...))
+	}
+	if len(i.PostTypeIDNotIn) > 0 {
+		predicates = append(predicates, posttypeform.PostTypeIDNotIn(i.PostTypeIDNotIn...))
+	}
+	if i.PostTypeIDGT != nil {
+		predicates = append(predicates, posttypeform.PostTypeIDGT(*i.PostTypeIDGT))
+	}
+	if i.PostTypeIDGTE != nil {
+		predicates = append(predicates, posttypeform.PostTypeIDGTE(*i.PostTypeIDGTE))
+	}
+	if i.PostTypeIDLT != nil {
+		predicates = append(predicates, posttypeform.PostTypeIDLT(*i.PostTypeIDLT))
+	}
+	if i.PostTypeIDLTE != nil {
+		predicates = append(predicates, posttypeform.PostTypeIDLTE(*i.PostTypeIDLTE))
+	}
+	if i.PostTypeIDContains != nil {
+		predicates = append(predicates, posttypeform.PostTypeIDContains(*i.PostTypeIDContains))
+	}
+	if i.PostTypeIDHasPrefix != nil {
+		predicates = append(predicates, posttypeform.PostTypeIDHasPrefix(*i.PostTypeIDHasPrefix))
+	}
+	if i.PostTypeIDHasSuffix != nil {
+		predicates = append(predicates, posttypeform.PostTypeIDHasSuffix(*i.PostTypeIDHasSuffix))
+	}
+	if i.PostTypeIDIsNil {
+		predicates = append(predicates, posttypeform.PostTypeIDIsNil())
+	}
+	if i.PostTypeIDNotNil {
+		predicates = append(predicates, posttypeform.PostTypeIDNotNil())
+	}
+	if i.PostTypeIDEqualFold != nil {
+		predicates = append(predicates, posttypeform.PostTypeIDEqualFold(*i.PostTypeIDEqualFold))
+	}
+	if i.PostTypeIDContainsFold != nil {
+		predicates = append(predicates, posttypeform.PostTypeIDContainsFold(*i.PostTypeIDContainsFold))
+	}
+
+	if i.HasPostType != nil {
+		p := posttypeform.HasPostType()
+		if !*i.HasPostType {
+			p = posttypeform.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasPostTypeWith) > 0 {
+		with := make([]predicate.PostType, 0, len(i.HasPostTypeWith))
+		for _, w := range i.HasPostTypeWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasPostTypeWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, posttypeform.HasPostTypeWith(with...))
+	}
+	switch len(predicates) {
+	case 0:
+		return nil, ErrEmptyPostTypeFormWhereInput
+	case 1:
+		return predicates[0], nil
+	default:
+		return posttypeform.And(predicates...), nil
 	}
 }
 

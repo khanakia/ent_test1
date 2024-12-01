@@ -42,6 +42,8 @@ const (
 	EdgePosts = "posts"
 	// EdgePostStatuses holds the string denoting the post_statuses edge name in mutations.
 	EdgePostStatuses = "post_statuses"
+	// EdgePostTypeForms holds the string denoting the post_type_forms edge name in mutations.
+	EdgePostTypeForms = "post_type_forms"
 	// Table holds the table name of the posttype in the database.
 	Table = "post_types"
 	// PostsTable is the table that holds the posts relation/edge.
@@ -58,6 +60,13 @@ const (
 	PostStatusesInverseTable = "post_status"
 	// PostStatusesColumn is the table column denoting the post_statuses relation/edge.
 	PostStatusesColumn = "post_type_id"
+	// PostTypeFormsTable is the table that holds the post_type_forms relation/edge.
+	PostTypeFormsTable = "post_type_forms"
+	// PostTypeFormsInverseTable is the table name for the PostTypeForm entity.
+	// It exists in this package in order to avoid circular dependency with the "posttypeform" package.
+	PostTypeFormsInverseTable = "post_type_forms"
+	// PostTypeFormsColumn is the table column denoting the post_type_forms relation/edge.
+	PostTypeFormsColumn = "post_type_id"
 )
 
 // Columns holds all SQL columns for posttype fields.
@@ -197,6 +206,20 @@ func ByPostStatuses(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
 		sqlgraph.OrderByNeighborTerms(s, newPostStatusesStep(), append([]sql.OrderTerm{term}, terms...)...)
 	}
 }
+
+// ByPostTypeFormsCount orders the results by post_type_forms count.
+func ByPostTypeFormsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newPostTypeFormsStep(), opts...)
+	}
+}
+
+// ByPostTypeForms orders the results by post_type_forms terms.
+func ByPostTypeForms(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newPostTypeFormsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newPostsStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -209,5 +232,12 @@ func newPostStatusesStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(PostStatusesInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.O2M, false, PostStatusesTable, PostStatusesColumn),
+	)
+}
+func newPostTypeFormsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(PostTypeFormsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, PostTypeFormsTable, PostTypeFormsColumn),
 	)
 }

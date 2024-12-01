@@ -4,8 +4,10 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"math"
+	"saas/gen/ent/post"
 	"saas/gen/ent/posttag"
 	"saas/gen/ent/predicate"
 
@@ -17,12 +19,14 @@ import (
 // PostTagQuery is the builder for querying PostTag entities.
 type PostTagQuery struct {
 	config
-	ctx        *QueryContext
-	order      []posttag.OrderOption
-	inters     []Interceptor
-	predicates []predicate.PostTag
-	loadTotal  []func(context.Context, []*PostTag) error
-	modifiers  []func(*sql.Selector)
+	ctx            *QueryContext
+	order          []posttag.OrderOption
+	inters         []Interceptor
+	predicates     []predicate.PostTag
+	withPosts      *PostQuery
+	loadTotal      []func(context.Context, []*PostTag) error
+	modifiers      []func(*sql.Selector)
+	withNamedPosts map[string]*PostQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -57,6 +61,28 @@ func (ptq *PostTagQuery) Unique(unique bool) *PostTagQuery {
 func (ptq *PostTagQuery) Order(o ...posttag.OrderOption) *PostTagQuery {
 	ptq.order = append(ptq.order, o...)
 	return ptq
+}
+
+// QueryPosts chains the current query on the "posts" edge.
+func (ptq *PostTagQuery) QueryPosts() *PostQuery {
+	query := (&PostClient{config: ptq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := ptq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := ptq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(posttag.Table, posttag.FieldID, selector),
+			sqlgraph.To(post.Table, post.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, posttag.PostsTable, posttag.PostsPrimaryKey...),
+		)
+		fromU = sqlgraph.SetNeighbors(ptq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first PostTag entity from the query.
@@ -251,10 +277,22 @@ func (ptq *PostTagQuery) Clone() *PostTagQuery {
 		order:      append([]posttag.OrderOption{}, ptq.order...),
 		inters:     append([]Interceptor{}, ptq.inters...),
 		predicates: append([]predicate.PostTag{}, ptq.predicates...),
+		withPosts:  ptq.withPosts.Clone(),
 		// clone intermediate query.
 		sql:  ptq.sql.Clone(),
 		path: ptq.path,
 	}
+}
+
+// WithPosts tells the query-builder to eager-load the nodes that are connected to
+// the "posts" edge. The optional arguments are used to configure the query builder of the edge.
+func (ptq *PostTagQuery) WithPosts(opts ...func(*PostQuery)) *PostTagQuery {
+	query := (&PostClient{config: ptq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	ptq.withPosts = query
+	return ptq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -333,8 +371,11 @@ func (ptq *PostTagQuery) prepareQuery(ctx context.Context) error {
 
 func (ptq *PostTagQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*PostTag, error) {
 	var (
-		nodes = []*PostTag{}
-		_spec = ptq.querySpec()
+		nodes       = []*PostTag{}
+		_spec       = ptq.querySpec()
+		loadedTypes = [1]bool{
+			ptq.withPosts != nil,
+		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*PostTag).scanValues(nil, columns)
@@ -342,6 +383,7 @@ func (ptq *PostTagQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Pos
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &PostTag{config: ptq.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	if len(ptq.modifiers) > 0 {
@@ -356,12 +398,88 @@ func (ptq *PostTagQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Pos
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := ptq.withPosts; query != nil {
+		if err := ptq.loadPosts(ctx, query, nodes,
+			func(n *PostTag) { n.Edges.Posts = []*Post{} },
+			func(n *PostTag, e *Post) { n.Edges.Posts = append(n.Edges.Posts, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range ptq.withNamedPosts {
+		if err := ptq.loadPosts(ctx, query, nodes,
+			func(n *PostTag) { n.appendNamedPosts(name) },
+			func(n *PostTag, e *Post) { n.appendNamedPosts(name, e) }); err != nil {
+			return nil, err
+		}
+	}
 	for i := range ptq.loadTotal {
 		if err := ptq.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
 		}
 	}
 	return nodes, nil
+}
+
+func (ptq *PostTagQuery) loadPosts(ctx context.Context, query *PostQuery, nodes []*PostTag, init func(*PostTag), assign func(*PostTag, *Post)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*PostTag)
+	nids := make(map[string]map[*PostTag]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(posttag.PostsTable)
+		s.Join(joinT).On(s.C(post.FieldID), joinT.C(posttag.PostsPrimaryKey[1]))
+		s.Where(sql.InValues(joinT.C(posttag.PostsPrimaryKey[0]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(posttag.PostsPrimaryKey[0]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*PostTag]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*Post](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "posts" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
+		}
+	}
+	return nil
 }
 
 func (ptq *PostTagQuery) sqlCount(ctx context.Context) (int, error) {
@@ -455,6 +573,20 @@ func (ptq *PostTagQuery) sqlQuery(ctx context.Context) *sql.Selector {
 func (ptq *PostTagQuery) Modify(modifiers ...func(s *sql.Selector)) *PostTagSelect {
 	ptq.modifiers = append(ptq.modifiers, modifiers...)
 	return ptq.Select()
+}
+
+// WithNamedPosts tells the query-builder to eager-load the nodes that are connected to the "posts"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (ptq *PostTagQuery) WithNamedPosts(name string, opts ...func(*PostQuery)) *PostTagQuery {
+	query := (&PostClient{config: ptq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if ptq.withNamedPosts == nil {
+		ptq.withNamedPosts = make(map[string]*PostQuery)
+	}
+	ptq.withNamedPosts[name] = query
+	return ptq
 }
 
 // PostTagGroupBy is the group-by builder for PostTag entities.

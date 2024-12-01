@@ -20,6 +20,7 @@ import (
 	"saas/gen/ent/poststatus"
 	"saas/gen/ent/posttag"
 	"saas/gen/ent/posttype"
+	"saas/gen/ent/posttypeform"
 	"saas/gen/ent/session"
 	"saas/gen/ent/temp"
 	"saas/gen/ent/templ"
@@ -106,6 +107,7 @@ func checkColumn(table, column string) error {
 			poststatus.Table:      poststatus.ValidColumn,
 			posttag.Table:         posttag.ValidColumn,
 			posttype.Table:        posttype.ValidColumn,
+			posttypeform.Table:    posttypeform.ValidColumn,
 			session.Table:         session.ValidColumn,
 			temp.Table:            temp.ValidColumn,
 			templ.Table:           templ.ValidColumn,

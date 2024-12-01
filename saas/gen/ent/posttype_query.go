@@ -10,6 +10,7 @@ import (
 	"saas/gen/ent/post"
 	"saas/gen/ent/poststatus"
 	"saas/gen/ent/posttype"
+	"saas/gen/ent/posttypeform"
 	"saas/gen/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
@@ -20,16 +21,18 @@ import (
 // PostTypeQuery is the builder for querying PostType entities.
 type PostTypeQuery struct {
 	config
-	ctx                   *QueryContext
-	order                 []posttype.OrderOption
-	inters                []Interceptor
-	predicates            []predicate.PostType
-	withPosts             *PostQuery
-	withPostStatuses      *PostStatusQuery
-	loadTotal             []func(context.Context, []*PostType) error
-	modifiers             []func(*sql.Selector)
-	withNamedPosts        map[string]*PostQuery
-	withNamedPostStatuses map[string]*PostStatusQuery
+	ctx                    *QueryContext
+	order                  []posttype.OrderOption
+	inters                 []Interceptor
+	predicates             []predicate.PostType
+	withPosts              *PostQuery
+	withPostStatuses       *PostStatusQuery
+	withPostTypeForms      *PostTypeFormQuery
+	loadTotal              []func(context.Context, []*PostType) error
+	modifiers              []func(*sql.Selector)
+	withNamedPosts         map[string]*PostQuery
+	withNamedPostStatuses  map[string]*PostStatusQuery
+	withNamedPostTypeForms map[string]*PostTypeFormQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -103,6 +106,28 @@ func (ptq *PostTypeQuery) QueryPostStatuses() *PostStatusQuery {
 			sqlgraph.From(posttype.Table, posttype.FieldID, selector),
 			sqlgraph.To(poststatus.Table, poststatus.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, posttype.PostStatusesTable, posttype.PostStatusesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(ptq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPostTypeForms chains the current query on the "post_type_forms" edge.
+func (ptq *PostTypeQuery) QueryPostTypeForms() *PostTypeFormQuery {
+	query := (&PostTypeFormClient{config: ptq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := ptq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := ptq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(posttype.Table, posttype.FieldID, selector),
+			sqlgraph.To(posttypeform.Table, posttypeform.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, posttype.PostTypeFormsTable, posttype.PostTypeFormsColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(ptq.driver.Dialect(), step)
 		return fromU, nil
@@ -297,13 +322,14 @@ func (ptq *PostTypeQuery) Clone() *PostTypeQuery {
 		return nil
 	}
 	return &PostTypeQuery{
-		config:           ptq.config,
-		ctx:              ptq.ctx.Clone(),
-		order:            append([]posttype.OrderOption{}, ptq.order...),
-		inters:           append([]Interceptor{}, ptq.inters...),
-		predicates:       append([]predicate.PostType{}, ptq.predicates...),
-		withPosts:        ptq.withPosts.Clone(),
-		withPostStatuses: ptq.withPostStatuses.Clone(),
+		config:            ptq.config,
+		ctx:               ptq.ctx.Clone(),
+		order:             append([]posttype.OrderOption{}, ptq.order...),
+		inters:            append([]Interceptor{}, ptq.inters...),
+		predicates:        append([]predicate.PostType{}, ptq.predicates...),
+		withPosts:         ptq.withPosts.Clone(),
+		withPostStatuses:  ptq.withPostStatuses.Clone(),
+		withPostTypeForms: ptq.withPostTypeForms.Clone(),
 		// clone intermediate query.
 		sql:  ptq.sql.Clone(),
 		path: ptq.path,
@@ -329,6 +355,17 @@ func (ptq *PostTypeQuery) WithPostStatuses(opts ...func(*PostStatusQuery)) *Post
 		opt(query)
 	}
 	ptq.withPostStatuses = query
+	return ptq
+}
+
+// WithPostTypeForms tells the query-builder to eager-load the nodes that are connected to
+// the "post_type_forms" edge. The optional arguments are used to configure the query builder of the edge.
+func (ptq *PostTypeQuery) WithPostTypeForms(opts ...func(*PostTypeFormQuery)) *PostTypeQuery {
+	query := (&PostTypeFormClient{config: ptq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	ptq.withPostTypeForms = query
 	return ptq
 }
 
@@ -410,9 +447,10 @@ func (ptq *PostTypeQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Po
 	var (
 		nodes       = []*PostType{}
 		_spec       = ptq.querySpec()
-		loadedTypes = [2]bool{
+		loadedTypes = [3]bool{
 			ptq.withPosts != nil,
 			ptq.withPostStatuses != nil,
+			ptq.withPostTypeForms != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -450,6 +488,13 @@ func (ptq *PostTypeQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Po
 			return nil, err
 		}
 	}
+	if query := ptq.withPostTypeForms; query != nil {
+		if err := ptq.loadPostTypeForms(ctx, query, nodes,
+			func(n *PostType) { n.Edges.PostTypeForms = []*PostTypeForm{} },
+			func(n *PostType, e *PostTypeForm) { n.Edges.PostTypeForms = append(n.Edges.PostTypeForms, e) }); err != nil {
+			return nil, err
+		}
+	}
 	for name, query := range ptq.withNamedPosts {
 		if err := ptq.loadPosts(ctx, query, nodes,
 			func(n *PostType) { n.appendNamedPosts(name) },
@@ -461,6 +506,13 @@ func (ptq *PostTypeQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Po
 		if err := ptq.loadPostStatuses(ctx, query, nodes,
 			func(n *PostType) { n.appendNamedPostStatuses(name) },
 			func(n *PostType, e *PostStatus) { n.appendNamedPostStatuses(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range ptq.withNamedPostTypeForms {
+		if err := ptq.loadPostTypeForms(ctx, query, nodes,
+			func(n *PostType) { n.appendNamedPostTypeForms(name) },
+			func(n *PostType, e *PostTypeForm) { n.appendNamedPostTypeForms(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -517,6 +569,36 @@ func (ptq *PostTypeQuery) loadPostStatuses(ctx context.Context, query *PostStatu
 	}
 	query.Where(predicate.PostStatus(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(posttype.PostStatusesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.PostTypeID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "post_type_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (ptq *PostTypeQuery) loadPostTypeForms(ctx context.Context, query *PostTypeFormQuery, nodes []*PostType, init func(*PostType), assign func(*PostType, *PostTypeForm)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*PostType)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(posttypeform.FieldPostTypeID)
+	}
+	query.Where(predicate.PostTypeForm(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(posttype.PostTypeFormsColumn), fks...))
 	}))
 	neighbors, err := query.All(ctx)
 	if err != nil {
@@ -651,6 +733,20 @@ func (ptq *PostTypeQuery) WithNamedPostStatuses(name string, opts ...func(*PostS
 		ptq.withNamedPostStatuses = make(map[string]*PostStatusQuery)
 	}
 	ptq.withNamedPostStatuses[name] = query
+	return ptq
+}
+
+// WithNamedPostTypeForms tells the query-builder to eager-load the nodes that are connected to the "post_type_forms"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (ptq *PostTypeQuery) WithNamedPostTypeForms(name string, opts ...func(*PostTypeFormQuery)) *PostTypeQuery {
+	query := (&PostTypeFormClient{config: ptq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if ptq.withNamedPostTypeForms == nil {
+		ptq.withNamedPostTypeForms = make(map[string]*PostTypeFormQuery)
+	}
+	ptq.withNamedPostTypeForms[name] = query
 	return ptq
 }
 

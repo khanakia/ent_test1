@@ -9,6 +9,7 @@ import (
 	"saas/gen/ent/post"
 	"saas/gen/ent/postcategory"
 	"saas/gen/ent/poststatus"
+	"saas/gen/ent/posttag"
 	"saas/gen/ent/posttype"
 	"time"
 
@@ -236,6 +237,12 @@ func (pc *PostCreate) SetNillableMetaRobots(s *string) *PostCreate {
 	return pc
 }
 
+// SetCustom sets the "custom" field.
+func (pc *PostCreate) SetCustom(m map[string]interface{}) *PostCreate {
+	pc.mutation.SetCustom(m)
+	return pc
+}
+
 // SetID sets the "id" field.
 func (pc *PostCreate) SetID(s string) *PostCreate {
 	pc.mutation.SetID(s)
@@ -263,6 +270,21 @@ func (pc *PostCreate) SetPostType(p *PostType) *PostCreate {
 // SetPrimaryCategory sets the "primary_category" edge to the PostCategory entity.
 func (pc *PostCreate) SetPrimaryCategory(p *PostCategory) *PostCreate {
 	return pc.SetPrimaryCategoryID(p.ID)
+}
+
+// AddPostTagIDs adds the "post_tags" edge to the PostTag entity by IDs.
+func (pc *PostCreate) AddPostTagIDs(ids ...string) *PostCreate {
+	pc.mutation.AddPostTagIDs(ids...)
+	return pc
+}
+
+// AddPostTags adds the "post_tags" edges to the PostTag entity.
+func (pc *PostCreate) AddPostTags(p ...*PostTag) *PostCreate {
+	ids := make([]string, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return pc.AddPostTagIDs(ids...)
 }
 
 // Mutation returns the PostMutation object of the builder.
@@ -400,6 +422,10 @@ func (pc *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 		_spec.SetField(post.FieldMetaRobots, field.TypeString, value)
 		_node.MetaRobots = value
 	}
+	if value, ok := pc.mutation.Custom(); ok {
+		_spec.SetField(post.FieldCustom, field.TypeJSON, value)
+		_node.Custom = value
+	}
 	if nodes := pc.mutation.PostStatusIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
 			Rel:     sqlgraph.M2O,
@@ -449,6 +475,22 @@ func (pc *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.PrimaryCategoryID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := pc.mutation.PostTagsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   post.PostTagsTable,
+			Columns: post.PostTagsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(posttag.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
@@ -752,6 +794,24 @@ func (u *PostUpsert) UpdateMetaRobots() *PostUpsert {
 // ClearMetaRobots clears the value of the "meta_robots" field.
 func (u *PostUpsert) ClearMetaRobots() *PostUpsert {
 	u.SetNull(post.FieldMetaRobots)
+	return u
+}
+
+// SetCustom sets the "custom" field.
+func (u *PostUpsert) SetCustom(v map[string]interface{}) *PostUpsert {
+	u.Set(post.FieldCustom, v)
+	return u
+}
+
+// UpdateCustom sets the "custom" field to the value that was provided on create.
+func (u *PostUpsert) UpdateCustom() *PostUpsert {
+	u.SetExcluded(post.FieldCustom)
+	return u
+}
+
+// ClearCustom clears the value of the "custom" field.
+func (u *PostUpsert) ClearCustom() *PostUpsert {
+	u.SetNull(post.FieldCustom)
 	return u
 }
 
@@ -1097,6 +1157,27 @@ func (u *PostUpsertOne) UpdateMetaRobots() *PostUpsertOne {
 func (u *PostUpsertOne) ClearMetaRobots() *PostUpsertOne {
 	return u.Update(func(s *PostUpsert) {
 		s.ClearMetaRobots()
+	})
+}
+
+// SetCustom sets the "custom" field.
+func (u *PostUpsertOne) SetCustom(v map[string]interface{}) *PostUpsertOne {
+	return u.Update(func(s *PostUpsert) {
+		s.SetCustom(v)
+	})
+}
+
+// UpdateCustom sets the "custom" field to the value that was provided on create.
+func (u *PostUpsertOne) UpdateCustom() *PostUpsertOne {
+	return u.Update(func(s *PostUpsert) {
+		s.UpdateCustom()
+	})
+}
+
+// ClearCustom clears the value of the "custom" field.
+func (u *PostUpsertOne) ClearCustom() *PostUpsertOne {
+	return u.Update(func(s *PostUpsert) {
+		s.ClearCustom()
 	})
 }
 
@@ -1609,6 +1690,27 @@ func (u *PostUpsertBulk) UpdateMetaRobots() *PostUpsertBulk {
 func (u *PostUpsertBulk) ClearMetaRobots() *PostUpsertBulk {
 	return u.Update(func(s *PostUpsert) {
 		s.ClearMetaRobots()
+	})
+}
+
+// SetCustom sets the "custom" field.
+func (u *PostUpsertBulk) SetCustom(v map[string]interface{}) *PostUpsertBulk {
+	return u.Update(func(s *PostUpsert) {
+		s.SetCustom(v)
+	})
+}
+
+// UpdateCustom sets the "custom" field to the value that was provided on create.
+func (u *PostUpsertBulk) UpdateCustom() *PostUpsertBulk {
+	return u.Update(func(s *PostUpsert) {
+		s.UpdateCustom()
+	})
+}
+
+// ClearCustom clears the value of the "custom" field.
+func (u *PostUpsertBulk) ClearCustom() *PostUpsertBulk {
+	return u.Update(func(s *PostUpsert) {
+		s.ClearCustom()
 	})
 }
 

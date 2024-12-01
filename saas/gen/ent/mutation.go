@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"lace/jsonslice"
 	"lace/jsontype"
 	"saas/gen/ent/adminuser"
 	"saas/gen/ent/app"
@@ -20,6 +21,7 @@ import (
 	"saas/gen/ent/poststatus"
 	"saas/gen/ent/posttag"
 	"saas/gen/ent/posttype"
+	"saas/gen/ent/posttypeform"
 	"saas/gen/ent/predicate"
 	"saas/gen/ent/session"
 	"saas/gen/ent/temp"
@@ -58,6 +60,7 @@ const (
 	TypePostStatus      = "PostStatus"
 	TypePostTag         = "PostTag"
 	TypePostType        = "PostType"
+	TypePostTypeForm    = "PostTypeForm"
 	TypeSession         = "Session"
 	TypeTemp            = "Temp"
 	TypeTempl           = "Templ"
@@ -9541,6 +9544,7 @@ type PostMutation struct {
 	meta_descr              *string
 	meta_canonical_url      *string
 	meta_robots             *string
+	custom                  *map[string]interface{}
 	clearedFields           map[string]struct{}
 	post_status             *string
 	clearedpost_status      bool
@@ -9548,6 +9552,9 @@ type PostMutation struct {
 	clearedpost_type        bool
 	primary_category        *string
 	clearedprimary_category bool
+	post_tags               map[string]struct{}
+	removedpost_tags        map[string]struct{}
+	clearedpost_tags        bool
 	done                    bool
 	oldValue                func(context.Context) (*Post, error)
 	predicates              []predicate.Post
@@ -10392,6 +10399,55 @@ func (m *PostMutation) ResetMetaRobots() {
 	delete(m.clearedFields, post.FieldMetaRobots)
 }
 
+// SetCustom sets the "custom" field.
+func (m *PostMutation) SetCustom(value map[string]interface{}) {
+	m.custom = &value
+}
+
+// Custom returns the value of the "custom" field in the mutation.
+func (m *PostMutation) Custom() (r map[string]interface{}, exists bool) {
+	v := m.custom
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCustom returns the old "custom" field's value of the Post entity.
+// If the Post object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostMutation) OldCustom(ctx context.Context) (v map[string]interface{}, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCustom is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCustom requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCustom: %w", err)
+	}
+	return oldValue.Custom, nil
+}
+
+// ClearCustom clears the value of the "custom" field.
+func (m *PostMutation) ClearCustom() {
+	m.custom = nil
+	m.clearedFields[post.FieldCustom] = struct{}{}
+}
+
+// CustomCleared returns if the "custom" field was cleared in this mutation.
+func (m *PostMutation) CustomCleared() bool {
+	_, ok := m.clearedFields[post.FieldCustom]
+	return ok
+}
+
+// ResetCustom resets all changes to the "custom" field.
+func (m *PostMutation) ResetCustom() {
+	m.custom = nil
+	delete(m.clearedFields, post.FieldCustom)
+}
+
 // ClearPostStatus clears the "post_status" edge to the PostStatus entity.
 func (m *PostMutation) ClearPostStatus() {
 	m.clearedpost_status = true
@@ -10473,6 +10529,60 @@ func (m *PostMutation) ResetPrimaryCategory() {
 	m.clearedprimary_category = false
 }
 
+// AddPostTagIDs adds the "post_tags" edge to the PostTag entity by ids.
+func (m *PostMutation) AddPostTagIDs(ids ...string) {
+	if m.post_tags == nil {
+		m.post_tags = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.post_tags[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPostTags clears the "post_tags" edge to the PostTag entity.
+func (m *PostMutation) ClearPostTags() {
+	m.clearedpost_tags = true
+}
+
+// PostTagsCleared reports if the "post_tags" edge to the PostTag entity was cleared.
+func (m *PostMutation) PostTagsCleared() bool {
+	return m.clearedpost_tags
+}
+
+// RemovePostTagIDs removes the "post_tags" edge to the PostTag entity by IDs.
+func (m *PostMutation) RemovePostTagIDs(ids ...string) {
+	if m.removedpost_tags == nil {
+		m.removedpost_tags = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.post_tags, ids[i])
+		m.removedpost_tags[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPostTags returns the removed IDs of the "post_tags" edge to the PostTag entity.
+func (m *PostMutation) RemovedPostTagsIDs() (ids []string) {
+	for id := range m.removedpost_tags {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PostTagsIDs returns the "post_tags" edge IDs in the mutation.
+func (m *PostMutation) PostTagsIDs() (ids []string) {
+	for id := range m.post_tags {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPostTags resets all changes to the "post_tags" edge.
+func (m *PostMutation) ResetPostTags() {
+	m.post_tags = nil
+	m.clearedpost_tags = false
+	m.removedpost_tags = nil
+}
+
 // Where appends a list predicates to the PostMutation builder.
 func (m *PostMutation) Where(ps ...predicate.Post) {
 	m.predicates = append(m.predicates, ps...)
@@ -10507,7 +10617,7 @@ func (m *PostMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PostMutation) Fields() []string {
-	fields := make([]string, 0, 15)
+	fields := make([]string, 0, 16)
 	if m.created_at != nil {
 		fields = append(fields, post.FieldCreatedAt)
 	}
@@ -10553,6 +10663,9 @@ func (m *PostMutation) Fields() []string {
 	if m.meta_robots != nil {
 		fields = append(fields, post.FieldMetaRobots)
 	}
+	if m.custom != nil {
+		fields = append(fields, post.FieldCustom)
+	}
 	return fields
 }
 
@@ -10591,6 +10704,8 @@ func (m *PostMutation) Field(name string) (ent.Value, bool) {
 		return m.MetaCanonicalURL()
 	case post.FieldMetaRobots:
 		return m.MetaRobots()
+	case post.FieldCustom:
+		return m.Custom()
 	}
 	return nil, false
 }
@@ -10630,6 +10745,8 @@ func (m *PostMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldMetaCanonicalURL(ctx)
 	case post.FieldMetaRobots:
 		return m.OldMetaRobots(ctx)
+	case post.FieldCustom:
+		return m.OldCustom(ctx)
 	}
 	return nil, fmt.Errorf("unknown Post field %s", name)
 }
@@ -10744,6 +10861,13 @@ func (m *PostMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetMetaRobots(v)
 		return nil
+	case post.FieldCustom:
+		v, ok := value.(map[string]interface{})
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCustom(v)
+		return nil
 	}
 	return fmt.Errorf("unknown Post field %s", name)
 }
@@ -10819,6 +10943,9 @@ func (m *PostMutation) ClearedFields() []string {
 	if m.FieldCleared(post.FieldMetaRobots) {
 		fields = append(fields, post.FieldMetaRobots)
 	}
+	if m.FieldCleared(post.FieldCustom) {
+		fields = append(fields, post.FieldCustom)
+	}
 	return fields
 }
 
@@ -10878,6 +11005,9 @@ func (m *PostMutation) ClearField(name string) error {
 	case post.FieldMetaRobots:
 		m.ClearMetaRobots()
 		return nil
+	case post.FieldCustom:
+		m.ClearCustom()
+		return nil
 	}
 	return fmt.Errorf("unknown Post nullable field %s", name)
 }
@@ -10931,13 +11061,16 @@ func (m *PostMutation) ResetField(name string) error {
 	case post.FieldMetaRobots:
 		m.ResetMetaRobots()
 		return nil
+	case post.FieldCustom:
+		m.ResetCustom()
+		return nil
 	}
 	return fmt.Errorf("unknown Post field %s", name)
 }
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *PostMutation) AddedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.post_status != nil {
 		edges = append(edges, post.EdgePostStatus)
 	}
@@ -10946,6 +11079,9 @@ func (m *PostMutation) AddedEdges() []string {
 	}
 	if m.primary_category != nil {
 		edges = append(edges, post.EdgePrimaryCategory)
+	}
+	if m.post_tags != nil {
+		edges = append(edges, post.EdgePostTags)
 	}
 	return edges
 }
@@ -10966,25 +11102,42 @@ func (m *PostMutation) AddedIDs(name string) []ent.Value {
 		if id := m.primary_category; id != nil {
 			return []ent.Value{*id}
 		}
+	case post.EdgePostTags:
+		ids := make([]ent.Value, 0, len(m.post_tags))
+		for id := range m.post_tags {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *PostMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
+	if m.removedpost_tags != nil {
+		edges = append(edges, post.EdgePostTags)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *PostMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case post.EdgePostTags:
+		ids := make([]ent.Value, 0, len(m.removedpost_tags))
+		for id := range m.removedpost_tags {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *PostMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 3)
+	edges := make([]string, 0, 4)
 	if m.clearedpost_status {
 		edges = append(edges, post.EdgePostStatus)
 	}
@@ -10993,6 +11146,9 @@ func (m *PostMutation) ClearedEdges() []string {
 	}
 	if m.clearedprimary_category {
 		edges = append(edges, post.EdgePrimaryCategory)
+	}
+	if m.clearedpost_tags {
+		edges = append(edges, post.EdgePostTags)
 	}
 	return edges
 }
@@ -11007,6 +11163,8 @@ func (m *PostMutation) EdgeCleared(name string) bool {
 		return m.clearedpost_type
 	case post.EdgePrimaryCategory:
 		return m.clearedprimary_category
+	case post.EdgePostTags:
+		return m.clearedpost_tags
 	}
 	return false
 }
@@ -11040,6 +11198,9 @@ func (m *PostMutation) ResetEdge(name string) error {
 		return nil
 	case post.EdgePrimaryCategory:
 		m.ResetPrimaryCategory()
+		return nil
+	case post.EdgePostTags:
+		m.ResetPostTags()
 		return nil
 	}
 	return fmt.Errorf("unknown Post edge %s", name)
@@ -13239,12 +13400,14 @@ type PostTagMutation struct {
 	slug               *string
 	status             *string
 	excerpt            *string
-	content            *string
 	meta_title         *string
 	meta_descr         *string
 	meta_canonical_url *string
 	meta_robots        *string
 	clearedFields      map[string]struct{}
+	posts              map[string]struct{}
+	removedposts       map[string]struct{}
+	clearedposts       bool
 	done               bool
 	oldValue           func(context.Context) (*PostTag, error)
 	predicates         []predicate.PostTag
@@ -13697,55 +13860,6 @@ func (m *PostTagMutation) ResetExcerpt() {
 	delete(m.clearedFields, posttag.FieldExcerpt)
 }
 
-// SetContent sets the "content" field.
-func (m *PostTagMutation) SetContent(s string) {
-	m.content = &s
-}
-
-// Content returns the value of the "content" field in the mutation.
-func (m *PostTagMutation) Content() (r string, exists bool) {
-	v := m.content
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldContent returns the old "content" field's value of the PostTag entity.
-// If the PostTag object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *PostTagMutation) OldContent(ctx context.Context) (v string, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldContent is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldContent requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldContent: %w", err)
-	}
-	return oldValue.Content, nil
-}
-
-// ClearContent clears the value of the "content" field.
-func (m *PostTagMutation) ClearContent() {
-	m.content = nil
-	m.clearedFields[posttag.FieldContent] = struct{}{}
-}
-
-// ContentCleared returns if the "content" field was cleared in this mutation.
-func (m *PostTagMutation) ContentCleared() bool {
-	_, ok := m.clearedFields[posttag.FieldContent]
-	return ok
-}
-
-// ResetContent resets all changes to the "content" field.
-func (m *PostTagMutation) ResetContent() {
-	m.content = nil
-	delete(m.clearedFields, posttag.FieldContent)
-}
-
 // SetMetaTitle sets the "meta_title" field.
 func (m *PostTagMutation) SetMetaTitle(s string) {
 	m.meta_title = &s
@@ -13942,6 +14056,60 @@ func (m *PostTagMutation) ResetMetaRobots() {
 	delete(m.clearedFields, posttag.FieldMetaRobots)
 }
 
+// AddPostIDs adds the "posts" edge to the Post entity by ids.
+func (m *PostTagMutation) AddPostIDs(ids ...string) {
+	if m.posts == nil {
+		m.posts = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.posts[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPosts clears the "posts" edge to the Post entity.
+func (m *PostTagMutation) ClearPosts() {
+	m.clearedposts = true
+}
+
+// PostsCleared reports if the "posts" edge to the Post entity was cleared.
+func (m *PostTagMutation) PostsCleared() bool {
+	return m.clearedposts
+}
+
+// RemovePostIDs removes the "posts" edge to the Post entity by IDs.
+func (m *PostTagMutation) RemovePostIDs(ids ...string) {
+	if m.removedposts == nil {
+		m.removedposts = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.posts, ids[i])
+		m.removedposts[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPosts returns the removed IDs of the "posts" edge to the Post entity.
+func (m *PostTagMutation) RemovedPostsIDs() (ids []string) {
+	for id := range m.removedposts {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PostsIDs returns the "posts" edge IDs in the mutation.
+func (m *PostTagMutation) PostsIDs() (ids []string) {
+	for id := range m.posts {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPosts resets all changes to the "posts" edge.
+func (m *PostTagMutation) ResetPosts() {
+	m.posts = nil
+	m.clearedposts = false
+	m.removedposts = nil
+}
+
 // Where appends a list predicates to the PostTagMutation builder.
 func (m *PostTagMutation) Where(ps ...predicate.PostTag) {
 	m.predicates = append(m.predicates, ps...)
@@ -13976,7 +14144,7 @@ func (m *PostTagMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PostTagMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 11)
 	if m.created_at != nil {
 		fields = append(fields, posttag.FieldCreatedAt)
 	}
@@ -13997,9 +14165,6 @@ func (m *PostTagMutation) Fields() []string {
 	}
 	if m.excerpt != nil {
 		fields = append(fields, posttag.FieldExcerpt)
-	}
-	if m.content != nil {
-		fields = append(fields, posttag.FieldContent)
 	}
 	if m.meta_title != nil {
 		fields = append(fields, posttag.FieldMetaTitle)
@@ -14035,8 +14200,6 @@ func (m *PostTagMutation) Field(name string) (ent.Value, bool) {
 		return m.Status()
 	case posttag.FieldExcerpt:
 		return m.Excerpt()
-	case posttag.FieldContent:
-		return m.Content()
 	case posttag.FieldMetaTitle:
 		return m.MetaTitle()
 	case posttag.FieldMetaDescr:
@@ -14068,8 +14231,6 @@ func (m *PostTagMutation) OldField(ctx context.Context, name string) (ent.Value,
 		return m.OldStatus(ctx)
 	case posttag.FieldExcerpt:
 		return m.OldExcerpt(ctx)
-	case posttag.FieldContent:
-		return m.OldContent(ctx)
 	case posttag.FieldMetaTitle:
 		return m.OldMetaTitle(ctx)
 	case posttag.FieldMetaDescr:
@@ -14135,13 +14296,6 @@ func (m *PostTagMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetExcerpt(v)
-		return nil
-	case posttag.FieldContent:
-		v, ok := value.(string)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetContent(v)
 		return nil
 	case posttag.FieldMetaTitle:
 		v, ok := value.(string)
@@ -14222,9 +14376,6 @@ func (m *PostTagMutation) ClearedFields() []string {
 	if m.FieldCleared(posttag.FieldExcerpt) {
 		fields = append(fields, posttag.FieldExcerpt)
 	}
-	if m.FieldCleared(posttag.FieldContent) {
-		fields = append(fields, posttag.FieldContent)
-	}
 	if m.FieldCleared(posttag.FieldMetaTitle) {
 		fields = append(fields, posttag.FieldMetaTitle)
 	}
@@ -14272,9 +14423,6 @@ func (m *PostTagMutation) ClearField(name string) error {
 	case posttag.FieldExcerpt:
 		m.ClearExcerpt()
 		return nil
-	case posttag.FieldContent:
-		m.ClearContent()
-		return nil
 	case posttag.FieldMetaTitle:
 		m.ClearMetaTitle()
 		return nil
@@ -14316,9 +14464,6 @@ func (m *PostTagMutation) ResetField(name string) error {
 	case posttag.FieldExcerpt:
 		m.ResetExcerpt()
 		return nil
-	case posttag.FieldContent:
-		m.ResetContent()
-		return nil
 	case posttag.FieldMetaTitle:
 		m.ResetMetaTitle()
 		return nil
@@ -14337,80 +14482,119 @@ func (m *PostTagMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *PostTagMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.posts != nil {
+		edges = append(edges, posttag.EdgePosts)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *PostTagMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case posttag.EdgePosts:
+		ids := make([]ent.Value, 0, len(m.posts))
+		for id := range m.posts {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *PostTagMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.removedposts != nil {
+		edges = append(edges, posttag.EdgePosts)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *PostTagMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case posttag.EdgePosts:
+		ids := make([]ent.Value, 0, len(m.removedposts))
+		for id := range m.removedposts {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *PostTagMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedposts {
+		edges = append(edges, posttag.EdgePosts)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *PostTagMutation) EdgeCleared(name string) bool {
+	switch name {
+	case posttag.EdgePosts:
+		return m.clearedposts
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *PostTagMutation) ClearEdge(name string) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown PostTag unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *PostTagMutation) ResetEdge(name string) error {
+	switch name {
+	case posttag.EdgePosts:
+		m.ResetPosts()
+		return nil
+	}
 	return fmt.Errorf("unknown PostTag edge %s", name)
 }
 
 // PostTypeMutation represents an operation that mutates the PostType nodes in the graph.
 type PostTypeMutation struct {
 	config
-	op                   Op
-	typ                  string
-	id                   *string
-	created_at           *time.Time
-	updated_at           *time.Time
-	app_id               *string
-	name                 *string
-	slug                 *string
-	status               *string
-	excerpt              *string
-	content              *string
-	meta_title           *string
-	meta_descr           *string
-	meta_canonical_url   *string
-	meta_robots          *string
-	clearedFields        map[string]struct{}
-	posts                map[string]struct{}
-	removedposts         map[string]struct{}
-	clearedposts         bool
-	post_statuses        map[string]struct{}
-	removedpost_statuses map[string]struct{}
-	clearedpost_statuses bool
-	done                 bool
-	oldValue             func(context.Context) (*PostType, error)
-	predicates           []predicate.PostType
+	op                     Op
+	typ                    string
+	id                     *string
+	created_at             *time.Time
+	updated_at             *time.Time
+	app_id                 *string
+	name                   *string
+	slug                   *string
+	status                 *string
+	excerpt                *string
+	content                *string
+	meta_title             *string
+	meta_descr             *string
+	meta_canonical_url     *string
+	meta_robots            *string
+	clearedFields          map[string]struct{}
+	posts                  map[string]struct{}
+	removedposts           map[string]struct{}
+	clearedposts           bool
+	post_statuses          map[string]struct{}
+	removedpost_statuses   map[string]struct{}
+	clearedpost_statuses   bool
+	post_type_forms        map[string]struct{}
+	removedpost_type_forms map[string]struct{}
+	clearedpost_type_forms bool
+	done                   bool
+	oldValue               func(context.Context) (*PostType, error)
+	predicates             []predicate.PostType
 }
 
 var _ ent.Mutation = (*PostTypeMutation)(nil)
@@ -15213,6 +15397,60 @@ func (m *PostTypeMutation) ResetPostStatuses() {
 	m.removedpost_statuses = nil
 }
 
+// AddPostTypeFormIDs adds the "post_type_forms" edge to the PostTypeForm entity by ids.
+func (m *PostTypeMutation) AddPostTypeFormIDs(ids ...string) {
+	if m.post_type_forms == nil {
+		m.post_type_forms = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.post_type_forms[ids[i]] = struct{}{}
+	}
+}
+
+// ClearPostTypeForms clears the "post_type_forms" edge to the PostTypeForm entity.
+func (m *PostTypeMutation) ClearPostTypeForms() {
+	m.clearedpost_type_forms = true
+}
+
+// PostTypeFormsCleared reports if the "post_type_forms" edge to the PostTypeForm entity was cleared.
+func (m *PostTypeMutation) PostTypeFormsCleared() bool {
+	return m.clearedpost_type_forms
+}
+
+// RemovePostTypeFormIDs removes the "post_type_forms" edge to the PostTypeForm entity by IDs.
+func (m *PostTypeMutation) RemovePostTypeFormIDs(ids ...string) {
+	if m.removedpost_type_forms == nil {
+		m.removedpost_type_forms = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.post_type_forms, ids[i])
+		m.removedpost_type_forms[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedPostTypeForms returns the removed IDs of the "post_type_forms" edge to the PostTypeForm entity.
+func (m *PostTypeMutation) RemovedPostTypeFormsIDs() (ids []string) {
+	for id := range m.removedpost_type_forms {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// PostTypeFormsIDs returns the "post_type_forms" edge IDs in the mutation.
+func (m *PostTypeMutation) PostTypeFormsIDs() (ids []string) {
+	for id := range m.post_type_forms {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetPostTypeForms resets all changes to the "post_type_forms" edge.
+func (m *PostTypeMutation) ResetPostTypeForms() {
+	m.post_type_forms = nil
+	m.clearedpost_type_forms = false
+	m.removedpost_type_forms = nil
+}
+
 // Where appends a list predicates to the PostTypeMutation builder.
 func (m *PostTypeMutation) Where(ps ...predicate.PostType) {
 	m.predicates = append(m.predicates, ps...)
@@ -15608,12 +15846,15 @@ func (m *PostTypeMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *PostTypeMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.posts != nil {
 		edges = append(edges, posttype.EdgePosts)
 	}
 	if m.post_statuses != nil {
 		edges = append(edges, posttype.EdgePostStatuses)
+	}
+	if m.post_type_forms != nil {
+		edges = append(edges, posttype.EdgePostTypeForms)
 	}
 	return edges
 }
@@ -15634,18 +15875,27 @@ func (m *PostTypeMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case posttype.EdgePostTypeForms:
+		ids := make([]ent.Value, 0, len(m.post_type_forms))
+		for id := range m.post_type_forms {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *PostTypeMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.removedposts != nil {
 		edges = append(edges, posttype.EdgePosts)
 	}
 	if m.removedpost_statuses != nil {
 		edges = append(edges, posttype.EdgePostStatuses)
+	}
+	if m.removedpost_type_forms != nil {
+		edges = append(edges, posttype.EdgePostTypeForms)
 	}
 	return edges
 }
@@ -15666,18 +15916,27 @@ func (m *PostTypeMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case posttype.EdgePostTypeForms:
+		ids := make([]ent.Value, 0, len(m.removedpost_type_forms))
+		for id := range m.removedpost_type_forms {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *PostTypeMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
+	edges := make([]string, 0, 3)
 	if m.clearedposts {
 		edges = append(edges, posttype.EdgePosts)
 	}
 	if m.clearedpost_statuses {
 		edges = append(edges, posttype.EdgePostStatuses)
+	}
+	if m.clearedpost_type_forms {
+		edges = append(edges, posttype.EdgePostTypeForms)
 	}
 	return edges
 }
@@ -15690,6 +15949,8 @@ func (m *PostTypeMutation) EdgeCleared(name string) bool {
 		return m.clearedposts
 	case posttype.EdgePostStatuses:
 		return m.clearedpost_statuses
+	case posttype.EdgePostTypeForms:
+		return m.clearedpost_type_forms
 	}
 	return false
 }
@@ -15712,8 +15973,874 @@ func (m *PostTypeMutation) ResetEdge(name string) error {
 	case posttype.EdgePostStatuses:
 		m.ResetPostStatuses()
 		return nil
+	case posttype.EdgePostTypeForms:
+		m.ResetPostTypeForms()
+		return nil
 	}
 	return fmt.Errorf("unknown PostType edge %s", name)
+}
+
+// PostTypeFormMutation represents an operation that mutates the PostTypeForm nodes in the graph.
+type PostTypeFormMutation struct {
+	config
+	op               Op
+	typ              string
+	id               *string
+	created_at       *time.Time
+	updated_at       *time.Time
+	app_id           *string
+	name             *string
+	status           *bool
+	body             *jsonslice.JsonSlice
+	appendbody       jsonslice.JsonSlice
+	clearedFields    map[string]struct{}
+	post_type        *string
+	clearedpost_type bool
+	done             bool
+	oldValue         func(context.Context) (*PostTypeForm, error)
+	predicates       []predicate.PostTypeForm
+}
+
+var _ ent.Mutation = (*PostTypeFormMutation)(nil)
+
+// posttypeformOption allows management of the mutation configuration using functional options.
+type posttypeformOption func(*PostTypeFormMutation)
+
+// newPostTypeFormMutation creates new mutation for the PostTypeForm entity.
+func newPostTypeFormMutation(c config, op Op, opts ...posttypeformOption) *PostTypeFormMutation {
+	m := &PostTypeFormMutation{
+		config:        c,
+		op:            op,
+		typ:           TypePostTypeForm,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withPostTypeFormID sets the ID field of the mutation.
+func withPostTypeFormID(id string) posttypeformOption {
+	return func(m *PostTypeFormMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *PostTypeForm
+		)
+		m.oldValue = func(ctx context.Context) (*PostTypeForm, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().PostTypeForm.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withPostTypeForm sets the old PostTypeForm of the mutation.
+func withPostTypeForm(node *PostTypeForm) posttypeformOption {
+	return func(m *PostTypeFormMutation) {
+		m.oldValue = func(context.Context) (*PostTypeForm, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m PostTypeFormMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m PostTypeFormMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of PostTypeForm entities.
+func (m *PostTypeFormMutation) SetID(id string) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *PostTypeFormMutation) ID() (id string, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *PostTypeFormMutation) IDs(ctx context.Context) ([]string, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []string{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().PostTypeForm.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *PostTypeFormMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *PostTypeFormMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the PostTypeForm entity.
+// If the PostTypeForm object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostTypeFormMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *PostTypeFormMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[posttypeform.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *PostTypeFormMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[posttypeform.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *PostTypeFormMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, posttypeform.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *PostTypeFormMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *PostTypeFormMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the PostTypeForm entity.
+// If the PostTypeForm object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostTypeFormMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *PostTypeFormMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[posttypeform.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *PostTypeFormMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[posttypeform.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *PostTypeFormMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, posttypeform.FieldUpdatedAt)
+}
+
+// SetAppID sets the "app_id" field.
+func (m *PostTypeFormMutation) SetAppID(s string) {
+	m.app_id = &s
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *PostTypeFormMutation) AppID() (r string, exists bool) {
+	v := m.app_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the PostTypeForm entity.
+// If the PostTypeForm object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostTypeFormMutation) OldAppID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *PostTypeFormMutation) ClearAppID() {
+	m.app_id = nil
+	m.clearedFields[posttypeform.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *PostTypeFormMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[posttypeform.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *PostTypeFormMutation) ResetAppID() {
+	m.app_id = nil
+	delete(m.clearedFields, posttypeform.FieldAppID)
+}
+
+// SetName sets the "name" field.
+func (m *PostTypeFormMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *PostTypeFormMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the PostTypeForm entity.
+// If the PostTypeForm object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostTypeFormMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ClearName clears the value of the "name" field.
+func (m *PostTypeFormMutation) ClearName() {
+	m.name = nil
+	m.clearedFields[posttypeform.FieldName] = struct{}{}
+}
+
+// NameCleared returns if the "name" field was cleared in this mutation.
+func (m *PostTypeFormMutation) NameCleared() bool {
+	_, ok := m.clearedFields[posttypeform.FieldName]
+	return ok
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *PostTypeFormMutation) ResetName() {
+	m.name = nil
+	delete(m.clearedFields, posttypeform.FieldName)
+}
+
+// SetStatus sets the "status" field.
+func (m *PostTypeFormMutation) SetStatus(b bool) {
+	m.status = &b
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *PostTypeFormMutation) Status() (r bool, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the PostTypeForm entity.
+// If the PostTypeForm object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostTypeFormMutation) OldStatus(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// ClearStatus clears the value of the "status" field.
+func (m *PostTypeFormMutation) ClearStatus() {
+	m.status = nil
+	m.clearedFields[posttypeform.FieldStatus] = struct{}{}
+}
+
+// StatusCleared returns if the "status" field was cleared in this mutation.
+func (m *PostTypeFormMutation) StatusCleared() bool {
+	_, ok := m.clearedFields[posttypeform.FieldStatus]
+	return ok
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *PostTypeFormMutation) ResetStatus() {
+	m.status = nil
+	delete(m.clearedFields, posttypeform.FieldStatus)
+}
+
+// SetPostTypeID sets the "post_type_id" field.
+func (m *PostTypeFormMutation) SetPostTypeID(s string) {
+	m.post_type = &s
+}
+
+// PostTypeID returns the value of the "post_type_id" field in the mutation.
+func (m *PostTypeFormMutation) PostTypeID() (r string, exists bool) {
+	v := m.post_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldPostTypeID returns the old "post_type_id" field's value of the PostTypeForm entity.
+// If the PostTypeForm object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostTypeFormMutation) OldPostTypeID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldPostTypeID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldPostTypeID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldPostTypeID: %w", err)
+	}
+	return oldValue.PostTypeID, nil
+}
+
+// ClearPostTypeID clears the value of the "post_type_id" field.
+func (m *PostTypeFormMutation) ClearPostTypeID() {
+	m.post_type = nil
+	m.clearedFields[posttypeform.FieldPostTypeID] = struct{}{}
+}
+
+// PostTypeIDCleared returns if the "post_type_id" field was cleared in this mutation.
+func (m *PostTypeFormMutation) PostTypeIDCleared() bool {
+	_, ok := m.clearedFields[posttypeform.FieldPostTypeID]
+	return ok
+}
+
+// ResetPostTypeID resets all changes to the "post_type_id" field.
+func (m *PostTypeFormMutation) ResetPostTypeID() {
+	m.post_type = nil
+	delete(m.clearedFields, posttypeform.FieldPostTypeID)
+}
+
+// SetBody sets the "body" field.
+func (m *PostTypeFormMutation) SetBody(js jsonslice.JsonSlice) {
+	m.body = &js
+	m.appendbody = nil
+}
+
+// Body returns the value of the "body" field in the mutation.
+func (m *PostTypeFormMutation) Body() (r jsonslice.JsonSlice, exists bool) {
+	v := m.body
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBody returns the old "body" field's value of the PostTypeForm entity.
+// If the PostTypeForm object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostTypeFormMutation) OldBody(ctx context.Context) (v jsonslice.JsonSlice, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBody is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBody requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBody: %w", err)
+	}
+	return oldValue.Body, nil
+}
+
+// AppendBody adds js to the "body" field.
+func (m *PostTypeFormMutation) AppendBody(js jsonslice.JsonSlice) {
+	m.appendbody = append(m.appendbody, js...)
+}
+
+// AppendedBody returns the list of values that were appended to the "body" field in this mutation.
+func (m *PostTypeFormMutation) AppendedBody() (jsonslice.JsonSlice, bool) {
+	if len(m.appendbody) == 0 {
+		return nil, false
+	}
+	return m.appendbody, true
+}
+
+// ClearBody clears the value of the "body" field.
+func (m *PostTypeFormMutation) ClearBody() {
+	m.body = nil
+	m.appendbody = nil
+	m.clearedFields[posttypeform.FieldBody] = struct{}{}
+}
+
+// BodyCleared returns if the "body" field was cleared in this mutation.
+func (m *PostTypeFormMutation) BodyCleared() bool {
+	_, ok := m.clearedFields[posttypeform.FieldBody]
+	return ok
+}
+
+// ResetBody resets all changes to the "body" field.
+func (m *PostTypeFormMutation) ResetBody() {
+	m.body = nil
+	m.appendbody = nil
+	delete(m.clearedFields, posttypeform.FieldBody)
+}
+
+// ClearPostType clears the "post_type" edge to the PostType entity.
+func (m *PostTypeFormMutation) ClearPostType() {
+	m.clearedpost_type = true
+	m.clearedFields[posttypeform.FieldPostTypeID] = struct{}{}
+}
+
+// PostTypeCleared reports if the "post_type" edge to the PostType entity was cleared.
+func (m *PostTypeFormMutation) PostTypeCleared() bool {
+	return m.PostTypeIDCleared() || m.clearedpost_type
+}
+
+// PostTypeIDs returns the "post_type" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// PostTypeID instead. It exists only for internal usage by the builders.
+func (m *PostTypeFormMutation) PostTypeIDs() (ids []string) {
+	if id := m.post_type; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetPostType resets all changes to the "post_type" edge.
+func (m *PostTypeFormMutation) ResetPostType() {
+	m.post_type = nil
+	m.clearedpost_type = false
+}
+
+// Where appends a list predicates to the PostTypeFormMutation builder.
+func (m *PostTypeFormMutation) Where(ps ...predicate.PostTypeForm) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the PostTypeFormMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *PostTypeFormMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.PostTypeForm, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *PostTypeFormMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *PostTypeFormMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (PostTypeForm).
+func (m *PostTypeFormMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *PostTypeFormMutation) Fields() []string {
+	fields := make([]string, 0, 7)
+	if m.created_at != nil {
+		fields = append(fields, posttypeform.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, posttypeform.FieldUpdatedAt)
+	}
+	if m.app_id != nil {
+		fields = append(fields, posttypeform.FieldAppID)
+	}
+	if m.name != nil {
+		fields = append(fields, posttypeform.FieldName)
+	}
+	if m.status != nil {
+		fields = append(fields, posttypeform.FieldStatus)
+	}
+	if m.post_type != nil {
+		fields = append(fields, posttypeform.FieldPostTypeID)
+	}
+	if m.body != nil {
+		fields = append(fields, posttypeform.FieldBody)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *PostTypeFormMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case posttypeform.FieldCreatedAt:
+		return m.CreatedAt()
+	case posttypeform.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case posttypeform.FieldAppID:
+		return m.AppID()
+	case posttypeform.FieldName:
+		return m.Name()
+	case posttypeform.FieldStatus:
+		return m.Status()
+	case posttypeform.FieldPostTypeID:
+		return m.PostTypeID()
+	case posttypeform.FieldBody:
+		return m.Body()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *PostTypeFormMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case posttypeform.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case posttypeform.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case posttypeform.FieldAppID:
+		return m.OldAppID(ctx)
+	case posttypeform.FieldName:
+		return m.OldName(ctx)
+	case posttypeform.FieldStatus:
+		return m.OldStatus(ctx)
+	case posttypeform.FieldPostTypeID:
+		return m.OldPostTypeID(ctx)
+	case posttypeform.FieldBody:
+		return m.OldBody(ctx)
+	}
+	return nil, fmt.Errorf("unknown PostTypeForm field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PostTypeFormMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case posttypeform.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case posttypeform.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case posttypeform.FieldAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
+		return nil
+	case posttypeform.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case posttypeform.FieldStatus:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	case posttypeform.FieldPostTypeID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetPostTypeID(v)
+		return nil
+	case posttypeform.FieldBody:
+		v, ok := value.(jsonslice.JsonSlice)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBody(v)
+		return nil
+	}
+	return fmt.Errorf("unknown PostTypeForm field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *PostTypeFormMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *PostTypeFormMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *PostTypeFormMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown PostTypeForm numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *PostTypeFormMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(posttypeform.FieldCreatedAt) {
+		fields = append(fields, posttypeform.FieldCreatedAt)
+	}
+	if m.FieldCleared(posttypeform.FieldUpdatedAt) {
+		fields = append(fields, posttypeform.FieldUpdatedAt)
+	}
+	if m.FieldCleared(posttypeform.FieldAppID) {
+		fields = append(fields, posttypeform.FieldAppID)
+	}
+	if m.FieldCleared(posttypeform.FieldName) {
+		fields = append(fields, posttypeform.FieldName)
+	}
+	if m.FieldCleared(posttypeform.FieldStatus) {
+		fields = append(fields, posttypeform.FieldStatus)
+	}
+	if m.FieldCleared(posttypeform.FieldPostTypeID) {
+		fields = append(fields, posttypeform.FieldPostTypeID)
+	}
+	if m.FieldCleared(posttypeform.FieldBody) {
+		fields = append(fields, posttypeform.FieldBody)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *PostTypeFormMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *PostTypeFormMutation) ClearField(name string) error {
+	switch name {
+	case posttypeform.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case posttypeform.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case posttypeform.FieldAppID:
+		m.ClearAppID()
+		return nil
+	case posttypeform.FieldName:
+		m.ClearName()
+		return nil
+	case posttypeform.FieldStatus:
+		m.ClearStatus()
+		return nil
+	case posttypeform.FieldPostTypeID:
+		m.ClearPostTypeID()
+		return nil
+	case posttypeform.FieldBody:
+		m.ClearBody()
+		return nil
+	}
+	return fmt.Errorf("unknown PostTypeForm nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *PostTypeFormMutation) ResetField(name string) error {
+	switch name {
+	case posttypeform.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case posttypeform.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case posttypeform.FieldAppID:
+		m.ResetAppID()
+		return nil
+	case posttypeform.FieldName:
+		m.ResetName()
+		return nil
+	case posttypeform.FieldStatus:
+		m.ResetStatus()
+		return nil
+	case posttypeform.FieldPostTypeID:
+		m.ResetPostTypeID()
+		return nil
+	case posttypeform.FieldBody:
+		m.ResetBody()
+		return nil
+	}
+	return fmt.Errorf("unknown PostTypeForm field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *PostTypeFormMutation) AddedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.post_type != nil {
+		edges = append(edges, posttypeform.EdgePostType)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *PostTypeFormMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case posttypeform.EdgePostType:
+		if id := m.post_type; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *PostTypeFormMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 1)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *PostTypeFormMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *PostTypeFormMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 1)
+	if m.clearedpost_type {
+		edges = append(edges, posttypeform.EdgePostType)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *PostTypeFormMutation) EdgeCleared(name string) bool {
+	switch name {
+	case posttypeform.EdgePostType:
+		return m.clearedpost_type
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *PostTypeFormMutation) ClearEdge(name string) error {
+	switch name {
+	case posttypeform.EdgePostType:
+		m.ClearPostType()
+		return nil
+	}
+	return fmt.Errorf("unknown PostTypeForm unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *PostTypeFormMutation) ResetEdge(name string) error {
+	switch name {
+	case posttypeform.EdgePostType:
+		m.ResetPostType()
+		return nil
+	}
+	return fmt.Errorf("unknown PostTypeForm edge %s", name)
 }
 
 // SessionMutation represents an operation that mutates the Session nodes in the graph.

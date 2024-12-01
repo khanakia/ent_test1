@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"lace/jsonslice"
 	"saas/gen/ent"
 	"saas/gen/ent/todo"
 	"strconv"
@@ -31,7 +32,9 @@ type QueryResolver interface {
 	Posts(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostOrder, where *ent.PostWhereInput) (*ent.PostConnection, error)
 	PostCategories(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostCategoryOrder, where *ent.PostCategoryWhereInput) (*ent.PostCategoryConnection, error)
 	PostStatuses(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostStatusOrder, where *ent.PostStatusWhereInput) (*ent.PostStatusConnection, error)
+	PostTags(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostTagOrder, where *ent.PostTagWhereInput) (*ent.PostTagConnection, error)
 	PostTypes(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostTypeOrder, where *ent.PostTypeWhereInput) (*ent.PostTypeConnection, error)
+	PostTypeForms(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostTypeFormOrder, where *ent.PostTypeFormWhereInput) (*ent.PostTypeFormConnection, error)
 	Templs(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.TemplOrder, where *ent.TemplWhereInput) (*ent.TemplConnection, error)
 	Todos(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy *ent.TodoOrder, where *ent.TodoWhereInput) (*ent.TodoConnection, error)
 	Users(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.UserOrder, where *ent.UserWhereInput) (*ent.UserConnection, error)
@@ -442,6 +445,126 @@ func (ec *executionContext) field_Query_postStatuses_args(ctx context.Context, r
 	if tmp, ok := rawArgs["where"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
 		arg5, err = ec.unmarshalOPostStatusWhereInput2ᚖsaasᚋgenᚋentᚐPostStatusWhereInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg5
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_postTags_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["last"] = arg3
+	var arg4 []*ent.PostTagOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalOPostTagOrder2ᚕᚖsaasᚋgenᚋentᚐPostTagOrderᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 *ent.PostTagWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+		arg5, err = ec.unmarshalOPostTagWhereInput2ᚖsaasᚋgenᚋentᚐPostTagWhereInput(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["where"] = arg5
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_postTypeForms_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["after"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("after"))
+		arg0, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["after"] = arg0
+	var arg1 *int
+	if tmp, ok := rawArgs["first"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
+		arg1, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["first"] = arg1
+	var arg2 *entgql.Cursor[string]
+	if tmp, ok := rawArgs["before"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("before"))
+		arg2, err = ec.unmarshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["before"] = arg2
+	var arg3 *int
+	if tmp, ok := rawArgs["last"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
+		arg3, err = ec.unmarshalOInt2ᚖint(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["last"] = arg3
+	var arg4 []*ent.PostTypeFormOrder
+	if tmp, ok := rawArgs["orderBy"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
+		arg4, err = ec.unmarshalOPostTypeFormOrder2ᚕᚖsaasᚋgenᚋentᚐPostTypeFormOrderᚄ(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["orderBy"] = arg4
+	var arg5 *ent.PostTypeFormWhereInput
+	if tmp, ok := rawArgs["where"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("where"))
+		arg5, err = ec.unmarshalOPostTypeFormWhereInput2ᚖsaasᚋgenᚋentᚐPostTypeFormWhereInput(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -6157,6 +6280,47 @@ func (ec *executionContext) fieldContext_Post_metaRobots(_ context.Context, fiel
 	return fc, nil
 }
 
+func (ec *executionContext) _Post_custom(ctx context.Context, field graphql.CollectedField, obj *ent.Post) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Post_custom(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Custom, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(map[string]interface{})
+	fc.Result = res
+	return ec.marshalOMap2map(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Post_custom(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Post",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Map does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Post_postStatus(ctx context.Context, field graphql.CollectedField, obj *ent.Post) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Post_postStatus(ctx, field)
 	if err != nil {
@@ -6286,6 +6450,8 @@ func (ec *executionContext) fieldContext_Post_postType(_ context.Context, field 
 				return ec.fieldContext_PostType_posts(ctx, field)
 			case "postStatuses":
 				return ec.fieldContext_PostType_postStatuses(ctx, field)
+			case "postTypeForms":
+				return ec.fieldContext_PostType_postTypeForms(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PostType", field.Name)
 		},
@@ -6359,6 +6525,75 @@ func (ec *executionContext) fieldContext_Post_primaryCategory(_ context.Context,
 				return ec.fieldContext_PostCategory_posts(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PostCategory", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Post_postTags(ctx context.Context, field graphql.CollectedField, obj *ent.Post) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Post_postTags(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PostTags(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.PostTag)
+	fc.Result = res
+	return ec.marshalOPostTag2ᚕᚖsaasᚋgenᚋentᚐPostTagᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Post_postTags(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Post",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_PostTag_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_PostTag_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_PostTag_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_PostTag_appID(ctx, field)
+			case "name":
+				return ec.fieldContext_PostTag_name(ctx, field)
+			case "slug":
+				return ec.fieldContext_PostTag_slug(ctx, field)
+			case "status":
+				return ec.fieldContext_PostTag_status(ctx, field)
+			case "excerpt":
+				return ec.fieldContext_PostTag_excerpt(ctx, field)
+			case "metaTitle":
+				return ec.fieldContext_PostTag_metaTitle(ctx, field)
+			case "metaDescr":
+				return ec.fieldContext_PostTag_metaDescr(ctx, field)
+			case "metaCanonicalURL":
+				return ec.fieldContext_PostTag_metaCanonicalURL(ctx, field)
+			case "metaRobots":
+				return ec.fieldContext_PostTag_metaRobots(ctx, field)
+			case "posts":
+				return ec.fieldContext_PostTag_posts(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PostTag", field.Name)
 		},
 	}
 	return fc, nil
@@ -6968,12 +7203,16 @@ func (ec *executionContext) fieldContext_PostCategory_posts(_ context.Context, f
 				return ec.fieldContext_Post_metaCanonicalURL(ctx, field)
 			case "metaRobots":
 				return ec.fieldContext_Post_metaRobots(ctx, field)
+			case "custom":
+				return ec.fieldContext_Post_custom(ctx, field)
 			case "postStatus":
 				return ec.fieldContext_Post_postStatus(ctx, field)
 			case "postType":
 				return ec.fieldContext_Post_postType(ctx, field)
 			case "primaryCategory":
 				return ec.fieldContext_Post_primaryCategory(ctx, field)
+			case "postTags":
+				return ec.fieldContext_Post_postTags(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Post", field.Name)
 		},
@@ -7454,12 +7693,16 @@ func (ec *executionContext) fieldContext_PostEdge_node(_ context.Context, field 
 				return ec.fieldContext_Post_metaCanonicalURL(ctx, field)
 			case "metaRobots":
 				return ec.fieldContext_Post_metaRobots(ctx, field)
+			case "custom":
+				return ec.fieldContext_Post_custom(ctx, field)
 			case "postStatus":
 				return ec.fieldContext_Post_postStatus(ctx, field)
 			case "postType":
 				return ec.fieldContext_Post_postType(ctx, field)
 			case "primaryCategory":
 				return ec.fieldContext_Post_primaryCategory(ctx, field)
+			case "postTags":
+				return ec.fieldContext_Post_postTags(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Post", field.Name)
 		},
@@ -7908,6 +8151,8 @@ func (ec *executionContext) fieldContext_PostStatus_postType(_ context.Context, 
 				return ec.fieldContext_PostType_posts(ctx, field)
 			case "postStatuses":
 				return ec.fieldContext_PostType_postStatuses(ctx, field)
+			case "postTypeForms":
+				return ec.fieldContext_PostType_postTypeForms(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PostType", field.Name)
 		},
@@ -7983,12 +8228,16 @@ func (ec *executionContext) fieldContext_PostStatus_posts(_ context.Context, fie
 				return ec.fieldContext_Post_metaCanonicalURL(ctx, field)
 			case "metaRobots":
 				return ec.fieldContext_Post_metaRobots(ctx, field)
+			case "custom":
+				return ec.fieldContext_Post_custom(ctx, field)
 			case "postStatus":
 				return ec.fieldContext_Post_postStatus(ctx, field)
 			case "postType":
 				return ec.fieldContext_Post_postType(ctx, field)
 			case "primaryCategory":
 				return ec.fieldContext_Post_primaryCategory(ctx, field)
+			case "postTags":
+				return ec.fieldContext_Post_postTags(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Post", field.Name)
 		},
@@ -8579,47 +8828,6 @@ func (ec *executionContext) fieldContext_PostTag_excerpt(_ context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _PostTag_content(ctx context.Context, field graphql.CollectedField, obj *ent.PostTag) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PostTag_content(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Content, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_PostTag_content(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "PostTag",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _PostTag_metaTitle(ctx context.Context, field graphql.CollectedField, obj *ent.PostTag) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PostTag_metaTitle(ctx, field)
 	if err != nil {
@@ -8779,6 +8987,349 @@ func (ec *executionContext) fieldContext_PostTag_metaRobots(_ context.Context, f
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PostTag_posts(ctx context.Context, field graphql.CollectedField, obj *ent.PostTag) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PostTag_posts(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Posts(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.Post)
+	fc.Result = res
+	return ec.marshalOPost2ᚕᚖsaasᚋgenᚋentᚐPostᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PostTag_posts(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PostTag",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Post_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Post_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Post_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_Post_appID(ctx, field)
+			case "name":
+				return ec.fieldContext_Post_name(ctx, field)
+			case "slug":
+				return ec.fieldContext_Post_slug(ctx, field)
+			case "postStatusID":
+				return ec.fieldContext_Post_postStatusID(ctx, field)
+			case "postTypeID":
+				return ec.fieldContext_Post_postTypeID(ctx, field)
+			case "primaryCategoryID":
+				return ec.fieldContext_Post_primaryCategoryID(ctx, field)
+			case "headline":
+				return ec.fieldContext_Post_headline(ctx, field)
+			case "excerpt":
+				return ec.fieldContext_Post_excerpt(ctx, field)
+			case "content":
+				return ec.fieldContext_Post_content(ctx, field)
+			case "metaTitle":
+				return ec.fieldContext_Post_metaTitle(ctx, field)
+			case "metaDescr":
+				return ec.fieldContext_Post_metaDescr(ctx, field)
+			case "metaCanonicalURL":
+				return ec.fieldContext_Post_metaCanonicalURL(ctx, field)
+			case "metaRobots":
+				return ec.fieldContext_Post_metaRobots(ctx, field)
+			case "custom":
+				return ec.fieldContext_Post_custom(ctx, field)
+			case "postStatus":
+				return ec.fieldContext_Post_postStatus(ctx, field)
+			case "postType":
+				return ec.fieldContext_Post_postType(ctx, field)
+			case "primaryCategory":
+				return ec.fieldContext_Post_primaryCategory(ctx, field)
+			case "postTags":
+				return ec.fieldContext_Post_postTags(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Post", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PostTagConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.PostTagConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PostTagConnection_edges(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.PostTagEdge)
+	fc.Result = res
+	return ec.marshalOPostTagEdge2ᚕᚖsaasᚋgenᚋentᚐPostTagEdge(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PostTagConnection_edges(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PostTagConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_PostTagEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_PostTagEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PostTagEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PostTagConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.PostTagConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PostTagConnection_pageInfo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.PageInfo[string])
+	fc.Result = res
+	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PostTagConnection_pageInfo(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PostTagConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hasNextPage":
+				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
+			case "hasPreviousPage":
+				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
+			case "startCursor":
+				return ec.fieldContext_PageInfo_startCursor(ctx, field)
+			case "endCursor":
+				return ec.fieldContext_PageInfo_endCursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PostTagConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.PostTagConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PostTagConnection_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PostTagConnection_totalCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PostTagConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PostTagEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.PostTagEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PostTagEdge_node(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.PostTag)
+	fc.Result = res
+	return ec.marshalOPostTag2ᚖsaasᚋgenᚋentᚐPostTag(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PostTagEdge_node(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PostTagEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_PostTag_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_PostTag_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_PostTag_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_PostTag_appID(ctx, field)
+			case "name":
+				return ec.fieldContext_PostTag_name(ctx, field)
+			case "slug":
+				return ec.fieldContext_PostTag_slug(ctx, field)
+			case "status":
+				return ec.fieldContext_PostTag_status(ctx, field)
+			case "excerpt":
+				return ec.fieldContext_PostTag_excerpt(ctx, field)
+			case "metaTitle":
+				return ec.fieldContext_PostTag_metaTitle(ctx, field)
+			case "metaDescr":
+				return ec.fieldContext_PostTag_metaDescr(ctx, field)
+			case "metaCanonicalURL":
+				return ec.fieldContext_PostTag_metaCanonicalURL(ctx, field)
+			case "metaRobots":
+				return ec.fieldContext_PostTag_metaRobots(ctx, field)
+			case "posts":
+				return ec.fieldContext_PostTag_posts(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PostTag", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PostTagEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.PostTagEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PostTagEdge_cursor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.Cursor[string])
+	fc.Result = res
+	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PostTagEdge_cursor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PostTagEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Cursor does not have child fields")
 		},
 	}
 	return fc, nil
@@ -9388,12 +9939,16 @@ func (ec *executionContext) fieldContext_PostType_posts(_ context.Context, field
 				return ec.fieldContext_Post_metaCanonicalURL(ctx, field)
 			case "metaRobots":
 				return ec.fieldContext_Post_metaRobots(ctx, field)
+			case "custom":
+				return ec.fieldContext_Post_custom(ctx, field)
 			case "postStatus":
 				return ec.fieldContext_Post_postStatus(ctx, field)
 			case "postType":
 				return ec.fieldContext_Post_postType(ctx, field)
 			case "primaryCategory":
 				return ec.fieldContext_Post_primaryCategory(ctx, field)
+			case "postTags":
+				return ec.fieldContext_Post_postTags(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Post", field.Name)
 		},
@@ -9459,6 +10014,67 @@ func (ec *executionContext) fieldContext_PostType_postStatuses(_ context.Context
 				return ec.fieldContext_PostStatus_posts(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PostStatus", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PostType_postTypeForms(ctx context.Context, field graphql.CollectedField, obj *ent.PostType) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PostType_postTypeForms(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PostTypeForms(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.PostTypeForm)
+	fc.Result = res
+	return ec.marshalOPostTypeForm2ᚕᚖsaasᚋgenᚋentᚐPostTypeFormᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PostType_postTypeForms(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PostType",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_PostTypeForm_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_PostTypeForm_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_PostTypeForm_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_PostTypeForm_appID(ctx, field)
+			case "name":
+				return ec.fieldContext_PostTypeForm_name(ctx, field)
+			case "status":
+				return ec.fieldContext_PostTypeForm_status(ctx, field)
+			case "postTypeID":
+				return ec.fieldContext_PostTypeForm_postTypeID(ctx, field)
+			case "body":
+				return ec.fieldContext_PostTypeForm_body(ctx, field)
+			case "postType":
+				return ec.fieldContext_PostTypeForm_postType(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PostTypeForm", field.Name)
 		},
 	}
 	return fc, nil
@@ -9675,6 +10291,8 @@ func (ec *executionContext) fieldContext_PostTypeEdge_node(_ context.Context, fi
 				return ec.fieldContext_PostType_posts(ctx, field)
 			case "postStatuses":
 				return ec.fieldContext_PostType_postStatuses(ctx, field)
+			case "postTypeForms":
+				return ec.fieldContext_PostType_postTypeForms(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PostType", field.Name)
 		},
@@ -9716,6 +10334,662 @@ func (ec *executionContext) _PostTypeEdge_cursor(ctx context.Context, field grap
 func (ec *executionContext) fieldContext_PostTypeEdge_cursor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "PostTypeEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Cursor does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PostTypeForm_id(ctx context.Context, field graphql.CollectedField, obj *ent.PostTypeForm) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PostTypeForm_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PostTypeForm_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PostTypeForm",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PostTypeForm_createdAt(ctx context.Context, field graphql.CollectedField, obj *ent.PostTypeForm) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PostTypeForm_createdAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PostTypeForm_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PostTypeForm",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PostTypeForm_updatedAt(ctx context.Context, field graphql.CollectedField, obj *ent.PostTypeForm) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PostTypeForm_updatedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UpdatedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalOTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PostTypeForm_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PostTypeForm",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PostTypeForm_appID(ctx context.Context, field graphql.CollectedField, obj *ent.PostTypeForm) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PostTypeForm_appID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AppID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PostTypeForm_appID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PostTypeForm",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PostTypeForm_name(ctx context.Context, field graphql.CollectedField, obj *ent.PostTypeForm) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PostTypeForm_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PostTypeForm_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PostTypeForm",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PostTypeForm_status(ctx context.Context, field graphql.CollectedField, obj *ent.PostTypeForm) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PostTypeForm_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PostTypeForm_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PostTypeForm",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PostTypeForm_postTypeID(ctx context.Context, field graphql.CollectedField, obj *ent.PostTypeForm) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PostTypeForm_postTypeID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PostTypeID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PostTypeForm_postTypeID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PostTypeForm",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PostTypeForm_body(ctx context.Context, field graphql.CollectedField, obj *ent.PostTypeForm) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PostTypeForm_body(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Body, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(jsonslice.JsonSlice)
+	fc.Result = res
+	return ec.marshalOJsonSlice2laceᚋjsonsliceᚐJsonSlice(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PostTypeForm_body(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PostTypeForm",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type JsonSlice does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PostTypeForm_postType(ctx context.Context, field graphql.CollectedField, obj *ent.PostTypeForm) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PostTypeForm_postType(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PostType(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.PostType)
+	fc.Result = res
+	return ec.marshalOPostType2ᚖsaasᚋgenᚋentᚐPostType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PostTypeForm_postType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PostTypeForm",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_PostType_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_PostType_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_PostType_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_PostType_appID(ctx, field)
+			case "name":
+				return ec.fieldContext_PostType_name(ctx, field)
+			case "slug":
+				return ec.fieldContext_PostType_slug(ctx, field)
+			case "status":
+				return ec.fieldContext_PostType_status(ctx, field)
+			case "excerpt":
+				return ec.fieldContext_PostType_excerpt(ctx, field)
+			case "content":
+				return ec.fieldContext_PostType_content(ctx, field)
+			case "metaTitle":
+				return ec.fieldContext_PostType_metaTitle(ctx, field)
+			case "metaDescr":
+				return ec.fieldContext_PostType_metaDescr(ctx, field)
+			case "metaCanonicalURL":
+				return ec.fieldContext_PostType_metaCanonicalURL(ctx, field)
+			case "metaRobots":
+				return ec.fieldContext_PostType_metaRobots(ctx, field)
+			case "posts":
+				return ec.fieldContext_PostType_posts(ctx, field)
+			case "postStatuses":
+				return ec.fieldContext_PostType_postStatuses(ctx, field)
+			case "postTypeForms":
+				return ec.fieldContext_PostType_postTypeForms(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PostType", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PostTypeFormConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.PostTypeFormConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PostTypeFormConnection_edges(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.PostTypeFormEdge)
+	fc.Result = res
+	return ec.marshalOPostTypeFormEdge2ᚕᚖsaasᚋgenᚋentᚐPostTypeFormEdge(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PostTypeFormConnection_edges(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PostTypeFormConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "node":
+				return ec.fieldContext_PostTypeFormEdge_node(ctx, field)
+			case "cursor":
+				return ec.fieldContext_PostTypeFormEdge_cursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PostTypeFormEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PostTypeFormConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *ent.PostTypeFormConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PostTypeFormConnection_pageInfo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.PageInfo[string])
+	fc.Result = res
+	return ec.marshalNPageInfo2entgoᚗioᚋcontribᚋentgqlᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PostTypeFormConnection_pageInfo(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PostTypeFormConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "hasNextPage":
+				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
+			case "hasPreviousPage":
+				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
+			case "startCursor":
+				return ec.fieldContext_PageInfo_startCursor(ctx, field)
+			case "endCursor":
+				return ec.fieldContext_PageInfo_endCursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PostTypeFormConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *ent.PostTypeFormConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PostTypeFormConnection_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PostTypeFormConnection_totalCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PostTypeFormConnection",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PostTypeFormEdge_node(ctx context.Context, field graphql.CollectedField, obj *ent.PostTypeFormEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PostTypeFormEdge_node(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.PostTypeForm)
+	fc.Result = res
+	return ec.marshalOPostTypeForm2ᚖsaasᚋgenᚋentᚐPostTypeForm(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PostTypeFormEdge_node(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PostTypeFormEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_PostTypeForm_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_PostTypeForm_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_PostTypeForm_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_PostTypeForm_appID(ctx, field)
+			case "name":
+				return ec.fieldContext_PostTypeForm_name(ctx, field)
+			case "status":
+				return ec.fieldContext_PostTypeForm_status(ctx, field)
+			case "postTypeID":
+				return ec.fieldContext_PostTypeForm_postTypeID(ctx, field)
+			case "body":
+				return ec.fieldContext_PostTypeForm_body(ctx, field)
+			case "postType":
+				return ec.fieldContext_PostTypeForm_postType(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PostTypeForm", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PostTypeFormEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *ent.PostTypeFormEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PostTypeFormEdge_cursor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(entgql.Cursor[string])
+	fc.Result = res
+	return ec.marshalNCursor2entgoᚗioᚋcontribᚋentgqlᚐCursor(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PostTypeFormEdge_cursor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PostTypeFormEdge",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -10454,6 +11728,89 @@ func (ec *executionContext) fieldContext_Query_postStatuses(ctx context.Context,
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_postTags(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_postTags(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().PostTags(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["orderBy"].([]*ent.PostTagOrder), fc.Args["where"].(*ent.PostTagWhereInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
+			}
+			return ec.directives.CanApp(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*ent.PostTagConnection); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *saas/gen/ent.PostTagConnection`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.PostTagConnection)
+	fc.Result = res
+	return ec.marshalNPostTagConnection2ᚖsaasᚋgenᚋentᚐPostTagConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_postTags(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_PostTagConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_PostTagConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_PostTagConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PostTagConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_postTags_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_postTypes(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_postTypes(ctx, field)
 	if err != nil {
@@ -10531,6 +11888,89 @@ func (ec *executionContext) fieldContext_Query_postTypes(ctx context.Context, fi
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_postTypes_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_postTypeForms(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_postTypeForms(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().PostTypeForms(rctx, fc.Args["after"].(*entgql.Cursor[string]), fc.Args["first"].(*int), fc.Args["before"].(*entgql.Cursor[string]), fc.Args["last"].(*int), fc.Args["orderBy"].([]*ent.PostTypeFormOrder), fc.Args["where"].(*ent.PostTypeFormWhereInput))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
+			}
+			return ec.directives.CanApp(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*ent.PostTypeFormConnection); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *saas/gen/ent.PostTypeFormConnection`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*ent.PostTypeFormConnection)
+	fc.Result = res
+	return ec.marshalNPostTypeFormConnection2ᚖsaasᚋgenᚋentᚐPostTypeFormConnection(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_postTypeForms(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_PostTypeFormConnection_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_PostTypeFormConnection_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_PostTypeFormConnection_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PostTypeFormConnection", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_postTypeForms_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -18220,7 +19660,7 @@ func (ec *executionContext) unmarshalInputCreatePostInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "name", "slug", "headline", "excerpt", "content", "metaTitle", "metaDescr", "metaCanonicalURL", "metaRobots", "postStatusID", "postTypeID", "primaryCategoryID"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "name", "slug", "headline", "excerpt", "content", "metaTitle", "metaDescr", "metaCanonicalURL", "metaRobots", "custom", "postStatusID", "postTypeID", "primaryCategoryID", "postTagIDs"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -18304,6 +19744,13 @@ func (ec *executionContext) unmarshalInputCreatePostInput(ctx context.Context, o
 				return it, err
 			}
 			it.MetaRobots = data
+		case "custom":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("custom"))
+			data, err := ec.unmarshalOMap2map(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Custom = data
 		case "postStatusID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postStatusID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -18325,6 +19772,13 @@ func (ec *executionContext) unmarshalInputCreatePostInput(ctx context.Context, o
 				return it, err
 			}
 			it.PrimaryCategoryID = data
+		case "postTagIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postTagIDs"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PostTagIDs = data
 		}
 	}
 
@@ -18380,6 +19834,165 @@ func (ec *executionContext) unmarshalInputCreatePostStatusInput(ctx context.Cont
 				return it, err
 			}
 			it.Status = data
+		case "postTypeID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postTypeID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PostTypeID = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputCreatePostTagInput(ctx context.Context, obj interface{}) (ent.CreatePostTagInput, error) {
+	var it ent.CreatePostTagInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "name", "slug", "status", "excerpt", "metaTitle", "metaDescr", "metaCanonicalURL", "metaRobots", "postIDs"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "createdAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAt = data
+		case "updatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAt = data
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "slug":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slug"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Slug = data
+		case "status":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Status = data
+		case "excerpt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("excerpt"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Excerpt = data
+		case "metaTitle":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("metaTitle"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MetaTitle = data
+		case "metaDescr":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("metaDescr"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MetaDescr = data
+		case "metaCanonicalURL":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("metaCanonicalURL"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MetaCanonicalURL = data
+		case "metaRobots":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("metaRobots"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MetaRobots = data
+		case "postIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postIDs"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PostIDs = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputCreatePostTypeFormInput(ctx context.Context, obj interface{}) (ent.CreatePostTypeFormInput, error) {
+	var it ent.CreatePostTypeFormInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "name", "status", "body", "postTypeID"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "createdAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAt = data
+		case "updatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAt = data
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "status":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Status = data
+		case "body":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("body"))
+			data, err := ec.unmarshalOJsonSlice2laceᚋjsonsliceᚐJsonSlice(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Body = data
 		case "postTypeID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postTypeID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -25570,7 +27183,7 @@ func (ec *executionContext) unmarshalInputPostTagWhereInput(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "appID", "appIDNEQ", "appIDIn", "appIDNotIn", "appIDGT", "appIDGTE", "appIDLT", "appIDLTE", "appIDContains", "appIDHasPrefix", "appIDHasSuffix", "appIDIsNil", "appIDNotNil", "appIDEqualFold", "appIDContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameIsNil", "nameNotNil", "nameEqualFold", "nameContainsFold", "slug", "slugNEQ", "slugIn", "slugNotIn", "slugGT", "slugGTE", "slugLT", "slugLTE", "slugContains", "slugHasPrefix", "slugHasSuffix", "slugIsNil", "slugNotNil", "slugEqualFold", "slugContainsFold", "status", "statusNEQ", "statusIn", "statusNotIn", "statusGT", "statusGTE", "statusLT", "statusLTE", "statusContains", "statusHasPrefix", "statusHasSuffix", "statusIsNil", "statusNotNil", "statusEqualFold", "statusContainsFold", "excerpt", "excerptNEQ", "excerptIn", "excerptNotIn", "excerptGT", "excerptGTE", "excerptLT", "excerptLTE", "excerptContains", "excerptHasPrefix", "excerptHasSuffix", "excerptIsNil", "excerptNotNil", "excerptEqualFold", "excerptContainsFold", "content", "contentNEQ", "contentIn", "contentNotIn", "contentGT", "contentGTE", "contentLT", "contentLTE", "contentContains", "contentHasPrefix", "contentHasSuffix", "contentIsNil", "contentNotNil", "contentEqualFold", "contentContainsFold", "metaTitle", "metaTitleNEQ", "metaTitleIn", "metaTitleNotIn", "metaTitleGT", "metaTitleGTE", "metaTitleLT", "metaTitleLTE", "metaTitleContains", "metaTitleHasPrefix", "metaTitleHasSuffix", "metaTitleIsNil", "metaTitleNotNil", "metaTitleEqualFold", "metaTitleContainsFold", "metaDescr", "metaDescrNEQ", "metaDescrIn", "metaDescrNotIn", "metaDescrGT", "metaDescrGTE", "metaDescrLT", "metaDescrLTE", "metaDescrContains", "metaDescrHasPrefix", "metaDescrHasSuffix", "metaDescrIsNil", "metaDescrNotNil", "metaDescrEqualFold", "metaDescrContainsFold", "metaCanonicalURL", "metaCanonicalURLNEQ", "metaCanonicalURLIn", "metaCanonicalURLNotIn", "metaCanonicalURLGT", "metaCanonicalURLGTE", "metaCanonicalURLLT", "metaCanonicalURLLTE", "metaCanonicalURLContains", "metaCanonicalURLHasPrefix", "metaCanonicalURLHasSuffix", "metaCanonicalURLIsNil", "metaCanonicalURLNotNil", "metaCanonicalURLEqualFold", "metaCanonicalURLContainsFold", "metaRobots", "metaRobotsNEQ", "metaRobotsIn", "metaRobotsNotIn", "metaRobotsGT", "metaRobotsGTE", "metaRobotsLT", "metaRobotsLTE", "metaRobotsContains", "metaRobotsHasPrefix", "metaRobotsHasSuffix", "metaRobotsIsNil", "metaRobotsNotNil", "metaRobotsEqualFold", "metaRobotsContainsFold"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "appID", "appIDNEQ", "appIDIn", "appIDNotIn", "appIDGT", "appIDGTE", "appIDLT", "appIDLTE", "appIDContains", "appIDHasPrefix", "appIDHasSuffix", "appIDIsNil", "appIDNotNil", "appIDEqualFold", "appIDContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameIsNil", "nameNotNil", "nameEqualFold", "nameContainsFold", "slug", "slugNEQ", "slugIn", "slugNotIn", "slugGT", "slugGTE", "slugLT", "slugLTE", "slugContains", "slugHasPrefix", "slugHasSuffix", "slugIsNil", "slugNotNil", "slugEqualFold", "slugContainsFold", "status", "statusNEQ", "statusIn", "statusNotIn", "statusGT", "statusGTE", "statusLT", "statusLTE", "statusContains", "statusHasPrefix", "statusHasSuffix", "statusIsNil", "statusNotNil", "statusEqualFold", "statusContainsFold", "excerpt", "excerptNEQ", "excerptIn", "excerptNotIn", "excerptGT", "excerptGTE", "excerptLT", "excerptLTE", "excerptContains", "excerptHasPrefix", "excerptHasSuffix", "excerptIsNil", "excerptNotNil", "excerptEqualFold", "excerptContainsFold", "metaTitle", "metaTitleNEQ", "metaTitleIn", "metaTitleNotIn", "metaTitleGT", "metaTitleGTE", "metaTitleLT", "metaTitleLTE", "metaTitleContains", "metaTitleHasPrefix", "metaTitleHasSuffix", "metaTitleIsNil", "metaTitleNotNil", "metaTitleEqualFold", "metaTitleContainsFold", "metaDescr", "metaDescrNEQ", "metaDescrIn", "metaDescrNotIn", "metaDescrGT", "metaDescrGTE", "metaDescrLT", "metaDescrLTE", "metaDescrContains", "metaDescrHasPrefix", "metaDescrHasSuffix", "metaDescrIsNil", "metaDescrNotNil", "metaDescrEqualFold", "metaDescrContainsFold", "metaCanonicalURL", "metaCanonicalURLNEQ", "metaCanonicalURLIn", "metaCanonicalURLNotIn", "metaCanonicalURLGT", "metaCanonicalURLGTE", "metaCanonicalURLLT", "metaCanonicalURLLTE", "metaCanonicalURLContains", "metaCanonicalURLHasPrefix", "metaCanonicalURLHasSuffix", "metaCanonicalURLIsNil", "metaCanonicalURLNotNil", "metaCanonicalURLEqualFold", "metaCanonicalURLContainsFold", "metaRobots", "metaRobotsNEQ", "metaRobotsIn", "metaRobotsNotIn", "metaRobotsGT", "metaRobotsGTE", "metaRobotsLT", "metaRobotsLTE", "metaRobotsContains", "metaRobotsHasPrefix", "metaRobotsHasSuffix", "metaRobotsIsNil", "metaRobotsNotNil", "metaRobotsEqualFold", "metaRobotsContainsFold", "hasPosts", "hasPostsWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -26333,111 +27946,6 @@ func (ec *executionContext) unmarshalInputPostTagWhereInput(ctx context.Context,
 				return it, err
 			}
 			it.ExcerptContainsFold = data
-		case "content":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("content"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Content = data
-		case "contentNEQ":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contentNEQ"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ContentNEQ = data
-		case "contentIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contentIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ContentIn = data
-		case "contentNotIn":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contentNotIn"))
-			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ContentNotIn = data
-		case "contentGT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contentGT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ContentGT = data
-		case "contentGTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contentGTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ContentGTE = data
-		case "contentLT":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contentLT"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ContentLT = data
-		case "contentLTE":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contentLTE"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ContentLTE = data
-		case "contentContains":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contentContains"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ContentContains = data
-		case "contentHasPrefix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contentHasPrefix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ContentHasPrefix = data
-		case "contentHasSuffix":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contentHasSuffix"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ContentHasSuffix = data
-		case "contentIsNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contentIsNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ContentIsNil = data
-		case "contentNotNil":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contentNotNil"))
-			data, err := ec.unmarshalOBoolean2bool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ContentNotNil = data
-		case "contentEqualFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contentEqualFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ContentEqualFold = data
-		case "contentContainsFold":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("contentContainsFold"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ContentContainsFold = data
 		case "metaTitle":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("metaTitle"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -26858,6 +28366,666 @@ func (ec *executionContext) unmarshalInputPostTagWhereInput(ctx context.Context,
 				return it, err
 			}
 			it.MetaRobotsContainsFold = data
+		case "hasPosts":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasPosts"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasPosts = data
+		case "hasPostsWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasPostsWith"))
+			data, err := ec.unmarshalOPostWhereInput2ᚕᚖsaasᚋgenᚋentᚐPostWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasPostsWith = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputPostTypeFormOrder(ctx context.Context, obj interface{}) (ent.PostTypeFormOrder, error) {
+	var it ent.PostTypeFormOrder
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	if _, present := asMap["direction"]; !present {
+		asMap["direction"] = "ASC"
+	}
+
+	fieldsInOrder := [...]string{"direction", "field"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "direction":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("direction"))
+			data, err := ec.unmarshalNOrderDirection2entgoᚗioᚋcontribᚋentgqlᚐOrderDirection(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Direction = data
+		case "field":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("field"))
+			data, err := ec.unmarshalNPostTypeFormOrderField2ᚖsaasᚋgenᚋentᚐPostTypeFormOrderField(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Field = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputPostTypeFormWhereInput(ctx context.Context, obj interface{}) (ent.PostTypeFormWhereInput, error) {
+	var it ent.PostTypeFormWhereInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "appID", "appIDNEQ", "appIDIn", "appIDNotIn", "appIDGT", "appIDGTE", "appIDLT", "appIDLTE", "appIDContains", "appIDHasPrefix", "appIDHasSuffix", "appIDIsNil", "appIDNotNil", "appIDEqualFold", "appIDContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameIsNil", "nameNotNil", "nameEqualFold", "nameContainsFold", "status", "statusNEQ", "statusIsNil", "statusNotNil", "postTypeID", "postTypeIDNEQ", "postTypeIDIn", "postTypeIDNotIn", "postTypeIDGT", "postTypeIDGTE", "postTypeIDLT", "postTypeIDLTE", "postTypeIDContains", "postTypeIDHasPrefix", "postTypeIDHasSuffix", "postTypeIDIsNil", "postTypeIDNotNil", "postTypeIDEqualFold", "postTypeIDContainsFold", "hasPostType", "hasPostTypeWith"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "not":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("not"))
+			data, err := ec.unmarshalOPostTypeFormWhereInput2ᚖsaasᚋgenᚋentᚐPostTypeFormWhereInput(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Not = data
+		case "and":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("and"))
+			data, err := ec.unmarshalOPostTypeFormWhereInput2ᚕᚖsaasᚋgenᚋentᚐPostTypeFormWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.And = data
+		case "or":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("or"))
+			data, err := ec.unmarshalOPostTypeFormWhereInput2ᚕᚖsaasᚋgenᚋentᚐPostTypeFormWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Or = data
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "idNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idNEQ"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDNEQ = data
+		case "idIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDIn = data
+		case "idNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idNotIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDNotIn = data
+		case "idGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idGT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDGT = data
+		case "idGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idGTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDGTE = data
+		case "idLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDLT = data
+		case "idLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idLTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDLTE = data
+		case "idEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idEqualFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDEqualFold = data
+		case "idContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("idContainsFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IDContainsFold = data
+		case "createdAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAt = data
+		case "createdAtNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtNEQ = data
+		case "createdAtIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtIn = data
+		case "createdAtNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtNotIn = data
+		case "createdAtGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtGT = data
+		case "createdAtGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtGTE = data
+		case "createdAtLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtLT = data
+		case "createdAtLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtLTE = data
+		case "createdAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtIsNil = data
+		case "createdAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.CreatedAtNotNil = data
+		case "updatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAt = data
+		case "updatedAtNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNEQ"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtNEQ = data
+		case "updatedAtIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtIn = data
+		case "updatedAtNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNotIn"))
+			data, err := ec.unmarshalOTime2ᚕtimeᚐTimeᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtNotIn = data
+		case "updatedAtGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtGT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtGT = data
+		case "updatedAtGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtGTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtGTE = data
+		case "updatedAtLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtLT"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtLT = data
+		case "updatedAtLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtLTE"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtLTE = data
+		case "updatedAtIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtIsNil = data
+		case "updatedAtNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAtNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAtNotNil = data
+		case "appID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppID = data
+		case "appIDNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appIDNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppIDNEQ = data
+		case "appIDIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appIDIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppIDIn = data
+		case "appIDNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appIDNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppIDNotIn = data
+		case "appIDGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appIDGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppIDGT = data
+		case "appIDGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appIDGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppIDGTE = data
+		case "appIDLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appIDLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppIDLT = data
+		case "appIDLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appIDLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppIDLTE = data
+		case "appIDContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appIDContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppIDContains = data
+		case "appIDHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appIDHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppIDHasPrefix = data
+		case "appIDHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appIDHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppIDHasSuffix = data
+		case "appIDIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appIDIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppIDIsNil = data
+		case "appIDNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appIDNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppIDNotNil = data
+		case "appIDEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appIDEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppIDEqualFold = data
+		case "appIDContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appIDContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppIDContainsFold = data
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "nameNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameNEQ"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameNEQ = data
+		case "nameIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameIn = data
+		case "nameNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameNotIn"))
+			data, err := ec.unmarshalOString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameNotIn = data
+		case "nameGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameGT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameGT = data
+		case "nameGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameGTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameGTE = data
+		case "nameLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameLT"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameLT = data
+		case "nameLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameLTE"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameLTE = data
+		case "nameContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameContains"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameContains = data
+		case "nameHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameHasPrefix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameHasPrefix = data
+		case "nameHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameHasSuffix"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameHasSuffix = data
+		case "nameIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameIsNil = data
+		case "nameNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameNotNil = data
+		case "nameEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameEqualFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameEqualFold = data
+		case "nameContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nameContainsFold"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NameContainsFold = data
+		case "status":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Status = data
+		case "statusNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("statusNEQ"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.StatusNEQ = data
+		case "statusIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("statusIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.StatusIsNil = data
+		case "statusNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("statusNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.StatusNotNil = data
+		case "postTypeID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postTypeID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PostTypeID = data
+		case "postTypeIDNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postTypeIDNEQ"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PostTypeIDNEQ = data
+		case "postTypeIDIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postTypeIDIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PostTypeIDIn = data
+		case "postTypeIDNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postTypeIDNotIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PostTypeIDNotIn = data
+		case "postTypeIDGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postTypeIDGT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PostTypeIDGT = data
+		case "postTypeIDGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postTypeIDGTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PostTypeIDGTE = data
+		case "postTypeIDLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postTypeIDLT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PostTypeIDLT = data
+		case "postTypeIDLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postTypeIDLTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PostTypeIDLTE = data
+		case "postTypeIDContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postTypeIDContains"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PostTypeIDContains = data
+		case "postTypeIDHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postTypeIDHasPrefix"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PostTypeIDHasPrefix = data
+		case "postTypeIDHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postTypeIDHasSuffix"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PostTypeIDHasSuffix = data
+		case "postTypeIDIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postTypeIDIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PostTypeIDIsNil = data
+		case "postTypeIDNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postTypeIDNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PostTypeIDNotNil = data
+		case "postTypeIDEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postTypeIDEqualFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PostTypeIDEqualFold = data
+		case "postTypeIDContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postTypeIDContainsFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PostTypeIDContainsFold = data
+		case "hasPostType":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasPostType"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasPostType = data
+		case "hasPostTypeWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasPostTypeWith"))
+			data, err := ec.unmarshalOPostTypeWhereInput2ᚕᚖsaasᚋgenᚋentᚐPostTypeWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasPostTypeWith = data
 		}
 	}
 
@@ -26909,7 +29077,7 @@ func (ec *executionContext) unmarshalInputPostTypeWhereInput(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "appID", "appIDNEQ", "appIDIn", "appIDNotIn", "appIDGT", "appIDGTE", "appIDLT", "appIDLTE", "appIDContains", "appIDHasPrefix", "appIDHasSuffix", "appIDIsNil", "appIDNotNil", "appIDEqualFold", "appIDContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameIsNil", "nameNotNil", "nameEqualFold", "nameContainsFold", "slug", "slugNEQ", "slugIn", "slugNotIn", "slugGT", "slugGTE", "slugLT", "slugLTE", "slugContains", "slugHasPrefix", "slugHasSuffix", "slugIsNil", "slugNotNil", "slugEqualFold", "slugContainsFold", "status", "statusNEQ", "statusIn", "statusNotIn", "statusGT", "statusGTE", "statusLT", "statusLTE", "statusContains", "statusHasPrefix", "statusHasSuffix", "statusIsNil", "statusNotNil", "statusEqualFold", "statusContainsFold", "excerpt", "excerptNEQ", "excerptIn", "excerptNotIn", "excerptGT", "excerptGTE", "excerptLT", "excerptLTE", "excerptContains", "excerptHasPrefix", "excerptHasSuffix", "excerptIsNil", "excerptNotNil", "excerptEqualFold", "excerptContainsFold", "content", "contentNEQ", "contentIn", "contentNotIn", "contentGT", "contentGTE", "contentLT", "contentLTE", "contentContains", "contentHasPrefix", "contentHasSuffix", "contentIsNil", "contentNotNil", "contentEqualFold", "contentContainsFold", "metaTitle", "metaTitleNEQ", "metaTitleIn", "metaTitleNotIn", "metaTitleGT", "metaTitleGTE", "metaTitleLT", "metaTitleLTE", "metaTitleContains", "metaTitleHasPrefix", "metaTitleHasSuffix", "metaTitleIsNil", "metaTitleNotNil", "metaTitleEqualFold", "metaTitleContainsFold", "metaDescr", "metaDescrNEQ", "metaDescrIn", "metaDescrNotIn", "metaDescrGT", "metaDescrGTE", "metaDescrLT", "metaDescrLTE", "metaDescrContains", "metaDescrHasPrefix", "metaDescrHasSuffix", "metaDescrIsNil", "metaDescrNotNil", "metaDescrEqualFold", "metaDescrContainsFold", "metaCanonicalURL", "metaCanonicalURLNEQ", "metaCanonicalURLIn", "metaCanonicalURLNotIn", "metaCanonicalURLGT", "metaCanonicalURLGTE", "metaCanonicalURLLT", "metaCanonicalURLLTE", "metaCanonicalURLContains", "metaCanonicalURLHasPrefix", "metaCanonicalURLHasSuffix", "metaCanonicalURLIsNil", "metaCanonicalURLNotNil", "metaCanonicalURLEqualFold", "metaCanonicalURLContainsFold", "metaRobots", "metaRobotsNEQ", "metaRobotsIn", "metaRobotsNotIn", "metaRobotsGT", "metaRobotsGTE", "metaRobotsLT", "metaRobotsLTE", "metaRobotsContains", "metaRobotsHasPrefix", "metaRobotsHasSuffix", "metaRobotsIsNil", "metaRobotsNotNil", "metaRobotsEqualFold", "metaRobotsContainsFold", "hasPosts", "hasPostsWith", "hasPostStatuses", "hasPostStatusesWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "appID", "appIDNEQ", "appIDIn", "appIDNotIn", "appIDGT", "appIDGTE", "appIDLT", "appIDLTE", "appIDContains", "appIDHasPrefix", "appIDHasSuffix", "appIDIsNil", "appIDNotNil", "appIDEqualFold", "appIDContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameIsNil", "nameNotNil", "nameEqualFold", "nameContainsFold", "slug", "slugNEQ", "slugIn", "slugNotIn", "slugGT", "slugGTE", "slugLT", "slugLTE", "slugContains", "slugHasPrefix", "slugHasSuffix", "slugIsNil", "slugNotNil", "slugEqualFold", "slugContainsFold", "status", "statusNEQ", "statusIn", "statusNotIn", "statusGT", "statusGTE", "statusLT", "statusLTE", "statusContains", "statusHasPrefix", "statusHasSuffix", "statusIsNil", "statusNotNil", "statusEqualFold", "statusContainsFold", "excerpt", "excerptNEQ", "excerptIn", "excerptNotIn", "excerptGT", "excerptGTE", "excerptLT", "excerptLTE", "excerptContains", "excerptHasPrefix", "excerptHasSuffix", "excerptIsNil", "excerptNotNil", "excerptEqualFold", "excerptContainsFold", "content", "contentNEQ", "contentIn", "contentNotIn", "contentGT", "contentGTE", "contentLT", "contentLTE", "contentContains", "contentHasPrefix", "contentHasSuffix", "contentIsNil", "contentNotNil", "contentEqualFold", "contentContainsFold", "metaTitle", "metaTitleNEQ", "metaTitleIn", "metaTitleNotIn", "metaTitleGT", "metaTitleGTE", "metaTitleLT", "metaTitleLTE", "metaTitleContains", "metaTitleHasPrefix", "metaTitleHasSuffix", "metaTitleIsNil", "metaTitleNotNil", "metaTitleEqualFold", "metaTitleContainsFold", "metaDescr", "metaDescrNEQ", "metaDescrIn", "metaDescrNotIn", "metaDescrGT", "metaDescrGTE", "metaDescrLT", "metaDescrLTE", "metaDescrContains", "metaDescrHasPrefix", "metaDescrHasSuffix", "metaDescrIsNil", "metaDescrNotNil", "metaDescrEqualFold", "metaDescrContainsFold", "metaCanonicalURL", "metaCanonicalURLNEQ", "metaCanonicalURLIn", "metaCanonicalURLNotIn", "metaCanonicalURLGT", "metaCanonicalURLGTE", "metaCanonicalURLLT", "metaCanonicalURLLTE", "metaCanonicalURLContains", "metaCanonicalURLHasPrefix", "metaCanonicalURLHasSuffix", "metaCanonicalURLIsNil", "metaCanonicalURLNotNil", "metaCanonicalURLEqualFold", "metaCanonicalURLContainsFold", "metaRobots", "metaRobotsNEQ", "metaRobotsIn", "metaRobotsNotIn", "metaRobotsGT", "metaRobotsGTE", "metaRobotsLT", "metaRobotsLTE", "metaRobotsContains", "metaRobotsHasPrefix", "metaRobotsHasSuffix", "metaRobotsIsNil", "metaRobotsNotNil", "metaRobotsEqualFold", "metaRobotsContainsFold", "hasPosts", "hasPostsWith", "hasPostStatuses", "hasPostStatusesWith", "hasPostTypeForms", "hasPostTypeFormsWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -28225,6 +30393,20 @@ func (ec *executionContext) unmarshalInputPostTypeWhereInput(ctx context.Context
 				return it, err
 			}
 			it.HasPostStatusesWith = data
+		case "hasPostTypeForms":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasPostTypeForms"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasPostTypeForms = data
+		case "hasPostTypeFormsWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasPostTypeFormsWith"))
+			data, err := ec.unmarshalOPostTypeFormWhereInput2ᚕᚖsaasᚋgenᚋentᚐPostTypeFormWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasPostTypeFormsWith = data
 		}
 	}
 
@@ -28238,7 +30420,7 @@ func (ec *executionContext) unmarshalInputPostWhereInput(ctx context.Context, ob
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "appID", "appIDNEQ", "appIDIn", "appIDNotIn", "appIDGT", "appIDGTE", "appIDLT", "appIDLTE", "appIDContains", "appIDHasPrefix", "appIDHasSuffix", "appIDIsNil", "appIDNotNil", "appIDEqualFold", "appIDContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameIsNil", "nameNotNil", "nameEqualFold", "nameContainsFold", "slug", "slugNEQ", "slugIn", "slugNotIn", "slugGT", "slugGTE", "slugLT", "slugLTE", "slugContains", "slugHasPrefix", "slugHasSuffix", "slugIsNil", "slugNotNil", "slugEqualFold", "slugContainsFold", "postStatusID", "postStatusIDNEQ", "postStatusIDIn", "postStatusIDNotIn", "postStatusIDGT", "postStatusIDGTE", "postStatusIDLT", "postStatusIDLTE", "postStatusIDContains", "postStatusIDHasPrefix", "postStatusIDHasSuffix", "postStatusIDIsNil", "postStatusIDNotNil", "postStatusIDEqualFold", "postStatusIDContainsFold", "postTypeID", "postTypeIDNEQ", "postTypeIDIn", "postTypeIDNotIn", "postTypeIDGT", "postTypeIDGTE", "postTypeIDLT", "postTypeIDLTE", "postTypeIDContains", "postTypeIDHasPrefix", "postTypeIDHasSuffix", "postTypeIDIsNil", "postTypeIDNotNil", "postTypeIDEqualFold", "postTypeIDContainsFold", "primaryCategoryID", "primaryCategoryIDNEQ", "primaryCategoryIDIn", "primaryCategoryIDNotIn", "primaryCategoryIDGT", "primaryCategoryIDGTE", "primaryCategoryIDLT", "primaryCategoryIDLTE", "primaryCategoryIDContains", "primaryCategoryIDHasPrefix", "primaryCategoryIDHasSuffix", "primaryCategoryIDIsNil", "primaryCategoryIDNotNil", "primaryCategoryIDEqualFold", "primaryCategoryIDContainsFold", "headline", "headlineNEQ", "headlineIn", "headlineNotIn", "headlineGT", "headlineGTE", "headlineLT", "headlineLTE", "headlineContains", "headlineHasPrefix", "headlineHasSuffix", "headlineIsNil", "headlineNotNil", "headlineEqualFold", "headlineContainsFold", "excerpt", "excerptNEQ", "excerptIn", "excerptNotIn", "excerptGT", "excerptGTE", "excerptLT", "excerptLTE", "excerptContains", "excerptHasPrefix", "excerptHasSuffix", "excerptIsNil", "excerptNotNil", "excerptEqualFold", "excerptContainsFold", "content", "contentNEQ", "contentIn", "contentNotIn", "contentGT", "contentGTE", "contentLT", "contentLTE", "contentContains", "contentHasPrefix", "contentHasSuffix", "contentIsNil", "contentNotNil", "contentEqualFold", "contentContainsFold", "metaTitle", "metaTitleNEQ", "metaTitleIn", "metaTitleNotIn", "metaTitleGT", "metaTitleGTE", "metaTitleLT", "metaTitleLTE", "metaTitleContains", "metaTitleHasPrefix", "metaTitleHasSuffix", "metaTitleIsNil", "metaTitleNotNil", "metaTitleEqualFold", "metaTitleContainsFold", "metaDescr", "metaDescrNEQ", "metaDescrIn", "metaDescrNotIn", "metaDescrGT", "metaDescrGTE", "metaDescrLT", "metaDescrLTE", "metaDescrContains", "metaDescrHasPrefix", "metaDescrHasSuffix", "metaDescrIsNil", "metaDescrNotNil", "metaDescrEqualFold", "metaDescrContainsFold", "metaCanonicalURL", "metaCanonicalURLNEQ", "metaCanonicalURLIn", "metaCanonicalURLNotIn", "metaCanonicalURLGT", "metaCanonicalURLGTE", "metaCanonicalURLLT", "metaCanonicalURLLTE", "metaCanonicalURLContains", "metaCanonicalURLHasPrefix", "metaCanonicalURLHasSuffix", "metaCanonicalURLIsNil", "metaCanonicalURLNotNil", "metaCanonicalURLEqualFold", "metaCanonicalURLContainsFold", "metaRobots", "metaRobotsNEQ", "metaRobotsIn", "metaRobotsNotIn", "metaRobotsGT", "metaRobotsGTE", "metaRobotsLT", "metaRobotsLTE", "metaRobotsContains", "metaRobotsHasPrefix", "metaRobotsHasSuffix", "metaRobotsIsNil", "metaRobotsNotNil", "metaRobotsEqualFold", "metaRobotsContainsFold", "hasPostStatus", "hasPostStatusWith", "hasPostType", "hasPostTypeWith", "hasPrimaryCategory", "hasPrimaryCategoryWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "appID", "appIDNEQ", "appIDIn", "appIDNotIn", "appIDGT", "appIDGTE", "appIDLT", "appIDLTE", "appIDContains", "appIDHasPrefix", "appIDHasSuffix", "appIDIsNil", "appIDNotNil", "appIDEqualFold", "appIDContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameIsNil", "nameNotNil", "nameEqualFold", "nameContainsFold", "slug", "slugNEQ", "slugIn", "slugNotIn", "slugGT", "slugGTE", "slugLT", "slugLTE", "slugContains", "slugHasPrefix", "slugHasSuffix", "slugIsNil", "slugNotNil", "slugEqualFold", "slugContainsFold", "postStatusID", "postStatusIDNEQ", "postStatusIDIn", "postStatusIDNotIn", "postStatusIDGT", "postStatusIDGTE", "postStatusIDLT", "postStatusIDLTE", "postStatusIDContains", "postStatusIDHasPrefix", "postStatusIDHasSuffix", "postStatusIDIsNil", "postStatusIDNotNil", "postStatusIDEqualFold", "postStatusIDContainsFold", "postTypeID", "postTypeIDNEQ", "postTypeIDIn", "postTypeIDNotIn", "postTypeIDGT", "postTypeIDGTE", "postTypeIDLT", "postTypeIDLTE", "postTypeIDContains", "postTypeIDHasPrefix", "postTypeIDHasSuffix", "postTypeIDIsNil", "postTypeIDNotNil", "postTypeIDEqualFold", "postTypeIDContainsFold", "primaryCategoryID", "primaryCategoryIDNEQ", "primaryCategoryIDIn", "primaryCategoryIDNotIn", "primaryCategoryIDGT", "primaryCategoryIDGTE", "primaryCategoryIDLT", "primaryCategoryIDLTE", "primaryCategoryIDContains", "primaryCategoryIDHasPrefix", "primaryCategoryIDHasSuffix", "primaryCategoryIDIsNil", "primaryCategoryIDNotNil", "primaryCategoryIDEqualFold", "primaryCategoryIDContainsFold", "headline", "headlineNEQ", "headlineIn", "headlineNotIn", "headlineGT", "headlineGTE", "headlineLT", "headlineLTE", "headlineContains", "headlineHasPrefix", "headlineHasSuffix", "headlineIsNil", "headlineNotNil", "headlineEqualFold", "headlineContainsFold", "excerpt", "excerptNEQ", "excerptIn", "excerptNotIn", "excerptGT", "excerptGTE", "excerptLT", "excerptLTE", "excerptContains", "excerptHasPrefix", "excerptHasSuffix", "excerptIsNil", "excerptNotNil", "excerptEqualFold", "excerptContainsFold", "content", "contentNEQ", "contentIn", "contentNotIn", "contentGT", "contentGTE", "contentLT", "contentLTE", "contentContains", "contentHasPrefix", "contentHasSuffix", "contentIsNil", "contentNotNil", "contentEqualFold", "contentContainsFold", "metaTitle", "metaTitleNEQ", "metaTitleIn", "metaTitleNotIn", "metaTitleGT", "metaTitleGTE", "metaTitleLT", "metaTitleLTE", "metaTitleContains", "metaTitleHasPrefix", "metaTitleHasSuffix", "metaTitleIsNil", "metaTitleNotNil", "metaTitleEqualFold", "metaTitleContainsFold", "metaDescr", "metaDescrNEQ", "metaDescrIn", "metaDescrNotIn", "metaDescrGT", "metaDescrGTE", "metaDescrLT", "metaDescrLTE", "metaDescrContains", "metaDescrHasPrefix", "metaDescrHasSuffix", "metaDescrIsNil", "metaDescrNotNil", "metaDescrEqualFold", "metaDescrContainsFold", "metaCanonicalURL", "metaCanonicalURLNEQ", "metaCanonicalURLIn", "metaCanonicalURLNotIn", "metaCanonicalURLGT", "metaCanonicalURLGTE", "metaCanonicalURLLT", "metaCanonicalURLLTE", "metaCanonicalURLContains", "metaCanonicalURLHasPrefix", "metaCanonicalURLHasSuffix", "metaCanonicalURLIsNil", "metaCanonicalURLNotNil", "metaCanonicalURLEqualFold", "metaCanonicalURLContainsFold", "metaRobots", "metaRobotsNEQ", "metaRobotsIn", "metaRobotsNotIn", "metaRobotsGT", "metaRobotsGTE", "metaRobotsLT", "metaRobotsLTE", "metaRobotsContains", "metaRobotsHasPrefix", "metaRobotsHasSuffix", "metaRobotsIsNil", "metaRobotsNotNil", "metaRobotsEqualFold", "metaRobotsContainsFold", "hasPostStatus", "hasPostStatusWith", "hasPostType", "hasPostTypeWith", "hasPrimaryCategory", "hasPrimaryCategoryWith", "hasPostTags", "hasPostTagsWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -29883,6 +32065,20 @@ func (ec *executionContext) unmarshalInputPostWhereInput(ctx context.Context, ob
 				return it, err
 			}
 			it.HasPrimaryCategoryWith = data
+		case "hasPostTags":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasPostTags"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasPostTags = data
+		case "hasPostTagsWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasPostTagsWith"))
+			data, err := ec.unmarshalOPostTagWhereInput2ᚕᚖsaasᚋgenᚋentᚐPostTagWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasPostTagsWith = data
 		}
 	}
 
@@ -32087,7 +34283,7 @@ func (ec *executionContext) unmarshalInputUpdatePostInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "appID", "clearAppID", "name", "clearName", "slug", "clearSlug", "headline", "clearHeadline", "excerpt", "clearExcerpt", "content", "clearContent", "metaTitle", "clearMetaTitle", "metaDescr", "clearMetaDescr", "metaCanonicalURL", "clearMetaCanonicalURL", "metaRobots", "clearMetaRobots", "postStatusID", "clearPostStatus", "postTypeID", "clearPostType", "primaryCategoryID", "clearPrimaryCategory"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "appID", "clearAppID", "name", "clearName", "slug", "clearSlug", "headline", "clearHeadline", "excerpt", "clearExcerpt", "content", "clearContent", "metaTitle", "clearMetaTitle", "metaDescr", "clearMetaDescr", "metaCanonicalURL", "clearMetaCanonicalURL", "metaRobots", "clearMetaRobots", "custom", "clearCustom", "postStatusID", "clearPostStatus", "postTypeID", "clearPostType", "primaryCategoryID", "clearPrimaryCategory", "addPostTagIDs", "removePostTagIDs", "clearPostTags"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -32248,6 +34444,20 @@ func (ec *executionContext) unmarshalInputUpdatePostInput(ctx context.Context, o
 				return it, err
 			}
 			it.ClearMetaRobots = data
+		case "custom":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("custom"))
+			data, err := ec.unmarshalOMap2map(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Custom = data
+		case "clearCustom":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearCustom"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearCustom = data
 		case "postStatusID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postStatusID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -32290,6 +34500,27 @@ func (ec *executionContext) unmarshalInputUpdatePostInput(ctx context.Context, o
 				return it, err
 			}
 			it.ClearPrimaryCategory = data
+		case "addPostTagIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addPostTagIDs"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AddPostTagIDs = data
+		case "removePostTagIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("removePostTagIDs"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RemovePostTagIDs = data
+		case "clearPostTags":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearPostTags"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearPostTags = data
 		}
 	}
 
@@ -32380,6 +34611,298 @@ func (ec *executionContext) unmarshalInputUpdatePostStatusInput(ctx context.Cont
 				return it, err
 			}
 			it.ClearStatus = data
+		case "postTypeID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postTypeID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PostTypeID = data
+		case "clearPostType":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearPostType"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearPostType = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdatePostTagInput(ctx context.Context, obj interface{}) (ent.UpdatePostTagInput, error) {
+	var it ent.UpdatePostTagInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "appID", "clearAppID", "name", "clearName", "slug", "clearSlug", "status", "clearStatus", "excerpt", "clearExcerpt", "metaTitle", "clearMetaTitle", "metaDescr", "clearMetaDescr", "metaCanonicalURL", "clearMetaCanonicalURL", "metaRobots", "clearMetaRobots", "addPostIDs", "removePostIDs", "clearPosts"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "updatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAt = data
+		case "clearUpdatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpdatedAt"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearUpdatedAt = data
+		case "appID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppID = data
+		case "clearAppID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearAppID"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearAppID = data
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "clearName":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearName"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearName = data
+		case "slug":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slug"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Slug = data
+		case "clearSlug":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearSlug"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearSlug = data
+		case "status":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Status = data
+		case "clearStatus":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearStatus"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearStatus = data
+		case "excerpt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("excerpt"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Excerpt = data
+		case "clearExcerpt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearExcerpt"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearExcerpt = data
+		case "metaTitle":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("metaTitle"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MetaTitle = data
+		case "clearMetaTitle":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearMetaTitle"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearMetaTitle = data
+		case "metaDescr":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("metaDescr"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MetaDescr = data
+		case "clearMetaDescr":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearMetaDescr"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearMetaDescr = data
+		case "metaCanonicalURL":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("metaCanonicalURL"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MetaCanonicalURL = data
+		case "clearMetaCanonicalURL":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearMetaCanonicalURL"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearMetaCanonicalURL = data
+		case "metaRobots":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("metaRobots"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MetaRobots = data
+		case "clearMetaRobots":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearMetaRobots"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearMetaRobots = data
+		case "addPostIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addPostIDs"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AddPostIDs = data
+		case "removePostIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("removePostIDs"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RemovePostIDs = data
+		case "clearPosts":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearPosts"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearPosts = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputUpdatePostTypeFormInput(ctx context.Context, obj interface{}) (ent.UpdatePostTypeFormInput, error) {
+	var it ent.UpdatePostTypeFormInput
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "appID", "clearAppID", "name", "clearName", "status", "clearStatus", "body", "appendBody", "clearBody", "postTypeID", "clearPostType"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "updatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
+			data, err := ec.unmarshalOTime2ᚖtimeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UpdatedAt = data
+		case "clearUpdatedAt":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearUpdatedAt"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearUpdatedAt = data
+		case "appID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appID"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppID = data
+		case "clearAppID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearAppID"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearAppID = data
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "clearName":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearName"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearName = data
+		case "status":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Status = data
+		case "clearStatus":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearStatus"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearStatus = data
+		case "body":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("body"))
+			data, err := ec.unmarshalOJsonSlice2laceᚋjsonsliceᚐJsonSlice(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Body = data
+		case "appendBody":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appendBody"))
+			data, err := ec.unmarshalOJsonSlice2laceᚋjsonsliceᚐJsonSlice(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppendBody = data
+		case "clearBody":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearBody"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearBody = data
 		case "postTypeID":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("postTypeID"))
 			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
@@ -36626,6 +39149,11 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._PostType(ctx, sel, obj)
+	case *ent.PostTypeForm:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._PostTypeForm(ctx, sel, obj)
 	case *ent.Templ:
 		if obj == nil {
 			return graphql.Null
@@ -37629,6 +40157,8 @@ func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = ec._Post_metaCanonicalURL(ctx, field, obj)
 		case "metaRobots":
 			out.Values[i] = ec._Post_metaRobots(ctx, field, obj)
+		case "custom":
+			out.Values[i] = ec._Post_custom(ctx, field, obj)
 		case "postStatus":
 			field := field
 
@@ -37705,6 +40235,39 @@ func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj
 					}
 				}()
 				res = ec._Post_primaryCategory(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "postTags":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Post_postTags(ctx, field, obj)
 				return res
 			}
 
@@ -38241,7 +40804,7 @@ func (ec *executionContext) _PostTag(ctx context.Context, sel ast.SelectionSet, 
 		case "id":
 			out.Values[i] = ec._PostTag_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "createdAt":
 			out.Values[i] = ec._PostTag_createdAt(ctx, field, obj)
@@ -38257,8 +40820,6 @@ func (ec *executionContext) _PostTag(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = ec._PostTag_status(ctx, field, obj)
 		case "excerpt":
 			out.Values[i] = ec._PostTag_excerpt(ctx, field, obj)
-		case "content":
-			out.Values[i] = ec._PostTag_content(ctx, field, obj)
 		case "metaTitle":
 			out.Values[i] = ec._PostTag_metaTitle(ctx, field, obj)
 		case "metaDescr":
@@ -38267,6 +40828,126 @@ func (ec *executionContext) _PostTag(ctx context.Context, sel ast.SelectionSet, 
 			out.Values[i] = ec._PostTag_metaCanonicalURL(ctx, field, obj)
 		case "metaRobots":
 			out.Values[i] = ec._PostTag_metaRobots(ctx, field, obj)
+		case "posts":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._PostTag_posts(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var postTagConnectionImplementors = []string{"PostTagConnection"}
+
+func (ec *executionContext) _PostTagConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.PostTagConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, postTagConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PostTagConnection")
+		case "edges":
+			out.Values[i] = ec._PostTagConnection_edges(ctx, field, obj)
+		case "pageInfo":
+			out.Values[i] = ec._PostTagConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._PostTagConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var postTagEdgeImplementors = []string{"PostTagEdge"}
+
+func (ec *executionContext) _PostTagEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.PostTagEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, postTagEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PostTagEdge")
+		case "node":
+			out.Values[i] = ec._PostTagEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._PostTagEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -38396,6 +41077,39 @@ func (ec *executionContext) _PostType(ctx context.Context, sel ast.SelectionSet,
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "postTypeForms":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._PostType_postTypeForms(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -38480,6 +41194,179 @@ func (ec *executionContext) _PostTypeEdge(ctx context.Context, sel ast.Selection
 			out.Values[i] = ec._PostTypeEdge_node(ctx, field, obj)
 		case "cursor":
 			out.Values[i] = ec._PostTypeEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var postTypeFormImplementors = []string{"PostTypeForm", "Node"}
+
+func (ec *executionContext) _PostTypeForm(ctx context.Context, sel ast.SelectionSet, obj *ent.PostTypeForm) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, postTypeFormImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PostTypeForm")
+		case "id":
+			out.Values[i] = ec._PostTypeForm_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "createdAt":
+			out.Values[i] = ec._PostTypeForm_createdAt(ctx, field, obj)
+		case "updatedAt":
+			out.Values[i] = ec._PostTypeForm_updatedAt(ctx, field, obj)
+		case "appID":
+			out.Values[i] = ec._PostTypeForm_appID(ctx, field, obj)
+		case "name":
+			out.Values[i] = ec._PostTypeForm_name(ctx, field, obj)
+		case "status":
+			out.Values[i] = ec._PostTypeForm_status(ctx, field, obj)
+		case "postTypeID":
+			out.Values[i] = ec._PostTypeForm_postTypeID(ctx, field, obj)
+		case "body":
+			out.Values[i] = ec._PostTypeForm_body(ctx, field, obj)
+		case "postType":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._PostTypeForm_postType(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var postTypeFormConnectionImplementors = []string{"PostTypeFormConnection"}
+
+func (ec *executionContext) _PostTypeFormConnection(ctx context.Context, sel ast.SelectionSet, obj *ent.PostTypeFormConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, postTypeFormConnectionImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PostTypeFormConnection")
+		case "edges":
+			out.Values[i] = ec._PostTypeFormConnection_edges(ctx, field, obj)
+		case "pageInfo":
+			out.Values[i] = ec._PostTypeFormConnection_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._PostTypeFormConnection_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var postTypeFormEdgeImplementors = []string{"PostTypeFormEdge"}
+
+func (ec *executionContext) _PostTypeFormEdge(ctx context.Context, sel ast.SelectionSet, obj *ent.PostTypeFormEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, postTypeFormEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("PostTypeFormEdge")
+		case "node":
+			out.Values[i] = ec._PostTypeFormEdge_node(ctx, field, obj)
+		case "cursor":
+			out.Values[i] = ec._PostTypeFormEdge_cursor(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -38720,6 +41607,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "postTags":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_postTags(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "postTypes":
 			field := field
 
@@ -38730,6 +41639,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_postTypes(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "postTypeForms":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_postTypeForms(ctx, field)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -40215,6 +43146,16 @@ func (ec *executionContext) unmarshalNCreatePostStatusInput2saasᚋgenᚋentᚐC
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNCreatePostTagInput2saasᚋgenᚋentᚐCreatePostTagInput(ctx context.Context, v interface{}) (ent.CreatePostTagInput, error) {
+	res, err := ec.unmarshalInputCreatePostTagInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNCreatePostTypeFormInput2saasᚋgenᚋentᚐCreatePostTypeFormInput(ctx context.Context, v interface{}) (ent.CreatePostTypeFormInput, error) {
+	res, err := ec.unmarshalInputCreatePostTypeFormInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNCreatePostTypeInput2saasᚋgenᚋentᚐCreatePostTypeInput(ctx context.Context, v interface{}) (ent.CreatePostTypeInput, error) {
 	res, err := ec.unmarshalInputCreatePostTypeInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -40592,6 +43533,39 @@ func (ec *executionContext) unmarshalNPostStatusWhereInput2ᚖsaasᚋgenᚋent�
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalNPostTag2saasᚋgenᚋentᚐPostTag(ctx context.Context, sel ast.SelectionSet, v ent.PostTag) graphql.Marshaler {
+	return ec._PostTag(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNPostTag2ᚖsaasᚋgenᚋentᚐPostTag(ctx context.Context, sel ast.SelectionSet, v *ent.PostTag) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._PostTag(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNPostTagConnection2saasᚋgenᚋentᚐPostTagConnection(ctx context.Context, sel ast.SelectionSet, v ent.PostTagConnection) graphql.Marshaler {
+	return ec._PostTagConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNPostTagConnection2ᚖsaasᚋgenᚋentᚐPostTagConnection(ctx context.Context, sel ast.SelectionSet, v *ent.PostTagConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._PostTagConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNPostTagOrder2ᚖsaasᚋgenᚋentᚐPostTagOrder(ctx context.Context, v interface{}) (*ent.PostTagOrder, error) {
+	res, err := ec.unmarshalInputPostTagOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) unmarshalNPostTagOrderField2ᚖsaasᚋgenᚋentᚐPostTagOrderField(ctx context.Context, v interface{}) (*ent.PostTagOrderField, error) {
 	var res = new(ent.PostTagOrderField)
 	err := res.UnmarshalGQL(v)
@@ -40639,6 +43613,60 @@ func (ec *executionContext) marshalNPostTypeConnection2ᚖsaasᚋgenᚋentᚐPos
 		return graphql.Null
 	}
 	return ec._PostTypeConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNPostTypeForm2saasᚋgenᚋentᚐPostTypeForm(ctx context.Context, sel ast.SelectionSet, v ent.PostTypeForm) graphql.Marshaler {
+	return ec._PostTypeForm(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNPostTypeForm2ᚖsaasᚋgenᚋentᚐPostTypeForm(ctx context.Context, sel ast.SelectionSet, v *ent.PostTypeForm) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._PostTypeForm(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNPostTypeFormConnection2saasᚋgenᚋentᚐPostTypeFormConnection(ctx context.Context, sel ast.SelectionSet, v ent.PostTypeFormConnection) graphql.Marshaler {
+	return ec._PostTypeFormConnection(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNPostTypeFormConnection2ᚖsaasᚋgenᚋentᚐPostTypeFormConnection(ctx context.Context, sel ast.SelectionSet, v *ent.PostTypeFormConnection) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._PostTypeFormConnection(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNPostTypeFormOrder2ᚖsaasᚋgenᚋentᚐPostTypeFormOrder(ctx context.Context, v interface{}) (*ent.PostTypeFormOrder, error) {
+	res, err := ec.unmarshalInputPostTypeFormOrder(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNPostTypeFormOrderField2ᚖsaasᚋgenᚋentᚐPostTypeFormOrderField(ctx context.Context, v interface{}) (*ent.PostTypeFormOrderField, error) {
+	var res = new(ent.PostTypeFormOrderField)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNPostTypeFormOrderField2ᚖsaasᚋgenᚋentᚐPostTypeFormOrderField(ctx context.Context, sel ast.SelectionSet, v *ent.PostTypeFormOrderField) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return v
+}
+
+func (ec *executionContext) unmarshalNPostTypeFormWhereInput2ᚖsaasᚋgenᚋentᚐPostTypeFormWhereInput(ctx context.Context, v interface{}) (*ent.PostTypeFormWhereInput, error) {
+	res, err := ec.unmarshalInputPostTypeFormWhereInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNPostTypeOrder2ᚖsaasᚋgenᚋentᚐPostTypeOrder(ctx context.Context, v interface{}) (*ent.PostTypeOrder, error) {
@@ -40808,6 +43836,16 @@ func (ec *executionContext) unmarshalNUpdatePostInput2saasᚋgenᚋentᚐUpdateP
 
 func (ec *executionContext) unmarshalNUpdatePostStatusInput2saasᚋgenᚋentᚐUpdatePostStatusInput(ctx context.Context, v interface{}) (ent.UpdatePostStatusInput, error) {
 	res, err := ec.unmarshalInputUpdatePostStatusInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpdatePostTagInput2saasᚋgenᚋentᚐUpdatePostTagInput(ctx context.Context, v interface{}) (ent.UpdatePostTagInput, error) {
+	res, err := ec.unmarshalInputUpdatePostTagInput(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNUpdatePostTypeFormInput2saasᚋgenᚋentᚐUpdatePostTypeFormInput(ctx context.Context, v interface{}) (ent.UpdatePostTypeFormInput, error) {
+	res, err := ec.unmarshalInputUpdatePostTypeFormInput(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -41831,6 +44869,128 @@ func (ec *executionContext) unmarshalOPostStatusWhereInput2ᚖsaasᚋgenᚋent�
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalOPostTag2ᚕᚖsaasᚋgenᚋentᚐPostTagᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.PostTag) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNPostTag2ᚖsaasᚋgenᚋentᚐPostTag(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalOPostTag2ᚖsaasᚋgenᚋentᚐPostTag(ctx context.Context, sel ast.SelectionSet, v *ent.PostTag) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._PostTag(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOPostTagEdge2ᚕᚖsaasᚋgenᚋentᚐPostTagEdge(ctx context.Context, sel ast.SelectionSet, v []*ent.PostTagEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOPostTagEdge2ᚖsaasᚋgenᚋentᚐPostTagEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOPostTagEdge2ᚖsaasᚋgenᚋentᚐPostTagEdge(ctx context.Context, sel ast.SelectionSet, v *ent.PostTagEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._PostTagEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOPostTagOrder2ᚕᚖsaasᚋgenᚋentᚐPostTagOrderᚄ(ctx context.Context, v interface{}) ([]*ent.PostTagOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*ent.PostTagOrder, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNPostTagOrder2ᚖsaasᚋgenᚋentᚐPostTagOrder(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
 func (ec *executionContext) unmarshalOPostTagWhereInput2ᚕᚖsaasᚋgenᚋentᚐPostTagWhereInputᚄ(ctx context.Context, v interface{}) ([]*ent.PostTagWhereInput, error) {
 	if v == nil {
 		return nil, nil
@@ -41912,6 +45072,156 @@ func (ec *executionContext) marshalOPostTypeEdge2ᚖsaasᚋgenᚋentᚐPostTypeE
 		return graphql.Null
 	}
 	return ec._PostTypeEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOPostTypeForm2ᚕᚖsaasᚋgenᚋentᚐPostTypeFormᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.PostTypeForm) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNPostTypeForm2ᚖsaasᚋgenᚋentᚐPostTypeForm(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalOPostTypeForm2ᚖsaasᚋgenᚋentᚐPostTypeForm(ctx context.Context, sel ast.SelectionSet, v *ent.PostTypeForm) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._PostTypeForm(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOPostTypeFormEdge2ᚕᚖsaasᚋgenᚋentᚐPostTypeFormEdge(ctx context.Context, sel ast.SelectionSet, v []*ent.PostTypeFormEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalOPostTypeFormEdge2ᚖsaasᚋgenᚋentᚐPostTypeFormEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	return ret
+}
+
+func (ec *executionContext) marshalOPostTypeFormEdge2ᚖsaasᚋgenᚋentᚐPostTypeFormEdge(ctx context.Context, sel ast.SelectionSet, v *ent.PostTypeFormEdge) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._PostTypeFormEdge(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOPostTypeFormOrder2ᚕᚖsaasᚋgenᚋentᚐPostTypeFormOrderᚄ(ctx context.Context, v interface{}) ([]*ent.PostTypeFormOrder, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*ent.PostTypeFormOrder, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNPostTypeFormOrder2ᚖsaasᚋgenᚋentᚐPostTypeFormOrder(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOPostTypeFormWhereInput2ᚕᚖsaasᚋgenᚋentᚐPostTypeFormWhereInputᚄ(ctx context.Context, v interface{}) ([]*ent.PostTypeFormWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*ent.PostTypeFormWhereInput, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNPostTypeFormWhereInput2ᚖsaasᚋgenᚋentᚐPostTypeFormWhereInput(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) unmarshalOPostTypeFormWhereInput2ᚖsaasᚋgenᚋentᚐPostTypeFormWhereInput(ctx context.Context, v interface{}) (*ent.PostTypeFormWhereInput, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputPostTypeFormWhereInput(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOPostTypeOrder2ᚕᚖsaasᚋgenᚋentᚐPostTypeOrderᚄ(ctx context.Context, v interface{}) ([]*ent.PostTypeOrder, error) {

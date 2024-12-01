@@ -44,12 +44,16 @@ const (
 	FieldMetaCanonicalURL = "meta_canonical_url"
 	// FieldMetaRobots holds the string denoting the meta_robots field in the database.
 	FieldMetaRobots = "meta_robots"
+	// FieldCustom holds the string denoting the custom field in the database.
+	FieldCustom = "custom"
 	// EdgePostStatus holds the string denoting the post_status edge name in mutations.
 	EdgePostStatus = "post_status"
 	// EdgePostType holds the string denoting the post_type edge name in mutations.
 	EdgePostType = "post_type"
 	// EdgePrimaryCategory holds the string denoting the primary_category edge name in mutations.
 	EdgePrimaryCategory = "primary_category"
+	// EdgePostTags holds the string denoting the post_tags edge name in mutations.
+	EdgePostTags = "post_tags"
 	// Table holds the table name of the post in the database.
 	Table = "posts"
 	// PostStatusTable is the table that holds the post_status relation/edge.
@@ -73,6 +77,11 @@ const (
 	PrimaryCategoryInverseTable = "post_categories"
 	// PrimaryCategoryColumn is the table column denoting the primary_category relation/edge.
 	PrimaryCategoryColumn = "primary_category_id"
+	// PostTagsTable is the table that holds the post_tags relation/edge. The primary key declared below.
+	PostTagsTable = "post_tag_posts"
+	// PostTagsInverseTable is the table name for the PostTag entity.
+	// It exists in this package in order to avoid circular dependency with the "posttag" package.
+	PostTagsInverseTable = "post_tags"
 )
 
 // Columns holds all SQL columns for post fields.
@@ -93,7 +102,14 @@ var Columns = []string{
 	FieldMetaDescr,
 	FieldMetaCanonicalURL,
 	FieldMetaRobots,
+	FieldCustom,
 }
+
+var (
+	// PostTagsPrimaryKey and PostTagsColumn2 are the table columns denoting the
+	// primary key for the post_tags relation (M2M).
+	PostTagsPrimaryKey = []string{"post_tag_id", "post_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -219,6 +235,20 @@ func ByPrimaryCategoryField(field string, opts ...sql.OrderTermOption) OrderOpti
 		sqlgraph.OrderByNeighborTerms(s, newPrimaryCategoryStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByPostTagsCount orders the results by post_tags count.
+func ByPostTagsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newPostTagsStep(), opts...)
+	}
+}
+
+// ByPostTags orders the results by post_tags terms.
+func ByPostTags(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newPostTagsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newPostStatusStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -238,5 +268,12 @@ func newPrimaryCategoryStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(PrimaryCategoryInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, true, PrimaryCategoryTable, PrimaryCategoryColumn),
+	)
+}
+func newPostTagsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(PostTagsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, PostTagsTable, PostTagsPrimaryKey...),
 	)
 }

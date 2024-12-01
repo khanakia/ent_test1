@@ -6,6 +6,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"saas/gen/ent/post"
 	"saas/gen/ent/posttag"
 	"saas/gen/ent/predicate"
 	"time"
@@ -141,26 +142,6 @@ func (ptu *PostTagUpdate) ClearExcerpt() *PostTagUpdate {
 	return ptu
 }
 
-// SetContent sets the "content" field.
-func (ptu *PostTagUpdate) SetContent(s string) *PostTagUpdate {
-	ptu.mutation.SetContent(s)
-	return ptu
-}
-
-// SetNillableContent sets the "content" field if the given value is not nil.
-func (ptu *PostTagUpdate) SetNillableContent(s *string) *PostTagUpdate {
-	if s != nil {
-		ptu.SetContent(*s)
-	}
-	return ptu
-}
-
-// ClearContent clears the value of the "content" field.
-func (ptu *PostTagUpdate) ClearContent() *PostTagUpdate {
-	ptu.mutation.ClearContent()
-	return ptu
-}
-
 // SetMetaTitle sets the "meta_title" field.
 func (ptu *PostTagUpdate) SetMetaTitle(s string) *PostTagUpdate {
 	ptu.mutation.SetMetaTitle(s)
@@ -241,9 +222,45 @@ func (ptu *PostTagUpdate) ClearMetaRobots() *PostTagUpdate {
 	return ptu
 }
 
+// AddPostIDs adds the "posts" edge to the Post entity by IDs.
+func (ptu *PostTagUpdate) AddPostIDs(ids ...string) *PostTagUpdate {
+	ptu.mutation.AddPostIDs(ids...)
+	return ptu
+}
+
+// AddPosts adds the "posts" edges to the Post entity.
+func (ptu *PostTagUpdate) AddPosts(p ...*Post) *PostTagUpdate {
+	ids := make([]string, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptu.AddPostIDs(ids...)
+}
+
 // Mutation returns the PostTagMutation object of the builder.
 func (ptu *PostTagUpdate) Mutation() *PostTagMutation {
 	return ptu.mutation
+}
+
+// ClearPosts clears all "posts" edges to the Post entity.
+func (ptu *PostTagUpdate) ClearPosts() *PostTagUpdate {
+	ptu.mutation.ClearPosts()
+	return ptu
+}
+
+// RemovePostIDs removes the "posts" edge to Post entities by IDs.
+func (ptu *PostTagUpdate) RemovePostIDs(ids ...string) *PostTagUpdate {
+	ptu.mutation.RemovePostIDs(ids...)
+	return ptu
+}
+
+// RemovePosts removes "posts" edges to Post entities.
+func (ptu *PostTagUpdate) RemovePosts(p ...*Post) *PostTagUpdate {
+	ids := make([]string, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptu.RemovePostIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -336,12 +353,6 @@ func (ptu *PostTagUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if ptu.mutation.ExcerptCleared() {
 		_spec.ClearField(posttag.FieldExcerpt, field.TypeString)
 	}
-	if value, ok := ptu.mutation.Content(); ok {
-		_spec.SetField(posttag.FieldContent, field.TypeString, value)
-	}
-	if ptu.mutation.ContentCleared() {
-		_spec.ClearField(posttag.FieldContent, field.TypeString)
-	}
 	if value, ok := ptu.mutation.MetaTitle(); ok {
 		_spec.SetField(posttag.FieldMetaTitle, field.TypeString, value)
 	}
@@ -365,6 +376,51 @@ func (ptu *PostTagUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if ptu.mutation.MetaRobotsCleared() {
 		_spec.ClearField(posttag.FieldMetaRobots, field.TypeString)
+	}
+	if ptu.mutation.PostsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   posttag.PostsTable,
+			Columns: posttag.PostsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(post.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptu.mutation.RemovedPostsIDs(); len(nodes) > 0 && !ptu.mutation.PostsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   posttag.PostsTable,
+			Columns: posttag.PostsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(post.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptu.mutation.PostsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   posttag.PostsTable,
+			Columns: posttag.PostsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(post.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.AddModifiers(ptu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, ptu.driver, _spec); err != nil {
@@ -500,26 +556,6 @@ func (ptuo *PostTagUpdateOne) ClearExcerpt() *PostTagUpdateOne {
 	return ptuo
 }
 
-// SetContent sets the "content" field.
-func (ptuo *PostTagUpdateOne) SetContent(s string) *PostTagUpdateOne {
-	ptuo.mutation.SetContent(s)
-	return ptuo
-}
-
-// SetNillableContent sets the "content" field if the given value is not nil.
-func (ptuo *PostTagUpdateOne) SetNillableContent(s *string) *PostTagUpdateOne {
-	if s != nil {
-		ptuo.SetContent(*s)
-	}
-	return ptuo
-}
-
-// ClearContent clears the value of the "content" field.
-func (ptuo *PostTagUpdateOne) ClearContent() *PostTagUpdateOne {
-	ptuo.mutation.ClearContent()
-	return ptuo
-}
-
 // SetMetaTitle sets the "meta_title" field.
 func (ptuo *PostTagUpdateOne) SetMetaTitle(s string) *PostTagUpdateOne {
 	ptuo.mutation.SetMetaTitle(s)
@@ -600,9 +636,45 @@ func (ptuo *PostTagUpdateOne) ClearMetaRobots() *PostTagUpdateOne {
 	return ptuo
 }
 
+// AddPostIDs adds the "posts" edge to the Post entity by IDs.
+func (ptuo *PostTagUpdateOne) AddPostIDs(ids ...string) *PostTagUpdateOne {
+	ptuo.mutation.AddPostIDs(ids...)
+	return ptuo
+}
+
+// AddPosts adds the "posts" edges to the Post entity.
+func (ptuo *PostTagUpdateOne) AddPosts(p ...*Post) *PostTagUpdateOne {
+	ids := make([]string, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptuo.AddPostIDs(ids...)
+}
+
 // Mutation returns the PostTagMutation object of the builder.
 func (ptuo *PostTagUpdateOne) Mutation() *PostTagMutation {
 	return ptuo.mutation
+}
+
+// ClearPosts clears all "posts" edges to the Post entity.
+func (ptuo *PostTagUpdateOne) ClearPosts() *PostTagUpdateOne {
+	ptuo.mutation.ClearPosts()
+	return ptuo
+}
+
+// RemovePostIDs removes the "posts" edge to Post entities by IDs.
+func (ptuo *PostTagUpdateOne) RemovePostIDs(ids ...string) *PostTagUpdateOne {
+	ptuo.mutation.RemovePostIDs(ids...)
+	return ptuo
+}
+
+// RemovePosts removes "posts" edges to Post entities.
+func (ptuo *PostTagUpdateOne) RemovePosts(p ...*Post) *PostTagUpdateOne {
+	ids := make([]string, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return ptuo.RemovePostIDs(ids...)
 }
 
 // Where appends a list predicates to the PostTagUpdate builder.
@@ -725,12 +797,6 @@ func (ptuo *PostTagUpdateOne) sqlSave(ctx context.Context) (_node *PostTag, err 
 	if ptuo.mutation.ExcerptCleared() {
 		_spec.ClearField(posttag.FieldExcerpt, field.TypeString)
 	}
-	if value, ok := ptuo.mutation.Content(); ok {
-		_spec.SetField(posttag.FieldContent, field.TypeString, value)
-	}
-	if ptuo.mutation.ContentCleared() {
-		_spec.ClearField(posttag.FieldContent, field.TypeString)
-	}
 	if value, ok := ptuo.mutation.MetaTitle(); ok {
 		_spec.SetField(posttag.FieldMetaTitle, field.TypeString, value)
 	}
@@ -754,6 +820,51 @@ func (ptuo *PostTagUpdateOne) sqlSave(ctx context.Context) (_node *PostTag, err 
 	}
 	if ptuo.mutation.MetaRobotsCleared() {
 		_spec.ClearField(posttag.FieldMetaRobots, field.TypeString)
+	}
+	if ptuo.mutation.PostsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   posttag.PostsTable,
+			Columns: posttag.PostsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(post.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptuo.mutation.RemovedPostsIDs(); len(nodes) > 0 && !ptuo.mutation.PostsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   posttag.PostsTable,
+			Columns: posttag.PostsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(post.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := ptuo.mutation.PostsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   posttag.PostsTable,
+			Columns: posttag.PostsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(post.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.AddModifiers(ptuo.modifiers...)
 	_node = &PostTag{config: ptuo.config}

@@ -24,6 +24,7 @@ import (
 	"saas/gen/ent/poststatus"
 	"saas/gen/ent/posttag"
 	"saas/gen/ent/posttype"
+	"saas/gen/ent/posttypeform"
 	"saas/gen/ent/session"
 	"saas/gen/ent/temp"
 	"saas/gen/ent/templ"
@@ -72,6 +73,8 @@ type Client struct {
 	PostTag *PostTagClient
 	// PostType is the client for interacting with the PostType builders.
 	PostType *PostTypeClient
+	// PostTypeForm is the client for interacting with the PostTypeForm builders.
+	PostTypeForm *PostTypeFormClient
 	// Session is the client for interacting with the Session builders.
 	Session *SessionClient
 	// Temp is the client for interacting with the Temp builders.
@@ -112,6 +115,7 @@ func (c *Client) init() {
 	c.PostStatus = NewPostStatusClient(c.config)
 	c.PostTag = NewPostTagClient(c.config)
 	c.PostType = NewPostTypeClient(c.config)
+	c.PostTypeForm = NewPostTypeFormClient(c.config)
 	c.Session = NewSessionClient(c.config)
 	c.Temp = NewTempClient(c.config)
 	c.Templ = NewTemplClient(c.config)
@@ -225,6 +229,7 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		PostStatus:      NewPostStatusClient(cfg),
 		PostTag:         NewPostTagClient(cfg),
 		PostType:        NewPostTypeClient(cfg),
+		PostTypeForm:    NewPostTypeFormClient(cfg),
 		Session:         NewSessionClient(cfg),
 		Temp:            NewTempClient(cfg),
 		Templ:           NewTemplClient(cfg),
@@ -265,6 +270,7 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		PostStatus:      NewPostStatusClient(cfg),
 		PostTag:         NewPostTagClient(cfg),
 		PostType:        NewPostTypeClient(cfg),
+		PostTypeForm:    NewPostTypeFormClient(cfg),
 		Session:         NewSessionClient(cfg),
 		Temp:            NewTempClient(cfg),
 		Templ:           NewTemplClient(cfg),
@@ -303,9 +309,9 @@ func (c *Client) Close() error {
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
 		c.AdminUser, c.App, c.Kache, c.Keyvalue, c.MailConn, c.Media, c.OauthConnection,
-		c.Plan, c.Post, c.PostCategory, c.PostStatus, c.PostTag, c.PostType, c.Session,
-		c.Temp, c.Templ, c.Todo, c.User, c.Workspace, c.WorkspaceInvite,
-		c.WorkspaceUser,
+		c.Plan, c.Post, c.PostCategory, c.PostStatus, c.PostTag, c.PostType,
+		c.PostTypeForm, c.Session, c.Temp, c.Templ, c.Todo, c.User, c.Workspace,
+		c.WorkspaceInvite, c.WorkspaceUser,
 	} {
 		n.Use(hooks...)
 	}
@@ -316,9 +322,9 @@ func (c *Client) Use(hooks ...Hook) {
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
 		c.AdminUser, c.App, c.Kache, c.Keyvalue, c.MailConn, c.Media, c.OauthConnection,
-		c.Plan, c.Post, c.PostCategory, c.PostStatus, c.PostTag, c.PostType, c.Session,
-		c.Temp, c.Templ, c.Todo, c.User, c.Workspace, c.WorkspaceInvite,
-		c.WorkspaceUser,
+		c.Plan, c.Post, c.PostCategory, c.PostStatus, c.PostTag, c.PostType,
+		c.PostTypeForm, c.Session, c.Temp, c.Templ, c.Todo, c.User, c.Workspace,
+		c.WorkspaceInvite, c.WorkspaceUser,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -353,6 +359,8 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.PostTag.mutate(ctx, m)
 	case *PostTypeMutation:
 		return c.PostType.mutate(ctx, m)
+	case *PostTypeFormMutation:
+		return c.PostTypeForm.mutate(ctx, m)
 	case *SessionMutation:
 		return c.Session.mutate(ctx, m)
 	case *TempMutation:
@@ -1706,6 +1714,22 @@ func (c *PostClient) QueryPrimaryCategory(po *Post) *PostCategoryQuery {
 	return query
 }
 
+// QueryPostTags queries the post_tags edge of a Post.
+func (c *PostClient) QueryPostTags(po *Post) *PostTagQuery {
+	query := (&PostTagClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := po.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(post.Table, post.FieldID, id),
+			sqlgraph.To(posttag.Table, posttag.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, post.PostTagsTable, post.PostTagsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(po.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *PostClient) Hooks() []Hook {
 	return c.hooks.Post
@@ -2153,6 +2177,22 @@ func (c *PostTagClient) GetX(ctx context.Context, id string) *PostTag {
 	return obj
 }
 
+// QueryPosts queries the posts edge of a PostTag.
+func (c *PostTagClient) QueryPosts(pt *PostTag) *PostQuery {
+	query := (&PostClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := pt.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(posttag.Table, posttag.FieldID, id),
+			sqlgraph.To(post.Table, post.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, posttag.PostsTable, posttag.PostsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(pt.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *PostTagClient) Hooks() []Hook {
 	return c.hooks.PostTag
@@ -2318,6 +2358,22 @@ func (c *PostTypeClient) QueryPostStatuses(pt *PostType) *PostStatusQuery {
 	return query
 }
 
+// QueryPostTypeForms queries the post_type_forms edge of a PostType.
+func (c *PostTypeClient) QueryPostTypeForms(pt *PostType) *PostTypeFormQuery {
+	query := (&PostTypeFormClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := pt.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(posttype.Table, posttype.FieldID, id),
+			sqlgraph.To(posttypeform.Table, posttypeform.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, posttype.PostTypeFormsTable, posttype.PostTypeFormsColumn),
+		)
+		fromV = sqlgraph.Neighbors(pt.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *PostTypeClient) Hooks() []Hook {
 	return c.hooks.PostType
@@ -2340,6 +2396,155 @@ func (c *PostTypeClient) mutate(ctx context.Context, m *PostTypeMutation) (Value
 		return (&PostTypeDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown PostType mutation op: %q", m.Op())
+	}
+}
+
+// PostTypeFormClient is a client for the PostTypeForm schema.
+type PostTypeFormClient struct {
+	config
+}
+
+// NewPostTypeFormClient returns a client for the PostTypeForm from the given config.
+func NewPostTypeFormClient(c config) *PostTypeFormClient {
+	return &PostTypeFormClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `posttypeform.Hooks(f(g(h())))`.
+func (c *PostTypeFormClient) Use(hooks ...Hook) {
+	c.hooks.PostTypeForm = append(c.hooks.PostTypeForm, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `posttypeform.Intercept(f(g(h())))`.
+func (c *PostTypeFormClient) Intercept(interceptors ...Interceptor) {
+	c.inters.PostTypeForm = append(c.inters.PostTypeForm, interceptors...)
+}
+
+// Create returns a builder for creating a PostTypeForm entity.
+func (c *PostTypeFormClient) Create() *PostTypeFormCreate {
+	mutation := newPostTypeFormMutation(c.config, OpCreate)
+	return &PostTypeFormCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of PostTypeForm entities.
+func (c *PostTypeFormClient) CreateBulk(builders ...*PostTypeFormCreate) *PostTypeFormCreateBulk {
+	return &PostTypeFormCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *PostTypeFormClient) MapCreateBulk(slice any, setFunc func(*PostTypeFormCreate, int)) *PostTypeFormCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &PostTypeFormCreateBulk{err: fmt.Errorf("calling to PostTypeFormClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*PostTypeFormCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &PostTypeFormCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for PostTypeForm.
+func (c *PostTypeFormClient) Update() *PostTypeFormUpdate {
+	mutation := newPostTypeFormMutation(c.config, OpUpdate)
+	return &PostTypeFormUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *PostTypeFormClient) UpdateOne(ptf *PostTypeForm) *PostTypeFormUpdateOne {
+	mutation := newPostTypeFormMutation(c.config, OpUpdateOne, withPostTypeForm(ptf))
+	return &PostTypeFormUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *PostTypeFormClient) UpdateOneID(id string) *PostTypeFormUpdateOne {
+	mutation := newPostTypeFormMutation(c.config, OpUpdateOne, withPostTypeFormID(id))
+	return &PostTypeFormUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for PostTypeForm.
+func (c *PostTypeFormClient) Delete() *PostTypeFormDelete {
+	mutation := newPostTypeFormMutation(c.config, OpDelete)
+	return &PostTypeFormDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *PostTypeFormClient) DeleteOne(ptf *PostTypeForm) *PostTypeFormDeleteOne {
+	return c.DeleteOneID(ptf.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *PostTypeFormClient) DeleteOneID(id string) *PostTypeFormDeleteOne {
+	builder := c.Delete().Where(posttypeform.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &PostTypeFormDeleteOne{builder}
+}
+
+// Query returns a query builder for PostTypeForm.
+func (c *PostTypeFormClient) Query() *PostTypeFormQuery {
+	return &PostTypeFormQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypePostTypeForm},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a PostTypeForm entity by its id.
+func (c *PostTypeFormClient) Get(ctx context.Context, id string) (*PostTypeForm, error) {
+	return c.Query().Where(posttypeform.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *PostTypeFormClient) GetX(ctx context.Context, id string) *PostTypeForm {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryPostType queries the post_type edge of a PostTypeForm.
+func (c *PostTypeFormClient) QueryPostType(ptf *PostTypeForm) *PostTypeQuery {
+	query := (&PostTypeClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ptf.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(posttypeform.Table, posttypeform.FieldID, id),
+			sqlgraph.To(posttype.Table, posttype.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, posttypeform.PostTypeTable, posttypeform.PostTypeColumn),
+		)
+		fromV = sqlgraph.Neighbors(ptf.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *PostTypeFormClient) Hooks() []Hook {
+	return c.hooks.PostTypeForm
+}
+
+// Interceptors returns the client interceptors.
+func (c *PostTypeFormClient) Interceptors() []Interceptor {
+	return c.inters.PostTypeForm
+}
+
+func (c *PostTypeFormClient) mutate(ctx context.Context, m *PostTypeFormMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&PostTypeFormCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&PostTypeFormUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&PostTypeFormUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&PostTypeFormDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown PostTypeForm mutation op: %q", m.Op())
 	}
 }
 
@@ -3603,13 +3808,13 @@ func (c *WorkspaceUserClient) mutate(ctx context.Context, m *WorkspaceUserMutati
 type (
 	hooks struct {
 		AdminUser, App, Kache, Keyvalue, MailConn, Media, OauthConnection, Plan, Post,
-		PostCategory, PostStatus, PostTag, PostType, Session, Temp, Templ, Todo, User,
-		Workspace, WorkspaceInvite, WorkspaceUser []ent.Hook
+		PostCategory, PostStatus, PostTag, PostType, PostTypeForm, Session, Temp,
+		Templ, Todo, User, Workspace, WorkspaceInvite, WorkspaceUser []ent.Hook
 	}
 	inters struct {
 		AdminUser, App, Kache, Keyvalue, MailConn, Media, OauthConnection, Plan, Post,
-		PostCategory, PostStatus, PostTag, PostType, Session, Temp, Templ, Todo, User,
-		Workspace, WorkspaceInvite, WorkspaceUser []ent.Interceptor
+		PostCategory, PostStatus, PostTag, PostType, PostTypeForm, Session, Temp,
+		Templ, Todo, User, Workspace, WorkspaceInvite, WorkspaceUser []ent.Interceptor
 	}
 )
 

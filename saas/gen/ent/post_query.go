@@ -4,11 +4,13 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"math"
 	"saas/gen/ent/post"
 	"saas/gen/ent/postcategory"
 	"saas/gen/ent/poststatus"
+	"saas/gen/ent/posttag"
 	"saas/gen/ent/posttype"
 	"saas/gen/ent/predicate"
 
@@ -27,8 +29,10 @@ type PostQuery struct {
 	withPostStatus      *PostStatusQuery
 	withPostType        *PostTypeQuery
 	withPrimaryCategory *PostCategoryQuery
+	withPostTags        *PostTagQuery
 	loadTotal           []func(context.Context, []*Post) error
 	modifiers           []func(*sql.Selector)
+	withNamedPostTags   map[string]*PostTagQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -124,6 +128,28 @@ func (pq *PostQuery) QueryPrimaryCategory() *PostCategoryQuery {
 			sqlgraph.From(post.Table, post.FieldID, selector),
 			sqlgraph.To(postcategory.Table, postcategory.FieldID),
 			sqlgraph.Edge(sqlgraph.M2O, true, post.PrimaryCategoryTable, post.PrimaryCategoryColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryPostTags chains the current query on the "post_tags" edge.
+func (pq *PostQuery) QueryPostTags() *PostTagQuery {
+	query := (&PostTagClient{config: pq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := pq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := pq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(post.Table, post.FieldID, selector),
+			sqlgraph.To(posttag.Table, posttag.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, post.PostTagsTable, post.PostTagsPrimaryKey...),
 		)
 		fromU = sqlgraph.SetNeighbors(pq.driver.Dialect(), step)
 		return fromU, nil
@@ -326,6 +352,7 @@ func (pq *PostQuery) Clone() *PostQuery {
 		withPostStatus:      pq.withPostStatus.Clone(),
 		withPostType:        pq.withPostType.Clone(),
 		withPrimaryCategory: pq.withPrimaryCategory.Clone(),
+		withPostTags:        pq.withPostTags.Clone(),
 		// clone intermediate query.
 		sql:  pq.sql.Clone(),
 		path: pq.path,
@@ -362,6 +389,17 @@ func (pq *PostQuery) WithPrimaryCategory(opts ...func(*PostCategoryQuery)) *Post
 		opt(query)
 	}
 	pq.withPrimaryCategory = query
+	return pq
+}
+
+// WithPostTags tells the query-builder to eager-load the nodes that are connected to
+// the "post_tags" edge. The optional arguments are used to configure the query builder of the edge.
+func (pq *PostQuery) WithPostTags(opts ...func(*PostTagQuery)) *PostQuery {
+	query := (&PostTagClient{config: pq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	pq.withPostTags = query
 	return pq
 }
 
@@ -443,10 +481,11 @@ func (pq *PostQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Post, e
 	var (
 		nodes       = []*Post{}
 		_spec       = pq.querySpec()
-		loadedTypes = [3]bool{
+		loadedTypes = [4]bool{
 			pq.withPostStatus != nil,
 			pq.withPostType != nil,
 			pq.withPrimaryCategory != nil,
+			pq.withPostTags != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -485,6 +524,20 @@ func (pq *PostQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Post, e
 	if query := pq.withPrimaryCategory; query != nil {
 		if err := pq.loadPrimaryCategory(ctx, query, nodes, nil,
 			func(n *Post, e *PostCategory) { n.Edges.PrimaryCategory = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := pq.withPostTags; query != nil {
+		if err := pq.loadPostTags(ctx, query, nodes,
+			func(n *Post) { n.Edges.PostTags = []*PostTag{} },
+			func(n *Post, e *PostTag) { n.Edges.PostTags = append(n.Edges.PostTags, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range pq.withNamedPostTags {
+		if err := pq.loadPostTags(ctx, query, nodes,
+			func(n *Post) { n.appendNamedPostTags(name) },
+			func(n *Post, e *PostTag) { n.appendNamedPostTags(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -579,6 +632,67 @@ func (pq *PostQuery) loadPrimaryCategory(ctx context.Context, query *PostCategor
 		}
 		for i := range nodes {
 			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (pq *PostQuery) loadPostTags(ctx context.Context, query *PostTagQuery, nodes []*Post, init func(*Post), assign func(*Post, *PostTag)) error {
+	edgeIDs := make([]driver.Value, len(nodes))
+	byID := make(map[string]*Post)
+	nids := make(map[string]map[*Post]struct{})
+	for i, node := range nodes {
+		edgeIDs[i] = node.ID
+		byID[node.ID] = node
+		if init != nil {
+			init(node)
+		}
+	}
+	query.Where(func(s *sql.Selector) {
+		joinT := sql.Table(post.PostTagsTable)
+		s.Join(joinT).On(s.C(posttag.FieldID), joinT.C(post.PostTagsPrimaryKey[0]))
+		s.Where(sql.InValues(joinT.C(post.PostTagsPrimaryKey[1]), edgeIDs...))
+		columns := s.SelectedColumns()
+		s.Select(joinT.C(post.PostTagsPrimaryKey[1]))
+		s.AppendSelect(columns...)
+		s.SetDistinct(false)
+	})
+	if err := query.prepareQuery(ctx); err != nil {
+		return err
+	}
+	qr := QuerierFunc(func(ctx context.Context, q Query) (Value, error) {
+		return query.sqlAll(ctx, func(_ context.Context, spec *sqlgraph.QuerySpec) {
+			assign := spec.Assign
+			values := spec.ScanValues
+			spec.ScanValues = func(columns []string) ([]any, error) {
+				values, err := values(columns[1:])
+				if err != nil {
+					return nil, err
+				}
+				return append([]any{new(sql.NullString)}, values...), nil
+			}
+			spec.Assign = func(columns []string, values []any) error {
+				outValue := values[0].(*sql.NullString).String
+				inValue := values[1].(*sql.NullString).String
+				if nids[inValue] == nil {
+					nids[inValue] = map[*Post]struct{}{byID[outValue]: {}}
+					return assign(columns[1:], values[1:])
+				}
+				nids[inValue][byID[outValue]] = struct{}{}
+				return nil
+			}
+		})
+	})
+	neighbors, err := withInterceptors[[]*PostTag](ctx, query, qr, query.inters)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected "post_tags" node returned %v`, n.ID)
+		}
+		for kn := range nodes {
+			assign(kn, n)
 		}
 	}
 	return nil
@@ -684,6 +798,20 @@ func (pq *PostQuery) sqlQuery(ctx context.Context) *sql.Selector {
 func (pq *PostQuery) Modify(modifiers ...func(s *sql.Selector)) *PostSelect {
 	pq.modifiers = append(pq.modifiers, modifiers...)
 	return pq.Select()
+}
+
+// WithNamedPostTags tells the query-builder to eager-load the nodes that are connected to the "post_tags"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (pq *PostQuery) WithNamedPostTags(name string, opts ...func(*PostTagQuery)) *PostQuery {
+	query := (&PostTagClient{config: pq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if pq.withNamedPostTags == nil {
+		pq.withNamedPostTags = make(map[string]*PostTagQuery)
+	}
+	pq.withNamedPostTags[name] = query
+	return pq
 }
 
 // PostGroupBy is the group-by builder for Post entities.

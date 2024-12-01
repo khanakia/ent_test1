@@ -16,6 +16,7 @@ import (
 	"saas/gen/ent/poststatus"
 	"saas/gen/ent/posttag"
 	"saas/gen/ent/posttype"
+	"saas/gen/ent/posttypeform"
 	"saas/gen/ent/templ"
 	"saas/gen/ent/todo"
 	"saas/gen/ent/user"
@@ -2564,19 +2565,14 @@ func (c *PostTagConnection) build(nodes []*PostTag, pager *posttagPager, after *
 type PostTagPaginateOption func(*posttagPager) error
 
 // WithPostTagOrder configures pagination ordering.
-func WithPostTagOrder(order *PostTagOrder) PostTagPaginateOption {
-	if order == nil {
-		order = DefaultPostTagOrder
-	}
-	o := *order
+func WithPostTagOrder(order []*PostTagOrder) PostTagPaginateOption {
 	return func(pager *posttagPager) error {
-		if err := o.Direction.Validate(); err != nil {
-			return err
+		for _, o := range order {
+			if err := o.Direction.Validate(); err != nil {
+				return err
+			}
 		}
-		if o.Field == nil {
-			o.Field = DefaultPostTagOrder.Field
-		}
-		pager.order = &o
+		pager.order = append(pager.order, order...)
 		return nil
 	}
 }
@@ -2594,7 +2590,7 @@ func WithPostTagFilter(filter func(*PostTagQuery) (*PostTagQuery, error)) PostTa
 
 type posttagPager struct {
 	reverse bool
-	order   *PostTagOrder
+	order   []*PostTagOrder
 	filter  func(*PostTagQuery) (*PostTagQuery, error)
 }
 
@@ -2605,8 +2601,10 @@ func newPostTagPager(opts []PostTagPaginateOption, reverse bool) (*posttagPager,
 			return nil, err
 		}
 	}
-	if pager.order == nil {
-		pager.order = DefaultPostTagOrder
+	for i, o := range pager.order {
+		if i > 0 && o.Field == pager.order[i-1].Field {
+			return nil, fmt.Errorf("duplicate order direction %q", o.Direction)
+		}
 	}
 	return pager, nil
 }
@@ -2619,48 +2617,87 @@ func (p *posttagPager) applyFilter(query *PostTagQuery) (*PostTagQuery, error) {
 }
 
 func (p *posttagPager) toCursor(pt *PostTag) Cursor {
-	return p.order.Field.toCursor(pt)
+	cs_ := make([]any, 0, len(p.order))
+	for _, o_ := range p.order {
+		cs_ = append(cs_, o_.Field.toCursor(pt).Value)
+	}
+	return Cursor{ID: pt.ID, Value: cs_}
 }
 
 func (p *posttagPager) applyCursors(query *PostTagQuery, after, before *Cursor) (*PostTagQuery, error) {
-	direction := p.order.Direction
+	idDirection := entgql.OrderDirectionAsc
 	if p.reverse {
-		direction = direction.Reverse()
+		idDirection = entgql.OrderDirectionDesc
 	}
-	for _, predicate := range entgql.CursorsPredicate(after, before, DefaultPostTagOrder.Field.column, p.order.Field.column, direction) {
+	fields, directions := make([]string, 0, len(p.order)), make([]OrderDirection, 0, len(p.order))
+	for _, o := range p.order {
+		fields = append(fields, o.Field.column)
+		direction := o.Direction
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		directions = append(directions, direction)
+	}
+	predicates, err := entgql.MultiCursorsPredicate(after, before, &entgql.MultiCursorsOptions{
+		FieldID:     DefaultPostTagOrder.Field.column,
+		DirectionID: idDirection,
+		Fields:      fields,
+		Directions:  directions,
+	})
+	if err != nil {
+		return nil, err
+	}
+	for _, predicate := range predicates {
 		query = query.Where(predicate)
 	}
 	return query, nil
 }
 
 func (p *posttagPager) applyOrder(query *PostTagQuery) *PostTagQuery {
-	direction := p.order.Direction
-	if p.reverse {
-		direction = direction.Reverse()
+	var defaultOrdered bool
+	for _, o := range p.order {
+		direction := o.Direction
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		query = query.Order(o.Field.toTerm(direction.OrderTermOption()))
+		if o.Field.column == DefaultPostTagOrder.Field.column {
+			defaultOrdered = true
+		}
+		if len(query.ctx.Fields) > 0 {
+			query.ctx.AppendFieldOnce(o.Field.column)
+		}
 	}
-	query = query.Order(p.order.Field.toTerm(direction.OrderTermOption()))
-	if p.order.Field != DefaultPostTagOrder.Field {
+	if !defaultOrdered {
+		direction := entgql.OrderDirectionAsc
+		if p.reverse {
+			direction = direction.Reverse()
+		}
 		query = query.Order(DefaultPostTagOrder.Field.toTerm(direction.OrderTermOption()))
-	}
-	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(p.order.Field.column)
 	}
 	return query
 }
 
 func (p *posttagPager) orderExpr(query *PostTagQuery) sql.Querier {
-	direction := p.order.Direction
-	if p.reverse {
-		direction = direction.Reverse()
-	}
 	if len(query.ctx.Fields) > 0 {
-		query.ctx.AppendFieldOnce(p.order.Field.column)
+		for _, o := range p.order {
+			query.ctx.AppendFieldOnce(o.Field.column)
+		}
 	}
 	return sql.ExprFunc(func(b *sql.Builder) {
-		b.Ident(p.order.Field.column).Pad().WriteString(string(direction))
-		if p.order.Field != DefaultPostTagOrder.Field {
-			b.Comma().Ident(DefaultPostTagOrder.Field.column).Pad().WriteString(string(direction))
+		for _, o := range p.order {
+			direction := o.Direction
+			if p.reverse {
+				direction = direction.Reverse()
+			}
+			b.Ident(o.Field.column).Pad().WriteString(string(direction))
+			b.Comma()
 		}
+		direction := entgql.OrderDirectionAsc
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		b.Ident(DefaultPostTagOrder.Field.column).Pad().WriteString(string(direction))
 	})
 }
 
@@ -3170,6 +3207,411 @@ func (pt *PostType) ToEdge(order *PostTypeOrder) *PostTypeEdge {
 	return &PostTypeEdge{
 		Node:   pt,
 		Cursor: order.Field.toCursor(pt),
+	}
+}
+
+// PostTypeFormEdge is the edge representation of PostTypeForm.
+type PostTypeFormEdge struct {
+	Node   *PostTypeForm `json:"node"`
+	Cursor Cursor        `json:"cursor"`
+}
+
+// PostTypeFormConnection is the connection containing edges to PostTypeForm.
+type PostTypeFormConnection struct {
+	Edges      []*PostTypeFormEdge `json:"edges"`
+	PageInfo   PageInfo            `json:"pageInfo"`
+	TotalCount int                 `json:"totalCount"`
+}
+
+func (c *PostTypeFormConnection) build(nodes []*PostTypeForm, pager *posttypeformPager, after *Cursor, first *int, before *Cursor, last *int) {
+	c.PageInfo.HasNextPage = before != nil
+	c.PageInfo.HasPreviousPage = after != nil
+	if first != nil && *first+1 == len(nodes) {
+		c.PageInfo.HasNextPage = true
+		nodes = nodes[:len(nodes)-1]
+	} else if last != nil && *last+1 == len(nodes) {
+		c.PageInfo.HasPreviousPage = true
+		nodes = nodes[:len(nodes)-1]
+	}
+	var nodeAt func(int) *PostTypeForm
+	if last != nil {
+		n := len(nodes) - 1
+		nodeAt = func(i int) *PostTypeForm {
+			return nodes[n-i]
+		}
+	} else {
+		nodeAt = func(i int) *PostTypeForm {
+			return nodes[i]
+		}
+	}
+	c.Edges = make([]*PostTypeFormEdge, len(nodes))
+	for i := range nodes {
+		node := nodeAt(i)
+		c.Edges[i] = &PostTypeFormEdge{
+			Node:   node,
+			Cursor: pager.toCursor(node),
+		}
+	}
+	if l := len(c.Edges); l > 0 {
+		c.PageInfo.StartCursor = &c.Edges[0].Cursor
+		c.PageInfo.EndCursor = &c.Edges[l-1].Cursor
+	}
+	if c.TotalCount == 0 {
+		c.TotalCount = len(nodes)
+	}
+}
+
+// PostTypeFormPaginateOption enables pagination customization.
+type PostTypeFormPaginateOption func(*posttypeformPager) error
+
+// WithPostTypeFormOrder configures pagination ordering.
+func WithPostTypeFormOrder(order []*PostTypeFormOrder) PostTypeFormPaginateOption {
+	return func(pager *posttypeformPager) error {
+		for _, o := range order {
+			if err := o.Direction.Validate(); err != nil {
+				return err
+			}
+		}
+		pager.order = append(pager.order, order...)
+		return nil
+	}
+}
+
+// WithPostTypeFormFilter configures pagination filter.
+func WithPostTypeFormFilter(filter func(*PostTypeFormQuery) (*PostTypeFormQuery, error)) PostTypeFormPaginateOption {
+	return func(pager *posttypeformPager) error {
+		if filter == nil {
+			return errors.New("PostTypeFormQuery filter cannot be nil")
+		}
+		pager.filter = filter
+		return nil
+	}
+}
+
+type posttypeformPager struct {
+	reverse bool
+	order   []*PostTypeFormOrder
+	filter  func(*PostTypeFormQuery) (*PostTypeFormQuery, error)
+}
+
+func newPostTypeFormPager(opts []PostTypeFormPaginateOption, reverse bool) (*posttypeformPager, error) {
+	pager := &posttypeformPager{reverse: reverse}
+	for _, opt := range opts {
+		if err := opt(pager); err != nil {
+			return nil, err
+		}
+	}
+	for i, o := range pager.order {
+		if i > 0 && o.Field == pager.order[i-1].Field {
+			return nil, fmt.Errorf("duplicate order direction %q", o.Direction)
+		}
+	}
+	return pager, nil
+}
+
+func (p *posttypeformPager) applyFilter(query *PostTypeFormQuery) (*PostTypeFormQuery, error) {
+	if p.filter != nil {
+		return p.filter(query)
+	}
+	return query, nil
+}
+
+func (p *posttypeformPager) toCursor(ptf *PostTypeForm) Cursor {
+	cs_ := make([]any, 0, len(p.order))
+	for _, o_ := range p.order {
+		cs_ = append(cs_, o_.Field.toCursor(ptf).Value)
+	}
+	return Cursor{ID: ptf.ID, Value: cs_}
+}
+
+func (p *posttypeformPager) applyCursors(query *PostTypeFormQuery, after, before *Cursor) (*PostTypeFormQuery, error) {
+	idDirection := entgql.OrderDirectionAsc
+	if p.reverse {
+		idDirection = entgql.OrderDirectionDesc
+	}
+	fields, directions := make([]string, 0, len(p.order)), make([]OrderDirection, 0, len(p.order))
+	for _, o := range p.order {
+		fields = append(fields, o.Field.column)
+		direction := o.Direction
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		directions = append(directions, direction)
+	}
+	predicates, err := entgql.MultiCursorsPredicate(after, before, &entgql.MultiCursorsOptions{
+		FieldID:     DefaultPostTypeFormOrder.Field.column,
+		DirectionID: idDirection,
+		Fields:      fields,
+		Directions:  directions,
+	})
+	if err != nil {
+		return nil, err
+	}
+	for _, predicate := range predicates {
+		query = query.Where(predicate)
+	}
+	return query, nil
+}
+
+func (p *posttypeformPager) applyOrder(query *PostTypeFormQuery) *PostTypeFormQuery {
+	var defaultOrdered bool
+	for _, o := range p.order {
+		direction := o.Direction
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		query = query.Order(o.Field.toTerm(direction.OrderTermOption()))
+		if o.Field.column == DefaultPostTypeFormOrder.Field.column {
+			defaultOrdered = true
+		}
+		switch o.Field.column {
+		case PostTypeFormOrderFieldPostTypeName.column:
+		default:
+			if len(query.ctx.Fields) > 0 {
+				query.ctx.AppendFieldOnce(o.Field.column)
+			}
+		}
+	}
+	if !defaultOrdered {
+		direction := entgql.OrderDirectionAsc
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		query = query.Order(DefaultPostTypeFormOrder.Field.toTerm(direction.OrderTermOption()))
+	}
+	return query
+}
+
+func (p *posttypeformPager) orderExpr(query *PostTypeFormQuery) sql.Querier {
+	for _, o := range p.order {
+		switch o.Field.column {
+		case PostTypeFormOrderFieldPostTypeName.column:
+			direction := o.Direction
+			if p.reverse {
+				direction = direction.Reverse()
+			}
+			query = query.Order(o.Field.toTerm(direction.OrderTermOption()))
+		default:
+			if len(query.ctx.Fields) > 0 {
+				query.ctx.AppendFieldOnce(o.Field.column)
+			}
+		}
+	}
+	return sql.ExprFunc(func(b *sql.Builder) {
+		for _, o := range p.order {
+			direction := o.Direction
+			if p.reverse {
+				direction = direction.Reverse()
+			}
+			b.Ident(o.Field.column).Pad().WriteString(string(direction))
+			b.Comma()
+		}
+		direction := entgql.OrderDirectionAsc
+		if p.reverse {
+			direction = direction.Reverse()
+		}
+		b.Ident(DefaultPostTypeFormOrder.Field.column).Pad().WriteString(string(direction))
+	})
+}
+
+// Paginate executes the query and returns a relay based cursor connection to PostTypeForm.
+func (ptf *PostTypeFormQuery) Paginate(
+	ctx context.Context, after *Cursor, first *int,
+	before *Cursor, last *int, opts ...PostTypeFormPaginateOption,
+) (*PostTypeFormConnection, error) {
+	if err := validateFirstLast(first, last); err != nil {
+		return nil, err
+	}
+	pager, err := newPostTypeFormPager(opts, last != nil)
+	if err != nil {
+		return nil, err
+	}
+	if ptf, err = pager.applyFilter(ptf); err != nil {
+		return nil, err
+	}
+	conn := &PostTypeFormConnection{Edges: []*PostTypeFormEdge{}}
+	ignoredEdges := !hasCollectedField(ctx, edgesField)
+	if hasCollectedField(ctx, totalCountField) || hasCollectedField(ctx, pageInfoField) {
+		hasPagination := after != nil || first != nil || before != nil || last != nil
+		if hasPagination || ignoredEdges {
+			c := ptf.Clone()
+			c.ctx.Fields = nil
+			if conn.TotalCount, err = c.Count(ctx); err != nil {
+				return nil, err
+			}
+			conn.PageInfo.HasNextPage = first != nil && conn.TotalCount > 0
+			conn.PageInfo.HasPreviousPage = last != nil && conn.TotalCount > 0
+		}
+	}
+	if ignoredEdges || (first != nil && *first == 0) || (last != nil && *last == 0) {
+		return conn, nil
+	}
+	if ptf, err = pager.applyCursors(ptf, after, before); err != nil {
+		return nil, err
+	}
+	limit := paginateLimit(first, last)
+	if limit != 0 {
+		ptf.Limit(limit)
+	}
+	if field := collectedField(ctx, edgesField, nodeField); field != nil {
+		if err := ptf.collectField(ctx, limit == 1, graphql.GetOperationContext(ctx), *field, []string{edgesField, nodeField}); err != nil {
+			return nil, err
+		}
+	}
+	ptf = pager.applyOrder(ptf)
+	nodes, err := ptf.All(ctx)
+	if err != nil {
+		return nil, err
+	}
+	conn.build(nodes, pager, after, first, before, last)
+	return conn, nil
+}
+
+var (
+	// PostTypeFormOrderFieldCreatedAt orders PostTypeForm by created_at.
+	PostTypeFormOrderFieldCreatedAt = &PostTypeFormOrderField{
+		Value: func(ptf *PostTypeForm) (ent.Value, error) {
+			return ptf.CreatedAt, nil
+		},
+		column: posttypeform.FieldCreatedAt,
+		toTerm: posttypeform.ByCreatedAt,
+		toCursor: func(ptf *PostTypeForm) Cursor {
+			return Cursor{
+				ID:    ptf.ID,
+				Value: ptf.CreatedAt,
+			}
+		},
+	}
+	// PostTypeFormOrderFieldName orders PostTypeForm by name.
+	PostTypeFormOrderFieldName = &PostTypeFormOrderField{
+		Value: func(ptf *PostTypeForm) (ent.Value, error) {
+			return ptf.Name, nil
+		},
+		column: posttypeform.FieldName,
+		toTerm: posttypeform.ByName,
+		toCursor: func(ptf *PostTypeForm) Cursor {
+			return Cursor{
+				ID:    ptf.ID,
+				Value: ptf.Name,
+			}
+		},
+	}
+	// PostTypeFormOrderFieldStatus orders PostTypeForm by status.
+	PostTypeFormOrderFieldStatus = &PostTypeFormOrderField{
+		Value: func(ptf *PostTypeForm) (ent.Value, error) {
+			return ptf.Status, nil
+		},
+		column: posttypeform.FieldStatus,
+		toTerm: posttypeform.ByStatus,
+		toCursor: func(ptf *PostTypeForm) Cursor {
+			return Cursor{
+				ID:    ptf.ID,
+				Value: ptf.Status,
+			}
+		},
+	}
+	// PostTypeFormOrderFieldPostTypeName orders by POST_TYPE_NAME.
+	PostTypeFormOrderFieldPostTypeName = &PostTypeFormOrderField{
+		Value: func(ptf *PostTypeForm) (ent.Value, error) {
+			return ptf.Value("post_type_name")
+		},
+		column: "post_type_name",
+		toTerm: func(opts ...sql.OrderTermOption) posttypeform.OrderOption {
+			return posttypeform.ByPostTypeField(
+				posttype.FieldName,
+				append(opts, sql.OrderSelectAs("post_type_name"))...,
+			)
+		},
+		toCursor: func(ptf *PostTypeForm) Cursor {
+			cv, _ := ptf.Value("post_type_name")
+			return Cursor{
+				ID:    ptf.ID,
+				Value: cv,
+			}
+		},
+	}
+)
+
+// String implement fmt.Stringer interface.
+func (f PostTypeFormOrderField) String() string {
+	var str string
+	switch f.column {
+	case PostTypeFormOrderFieldCreatedAt.column:
+		str = "CREATED_AT"
+	case PostTypeFormOrderFieldName.column:
+		str = "NAME"
+	case PostTypeFormOrderFieldStatus.column:
+		str = "STATUS"
+	case PostTypeFormOrderFieldPostTypeName.column:
+		str = "POST_TYPE_NAME"
+	}
+	return str
+}
+
+// MarshalGQL implements graphql.Marshaler interface.
+func (f PostTypeFormOrderField) MarshalGQL(w io.Writer) {
+	io.WriteString(w, strconv.Quote(f.String()))
+}
+
+// UnmarshalGQL implements graphql.Unmarshaler interface.
+func (f *PostTypeFormOrderField) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("PostTypeFormOrderField %T must be a string", v)
+	}
+	switch str {
+	case "CREATED_AT":
+		*f = *PostTypeFormOrderFieldCreatedAt
+	case "NAME":
+		*f = *PostTypeFormOrderFieldName
+	case "STATUS":
+		*f = *PostTypeFormOrderFieldStatus
+	case "POST_TYPE_NAME":
+		*f = *PostTypeFormOrderFieldPostTypeName
+	default:
+		return fmt.Errorf("%s is not a valid PostTypeFormOrderField", str)
+	}
+	return nil
+}
+
+// PostTypeFormOrderField defines the ordering field of PostTypeForm.
+type PostTypeFormOrderField struct {
+	// Value extracts the ordering value from the given PostTypeForm.
+	Value    func(*PostTypeForm) (ent.Value, error)
+	column   string // field or computed.
+	toTerm   func(...sql.OrderTermOption) posttypeform.OrderOption
+	toCursor func(*PostTypeForm) Cursor
+}
+
+// PostTypeFormOrder defines the ordering of PostTypeForm.
+type PostTypeFormOrder struct {
+	Direction OrderDirection          `json:"direction"`
+	Field     *PostTypeFormOrderField `json:"field"`
+}
+
+// DefaultPostTypeFormOrder is the default ordering of PostTypeForm.
+var DefaultPostTypeFormOrder = &PostTypeFormOrder{
+	Direction: entgql.OrderDirectionAsc,
+	Field: &PostTypeFormOrderField{
+		Value: func(ptf *PostTypeForm) (ent.Value, error) {
+			return ptf.ID, nil
+		},
+		column: posttypeform.FieldID,
+		toTerm: posttypeform.ByID,
+		toCursor: func(ptf *PostTypeForm) Cursor {
+			return Cursor{ID: ptf.ID}
+		},
+	},
+}
+
+// ToEdge converts PostTypeForm into PostTypeFormEdge.
+func (ptf *PostTypeForm) ToEdge(order *PostTypeFormOrder) *PostTypeFormEdge {
+	if order == nil {
+		order = DefaultPostTypeFormOrder
+	}
+	return &PostTypeFormEdge{
+		Node:   ptf,
+		Cursor: order.Field.toCursor(ptf),
 	}
 }
 

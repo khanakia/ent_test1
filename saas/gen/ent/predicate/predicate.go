@@ -45,6 +45,9 @@ type PostTag func(*sql.Selector)
 // PostType is the predicate function for posttype builders.
 type PostType func(*sql.Selector)
 
+// PostTypeForm is the predicate function for posttypeform builders.
+type PostTypeForm func(*sql.Selector)
+
 // Session is the predicate function for session builders.
 type Session func(*sql.Selector)
 
