@@ -1,8 +1,8 @@
 # https://taskfile.dev
 
-version: '3'
+version: "3"
 
-# dotenv: ['.env']
+dotenv: [".env"]
 
 includes:
   saas:
@@ -17,3 +17,23 @@ includes:
   configmgr:
     taskfile: ./configmgr/Taskfile.yml
     dir: ./configmgr
+
+tasks:
+  workvendor:
+    desc: fix work vendor mismatch on server
+    cmds:
+      - rm -f configmgr/go.sum
+      - rm -f lace/go.sum
+      - rm -f saas/go.sum
+      - go work vendor
+
+  gitgen:
+    desc: auto commit the git gen files
+    cmds:
+      - git add saas/gen
+      - git add gql/graph/generated
+      - git add gql/graph/model/models_gen.go
+      - git add gqlsa/graph/generated
+      - git add gqlsa/graph/model/models_gen.go
+      - git add configmgr/gen
+      - git commit -m "gen - ent, gql, opsapi, repapi"

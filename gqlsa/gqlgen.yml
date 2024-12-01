@@ -72,6 +72,8 @@ resolver:
 autobind:
   #  - "gql/graph/model"
   - github.com/99designs/gqlgen/graphql/introspection
+  - saas/pkg/enttypes
+  - lace/jsonslice
   - saas/gen/ent
   - saas/gen/ent/user
   - saas/gen/ent/session

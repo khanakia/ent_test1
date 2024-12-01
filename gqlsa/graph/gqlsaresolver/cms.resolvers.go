@@ -11,7 +11,9 @@ import (
 	"saas/gen/ent/post"
 	"saas/gen/ent/postcategory"
 	"saas/gen/ent/poststatus"
+	"saas/gen/ent/posttag"
 	"saas/gen/ent/posttype"
+	"saas/gen/ent/posttypeform"
 	"saas/pkg/middleware/adminauthmiddleware"
 	"saas/pkg/middleware/appmiddleware"
 )
@@ -110,6 +112,54 @@ func (r *mutationResolver) UpdatePost(ctx context.Context, id string, input ent.
 	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
 
 	return r.Plugin.EntDB.Client().Post.UpdateOneID(id).SetInput(input).Where(post.AppID(app.ID)).Save(ctx)
+}
+
+// CreatePostTag is the resolver for the createPostTag field.
+func (r *mutationResolver) CreatePostTag(ctx context.Context, input ent.CreatePostTagInput) (*ent.PostTag, error) {
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
+	if cuser == nil {
+		return nil, err
+	}
+
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	return r.Plugin.EntDB.Client().PostTag.Create().SetInput(input).SetAppID(app.ID).Save(ctx)
+}
+
+// UpdatePostTag is the resolver for the updatePostTag field.
+func (r *mutationResolver) UpdatePostTag(ctx context.Context, id string, input ent.UpdatePostTagInput) (*ent.PostTag, error) {
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
+	if cuser == nil {
+		return nil, err
+	}
+
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	return r.Plugin.EntDB.Client().PostTag.UpdateOneID(id).SetInput(input).Where(posttag.AppID(app.ID)).Save(ctx)
+}
+
+// CreatePostTypeForm is the resolver for the createPostTypeForm field.
+func (r *mutationResolver) CreatePostTypeForm(ctx context.Context, input ent.CreatePostTypeFormInput) (*ent.PostTypeForm, error) {
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
+	if cuser == nil {
+		return nil, err
+	}
+
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	return r.Plugin.EntDB.Client().PostTypeForm.Create().SetInput(input).SetAppID(app.ID).Save(ctx)
+}
+
+// UpdatePostTypeForm is the resolver for the updatePostTypeForm field.
+func (r *mutationResolver) UpdatePostTypeForm(ctx context.Context, id string, input ent.UpdatePostTypeFormInput) (*ent.PostTypeForm, error) {
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
+	if cuser == nil {
+		return nil, err
+	}
+
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	return r.Plugin.EntDB.Client().PostTypeForm.UpdateOneID(id).SetInput(input).Where(posttypeform.AppID(app.ID)).Save(ctx)
 }
 
 // Mutation returns generated.MutationResolver implementation.

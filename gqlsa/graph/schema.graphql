@@ -6,6 +6,7 @@ scalar Uint
 scalar Uint64
 scalar Map
 scalar JSON
+scalar JsonSlice
 
 type Student {
   name: String!

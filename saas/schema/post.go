@@ -29,6 +29,7 @@ func (Post) Fields() []ent.Field {
 		field.String("meta_descr").Optional(),
 		field.String("meta_canonical_url").Optional(),
 		field.String("meta_robots").Optional(), // noindex
+		field.JSON("custom", map[string]interface{}{}).Optional(),
 	}
 }
 
@@ -48,6 +49,9 @@ func (Post) Edges() []ent.Edge {
 			Field("primary_category_id").
 			Ref("posts").
 			Unique(),
+
+		edge.From("post_tags", PostTag.Type).
+			Ref("posts"),
 	}
 }
 

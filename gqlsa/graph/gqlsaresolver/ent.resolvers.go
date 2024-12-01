@@ -19,6 +19,7 @@ import (
 	"saas/gen/ent/poststatus"
 	"saas/gen/ent/posttag"
 	"saas/gen/ent/posttype"
+	"saas/gen/ent/posttypeform"
 	"saas/gen/ent/templ"
 	"saas/gen/ent/todo"
 	"saas/gen/ent/user"
@@ -225,6 +226,23 @@ func (r *queryResolver) PostStatuses(ctx context.Context, after *entgql.Cursor[s
 		)
 }
 
+// PostTags is the resolver for the postTags field.
+func (r *queryResolver) PostTags(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostTagOrder, where *ent.PostTagWhereInput) (*ent.PostTagConnection, error) {
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
+	if cuser == nil {
+		return nil, err
+	}
+
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	return r.Plugin.EntDB.Client().PostTag.Query().
+		Where(posttag.AppID(app.ID)).
+		Paginate(ctx, after, first, before, last,
+			ent.WithPostTagOrder(orderBy),
+			ent.WithPostTagFilter(where.Filter),
+		)
+}
+
 // PostTypes is the resolver for the postTypes field.
 func (r *queryResolver) PostTypes(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostTypeOrder, where *ent.PostTypeWhereInput) (*ent.PostTypeConnection, error) {
 	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
@@ -241,6 +259,23 @@ func (r *queryResolver) PostTypes(ctx context.Context, after *entgql.Cursor[stri
 		Paginate(ctx, after, first, before, last,
 			ent.WithPostTypeOrder(orderBy),
 			ent.WithPostTypeFilter(where.Filter),
+		)
+}
+
+// PostTypeForms is the resolver for the postTypeForms field.
+func (r *queryResolver) PostTypeForms(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostTypeFormOrder, where *ent.PostTypeFormWhereInput) (*ent.PostTypeFormConnection, error) {
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
+	if cuser == nil {
+		return nil, err
+	}
+
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	return r.Plugin.EntDB.Client().PostTypeForm.Query().
+		Where(posttypeform.AppID(app.ID)).
+		Paginate(ctx, after, first, before, last,
+			ent.WithPostTypeFormOrder(orderBy),
+			ent.WithPostTypeFormFilter(where.Filter),
 		)
 }
 

@@ -7,4 +7,8 @@ type Mutation {
   updatePostCategory(id: ID!, input: UpdatePostCategoryInput!): PostCategory! @canApp
   createPost(input: CreatePostInput!): Post! @canApp
   updatePost(id: ID!, input: UpdatePostInput!): Post! @canApp
+  createPostTag(input: CreatePostTagInput!): PostTag! @canApp
+  updatePostTag(id: ID!, input: UpdatePostTagInput!): PostTag! @canApp
+  createPostTypeForm(input: CreatePostTypeFormInput!): PostTypeForm! @canApp
+  updatePostTypeForm(id: ID!, input: UpdatePostTypeFormInput!): PostTypeForm! @canApp
 }
