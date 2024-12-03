@@ -62,6 +62,26 @@ func (pcu *PostCategoryUpdate) ClearAppID() *PostCategoryUpdate {
 	return pcu
 }
 
+// SetParentID sets the "parent_id" field.
+func (pcu *PostCategoryUpdate) SetParentID(s string) *PostCategoryUpdate {
+	pcu.mutation.SetParentID(s)
+	return pcu
+}
+
+// SetNillableParentID sets the "parent_id" field if the given value is not nil.
+func (pcu *PostCategoryUpdate) SetNillableParentID(s *string) *PostCategoryUpdate {
+	if s != nil {
+		pcu.SetParentID(*s)
+	}
+	return pcu
+}
+
+// ClearParentID clears the value of the "parent_id" field.
+func (pcu *PostCategoryUpdate) ClearParentID() *PostCategoryUpdate {
+	pcu.mutation.ClearParentID()
+	return pcu
+}
+
 // SetName sets the "name" field.
 func (pcu *PostCategoryUpdate) SetName(s string) *PostCategoryUpdate {
 	pcu.mutation.SetName(s)
@@ -257,6 +277,26 @@ func (pcu *PostCategoryUpdate) AddPosts(p ...*Post) *PostCategoryUpdate {
 	return pcu.AddPostIDs(ids...)
 }
 
+// SetParent sets the "parent" edge to the PostCategory entity.
+func (pcu *PostCategoryUpdate) SetParent(p *PostCategory) *PostCategoryUpdate {
+	return pcu.SetParentID(p.ID)
+}
+
+// AddChildIDs adds the "children" edge to the PostCategory entity by IDs.
+func (pcu *PostCategoryUpdate) AddChildIDs(ids ...string) *PostCategoryUpdate {
+	pcu.mutation.AddChildIDs(ids...)
+	return pcu
+}
+
+// AddChildren adds the "children" edges to the PostCategory entity.
+func (pcu *PostCategoryUpdate) AddChildren(p ...*PostCategory) *PostCategoryUpdate {
+	ids := make([]string, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return pcu.AddChildIDs(ids...)
+}
+
 // Mutation returns the PostCategoryMutation object of the builder.
 func (pcu *PostCategoryUpdate) Mutation() *PostCategoryMutation {
 	return pcu.mutation
@@ -283,9 +323,38 @@ func (pcu *PostCategoryUpdate) RemovePosts(p ...*Post) *PostCategoryUpdate {
 	return pcu.RemovePostIDs(ids...)
 }
 
+// ClearParent clears the "parent" edge to the PostCategory entity.
+func (pcu *PostCategoryUpdate) ClearParent() *PostCategoryUpdate {
+	pcu.mutation.ClearParent()
+	return pcu
+}
+
+// ClearChildren clears all "children" edges to the PostCategory entity.
+func (pcu *PostCategoryUpdate) ClearChildren() *PostCategoryUpdate {
+	pcu.mutation.ClearChildren()
+	return pcu
+}
+
+// RemoveChildIDs removes the "children" edge to PostCategory entities by IDs.
+func (pcu *PostCategoryUpdate) RemoveChildIDs(ids ...string) *PostCategoryUpdate {
+	pcu.mutation.RemoveChildIDs(ids...)
+	return pcu
+}
+
+// RemoveChildren removes "children" edges to PostCategory entities.
+func (pcu *PostCategoryUpdate) RemoveChildren(p ...*PostCategory) *PostCategoryUpdate {
+	ids := make([]string, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return pcu.RemoveChildIDs(ids...)
+}
+
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (pcu *PostCategoryUpdate) Save(ctx context.Context) (int, error) {
-	pcu.defaults()
+	if err := pcu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, pcu.sqlSave, pcu.mutation, pcu.hooks)
 }
 
@@ -312,11 +381,15 @@ func (pcu *PostCategoryUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (pcu *PostCategoryUpdate) defaults() {
+func (pcu *PostCategoryUpdate) defaults() error {
 	if _, ok := pcu.mutation.UpdatedAt(); !ok && !pcu.mutation.UpdatedAtCleared() {
+		if postcategory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized postcategory.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := postcategory.UpdateDefaultUpdatedAt()
 		pcu.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
@@ -448,6 +521,80 @@ func (pcu *PostCategoryUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		}
 		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
+	if pcu.mutation.ParentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   postcategory.ParentTable,
+			Columns: []string{postcategory.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(postcategory.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pcu.mutation.ParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   postcategory.ParentTable,
+			Columns: []string{postcategory.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(postcategory.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if pcu.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   postcategory.ChildrenTable,
+			Columns: []string{postcategory.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(postcategory.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pcu.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !pcu.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   postcategory.ChildrenTable,
+			Columns: []string{postcategory.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(postcategory.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pcu.mutation.ChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   postcategory.ChildrenTable,
+			Columns: []string{postcategory.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(postcategory.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
 	_spec.AddModifiers(pcu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, pcu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -499,6 +646,26 @@ func (pcuo *PostCategoryUpdateOne) SetNillableAppID(s *string) *PostCategoryUpda
 // ClearAppID clears the value of the "app_id" field.
 func (pcuo *PostCategoryUpdateOne) ClearAppID() *PostCategoryUpdateOne {
 	pcuo.mutation.ClearAppID()
+	return pcuo
+}
+
+// SetParentID sets the "parent_id" field.
+func (pcuo *PostCategoryUpdateOne) SetParentID(s string) *PostCategoryUpdateOne {
+	pcuo.mutation.SetParentID(s)
+	return pcuo
+}
+
+// SetNillableParentID sets the "parent_id" field if the given value is not nil.
+func (pcuo *PostCategoryUpdateOne) SetNillableParentID(s *string) *PostCategoryUpdateOne {
+	if s != nil {
+		pcuo.SetParentID(*s)
+	}
+	return pcuo
+}
+
+// ClearParentID clears the value of the "parent_id" field.
+func (pcuo *PostCategoryUpdateOne) ClearParentID() *PostCategoryUpdateOne {
+	pcuo.mutation.ClearParentID()
 	return pcuo
 }
 
@@ -697,6 +864,26 @@ func (pcuo *PostCategoryUpdateOne) AddPosts(p ...*Post) *PostCategoryUpdateOne {
 	return pcuo.AddPostIDs(ids...)
 }
 
+// SetParent sets the "parent" edge to the PostCategory entity.
+func (pcuo *PostCategoryUpdateOne) SetParent(p *PostCategory) *PostCategoryUpdateOne {
+	return pcuo.SetParentID(p.ID)
+}
+
+// AddChildIDs adds the "children" edge to the PostCategory entity by IDs.
+func (pcuo *PostCategoryUpdateOne) AddChildIDs(ids ...string) *PostCategoryUpdateOne {
+	pcuo.mutation.AddChildIDs(ids...)
+	return pcuo
+}
+
+// AddChildren adds the "children" edges to the PostCategory entity.
+func (pcuo *PostCategoryUpdateOne) AddChildren(p ...*PostCategory) *PostCategoryUpdateOne {
+	ids := make([]string, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return pcuo.AddChildIDs(ids...)
+}
+
 // Mutation returns the PostCategoryMutation object of the builder.
 func (pcuo *PostCategoryUpdateOne) Mutation() *PostCategoryMutation {
 	return pcuo.mutation
@@ -723,6 +910,33 @@ func (pcuo *PostCategoryUpdateOne) RemovePosts(p ...*Post) *PostCategoryUpdateOn
 	return pcuo.RemovePostIDs(ids...)
 }
 
+// ClearParent clears the "parent" edge to the PostCategory entity.
+func (pcuo *PostCategoryUpdateOne) ClearParent() *PostCategoryUpdateOne {
+	pcuo.mutation.ClearParent()
+	return pcuo
+}
+
+// ClearChildren clears all "children" edges to the PostCategory entity.
+func (pcuo *PostCategoryUpdateOne) ClearChildren() *PostCategoryUpdateOne {
+	pcuo.mutation.ClearChildren()
+	return pcuo
+}
+
+// RemoveChildIDs removes the "children" edge to PostCategory entities by IDs.
+func (pcuo *PostCategoryUpdateOne) RemoveChildIDs(ids ...string) *PostCategoryUpdateOne {
+	pcuo.mutation.RemoveChildIDs(ids...)
+	return pcuo
+}
+
+// RemoveChildren removes "children" edges to PostCategory entities.
+func (pcuo *PostCategoryUpdateOne) RemoveChildren(p ...*PostCategory) *PostCategoryUpdateOne {
+	ids := make([]string, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return pcuo.RemoveChildIDs(ids...)
+}
+
 // Where appends a list predicates to the PostCategoryUpdate builder.
 func (pcuo *PostCategoryUpdateOne) Where(ps ...predicate.PostCategory) *PostCategoryUpdateOne {
 	pcuo.mutation.Where(ps...)
@@ -738,7 +952,9 @@ func (pcuo *PostCategoryUpdateOne) Select(field string, fields ...string) *PostC
 
 // Save executes the query and returns the updated PostCategory entity.
 func (pcuo *PostCategoryUpdateOne) Save(ctx context.Context) (*PostCategory, error) {
-	pcuo.defaults()
+	if err := pcuo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, pcuo.sqlSave, pcuo.mutation, pcuo.hooks)
 }
 
@@ -765,11 +981,15 @@ func (pcuo *PostCategoryUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (pcuo *PostCategoryUpdateOne) defaults() {
+func (pcuo *PostCategoryUpdateOne) defaults() error {
 	if _, ok := pcuo.mutation.UpdatedAt(); !ok && !pcuo.mutation.UpdatedAtCleared() {
+		if postcategory.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized postcategory.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := postcategory.UpdateDefaultUpdatedAt()
 		pcuo.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
@@ -911,6 +1131,80 @@ func (pcuo *PostCategoryUpdateOne) sqlSave(ctx context.Context) (_node *PostCate
 			Bidi:    false,
 			Target: &sqlgraph.EdgeTarget{
 				IDSpec: sqlgraph.NewFieldSpec(post.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if pcuo.mutation.ParentCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   postcategory.ParentTable,
+			Columns: []string{postcategory.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(postcategory.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pcuo.mutation.ParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   postcategory.ParentTable,
+			Columns: []string{postcategory.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(postcategory.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if pcuo.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   postcategory.ChildrenTable,
+			Columns: []string{postcategory.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(postcategory.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pcuo.mutation.RemovedChildrenIDs(); len(nodes) > 0 && !pcuo.mutation.ChildrenCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   postcategory.ChildrenTable,
+			Columns: []string{postcategory.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(postcategory.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := pcuo.mutation.ChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   postcategory.ChildrenTable,
+			Columns: []string{postcategory.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(postcategory.FieldID, field.TypeString),
 			},
 		}
 		for _, k := range nodes {

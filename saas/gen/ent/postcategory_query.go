@@ -19,14 +19,17 @@ import (
 // PostCategoryQuery is the builder for querying PostCategory entities.
 type PostCategoryQuery struct {
 	config
-	ctx            *QueryContext
-	order          []postcategory.OrderOption
-	inters         []Interceptor
-	predicates     []predicate.PostCategory
-	withPosts      *PostQuery
-	loadTotal      []func(context.Context, []*PostCategory) error
-	modifiers      []func(*sql.Selector)
-	withNamedPosts map[string]*PostQuery
+	ctx               *QueryContext
+	order             []postcategory.OrderOption
+	inters            []Interceptor
+	predicates        []predicate.PostCategory
+	withPosts         *PostQuery
+	withParent        *PostCategoryQuery
+	withChildren      *PostCategoryQuery
+	loadTotal         []func(context.Context, []*PostCategory) error
+	modifiers         []func(*sql.Selector)
+	withNamedPosts    map[string]*PostQuery
+	withNamedChildren map[string]*PostCategoryQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -78,6 +81,50 @@ func (pcq *PostCategoryQuery) QueryPosts() *PostQuery {
 			sqlgraph.From(postcategory.Table, postcategory.FieldID, selector),
 			sqlgraph.To(post.Table, post.FieldID),
 			sqlgraph.Edge(sqlgraph.O2M, false, postcategory.PostsTable, postcategory.PostsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(pcq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryParent chains the current query on the "parent" edge.
+func (pcq *PostCategoryQuery) QueryParent() *PostCategoryQuery {
+	query := (&PostCategoryClient{config: pcq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := pcq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := pcq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(postcategory.Table, postcategory.FieldID, selector),
+			sqlgraph.To(postcategory.Table, postcategory.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, postcategory.ParentTable, postcategory.ParentColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(pcq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryChildren chains the current query on the "children" edge.
+func (pcq *PostCategoryQuery) QueryChildren() *PostCategoryQuery {
+	query := (&PostCategoryClient{config: pcq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := pcq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := pcq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(postcategory.Table, postcategory.FieldID, selector),
+			sqlgraph.To(postcategory.Table, postcategory.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, postcategory.ChildrenTable, postcategory.ChildrenColumn),
 		)
 		fromU = sqlgraph.SetNeighbors(pcq.driver.Dialect(), step)
 		return fromU, nil
@@ -272,12 +319,14 @@ func (pcq *PostCategoryQuery) Clone() *PostCategoryQuery {
 		return nil
 	}
 	return &PostCategoryQuery{
-		config:     pcq.config,
-		ctx:        pcq.ctx.Clone(),
-		order:      append([]postcategory.OrderOption{}, pcq.order...),
-		inters:     append([]Interceptor{}, pcq.inters...),
-		predicates: append([]predicate.PostCategory{}, pcq.predicates...),
-		withPosts:  pcq.withPosts.Clone(),
+		config:       pcq.config,
+		ctx:          pcq.ctx.Clone(),
+		order:        append([]postcategory.OrderOption{}, pcq.order...),
+		inters:       append([]Interceptor{}, pcq.inters...),
+		predicates:   append([]predicate.PostCategory{}, pcq.predicates...),
+		withPosts:    pcq.withPosts.Clone(),
+		withParent:   pcq.withParent.Clone(),
+		withChildren: pcq.withChildren.Clone(),
 		// clone intermediate query.
 		sql:  pcq.sql.Clone(),
 		path: pcq.path,
@@ -292,6 +341,28 @@ func (pcq *PostCategoryQuery) WithPosts(opts ...func(*PostQuery)) *PostCategoryQ
 		opt(query)
 	}
 	pcq.withPosts = query
+	return pcq
+}
+
+// WithParent tells the query-builder to eager-load the nodes that are connected to
+// the "parent" edge. The optional arguments are used to configure the query builder of the edge.
+func (pcq *PostCategoryQuery) WithParent(opts ...func(*PostCategoryQuery)) *PostCategoryQuery {
+	query := (&PostCategoryClient{config: pcq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	pcq.withParent = query
+	return pcq
+}
+
+// WithChildren tells the query-builder to eager-load the nodes that are connected to
+// the "children" edge. The optional arguments are used to configure the query builder of the edge.
+func (pcq *PostCategoryQuery) WithChildren(opts ...func(*PostCategoryQuery)) *PostCategoryQuery {
+	query := (&PostCategoryClient{config: pcq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	pcq.withChildren = query
 	return pcq
 }
 
@@ -373,8 +444,10 @@ func (pcq *PostCategoryQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 	var (
 		nodes       = []*PostCategory{}
 		_spec       = pcq.querySpec()
-		loadedTypes = [1]bool{
+		loadedTypes = [3]bool{
 			pcq.withPosts != nil,
+			pcq.withParent != nil,
+			pcq.withChildren != nil,
 		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
@@ -405,10 +478,30 @@ func (pcq *PostCategoryQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([
 			return nil, err
 		}
 	}
+	if query := pcq.withParent; query != nil {
+		if err := pcq.loadParent(ctx, query, nodes, nil,
+			func(n *PostCategory, e *PostCategory) { n.Edges.Parent = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := pcq.withChildren; query != nil {
+		if err := pcq.loadChildren(ctx, query, nodes,
+			func(n *PostCategory) { n.Edges.Children = []*PostCategory{} },
+			func(n *PostCategory, e *PostCategory) { n.Edges.Children = append(n.Edges.Children, e) }); err != nil {
+			return nil, err
+		}
+	}
 	for name, query := range pcq.withNamedPosts {
 		if err := pcq.loadPosts(ctx, query, nodes,
 			func(n *PostCategory) { n.appendNamedPosts(name) },
 			func(n *PostCategory, e *Post) { n.appendNamedPosts(name, e) }); err != nil {
+			return nil, err
+		}
+	}
+	for name, query := range pcq.withNamedChildren {
+		if err := pcq.loadChildren(ctx, query, nodes,
+			func(n *PostCategory) { n.appendNamedChildren(name) },
+			func(n *PostCategory, e *PostCategory) { n.appendNamedChildren(name, e) }); err != nil {
 			return nil, err
 		}
 	}
@@ -450,6 +543,65 @@ func (pcq *PostCategoryQuery) loadPosts(ctx context.Context, query *PostQuery, n
 	}
 	return nil
 }
+func (pcq *PostCategoryQuery) loadParent(ctx context.Context, query *PostCategoryQuery, nodes []*PostCategory, init func(*PostCategory), assign func(*PostCategory, *PostCategory)) error {
+	ids := make([]string, 0, len(nodes))
+	nodeids := make(map[string][]*PostCategory)
+	for i := range nodes {
+		fk := nodes[i].ParentID
+		if _, ok := nodeids[fk]; !ok {
+			ids = append(ids, fk)
+		}
+		nodeids[fk] = append(nodeids[fk], nodes[i])
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	query.Where(postcategory.IDIn(ids...))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		nodes, ok := nodeids[n.ID]
+		if !ok {
+			return fmt.Errorf(`unexpected foreign-key "parent_id" returned %v`, n.ID)
+		}
+		for i := range nodes {
+			assign(nodes[i], n)
+		}
+	}
+	return nil
+}
+func (pcq *PostCategoryQuery) loadChildren(ctx context.Context, query *PostCategoryQuery, nodes []*PostCategory, init func(*PostCategory), assign func(*PostCategory, *PostCategory)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*PostCategory)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(postcategory.FieldParentID)
+	}
+	query.Where(predicate.PostCategory(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(postcategory.ChildrenColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.ParentID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "parent_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
 
 func (pcq *PostCategoryQuery) sqlCount(ctx context.Context) (int, error) {
 	_spec := pcq.querySpec()
@@ -478,6 +630,9 @@ func (pcq *PostCategoryQuery) querySpec() *sqlgraph.QuerySpec {
 			if fields[i] != postcategory.FieldID {
 				_spec.Node.Columns = append(_spec.Node.Columns, fields[i])
 			}
+		}
+		if pcq.withParent != nil {
+			_spec.Node.AddColumnOnce(postcategory.FieldParentID)
 		}
 	}
 	if ps := pcq.predicates; len(ps) > 0 {
@@ -555,6 +710,20 @@ func (pcq *PostCategoryQuery) WithNamedPosts(name string, opts ...func(*PostQuer
 		pcq.withNamedPosts = make(map[string]*PostQuery)
 	}
 	pcq.withNamedPosts[name] = query
+	return pcq
+}
+
+// WithNamedChildren tells the query-builder to eager-load the nodes that are connected to the "children"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (pcq *PostCategoryQuery) WithNamedChildren(name string, opts ...func(*PostCategoryQuery)) *PostCategoryQuery {
+	query := (&PostCategoryClient{config: pcq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if pcq.withNamedChildren == nil {
+		pcq.withNamedChildren = make(map[string]*PostCategoryQuery)
+	}
+	pcq.withNamedChildren[name] = query
 	return pcq
 }
 

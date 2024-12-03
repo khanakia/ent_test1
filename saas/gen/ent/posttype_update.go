@@ -359,7 +359,9 @@ func (ptu *PostTypeUpdate) RemovePostTypeForms(p ...*PostTypeForm) *PostTypeUpda
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (ptu *PostTypeUpdate) Save(ctx context.Context) (int, error) {
-	ptu.defaults()
+	if err := ptu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, ptu.sqlSave, ptu.mutation, ptu.hooks)
 }
 
@@ -386,11 +388,15 @@ func (ptu *PostTypeUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (ptu *PostTypeUpdate) defaults() {
+func (ptu *PostTypeUpdate) defaults() error {
 	if _, ok := ptu.mutation.UpdatedAt(); !ok && !ptu.mutation.UpdatedAtCleared() {
+		if posttype.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized posttype.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := posttype.UpdateDefaultUpdatedAt()
 		ptu.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -987,7 +993,9 @@ func (ptuo *PostTypeUpdateOne) Select(field string, fields ...string) *PostTypeU
 
 // Save executes the query and returns the updated PostType entity.
 func (ptuo *PostTypeUpdateOne) Save(ctx context.Context) (*PostType, error) {
-	ptuo.defaults()
+	if err := ptuo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, ptuo.sqlSave, ptuo.mutation, ptuo.hooks)
 }
 
@@ -1014,11 +1022,15 @@ func (ptuo *PostTypeUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (ptuo *PostTypeUpdateOne) defaults() {
+func (ptuo *PostTypeUpdateOne) defaults() error {
 	if _, ok := ptuo.mutation.UpdatedAt(); !ok && !ptuo.mutation.UpdatedAtCleared() {
+		if posttype.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized posttype.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := posttype.UpdateDefaultUpdatedAt()
 		ptuo.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.

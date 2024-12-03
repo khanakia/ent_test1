@@ -293,12 +293,28 @@ var (
 		{Name: "meta_descr", Type: field.TypeString, Nullable: true},
 		{Name: "meta_canonical_url", Type: field.TypeString, Nullable: true},
 		{Name: "meta_robots", Type: field.TypeString, Nullable: true},
+		{Name: "parent_id", Type: field.TypeString, Nullable: true},
 	}
 	// PostCategoriesTable holds the schema information for the "post_categories" table.
 	PostCategoriesTable = &schema.Table{
 		Name:       "post_categories",
 		Columns:    PostCategoriesColumns,
 		PrimaryKey: []*schema.Column{PostCategoriesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "post_categories_post_categories_children",
+				Columns:    []*schema.Column{PostCategoriesColumns[13]},
+				RefColumns: []*schema.Column{PostCategoriesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "postcategory_app_id_slug",
+				Unique:  true,
+				Columns: []*schema.Column{PostCategoriesColumns[3], PostCategoriesColumns[5]},
+			},
+		},
 	}
 	// PostStatusColumns holds the columns for the "post_status" table.
 	PostStatusColumns = []*schema.Column{
@@ -678,6 +694,7 @@ func init() {
 	PostsTable.ForeignKeys[0].RefTable = PostCategoriesTable
 	PostsTable.ForeignKeys[1].RefTable = PostStatusTable
 	PostsTable.ForeignKeys[2].RefTable = PostTypesTable
+	PostCategoriesTable.ForeignKeys[0].RefTable = PostCategoriesTable
 	PostStatusTable.ForeignKeys[0].RefTable = PostTypesTable
 	PostTypeFormsTable.ForeignKeys[0].RefTable = PostTypesTable
 	SessionsTable.ForeignKeys[0].RefTable = UsersTable

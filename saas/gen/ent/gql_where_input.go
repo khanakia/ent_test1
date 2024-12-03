@@ -5433,6 +5433,23 @@ type PostCategoryWhereInput struct {
 	AppIDEqualFold    *string  `json:"appIDEqualFold,omitempty"`
 	AppIDContainsFold *string  `json:"appIDContainsFold,omitempty"`
 
+	// "parent_id" field predicates.
+	ParentID             *string  `json:"parentID,omitempty"`
+	ParentIDNEQ          *string  `json:"parentIDNEQ,omitempty"`
+	ParentIDIn           []string `json:"parentIDIn,omitempty"`
+	ParentIDNotIn        []string `json:"parentIDNotIn,omitempty"`
+	ParentIDGT           *string  `json:"parentIDGT,omitempty"`
+	ParentIDGTE          *string  `json:"parentIDGTE,omitempty"`
+	ParentIDLT           *string  `json:"parentIDLT,omitempty"`
+	ParentIDLTE          *string  `json:"parentIDLTE,omitempty"`
+	ParentIDContains     *string  `json:"parentIDContains,omitempty"`
+	ParentIDHasPrefix    *string  `json:"parentIDHasPrefix,omitempty"`
+	ParentIDHasSuffix    *string  `json:"parentIDHasSuffix,omitempty"`
+	ParentIDIsNil        bool     `json:"parentIDIsNil,omitempty"`
+	ParentIDNotNil       bool     `json:"parentIDNotNil,omitempty"`
+	ParentIDEqualFold    *string  `json:"parentIDEqualFold,omitempty"`
+	ParentIDContainsFold *string  `json:"parentIDContainsFold,omitempty"`
+
 	// "name" field predicates.
 	Name             *string  `json:"name,omitempty"`
 	NameNEQ          *string  `json:"nameNEQ,omitempty"`
@@ -5589,6 +5606,14 @@ type PostCategoryWhereInput struct {
 	// "posts" edge predicates.
 	HasPosts     *bool             `json:"hasPosts,omitempty"`
 	HasPostsWith []*PostWhereInput `json:"hasPostsWith,omitempty"`
+
+	// "parent" edge predicates.
+	HasParent     *bool                     `json:"hasParent,omitempty"`
+	HasParentWith []*PostCategoryWhereInput `json:"hasParentWith,omitempty"`
+
+	// "children" edge predicates.
+	HasChildren     *bool                     `json:"hasChildren,omitempty"`
+	HasChildrenWith []*PostCategoryWhereInput `json:"hasChildrenWith,omitempty"`
 }
 
 // AddPredicates adds custom predicates to the where input to be used during the filtering phase.
@@ -5796,6 +5821,51 @@ func (i *PostCategoryWhereInput) P() (predicate.PostCategory, error) {
 	}
 	if i.AppIDContainsFold != nil {
 		predicates = append(predicates, postcategory.AppIDContainsFold(*i.AppIDContainsFold))
+	}
+	if i.ParentID != nil {
+		predicates = append(predicates, postcategory.ParentIDEQ(*i.ParentID))
+	}
+	if i.ParentIDNEQ != nil {
+		predicates = append(predicates, postcategory.ParentIDNEQ(*i.ParentIDNEQ))
+	}
+	if len(i.ParentIDIn) > 0 {
+		predicates = append(predicates, postcategory.ParentIDIn(i.ParentIDIn...))
+	}
+	if len(i.ParentIDNotIn) > 0 {
+		predicates = append(predicates, postcategory.ParentIDNotIn(i.ParentIDNotIn...))
+	}
+	if i.ParentIDGT != nil {
+		predicates = append(predicates, postcategory.ParentIDGT(*i.ParentIDGT))
+	}
+	if i.ParentIDGTE != nil {
+		predicates = append(predicates, postcategory.ParentIDGTE(*i.ParentIDGTE))
+	}
+	if i.ParentIDLT != nil {
+		predicates = append(predicates, postcategory.ParentIDLT(*i.ParentIDLT))
+	}
+	if i.ParentIDLTE != nil {
+		predicates = append(predicates, postcategory.ParentIDLTE(*i.ParentIDLTE))
+	}
+	if i.ParentIDContains != nil {
+		predicates = append(predicates, postcategory.ParentIDContains(*i.ParentIDContains))
+	}
+	if i.ParentIDHasPrefix != nil {
+		predicates = append(predicates, postcategory.ParentIDHasPrefix(*i.ParentIDHasPrefix))
+	}
+	if i.ParentIDHasSuffix != nil {
+		predicates = append(predicates, postcategory.ParentIDHasSuffix(*i.ParentIDHasSuffix))
+	}
+	if i.ParentIDIsNil {
+		predicates = append(predicates, postcategory.ParentIDIsNil())
+	}
+	if i.ParentIDNotNil {
+		predicates = append(predicates, postcategory.ParentIDNotNil())
+	}
+	if i.ParentIDEqualFold != nil {
+		predicates = append(predicates, postcategory.ParentIDEqualFold(*i.ParentIDEqualFold))
+	}
+	if i.ParentIDContainsFold != nil {
+		predicates = append(predicates, postcategory.ParentIDContainsFold(*i.ParentIDContainsFold))
 	}
 	if i.Name != nil {
 		predicates = append(predicates, postcategory.NameEQ(*i.Name))
@@ -6220,6 +6290,42 @@ func (i *PostCategoryWhereInput) P() (predicate.PostCategory, error) {
 			with = append(with, p)
 		}
 		predicates = append(predicates, postcategory.HasPostsWith(with...))
+	}
+	if i.HasParent != nil {
+		p := postcategory.HasParent()
+		if !*i.HasParent {
+			p = postcategory.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasParentWith) > 0 {
+		with := make([]predicate.PostCategory, 0, len(i.HasParentWith))
+		for _, w := range i.HasParentWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasParentWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, postcategory.HasParentWith(with...))
+	}
+	if i.HasChildren != nil {
+		p := postcategory.HasChildren()
+		if !*i.HasChildren {
+			p = postcategory.Not(p)
+		}
+		predicates = append(predicates, p)
+	}
+	if len(i.HasChildrenWith) > 0 {
+		with := make([]predicate.PostCategory, 0, len(i.HasChildrenWith))
+		for _, w := range i.HasChildrenWith {
+			p, err := w.P()
+			if err != nil {
+				return nil, fmt.Errorf("%w: field 'HasChildrenWith'", err)
+			}
+			with = append(with, p)
+		}
+		predicates = append(predicates, postcategory.HasChildrenWith(with...))
 	}
 	switch len(predicates) {
 	case 0:

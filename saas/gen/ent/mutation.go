@@ -11228,6 +11228,11 @@ type PostCategoryMutation struct {
 	posts              map[string]struct{}
 	removedposts       map[string]struct{}
 	clearedposts       bool
+	parent             *string
+	clearedparent      bool
+	children           map[string]struct{}
+	removedchildren    map[string]struct{}
+	clearedchildren    bool
 	done               bool
 	oldValue           func(context.Context) (*PostCategory, error)
 	predicates         []predicate.PostCategory
@@ -11482,6 +11487,55 @@ func (m *PostCategoryMutation) AppIDCleared() bool {
 func (m *PostCategoryMutation) ResetAppID() {
 	m.app_id = nil
 	delete(m.clearedFields, postcategory.FieldAppID)
+}
+
+// SetParentID sets the "parent_id" field.
+func (m *PostCategoryMutation) SetParentID(s string) {
+	m.parent = &s
+}
+
+// ParentID returns the value of the "parent_id" field in the mutation.
+func (m *PostCategoryMutation) ParentID() (r string, exists bool) {
+	v := m.parent
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldParentID returns the old "parent_id" field's value of the PostCategory entity.
+// If the PostCategory object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *PostCategoryMutation) OldParentID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldParentID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldParentID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldParentID: %w", err)
+	}
+	return oldValue.ParentID, nil
+}
+
+// ClearParentID clears the value of the "parent_id" field.
+func (m *PostCategoryMutation) ClearParentID() {
+	m.parent = nil
+	m.clearedFields[postcategory.FieldParentID] = struct{}{}
+}
+
+// ParentIDCleared returns if the "parent_id" field was cleared in this mutation.
+func (m *PostCategoryMutation) ParentIDCleared() bool {
+	_, ok := m.clearedFields[postcategory.FieldParentID]
+	return ok
+}
+
+// ResetParentID resets all changes to the "parent_id" field.
+func (m *PostCategoryMutation) ResetParentID() {
+	m.parent = nil
+	delete(m.clearedFields, postcategory.FieldParentID)
 }
 
 // SetName sets the "name" field.
@@ -11979,6 +12033,87 @@ func (m *PostCategoryMutation) ResetPosts() {
 	m.removedposts = nil
 }
 
+// ClearParent clears the "parent" edge to the PostCategory entity.
+func (m *PostCategoryMutation) ClearParent() {
+	m.clearedparent = true
+	m.clearedFields[postcategory.FieldParentID] = struct{}{}
+}
+
+// ParentCleared reports if the "parent" edge to the PostCategory entity was cleared.
+func (m *PostCategoryMutation) ParentCleared() bool {
+	return m.ParentIDCleared() || m.clearedparent
+}
+
+// ParentIDs returns the "parent" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// ParentID instead. It exists only for internal usage by the builders.
+func (m *PostCategoryMutation) ParentIDs() (ids []string) {
+	if id := m.parent; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetParent resets all changes to the "parent" edge.
+func (m *PostCategoryMutation) ResetParent() {
+	m.parent = nil
+	m.clearedparent = false
+}
+
+// AddChildIDs adds the "children" edge to the PostCategory entity by ids.
+func (m *PostCategoryMutation) AddChildIDs(ids ...string) {
+	if m.children == nil {
+		m.children = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.children[ids[i]] = struct{}{}
+	}
+}
+
+// ClearChildren clears the "children" edge to the PostCategory entity.
+func (m *PostCategoryMutation) ClearChildren() {
+	m.clearedchildren = true
+}
+
+// ChildrenCleared reports if the "children" edge to the PostCategory entity was cleared.
+func (m *PostCategoryMutation) ChildrenCleared() bool {
+	return m.clearedchildren
+}
+
+// RemoveChildIDs removes the "children" edge to the PostCategory entity by IDs.
+func (m *PostCategoryMutation) RemoveChildIDs(ids ...string) {
+	if m.removedchildren == nil {
+		m.removedchildren = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.children, ids[i])
+		m.removedchildren[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedChildren returns the removed IDs of the "children" edge to the PostCategory entity.
+func (m *PostCategoryMutation) RemovedChildrenIDs() (ids []string) {
+	for id := range m.removedchildren {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ChildrenIDs returns the "children" edge IDs in the mutation.
+func (m *PostCategoryMutation) ChildrenIDs() (ids []string) {
+	for id := range m.children {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetChildren resets all changes to the "children" edge.
+func (m *PostCategoryMutation) ResetChildren() {
+	m.children = nil
+	m.clearedchildren = false
+	m.removedchildren = nil
+}
+
 // Where appends a list predicates to the PostCategoryMutation builder.
 func (m *PostCategoryMutation) Where(ps ...predicate.PostCategory) {
 	m.predicates = append(m.predicates, ps...)
@@ -12013,7 +12148,7 @@ func (m *PostCategoryMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *PostCategoryMutation) Fields() []string {
-	fields := make([]string, 0, 12)
+	fields := make([]string, 0, 13)
 	if m.created_at != nil {
 		fields = append(fields, postcategory.FieldCreatedAt)
 	}
@@ -12022,6 +12157,9 @@ func (m *PostCategoryMutation) Fields() []string {
 	}
 	if m.app_id != nil {
 		fields = append(fields, postcategory.FieldAppID)
+	}
+	if m.parent != nil {
+		fields = append(fields, postcategory.FieldParentID)
 	}
 	if m.name != nil {
 		fields = append(fields, postcategory.FieldName)
@@ -12064,6 +12202,8 @@ func (m *PostCategoryMutation) Field(name string) (ent.Value, bool) {
 		return m.UpdatedAt()
 	case postcategory.FieldAppID:
 		return m.AppID()
+	case postcategory.FieldParentID:
+		return m.ParentID()
 	case postcategory.FieldName:
 		return m.Name()
 	case postcategory.FieldSlug:
@@ -12097,6 +12237,8 @@ func (m *PostCategoryMutation) OldField(ctx context.Context, name string) (ent.V
 		return m.OldUpdatedAt(ctx)
 	case postcategory.FieldAppID:
 		return m.OldAppID(ctx)
+	case postcategory.FieldParentID:
+		return m.OldParentID(ctx)
 	case postcategory.FieldName:
 		return m.OldName(ctx)
 	case postcategory.FieldSlug:
@@ -12144,6 +12286,13 @@ func (m *PostCategoryMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAppID(v)
+		return nil
+	case postcategory.FieldParentID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetParentID(v)
 		return nil
 	case postcategory.FieldName:
 		v, ok := value.(string)
@@ -12247,6 +12396,9 @@ func (m *PostCategoryMutation) ClearedFields() []string {
 	if m.FieldCleared(postcategory.FieldAppID) {
 		fields = append(fields, postcategory.FieldAppID)
 	}
+	if m.FieldCleared(postcategory.FieldParentID) {
+		fields = append(fields, postcategory.FieldParentID)
+	}
 	if m.FieldCleared(postcategory.FieldName) {
 		fields = append(fields, postcategory.FieldName)
 	}
@@ -12297,6 +12449,9 @@ func (m *PostCategoryMutation) ClearField(name string) error {
 	case postcategory.FieldAppID:
 		m.ClearAppID()
 		return nil
+	case postcategory.FieldParentID:
+		m.ClearParentID()
+		return nil
 	case postcategory.FieldName:
 		m.ClearName()
 		return nil
@@ -12341,6 +12496,9 @@ func (m *PostCategoryMutation) ResetField(name string) error {
 	case postcategory.FieldAppID:
 		m.ResetAppID()
 		return nil
+	case postcategory.FieldParentID:
+		m.ResetParentID()
+		return nil
 	case postcategory.FieldName:
 		m.ResetName()
 		return nil
@@ -12374,9 +12532,15 @@ func (m *PostCategoryMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *PostCategoryMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 3)
 	if m.posts != nil {
 		edges = append(edges, postcategory.EdgePosts)
+	}
+	if m.parent != nil {
+		edges = append(edges, postcategory.EdgeParent)
+	}
+	if m.children != nil {
+		edges = append(edges, postcategory.EdgeChildren)
 	}
 	return edges
 }
@@ -12391,15 +12555,28 @@ func (m *PostCategoryMutation) AddedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case postcategory.EdgeParent:
+		if id := m.parent; id != nil {
+			return []ent.Value{*id}
+		}
+	case postcategory.EdgeChildren:
+		ids := make([]ent.Value, 0, len(m.children))
+		for id := range m.children {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *PostCategoryMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 3)
 	if m.removedposts != nil {
 		edges = append(edges, postcategory.EdgePosts)
+	}
+	if m.removedchildren != nil {
+		edges = append(edges, postcategory.EdgeChildren)
 	}
 	return edges
 }
@@ -12414,15 +12591,27 @@ func (m *PostCategoryMutation) RemovedIDs(name string) []ent.Value {
 			ids = append(ids, id)
 		}
 		return ids
+	case postcategory.EdgeChildren:
+		ids := make([]ent.Value, 0, len(m.removedchildren))
+		for id := range m.removedchildren {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *PostCategoryMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 3)
 	if m.clearedposts {
 		edges = append(edges, postcategory.EdgePosts)
+	}
+	if m.clearedparent {
+		edges = append(edges, postcategory.EdgeParent)
+	}
+	if m.clearedchildren {
+		edges = append(edges, postcategory.EdgeChildren)
 	}
 	return edges
 }
@@ -12433,6 +12622,10 @@ func (m *PostCategoryMutation) EdgeCleared(name string) bool {
 	switch name {
 	case postcategory.EdgePosts:
 		return m.clearedposts
+	case postcategory.EdgeParent:
+		return m.clearedparent
+	case postcategory.EdgeChildren:
+		return m.clearedchildren
 	}
 	return false
 }
@@ -12441,6 +12634,9 @@ func (m *PostCategoryMutation) EdgeCleared(name string) bool {
 // if that edge is not defined in the schema.
 func (m *PostCategoryMutation) ClearEdge(name string) error {
 	switch name {
+	case postcategory.EdgeParent:
+		m.ClearParent()
+		return nil
 	}
 	return fmt.Errorf("unknown PostCategory unique edge %s", name)
 }
@@ -12451,6 +12647,12 @@ func (m *PostCategoryMutation) ResetEdge(name string) error {
 	switch name {
 	case postcategory.EdgePosts:
 		m.ResetPosts()
+		return nil
+	case postcategory.EdgeParent:
+		m.ResetParent()
+		return nil
+	case postcategory.EdgeChildren:
+		m.ResetChildren()
 		return nil
 	}
 	return fmt.Errorf("unknown PostCategory edge %s", name)

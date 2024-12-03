@@ -197,7 +197,9 @@ func (psu *PostStatusUpdate) RemovePosts(p ...*Post) *PostStatusUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (psu *PostStatusUpdate) Save(ctx context.Context) (int, error) {
-	psu.defaults()
+	if err := psu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, psu.sqlSave, psu.mutation, psu.hooks)
 }
 
@@ -224,11 +226,15 @@ func (psu *PostStatusUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (psu *PostStatusUpdate) defaults() {
+func (psu *PostStatusUpdate) defaults() error {
 	if _, ok := psu.mutation.UpdatedAt(); !ok && !psu.mutation.UpdatedAtCleared() {
+		if poststatus.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized poststatus.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := poststatus.UpdateDefaultUpdatedAt()
 		psu.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
@@ -554,7 +560,9 @@ func (psuo *PostStatusUpdateOne) Select(field string, fields ...string) *PostSta
 
 // Save executes the query and returns the updated PostStatus entity.
 func (psuo *PostStatusUpdateOne) Save(ctx context.Context) (*PostStatus, error) {
-	psuo.defaults()
+	if err := psuo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, psuo.sqlSave, psuo.mutation, psuo.hooks)
 }
 
@@ -581,11 +589,15 @@ func (psuo *PostStatusUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (psuo *PostStatusUpdateOne) defaults() {
+func (psuo *PostStatusUpdateOne) defaults() error {
 	if _, ok := psuo.mutation.UpdatedAt(); !ok && !psuo.mutation.UpdatedAtCleared() {
+		if poststatus.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized poststatus.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := poststatus.UpdateDefaultUpdatedAt()
 		psuo.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.

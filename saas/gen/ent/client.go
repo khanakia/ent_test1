@@ -1732,7 +1732,8 @@ func (c *PostClient) QueryPostTags(po *Post) *PostTagQuery {
 
 // Hooks returns the client hooks.
 func (c *PostClient) Hooks() []Hook {
-	return c.hooks.Post
+	hooks := c.hooks.Post
+	return append(hooks[:len(hooks):len(hooks)], post.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -1879,9 +1880,42 @@ func (c *PostCategoryClient) QueryPosts(pc *PostCategory) *PostQuery {
 	return query
 }
 
+// QueryParent queries the parent edge of a PostCategory.
+func (c *PostCategoryClient) QueryParent(pc *PostCategory) *PostCategoryQuery {
+	query := (&PostCategoryClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := pc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(postcategory.Table, postcategory.FieldID, id),
+			sqlgraph.To(postcategory.Table, postcategory.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, postcategory.ParentTable, postcategory.ParentColumn),
+		)
+		fromV = sqlgraph.Neighbors(pc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryChildren queries the children edge of a PostCategory.
+func (c *PostCategoryClient) QueryChildren(pc *PostCategory) *PostCategoryQuery {
+	query := (&PostCategoryClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := pc.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(postcategory.Table, postcategory.FieldID, id),
+			sqlgraph.To(postcategory.Table, postcategory.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, postcategory.ChildrenTable, postcategory.ChildrenColumn),
+		)
+		fromV = sqlgraph.Neighbors(pc.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *PostCategoryClient) Hooks() []Hook {
-	return c.hooks.PostCategory
+	hooks := c.hooks.PostCategory
+	return append(hooks[:len(hooks):len(hooks)], postcategory.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -2046,7 +2080,8 @@ func (c *PostStatusClient) QueryPosts(ps *PostStatus) *PostQuery {
 
 // Hooks returns the client hooks.
 func (c *PostStatusClient) Hooks() []Hook {
-	return c.hooks.PostStatus
+	hooks := c.hooks.PostStatus
+	return append(hooks[:len(hooks):len(hooks)], poststatus.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -2195,7 +2230,8 @@ func (c *PostTagClient) QueryPosts(pt *PostTag) *PostQuery {
 
 // Hooks returns the client hooks.
 func (c *PostTagClient) Hooks() []Hook {
-	return c.hooks.PostTag
+	hooks := c.hooks.PostTag
+	return append(hooks[:len(hooks):len(hooks)], posttag.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.
@@ -2376,7 +2412,8 @@ func (c *PostTypeClient) QueryPostTypeForms(pt *PostType) *PostTypeFormQuery {
 
 // Hooks returns the client hooks.
 func (c *PostTypeClient) Hooks() []Hook {
-	return c.hooks.PostType
+	hooks := c.hooks.PostType
+	return append(hooks[:len(hooks):len(hooks)], posttype.Hooks[:]...)
 }
 
 // Interceptors returns the client interceptors.

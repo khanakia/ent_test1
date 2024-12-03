@@ -6503,6 +6503,8 @@ func (ec *executionContext) fieldContext_Post_primaryCategory(_ context.Context,
 				return ec.fieldContext_PostCategory_updatedAt(ctx, field)
 			case "appID":
 				return ec.fieldContext_PostCategory_appID(ctx, field)
+			case "parentID":
+				return ec.fieldContext_PostCategory_parentID(ctx, field)
 			case "name":
 				return ec.fieldContext_PostCategory_name(ctx, field)
 			case "slug":
@@ -6523,6 +6525,10 @@ func (ec *executionContext) fieldContext_Post_primaryCategory(_ context.Context,
 				return ec.fieldContext_PostCategory_metaRobots(ctx, field)
 			case "posts":
 				return ec.fieldContext_PostCategory_posts(ctx, field)
+			case "parent":
+				return ec.fieldContext_PostCategory_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_PostCategory_children(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PostCategory", field.Name)
 		},
@@ -6761,6 +6767,47 @@ func (ec *executionContext) fieldContext_PostCategory_appID(_ context.Context, f
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PostCategory_parentID(ctx context.Context, field graphql.CollectedField, obj *ent.PostCategory) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PostCategory_parentID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ParentID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PostCategory_parentID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PostCategory",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -7220,6 +7267,160 @@ func (ec *executionContext) fieldContext_PostCategory_posts(_ context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _PostCategory_parent(ctx context.Context, field graphql.CollectedField, obj *ent.PostCategory) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PostCategory_parent(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Parent(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.PostCategory)
+	fc.Result = res
+	return ec.marshalOPostCategory2ᚖsaasᚋgenᚋentᚐPostCategory(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PostCategory_parent(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PostCategory",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_PostCategory_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_PostCategory_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_PostCategory_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_PostCategory_appID(ctx, field)
+			case "parentID":
+				return ec.fieldContext_PostCategory_parentID(ctx, field)
+			case "name":
+				return ec.fieldContext_PostCategory_name(ctx, field)
+			case "slug":
+				return ec.fieldContext_PostCategory_slug(ctx, field)
+			case "status":
+				return ec.fieldContext_PostCategory_status(ctx, field)
+			case "excerpt":
+				return ec.fieldContext_PostCategory_excerpt(ctx, field)
+			case "content":
+				return ec.fieldContext_PostCategory_content(ctx, field)
+			case "metaTitle":
+				return ec.fieldContext_PostCategory_metaTitle(ctx, field)
+			case "metaDescr":
+				return ec.fieldContext_PostCategory_metaDescr(ctx, field)
+			case "metaCanonicalURL":
+				return ec.fieldContext_PostCategory_metaCanonicalURL(ctx, field)
+			case "metaRobots":
+				return ec.fieldContext_PostCategory_metaRobots(ctx, field)
+			case "posts":
+				return ec.fieldContext_PostCategory_posts(ctx, field)
+			case "parent":
+				return ec.fieldContext_PostCategory_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_PostCategory_children(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PostCategory", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _PostCategory_children(ctx context.Context, field graphql.CollectedField, obj *ent.PostCategory) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PostCategory_children(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Children(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.PostCategory)
+	fc.Result = res
+	return ec.marshalOPostCategory2ᚕᚖsaasᚋgenᚋentᚐPostCategoryᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_PostCategory_children(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "PostCategory",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_PostCategory_id(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_PostCategory_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_PostCategory_updatedAt(ctx, field)
+			case "appID":
+				return ec.fieldContext_PostCategory_appID(ctx, field)
+			case "parentID":
+				return ec.fieldContext_PostCategory_parentID(ctx, field)
+			case "name":
+				return ec.fieldContext_PostCategory_name(ctx, field)
+			case "slug":
+				return ec.fieldContext_PostCategory_slug(ctx, field)
+			case "status":
+				return ec.fieldContext_PostCategory_status(ctx, field)
+			case "excerpt":
+				return ec.fieldContext_PostCategory_excerpt(ctx, field)
+			case "content":
+				return ec.fieldContext_PostCategory_content(ctx, field)
+			case "metaTitle":
+				return ec.fieldContext_PostCategory_metaTitle(ctx, field)
+			case "metaDescr":
+				return ec.fieldContext_PostCategory_metaDescr(ctx, field)
+			case "metaCanonicalURL":
+				return ec.fieldContext_PostCategory_metaCanonicalURL(ctx, field)
+			case "metaRobots":
+				return ec.fieldContext_PostCategory_metaRobots(ctx, field)
+			case "posts":
+				return ec.fieldContext_PostCategory_posts(ctx, field)
+			case "parent":
+				return ec.fieldContext_PostCategory_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_PostCategory_children(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PostCategory", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _PostCategoryConnection_edges(ctx context.Context, field graphql.CollectedField, obj *ent.PostCategoryConnection) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PostCategoryConnection_edges(ctx, field)
 	if err != nil {
@@ -7409,6 +7610,8 @@ func (ec *executionContext) fieldContext_PostCategoryEdge_node(_ context.Context
 				return ec.fieldContext_PostCategory_updatedAt(ctx, field)
 			case "appID":
 				return ec.fieldContext_PostCategory_appID(ctx, field)
+			case "parentID":
+				return ec.fieldContext_PostCategory_parentID(ctx, field)
 			case "name":
 				return ec.fieldContext_PostCategory_name(ctx, field)
 			case "slug":
@@ -7429,6 +7632,10 @@ func (ec *executionContext) fieldContext_PostCategoryEdge_node(_ context.Context
 				return ec.fieldContext_PostCategory_metaRobots(ctx, field)
 			case "posts":
 				return ec.fieldContext_PostCategory_posts(ctx, field)
+			case "parent":
+				return ec.fieldContext_PostCategory_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_PostCategory_children(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PostCategory", field.Name)
 		},
@@ -19556,7 +19763,7 @@ func (ec *executionContext) unmarshalInputCreatePostCategoryInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"createdAt", "updatedAt", "name", "slug", "status", "excerpt", "content", "metaTitle", "metaDescr", "metaCanonicalURL", "metaRobots", "postIDs"}
+	fieldsInOrder := [...]string{"createdAt", "updatedAt", "name", "slug", "status", "excerpt", "content", "metaTitle", "metaDescr", "metaCanonicalURL", "metaRobots", "postIDs", "parentID", "childIDs"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -19647,6 +19854,20 @@ func (ec *executionContext) unmarshalInputCreatePostCategoryInput(ctx context.Co
 				return it, err
 			}
 			it.PostIDs = data
+		case "parentID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ParentID = data
+		case "childIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("childIDs"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ChildIDs = data
 		}
 	}
 
@@ -25027,7 +25248,7 @@ func (ec *executionContext) unmarshalInputPostCategoryWhereInput(ctx context.Con
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "appID", "appIDNEQ", "appIDIn", "appIDNotIn", "appIDGT", "appIDGTE", "appIDLT", "appIDLTE", "appIDContains", "appIDHasPrefix", "appIDHasSuffix", "appIDIsNil", "appIDNotNil", "appIDEqualFold", "appIDContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameIsNil", "nameNotNil", "nameEqualFold", "nameContainsFold", "slug", "slugNEQ", "slugIn", "slugNotIn", "slugGT", "slugGTE", "slugLT", "slugLTE", "slugContains", "slugHasPrefix", "slugHasSuffix", "slugIsNil", "slugNotNil", "slugEqualFold", "slugContainsFold", "status", "statusNEQ", "statusIn", "statusNotIn", "statusGT", "statusGTE", "statusLT", "statusLTE", "statusContains", "statusHasPrefix", "statusHasSuffix", "statusIsNil", "statusNotNil", "statusEqualFold", "statusContainsFold", "excerpt", "excerptNEQ", "excerptIn", "excerptNotIn", "excerptGT", "excerptGTE", "excerptLT", "excerptLTE", "excerptContains", "excerptHasPrefix", "excerptHasSuffix", "excerptIsNil", "excerptNotNil", "excerptEqualFold", "excerptContainsFold", "content", "contentNEQ", "contentIn", "contentNotIn", "contentGT", "contentGTE", "contentLT", "contentLTE", "contentContains", "contentHasPrefix", "contentHasSuffix", "contentIsNil", "contentNotNil", "contentEqualFold", "contentContainsFold", "metaTitle", "metaTitleNEQ", "metaTitleIn", "metaTitleNotIn", "metaTitleGT", "metaTitleGTE", "metaTitleLT", "metaTitleLTE", "metaTitleContains", "metaTitleHasPrefix", "metaTitleHasSuffix", "metaTitleIsNil", "metaTitleNotNil", "metaTitleEqualFold", "metaTitleContainsFold", "metaDescr", "metaDescrNEQ", "metaDescrIn", "metaDescrNotIn", "metaDescrGT", "metaDescrGTE", "metaDescrLT", "metaDescrLTE", "metaDescrContains", "metaDescrHasPrefix", "metaDescrHasSuffix", "metaDescrIsNil", "metaDescrNotNil", "metaDescrEqualFold", "metaDescrContainsFold", "metaCanonicalURL", "metaCanonicalURLNEQ", "metaCanonicalURLIn", "metaCanonicalURLNotIn", "metaCanonicalURLGT", "metaCanonicalURLGTE", "metaCanonicalURLLT", "metaCanonicalURLLTE", "metaCanonicalURLContains", "metaCanonicalURLHasPrefix", "metaCanonicalURLHasSuffix", "metaCanonicalURLIsNil", "metaCanonicalURLNotNil", "metaCanonicalURLEqualFold", "metaCanonicalURLContainsFold", "metaRobots", "metaRobotsNEQ", "metaRobotsIn", "metaRobotsNotIn", "metaRobotsGT", "metaRobotsGTE", "metaRobotsLT", "metaRobotsLTE", "metaRobotsContains", "metaRobotsHasPrefix", "metaRobotsHasSuffix", "metaRobotsIsNil", "metaRobotsNotNil", "metaRobotsEqualFold", "metaRobotsContainsFold", "hasPosts", "hasPostsWith"}
+	fieldsInOrder := [...]string{"not", "and", "or", "id", "idNEQ", "idIn", "idNotIn", "idGT", "idGTE", "idLT", "idLTE", "idEqualFold", "idContainsFold", "createdAt", "createdAtNEQ", "createdAtIn", "createdAtNotIn", "createdAtGT", "createdAtGTE", "createdAtLT", "createdAtLTE", "createdAtIsNil", "createdAtNotNil", "updatedAt", "updatedAtNEQ", "updatedAtIn", "updatedAtNotIn", "updatedAtGT", "updatedAtGTE", "updatedAtLT", "updatedAtLTE", "updatedAtIsNil", "updatedAtNotNil", "appID", "appIDNEQ", "appIDIn", "appIDNotIn", "appIDGT", "appIDGTE", "appIDLT", "appIDLTE", "appIDContains", "appIDHasPrefix", "appIDHasSuffix", "appIDIsNil", "appIDNotNil", "appIDEqualFold", "appIDContainsFold", "parentID", "parentIDNEQ", "parentIDIn", "parentIDNotIn", "parentIDGT", "parentIDGTE", "parentIDLT", "parentIDLTE", "parentIDContains", "parentIDHasPrefix", "parentIDHasSuffix", "parentIDIsNil", "parentIDNotNil", "parentIDEqualFold", "parentIDContainsFold", "name", "nameNEQ", "nameIn", "nameNotIn", "nameGT", "nameGTE", "nameLT", "nameLTE", "nameContains", "nameHasPrefix", "nameHasSuffix", "nameIsNil", "nameNotNil", "nameEqualFold", "nameContainsFold", "slug", "slugNEQ", "slugIn", "slugNotIn", "slugGT", "slugGTE", "slugLT", "slugLTE", "slugContains", "slugHasPrefix", "slugHasSuffix", "slugIsNil", "slugNotNil", "slugEqualFold", "slugContainsFold", "status", "statusNEQ", "statusIn", "statusNotIn", "statusGT", "statusGTE", "statusLT", "statusLTE", "statusContains", "statusHasPrefix", "statusHasSuffix", "statusIsNil", "statusNotNil", "statusEqualFold", "statusContainsFold", "excerpt", "excerptNEQ", "excerptIn", "excerptNotIn", "excerptGT", "excerptGTE", "excerptLT", "excerptLTE", "excerptContains", "excerptHasPrefix", "excerptHasSuffix", "excerptIsNil", "excerptNotNil", "excerptEqualFold", "excerptContainsFold", "content", "contentNEQ", "contentIn", "contentNotIn", "contentGT", "contentGTE", "contentLT", "contentLTE", "contentContains", "contentHasPrefix", "contentHasSuffix", "contentIsNil", "contentNotNil", "contentEqualFold", "contentContainsFold", "metaTitle", "metaTitleNEQ", "metaTitleIn", "metaTitleNotIn", "metaTitleGT", "metaTitleGTE", "metaTitleLT", "metaTitleLTE", "metaTitleContains", "metaTitleHasPrefix", "metaTitleHasSuffix", "metaTitleIsNil", "metaTitleNotNil", "metaTitleEqualFold", "metaTitleContainsFold", "metaDescr", "metaDescrNEQ", "metaDescrIn", "metaDescrNotIn", "metaDescrGT", "metaDescrGTE", "metaDescrLT", "metaDescrLTE", "metaDescrContains", "metaDescrHasPrefix", "metaDescrHasSuffix", "metaDescrIsNil", "metaDescrNotNil", "metaDescrEqualFold", "metaDescrContainsFold", "metaCanonicalURL", "metaCanonicalURLNEQ", "metaCanonicalURLIn", "metaCanonicalURLNotIn", "metaCanonicalURLGT", "metaCanonicalURLGTE", "metaCanonicalURLLT", "metaCanonicalURLLTE", "metaCanonicalURLContains", "metaCanonicalURLHasPrefix", "metaCanonicalURLHasSuffix", "metaCanonicalURLIsNil", "metaCanonicalURLNotNil", "metaCanonicalURLEqualFold", "metaCanonicalURLContainsFold", "metaRobots", "metaRobotsNEQ", "metaRobotsIn", "metaRobotsNotIn", "metaRobotsGT", "metaRobotsGTE", "metaRobotsLT", "metaRobotsLTE", "metaRobotsContains", "metaRobotsHasPrefix", "metaRobotsHasSuffix", "metaRobotsIsNil", "metaRobotsNotNil", "metaRobotsEqualFold", "metaRobotsContainsFold", "hasPosts", "hasPostsWith", "hasParent", "hasParentWith", "hasChildren", "hasChildrenWith"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -25370,6 +25591,111 @@ func (ec *executionContext) unmarshalInputPostCategoryWhereInput(ctx context.Con
 				return it, err
 			}
 			it.AppIDContainsFold = data
+		case "parentID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ParentID = data
+		case "parentIDNEQ":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentIDNEQ"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ParentIDNEQ = data
+		case "parentIDIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentIDIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ParentIDIn = data
+		case "parentIDNotIn":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentIDNotIn"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ParentIDNotIn = data
+		case "parentIDGT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentIDGT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ParentIDGT = data
+		case "parentIDGTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentIDGTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ParentIDGTE = data
+		case "parentIDLT":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentIDLT"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ParentIDLT = data
+		case "parentIDLTE":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentIDLTE"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ParentIDLTE = data
+		case "parentIDContains":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentIDContains"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ParentIDContains = data
+		case "parentIDHasPrefix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentIDHasPrefix"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ParentIDHasPrefix = data
+		case "parentIDHasSuffix":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentIDHasSuffix"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ParentIDHasSuffix = data
+		case "parentIDIsNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentIDIsNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ParentIDIsNil = data
+		case "parentIDNotNil":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentIDNotNil"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ParentIDNotNil = data
+		case "parentIDEqualFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentIDEqualFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ParentIDEqualFold = data
+		case "parentIDContainsFold":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentIDContainsFold"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ParentIDContainsFold = data
 		case "name":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -26329,6 +26655,34 @@ func (ec *executionContext) unmarshalInputPostCategoryWhereInput(ctx context.Con
 				return it, err
 			}
 			it.HasPostsWith = data
+		case "hasParent":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasParent"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasParent = data
+		case "hasParentWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasParentWith"))
+			data, err := ec.unmarshalOPostCategoryWhereInput2ᚕᚖsaasᚋgenᚋentᚐPostCategoryWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasParentWith = data
+		case "hasChildren":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasChildren"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasChildren = data
+		case "hasChildrenWith":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hasChildrenWith"))
+			data, err := ec.unmarshalOPostCategoryWhereInput2ᚕᚖsaasᚋgenᚋentᚐPostCategoryWhereInputᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.HasChildrenWith = data
 		}
 	}
 
@@ -34088,7 +34442,7 @@ func (ec *executionContext) unmarshalInputUpdatePostCategoryInput(ctx context.Co
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "appID", "clearAppID", "name", "clearName", "slug", "clearSlug", "status", "clearStatus", "excerpt", "clearExcerpt", "content", "clearContent", "metaTitle", "clearMetaTitle", "metaDescr", "clearMetaDescr", "metaCanonicalURL", "clearMetaCanonicalURL", "metaRobots", "clearMetaRobots", "addPostIDs", "removePostIDs", "clearPosts"}
+	fieldsInOrder := [...]string{"updatedAt", "clearUpdatedAt", "appID", "clearAppID", "name", "clearName", "slug", "clearSlug", "status", "clearStatus", "excerpt", "clearExcerpt", "content", "clearContent", "metaTitle", "clearMetaTitle", "metaDescr", "clearMetaDescr", "metaCanonicalURL", "clearMetaCanonicalURL", "metaRobots", "clearMetaRobots", "addPostIDs", "removePostIDs", "clearPosts", "parentID", "clearParent", "addChildIDs", "removeChildIDs", "clearChildren"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -34270,6 +34624,41 @@ func (ec *executionContext) unmarshalInputUpdatePostCategoryInput(ctx context.Co
 				return it, err
 			}
 			it.ClearPosts = data
+		case "parentID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("parentID"))
+			data, err := ec.unmarshalOID2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ParentID = data
+		case "clearParent":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearParent"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearParent = data
+		case "addChildIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("addChildIDs"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AddChildIDs = data
+		case "removeChildIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("removeChildIDs"))
+			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RemoveChildIDs = data
+		case "clearChildren":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clearChildren"))
+			data, err := ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClearChildren = data
 		}
 	}
 
@@ -40336,6 +40725,8 @@ func (ec *executionContext) _PostCategory(ctx context.Context, sel ast.Selection
 			out.Values[i] = ec._PostCategory_updatedAt(ctx, field, obj)
 		case "appID":
 			out.Values[i] = ec._PostCategory_appID(ctx, field, obj)
+		case "parentID":
+			out.Values[i] = ec._PostCategory_parentID(ctx, field, obj)
 		case "name":
 			out.Values[i] = ec._PostCategory_name(ctx, field, obj)
 		case "slug":
@@ -40364,6 +40755,72 @@ func (ec *executionContext) _PostCategory(ctx context.Context, sel ast.Selection
 					}
 				}()
 				res = ec._PostCategory_posts(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "parent":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._PostCategory_parent(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "children":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._PostCategory_children(ctx, field, obj)
 				return res
 			}
 
@@ -44546,6 +45003,53 @@ func (ec *executionContext) marshalOPost2ᚖsaasᚋgenᚋentᚐPost(ctx context.
 		return graphql.Null
 	}
 	return ec._Post(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOPostCategory2ᚕᚖsaasᚋgenᚋentᚐPostCategoryᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.PostCategory) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNPostCategory2ᚖsaasᚋgenᚋentᚐPostCategory(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalOPostCategory2ᚖsaasᚋgenᚋentᚐPostCategory(ctx context.Context, sel ast.SelectionSet, v *ent.PostCategory) graphql.Marshaler {

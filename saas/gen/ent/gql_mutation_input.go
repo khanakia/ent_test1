@@ -874,6 +874,8 @@ type CreatePostCategoryInput struct {
 	MetaCanonicalURL *string
 	MetaRobots       *string
 	PostIDs          []string
+	ParentID         *string
+	ChildIDs         []string
 }
 
 // Mutate applies the CreatePostCategoryInput on the PostCategoryMutation builder.
@@ -914,6 +916,12 @@ func (i *CreatePostCategoryInput) Mutate(m *PostCategoryMutation) {
 	if v := i.PostIDs; len(v) > 0 {
 		m.AddPostIDs(v...)
 	}
+	if v := i.ParentID; v != nil {
+		m.SetParentID(*v)
+	}
+	if v := i.ChildIDs; len(v) > 0 {
+		m.AddChildIDs(v...)
+	}
 }
 
 // SetInput applies the change-set in the CreatePostCategoryInput on the PostCategoryCreate builder.
@@ -949,6 +957,11 @@ type UpdatePostCategoryInput struct {
 	ClearPosts            bool
 	AddPostIDs            []string
 	RemovePostIDs         []string
+	ClearParent           bool
+	ParentID              *string
+	ClearChildren         bool
+	AddChildIDs           []string
+	RemoveChildIDs        []string
 }
 
 // Mutate applies the UpdatePostCategoryInput on the PostCategoryMutation builder.
@@ -1027,6 +1040,21 @@ func (i *UpdatePostCategoryInput) Mutate(m *PostCategoryMutation) {
 	}
 	if v := i.RemovePostIDs; len(v) > 0 {
 		m.RemovePostIDs(v...)
+	}
+	if i.ClearParent {
+		m.ClearParent()
+	}
+	if v := i.ParentID; v != nil {
+		m.SetParentID(*v)
+	}
+	if i.ClearChildren {
+		m.ClearChildren()
+	}
+	if v := i.AddChildIDs; len(v) > 0 {
+		m.AddChildIDs(v...)
+	}
+	if v := i.RemoveChildIDs; len(v) > 0 {
+		m.RemoveChildIDs(v...)
 	}
 }
 

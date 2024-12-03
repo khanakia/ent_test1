@@ -23,6 +23,8 @@ type PostCategory struct {
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 	// AppID holds the value of the "app_id" field.
 	AppID string `json:"app_id,omitempty"`
+	// ParentID holds the value of the "parent_id" field.
+	ParentID string `json:"parent_id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Slug holds the value of the "slug" field.
@@ -51,13 +53,18 @@ type PostCategory struct {
 type PostCategoryEdges struct {
 	// Posts holds the value of the posts edge.
 	Posts []*Post `json:"posts,omitempty"`
+	// Parent holds the value of the parent edge.
+	Parent *PostCategory `json:"parent,omitempty"`
+	// Children holds the value of the children edge.
+	Children []*PostCategory `json:"children,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
+	loadedTypes [3]bool
 	// totalCount holds the count of the edges above.
-	totalCount [1]map[string]int
+	totalCount [3]map[string]int
 
-	namedPosts map[string][]*Post
+	namedPosts    map[string][]*Post
+	namedChildren map[string][]*PostCategory
 }
 
 // PostsOrErr returns the Posts value or an error if the edge
@@ -69,12 +76,34 @@ func (e PostCategoryEdges) PostsOrErr() ([]*Post, error) {
 	return nil, &NotLoadedError{edge: "posts"}
 }
 
+// ParentOrErr returns the Parent value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e PostCategoryEdges) ParentOrErr() (*PostCategory, error) {
+	if e.loadedTypes[1] {
+		if e.Parent == nil {
+			// Edge was loaded but was not found.
+			return nil, &NotFoundError{label: postcategory.Label}
+		}
+		return e.Parent, nil
+	}
+	return nil, &NotLoadedError{edge: "parent"}
+}
+
+// ChildrenOrErr returns the Children value or an error if the edge
+// was not loaded in eager-loading.
+func (e PostCategoryEdges) ChildrenOrErr() ([]*PostCategory, error) {
+	if e.loadedTypes[2] {
+		return e.Children, nil
+	}
+	return nil, &NotLoadedError{edge: "children"}
+}
+
 // scanValues returns the types for scanning values from sql.Rows.
 func (*PostCategory) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case postcategory.FieldID, postcategory.FieldAppID, postcategory.FieldName, postcategory.FieldSlug, postcategory.FieldStatus, postcategory.FieldExcerpt, postcategory.FieldContent, postcategory.FieldMetaTitle, postcategory.FieldMetaDescr, postcategory.FieldMetaCanonicalURL, postcategory.FieldMetaRobots:
+		case postcategory.FieldID, postcategory.FieldAppID, postcategory.FieldParentID, postcategory.FieldName, postcategory.FieldSlug, postcategory.FieldStatus, postcategory.FieldExcerpt, postcategory.FieldContent, postcategory.FieldMetaTitle, postcategory.FieldMetaDescr, postcategory.FieldMetaCanonicalURL, postcategory.FieldMetaRobots:
 			values[i] = new(sql.NullString)
 		case postcategory.FieldCreatedAt, postcategory.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -116,6 +145,12 @@ func (pc *PostCategory) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field app_id", values[i])
 			} else if value.Valid {
 				pc.AppID = value.String
+			}
+		case postcategory.FieldParentID:
+			if value, ok := values[i].(*sql.NullString); !ok {
+				return fmt.Errorf("unexpected type %T for field parent_id", values[i])
+			} else if value.Valid {
+				pc.ParentID = value.String
 			}
 		case postcategory.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -189,6 +224,16 @@ func (pc *PostCategory) QueryPosts() *PostQuery {
 	return NewPostCategoryClient(pc.config).QueryPosts(pc)
 }
 
+// QueryParent queries the "parent" edge of the PostCategory entity.
+func (pc *PostCategory) QueryParent() *PostCategoryQuery {
+	return NewPostCategoryClient(pc.config).QueryParent(pc)
+}
+
+// QueryChildren queries the "children" edge of the PostCategory entity.
+func (pc *PostCategory) QueryChildren() *PostCategoryQuery {
+	return NewPostCategoryClient(pc.config).QueryChildren(pc)
+}
+
 // Update returns a builder for updating this PostCategory.
 // Note that you need to call PostCategory.Unwrap() before calling this method if this PostCategory
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -220,6 +265,9 @@ func (pc *PostCategory) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("app_id=")
 	builder.WriteString(pc.AppID)
+	builder.WriteString(", ")
+	builder.WriteString("parent_id=")
+	builder.WriteString(pc.ParentID)
 	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(pc.Name)
@@ -272,6 +320,30 @@ func (pc *PostCategory) appendNamedPosts(name string, edges ...*Post) {
 		pc.Edges.namedPosts[name] = []*Post{}
 	} else {
 		pc.Edges.namedPosts[name] = append(pc.Edges.namedPosts[name], edges...)
+	}
+}
+
+// NamedChildren returns the Children named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (pc *PostCategory) NamedChildren(name string) ([]*PostCategory, error) {
+	if pc.Edges.namedChildren == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := pc.Edges.namedChildren[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (pc *PostCategory) appendNamedChildren(name string, edges ...*PostCategory) {
+	if pc.Edges.namedChildren == nil {
+		pc.Edges.namedChildren = make(map[string][]*PostCategory)
+	}
+	if len(edges) == 0 {
+		pc.Edges.namedChildren[name] = []*PostCategory{}
+	} else {
+		pc.Edges.namedChildren[name] = append(pc.Edges.namedChildren[name], edges...)
 	}
 }
 

@@ -66,6 +66,20 @@ func (pcc *PostCategoryCreate) SetNillableAppID(s *string) *PostCategoryCreate {
 	return pcc
 }
 
+// SetParentID sets the "parent_id" field.
+func (pcc *PostCategoryCreate) SetParentID(s string) *PostCategoryCreate {
+	pcc.mutation.SetParentID(s)
+	return pcc
+}
+
+// SetNillableParentID sets the "parent_id" field if the given value is not nil.
+func (pcc *PostCategoryCreate) SetNillableParentID(s *string) *PostCategoryCreate {
+	if s != nil {
+		pcc.SetParentID(*s)
+	}
+	return pcc
+}
+
 // SetName sets the "name" field.
 func (pcc *PostCategoryCreate) SetName(s string) *PostCategoryCreate {
 	pcc.mutation.SetName(s)
@@ -221,6 +235,26 @@ func (pcc *PostCategoryCreate) AddPosts(p ...*Post) *PostCategoryCreate {
 	return pcc.AddPostIDs(ids...)
 }
 
+// SetParent sets the "parent" edge to the PostCategory entity.
+func (pcc *PostCategoryCreate) SetParent(p *PostCategory) *PostCategoryCreate {
+	return pcc.SetParentID(p.ID)
+}
+
+// AddChildIDs adds the "children" edge to the PostCategory entity by IDs.
+func (pcc *PostCategoryCreate) AddChildIDs(ids ...string) *PostCategoryCreate {
+	pcc.mutation.AddChildIDs(ids...)
+	return pcc
+}
+
+// AddChildren adds the "children" edges to the PostCategory entity.
+func (pcc *PostCategoryCreate) AddChildren(p ...*PostCategory) *PostCategoryCreate {
+	ids := make([]string, len(p))
+	for i := range p {
+		ids[i] = p[i].ID
+	}
+	return pcc.AddChildIDs(ids...)
+}
+
 // Mutation returns the PostCategoryMutation object of the builder.
 func (pcc *PostCategoryCreate) Mutation() *PostCategoryMutation {
 	return pcc.mutation
@@ -228,7 +262,9 @@ func (pcc *PostCategoryCreate) Mutation() *PostCategoryMutation {
 
 // Save creates the PostCategory in the database.
 func (pcc *PostCategoryCreate) Save(ctx context.Context) (*PostCategory, error) {
-	pcc.defaults()
+	if err := pcc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, pcc.sqlSave, pcc.mutation, pcc.hooks)
 }
 
@@ -255,19 +291,29 @@ func (pcc *PostCategoryCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (pcc *PostCategoryCreate) defaults() {
+func (pcc *PostCategoryCreate) defaults() error {
 	if _, ok := pcc.mutation.CreatedAt(); !ok {
+		if postcategory.DefaultCreatedAt == nil {
+			return fmt.Errorf("ent: uninitialized postcategory.DefaultCreatedAt (forgotten import ent/runtime?)")
+		}
 		v := postcategory.DefaultCreatedAt()
 		pcc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := pcc.mutation.UpdatedAt(); !ok {
+		if postcategory.DefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized postcategory.DefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := postcategory.DefaultUpdatedAt()
 		pcc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := pcc.mutation.ID(); !ok {
+		if postcategory.DefaultID == nil {
+			return fmt.Errorf("ent: uninitialized postcategory.DefaultID (forgotten import ent/runtime?)")
+		}
 		v := postcategory.DefaultID()
 		pcc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -372,6 +418,39 @@ func (pcc *PostCategoryCreate) createSpec() (*PostCategory, *sqlgraph.CreateSpec
 		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
+	if nodes := pcc.mutation.ParentIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2O,
+			Inverse: true,
+			Table:   postcategory.ParentTable,
+			Columns: []string{postcategory.ParentColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(postcategory.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_node.ParentID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := pcc.mutation.ChildrenIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   postcategory.ChildrenTable,
+			Columns: []string{postcategory.ChildrenColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(postcategory.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
 	return _node, _spec
 }
 
@@ -457,6 +536,24 @@ func (u *PostCategoryUpsert) UpdateAppID() *PostCategoryUpsert {
 // ClearAppID clears the value of the "app_id" field.
 func (u *PostCategoryUpsert) ClearAppID() *PostCategoryUpsert {
 	u.SetNull(postcategory.FieldAppID)
+	return u
+}
+
+// SetParentID sets the "parent_id" field.
+func (u *PostCategoryUpsert) SetParentID(v string) *PostCategoryUpsert {
+	u.Set(postcategory.FieldParentID, v)
+	return u
+}
+
+// UpdateParentID sets the "parent_id" field to the value that was provided on create.
+func (u *PostCategoryUpsert) UpdateParentID() *PostCategoryUpsert {
+	u.SetExcluded(postcategory.FieldParentID)
+	return u
+}
+
+// ClearParentID clears the value of the "parent_id" field.
+func (u *PostCategoryUpsert) ClearParentID() *PostCategoryUpsert {
+	u.SetNull(postcategory.FieldParentID)
 	return u
 }
 
@@ -712,6 +809,27 @@ func (u *PostCategoryUpsertOne) UpdateAppID() *PostCategoryUpsertOne {
 func (u *PostCategoryUpsertOne) ClearAppID() *PostCategoryUpsertOne {
 	return u.Update(func(s *PostCategoryUpsert) {
 		s.ClearAppID()
+	})
+}
+
+// SetParentID sets the "parent_id" field.
+func (u *PostCategoryUpsertOne) SetParentID(v string) *PostCategoryUpsertOne {
+	return u.Update(func(s *PostCategoryUpsert) {
+		s.SetParentID(v)
+	})
+}
+
+// UpdateParentID sets the "parent_id" field to the value that was provided on create.
+func (u *PostCategoryUpsertOne) UpdateParentID() *PostCategoryUpsertOne {
+	return u.Update(func(s *PostCategoryUpsert) {
+		s.UpdateParentID()
+	})
+}
+
+// ClearParentID clears the value of the "parent_id" field.
+func (u *PostCategoryUpsertOne) ClearParentID() *PostCategoryUpsertOne {
+	return u.Update(func(s *PostCategoryUpsert) {
+		s.ClearParentID()
 	})
 }
 
@@ -1161,6 +1279,27 @@ func (u *PostCategoryUpsertBulk) UpdateAppID() *PostCategoryUpsertBulk {
 func (u *PostCategoryUpsertBulk) ClearAppID() *PostCategoryUpsertBulk {
 	return u.Update(func(s *PostCategoryUpsert) {
 		s.ClearAppID()
+	})
+}
+
+// SetParentID sets the "parent_id" field.
+func (u *PostCategoryUpsertBulk) SetParentID(v string) *PostCategoryUpsertBulk {
+	return u.Update(func(s *PostCategoryUpsert) {
+		s.SetParentID(v)
+	})
+}
+
+// UpdateParentID sets the "parent_id" field to the value that was provided on create.
+func (u *PostCategoryUpsertBulk) UpdateParentID() *PostCategoryUpsertBulk {
+	return u.Update(func(s *PostCategoryUpsert) {
+		s.UpdateParentID()
+	})
+}
+
+// ClearParentID clears the value of the "parent_id" field.
+func (u *PostCategoryUpsertBulk) ClearParentID() *PostCategoryUpsertBulk {
+	return u.Update(func(s *PostCategoryUpsert) {
+		s.ClearParentID()
 	})
 }
 

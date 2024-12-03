@@ -177,6 +177,7 @@ type ComplexityRoot struct {
 		CreatePostType        func(childComplexity int, input ent.CreatePostTypeInput) int
 		CreatePostTypeForm    func(childComplexity int, input ent.CreatePostTypeFormInput) int
 		CreateTempl           func(childComplexity int, input ent.CreateTemplInput) int
+		DeletePostCategory    func(childComplexity int, id string) int
 		Ping                  func(childComplexity int) int
 		UpdateApp             func(childComplexity int, id string, input ent.UpdateAppInput) int
 		UpdateMailConn        func(childComplexity int, id string, input ent.UpdateMailConnInput) int
@@ -250,6 +251,7 @@ type ComplexityRoot struct {
 
 	PostCategory struct {
 		AppID            func(childComplexity int) int
+		Children         func(childComplexity int) int
 		Content          func(childComplexity int) int
 		CreatedAt        func(childComplexity int) int
 		Excerpt          func(childComplexity int) int
@@ -259,6 +261,8 @@ type ComplexityRoot struct {
 		MetaRobots       func(childComplexity int) int
 		MetaTitle        func(childComplexity int) int
 		Name             func(childComplexity int) int
+		Parent           func(childComplexity int) int
+		ParentID         func(childComplexity int) int
 		Posts            func(childComplexity int) int
 		Slug             func(childComplexity int) int
 		Status           func(childComplexity int) int
@@ -1323,6 +1327,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateTempl(childComplexity, args["input"].(ent.CreateTemplInput)), true
 
+	case "Mutation.deletePostCategory":
+		if e.complexity.Mutation.DeletePostCategory == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deletePostCategory_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeletePostCategory(childComplexity, args["id"].(string)), true
+
 	case "Mutation.ping":
 		if e.complexity.Mutation.Ping == nil {
 			break
@@ -1758,6 +1774,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PostCategory.AppID(childComplexity), true
 
+	case "PostCategory.children":
+		if e.complexity.PostCategory.Children == nil {
+			break
+		}
+
+		return e.complexity.PostCategory.Children(childComplexity), true
+
 	case "PostCategory.content":
 		if e.complexity.PostCategory.Content == nil {
 			break
@@ -1820,6 +1843,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.PostCategory.Name(childComplexity), true
+
+	case "PostCategory.parent":
+		if e.complexity.PostCategory.Parent == nil {
+			break
+		}
+
+		return e.complexity.PostCategory.Parent(childComplexity), true
+
+	case "PostCategory.parentID":
+		if e.complexity.PostCategory.ParentID == nil {
+			break
+		}
+
+		return e.complexity.PostCategory.ParentID(childComplexity), true
 
 	case "PostCategory.posts":
 		if e.complexity.PostCategory.Posts == nil {
@@ -3465,6 +3502,7 @@ extend type Mutation {
   updatePostStatus(id: ID!, input: UpdatePostStatusInput!): PostStatus! @canApp
   createPostCategory(input: CreatePostCategoryInput!): PostCategory! @canApp
   updatePostCategory(id: ID!, input: UpdatePostCategoryInput!): PostCategory! @canApp
+  deletePostCategory(id: ID!): Boolean! @canApp
   createPost(input: CreatePostInput!): Post! @canApp
   updatePost(id: ID!, input: UpdatePostInput!): Post! @canApp
   createPostTag(input: CreatePostTagInput!): PostTag! @canApp
@@ -4045,6 +4083,8 @@ input CreatePostCategoryInput {
   metaCanonicalURL: String
   metaRobots: String
   postIDs: [ID!]
+  parentID: ID
+  childIDs: [ID!]
 }
 """
 CreatePostInput is used for create Post object.
@@ -5254,6 +5294,7 @@ type PostCategory implements Node {
   createdAt: Time
   updatedAt: Time
   appID: String
+  parentID: ID
   name: String
   slug: String
   status: String
@@ -5264,6 +5305,8 @@ type PostCategory implements Node {
   metaCanonicalURL: String
   metaRobots: String
   posts: [Post!]
+  parent: PostCategory
+  children: [PostCategory!]
 }
 """
 A connection to a list of items.
@@ -5379,6 +5422,24 @@ input PostCategoryWhereInput {
   appIDNotNil: Boolean
   appIDEqualFold: String
   appIDContainsFold: String
+  """
+  parent_id field predicates
+  """
+  parentID: ID
+  parentIDNEQ: ID
+  parentIDIn: [ID!]
+  parentIDNotIn: [ID!]
+  parentIDGT: ID
+  parentIDGTE: ID
+  parentIDLT: ID
+  parentIDLTE: ID
+  parentIDContains: ID
+  parentIDHasPrefix: ID
+  parentIDHasSuffix: ID
+  parentIDIsNil: Boolean
+  parentIDNotNil: Boolean
+  parentIDEqualFold: ID
+  parentIDContainsFold: ID
   """
   name field predicates
   """
@@ -5546,6 +5607,16 @@ input PostCategoryWhereInput {
   """
   hasPosts: Boolean
   hasPostsWith: [PostWhereInput!]
+  """
+  parent edge predicates
+  """
+  hasParent: Boolean
+  hasParentWith: [PostCategoryWhereInput!]
+  """
+  children edge predicates
+  """
+  hasChildren: Boolean
+  hasChildrenWith: [PostCategoryWhereInput!]
 }
 """
 A connection to a list of items.
@@ -7883,6 +7954,11 @@ input UpdatePostCategoryInput {
   addPostIDs: [ID!]
   removePostIDs: [ID!]
   clearPosts: Boolean
+  parentID: ID
+  clearParent: Boolean
+  addChildIDs: [ID!]
+  removeChildIDs: [ID!]
+  clearChildren: Boolean
 }
 """
 UpdatePostInput is used for update Post object.

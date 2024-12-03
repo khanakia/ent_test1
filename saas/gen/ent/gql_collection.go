@@ -1082,6 +1082,34 @@ func (pc *PostCategoryQuery) collectField(ctx context.Context, oneNode bool, opC
 			pc.WithNamedPosts(alias, func(wq *PostQuery) {
 				*wq = *query
 			})
+
+		case "parent":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&PostCategoryClient{config: pc.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, postcategoryImplementors)...); err != nil {
+				return err
+			}
+			pc.withParent = query
+			if _, ok := fieldSeen[postcategory.FieldParentID]; !ok {
+				selectedFields = append(selectedFields, postcategory.FieldParentID)
+				fieldSeen[postcategory.FieldParentID] = struct{}{}
+			}
+
+		case "children":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&PostCategoryClient{config: pc.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, postcategoryImplementors)...); err != nil {
+				return err
+			}
+			pc.WithNamedChildren(alias, func(wq *PostCategoryQuery) {
+				*wq = *query
+			})
 		case "createdAt":
 			if _, ok := fieldSeen[postcategory.FieldCreatedAt]; !ok {
 				selectedFields = append(selectedFields, postcategory.FieldCreatedAt)
@@ -1096,6 +1124,11 @@ func (pc *PostCategoryQuery) collectField(ctx context.Context, oneNode bool, opC
 			if _, ok := fieldSeen[postcategory.FieldAppID]; !ok {
 				selectedFields = append(selectedFields, postcategory.FieldAppID)
 				fieldSeen[postcategory.FieldAppID] = struct{}{}
+			}
+		case "parentID":
+			if _, ok := fieldSeen[postcategory.FieldParentID]; !ok {
+				selectedFields = append(selectedFields, postcategory.FieldParentID)
+				fieldSeen[postcategory.FieldParentID] = struct{}{}
 			}
 		case "name":
 			if _, ok := fieldSeen[postcategory.FieldName]; !ok {

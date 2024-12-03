@@ -393,7 +393,9 @@ func (pu *PostUpdate) RemovePostTags(p ...*PostTag) *PostUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (pu *PostUpdate) Save(ctx context.Context) (int, error) {
-	pu.defaults()
+	if err := pu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, pu.sqlSave, pu.mutation, pu.hooks)
 }
 
@@ -420,11 +422,15 @@ func (pu *PostUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (pu *PostUpdate) defaults() {
+func (pu *PostUpdate) defaults() error {
 	if _, ok := pu.mutation.UpdatedAt(); !ok && !pu.mutation.UpdatedAtCleared() {
+		if post.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized post.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := post.UpdateDefaultUpdatedAt()
 		pu.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
@@ -1044,7 +1050,9 @@ func (puo *PostUpdateOne) Select(field string, fields ...string) *PostUpdateOne 
 
 // Save executes the query and returns the updated Post entity.
 func (puo *PostUpdateOne) Save(ctx context.Context) (*Post, error) {
-	puo.defaults()
+	if err := puo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, puo.sqlSave, puo.mutation, puo.hooks)
 }
 
@@ -1071,11 +1079,15 @@ func (puo *PostUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (puo *PostUpdateOne) defaults() {
+func (puo *PostUpdateOne) defaults() error {
 	if _, ok := puo.mutation.UpdatedAt(); !ok && !puo.mutation.UpdatedAtCleared() {
+		if post.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized post.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := post.UpdateDefaultUpdatedAt()
 		puo.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.

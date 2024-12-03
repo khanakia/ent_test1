@@ -265,7 +265,9 @@ func (ptu *PostTagUpdate) RemovePosts(p ...*Post) *PostTagUpdate {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (ptu *PostTagUpdate) Save(ctx context.Context) (int, error) {
-	ptu.defaults()
+	if err := ptu.defaults(); err != nil {
+		return 0, err
+	}
 	return withHooks(ctx, ptu.sqlSave, ptu.mutation, ptu.hooks)
 }
 
@@ -292,11 +294,15 @@ func (ptu *PostTagUpdate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (ptu *PostTagUpdate) defaults() {
+func (ptu *PostTagUpdate) defaults() error {
 	if _, ok := ptu.mutation.UpdatedAt(); !ok && !ptu.mutation.UpdatedAtCleared() {
+		if posttag.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized posttag.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := posttag.UpdateDefaultUpdatedAt()
 		ptu.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
@@ -692,7 +698,9 @@ func (ptuo *PostTagUpdateOne) Select(field string, fields ...string) *PostTagUpd
 
 // Save executes the query and returns the updated PostTag entity.
 func (ptuo *PostTagUpdateOne) Save(ctx context.Context) (*PostTag, error) {
-	ptuo.defaults()
+	if err := ptuo.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, ptuo.sqlSave, ptuo.mutation, ptuo.hooks)
 }
 
@@ -719,11 +727,15 @@ func (ptuo *PostTagUpdateOne) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (ptuo *PostTagUpdateOne) defaults() {
+func (ptuo *PostTagUpdateOne) defaults() error {
 	if _, ok := ptuo.mutation.UpdatedAt(); !ok && !ptuo.mutation.UpdatedAtCleared() {
+		if posttag.UpdateDefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized posttag.UpdateDefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := posttag.UpdateDefaultUpdatedAt()
 		ptuo.mutation.SetUpdatedAt(v)
 	}
+	return nil
 }
 
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.

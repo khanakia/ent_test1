@@ -24,6 +24,7 @@ type MutationResolver interface {
 	UpdatePostStatus(ctx context.Context, id string, input ent.UpdatePostStatusInput) (*ent.PostStatus, error)
 	CreatePostCategory(ctx context.Context, input ent.CreatePostCategoryInput) (*ent.PostCategory, error)
 	UpdatePostCategory(ctx context.Context, id string, input ent.UpdatePostCategoryInput) (*ent.PostCategory, error)
+	DeletePostCategory(ctx context.Context, id string) (bool, error)
 	CreatePost(ctx context.Context, input ent.CreatePostInput) (*ent.Post, error)
 	UpdatePost(ctx context.Context, id string, input ent.UpdatePostInput) (*ent.Post, error)
 	CreatePostTag(ctx context.Context, input ent.CreatePostTagInput) (*ent.PostTag, error)
@@ -208,6 +209,21 @@ func (ec *executionContext) field_Mutation_createTempl_args(ctx context.Context,
 		}
 	}
 	args["input"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_deletePostCategory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["id"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["id"] = arg0
 	return args, nil
 }
 
@@ -938,6 +954,8 @@ func (ec *executionContext) fieldContext_Mutation_createPostCategory(ctx context
 				return ec.fieldContext_PostCategory_updatedAt(ctx, field)
 			case "appID":
 				return ec.fieldContext_PostCategory_appID(ctx, field)
+			case "parentID":
+				return ec.fieldContext_PostCategory_parentID(ctx, field)
 			case "name":
 				return ec.fieldContext_PostCategory_name(ctx, field)
 			case "slug":
@@ -958,6 +976,10 @@ func (ec *executionContext) fieldContext_Mutation_createPostCategory(ctx context
 				return ec.fieldContext_PostCategory_metaRobots(ctx, field)
 			case "posts":
 				return ec.fieldContext_PostCategory_posts(ctx, field)
+			case "parent":
+				return ec.fieldContext_PostCategory_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_PostCategory_children(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PostCategory", field.Name)
 		},
@@ -1043,6 +1065,8 @@ func (ec *executionContext) fieldContext_Mutation_updatePostCategory(ctx context
 				return ec.fieldContext_PostCategory_updatedAt(ctx, field)
 			case "appID":
 				return ec.fieldContext_PostCategory_appID(ctx, field)
+			case "parentID":
+				return ec.fieldContext_PostCategory_parentID(ctx, field)
 			case "name":
 				return ec.fieldContext_PostCategory_name(ctx, field)
 			case "slug":
@@ -1063,6 +1087,10 @@ func (ec *executionContext) fieldContext_Mutation_updatePostCategory(ctx context
 				return ec.fieldContext_PostCategory_metaRobots(ctx, field)
 			case "posts":
 				return ec.fieldContext_PostCategory_posts(ctx, field)
+			case "parent":
+				return ec.fieldContext_PostCategory_parent(ctx, field)
+			case "children":
+				return ec.fieldContext_PostCategory_children(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type PostCategory", field.Name)
 		},
@@ -1075,6 +1103,81 @@ func (ec *executionContext) fieldContext_Mutation_updatePostCategory(ctx context
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_updatePostCategory_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deletePostCategory(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deletePostCategory(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().DeletePostCategory(rctx, fc.Args["id"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.CanApp == nil {
+				return nil, errors.New("directive canApp is not implemented")
+			}
+			return ec.directives.CanApp(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deletePostCategory(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deletePostCategory_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -2761,6 +2864,13 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "updatePostCategory":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_updatePostCategory(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deletePostCategory":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deletePostCategory(ctx, field)
 			})
 			if out.Values[i] == graphql.Null {
 				out.Invalids++

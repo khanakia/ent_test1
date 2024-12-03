@@ -214,7 +214,9 @@ func (ptc *PostTagCreate) Mutation() *PostTagMutation {
 
 // Save creates the PostTag in the database.
 func (ptc *PostTagCreate) Save(ctx context.Context) (*PostTag, error) {
-	ptc.defaults()
+	if err := ptc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, ptc.sqlSave, ptc.mutation, ptc.hooks)
 }
 
@@ -241,19 +243,29 @@ func (ptc *PostTagCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (ptc *PostTagCreate) defaults() {
+func (ptc *PostTagCreate) defaults() error {
 	if _, ok := ptc.mutation.CreatedAt(); !ok {
+		if posttag.DefaultCreatedAt == nil {
+			return fmt.Errorf("ent: uninitialized posttag.DefaultCreatedAt (forgotten import ent/runtime?)")
+		}
 		v := posttag.DefaultCreatedAt()
 		ptc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := ptc.mutation.UpdatedAt(); !ok {
+		if posttag.DefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized posttag.DefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := posttag.DefaultUpdatedAt()
 		ptc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := ptc.mutation.ID(); !ok {
+		if posttag.DefaultID == nil {
+			return fmt.Errorf("ent: uninitialized posttag.DefaultID (forgotten import ent/runtime?)")
+		}
 		v := posttag.DefaultID()
 		ptc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.

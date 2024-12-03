@@ -112,6 +112,26 @@ func (pc *PostCategory) Posts(ctx context.Context) (result []*Post, err error) {
 	return result, err
 }
 
+func (pc *PostCategory) Parent(ctx context.Context) (*PostCategory, error) {
+	result, err := pc.Edges.ParentOrErr()
+	if IsNotLoaded(err) {
+		result, err = pc.QueryParent().Only(ctx)
+	}
+	return result, MaskNotFound(err)
+}
+
+func (pc *PostCategory) Children(ctx context.Context) (result []*PostCategory, err error) {
+	if fc := graphql.GetFieldContext(ctx); fc != nil && fc.Field.Alias != "" {
+		result, err = pc.NamedChildren(graphql.GetFieldContext(ctx).Field.Alias)
+	} else {
+		result, err = pc.Edges.ChildrenOrErr()
+	}
+	if IsNotLoaded(err) {
+		result, err = pc.QueryChildren().All(ctx)
+	}
+	return result, err
+}
+
 func (ps *PostStatus) PostType(ctx context.Context) (*PostType, error) {
 	result, err := ps.Edges.PostTypeOrErr()
 	if IsNotLoaded(err) {

@@ -260,7 +260,9 @@ func (ptc *PostTypeCreate) Mutation() *PostTypeMutation {
 
 // Save creates the PostType in the database.
 func (ptc *PostTypeCreate) Save(ctx context.Context) (*PostType, error) {
-	ptc.defaults()
+	if err := ptc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, ptc.sqlSave, ptc.mutation, ptc.hooks)
 }
 
@@ -287,12 +289,18 @@ func (ptc *PostTypeCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (ptc *PostTypeCreate) defaults() {
+func (ptc *PostTypeCreate) defaults() error {
 	if _, ok := ptc.mutation.CreatedAt(); !ok {
+		if posttype.DefaultCreatedAt == nil {
+			return fmt.Errorf("ent: uninitialized posttype.DefaultCreatedAt (forgotten import ent/runtime?)")
+		}
 		v := posttype.DefaultCreatedAt()
 		ptc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := ptc.mutation.UpdatedAt(); !ok {
+		if posttype.DefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized posttype.DefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := posttype.DefaultUpdatedAt()
 		ptc.mutation.SetUpdatedAt(v)
 	}
@@ -301,9 +309,13 @@ func (ptc *PostTypeCreate) defaults() {
 		ptc.mutation.SetStatus(v)
 	}
 	if _, ok := ptc.mutation.ID(); !ok {
+		if posttype.DefaultID == nil {
+			return fmt.Errorf("ent: uninitialized posttype.DefaultID (forgotten import ent/runtime?)")
+		}
 		v := posttype.DefaultID()
 		ptc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.

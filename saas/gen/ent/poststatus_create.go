@@ -164,7 +164,9 @@ func (psc *PostStatusCreate) Mutation() *PostStatusMutation {
 
 // Save creates the PostStatus in the database.
 func (psc *PostStatusCreate) Save(ctx context.Context) (*PostStatus, error) {
-	psc.defaults()
+	if err := psc.defaults(); err != nil {
+		return nil, err
+	}
 	return withHooks(ctx, psc.sqlSave, psc.mutation, psc.hooks)
 }
 
@@ -191,19 +193,29 @@ func (psc *PostStatusCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (psc *PostStatusCreate) defaults() {
+func (psc *PostStatusCreate) defaults() error {
 	if _, ok := psc.mutation.CreatedAt(); !ok {
+		if poststatus.DefaultCreatedAt == nil {
+			return fmt.Errorf("ent: uninitialized poststatus.DefaultCreatedAt (forgotten import ent/runtime?)")
+		}
 		v := poststatus.DefaultCreatedAt()
 		psc.mutation.SetCreatedAt(v)
 	}
 	if _, ok := psc.mutation.UpdatedAt(); !ok {
+		if poststatus.DefaultUpdatedAt == nil {
+			return fmt.Errorf("ent: uninitialized poststatus.DefaultUpdatedAt (forgotten import ent/runtime?)")
+		}
 		v := poststatus.DefaultUpdatedAt()
 		psc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := psc.mutation.ID(); !ok {
+		if poststatus.DefaultID == nil {
+			return fmt.Errorf("ent: uninitialized poststatus.DefaultID (forgotten import ent/runtime?)")
+		}
 		v := poststatus.DefaultID()
 		psc.mutation.SetID(v)
 	}
+	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
