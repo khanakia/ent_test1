@@ -570,6 +570,8 @@ input CreatePostCategoryInput {
   metaCanonicalURL: String
   metaRobots: String
   postIDs: [ID!]
+  parentID: ID
+  childIDs: [ID!]
 }
 """
 CreatePostInput is used for create Post object.
@@ -1779,6 +1781,7 @@ type PostCategory implements Node {
   createdAt: Time
   updatedAt: Time
   appID: String
+  parentID: ID
   name: String
   slug: String
   status: String
@@ -1789,6 +1792,8 @@ type PostCategory implements Node {
   metaCanonicalURL: String
   metaRobots: String
   posts: [Post!]
+  parent: PostCategory
+  children: [PostCategory!]
 }
 """
 A connection to a list of items.
@@ -1904,6 +1909,24 @@ input PostCategoryWhereInput {
   appIDNotNil: Boolean
   appIDEqualFold: String
   appIDContainsFold: String
+  """
+  parent_id field predicates
+  """
+  parentID: ID
+  parentIDNEQ: ID
+  parentIDIn: [ID!]
+  parentIDNotIn: [ID!]
+  parentIDGT: ID
+  parentIDGTE: ID
+  parentIDLT: ID
+  parentIDLTE: ID
+  parentIDContains: ID
+  parentIDHasPrefix: ID
+  parentIDHasSuffix: ID
+  parentIDIsNil: Boolean
+  parentIDNotNil: Boolean
+  parentIDEqualFold: ID
+  parentIDContainsFold: ID
   """
   name field predicates
   """
@@ -2071,6 +2094,16 @@ input PostCategoryWhereInput {
   """
   hasPosts: Boolean
   hasPostsWith: [PostWhereInput!]
+  """
+  parent edge predicates
+  """
+  hasParent: Boolean
+  hasParentWith: [PostCategoryWhereInput!]
+  """
+  children edge predicates
+  """
+  hasChildren: Boolean
+  hasChildrenWith: [PostCategoryWhereInput!]
 }
 """
 A connection to a list of items.
@@ -4408,6 +4441,11 @@ input UpdatePostCategoryInput {
   addPostIDs: [ID!]
   removePostIDs: [ID!]
   clearPosts: Boolean
+  parentID: ID
+  clearParent: Boolean
+  addChildIDs: [ID!]
+  removeChildIDs: [ID!]
+  clearChildren: Boolean
 }
 """
 UpdatePostInput is used for update Post object.

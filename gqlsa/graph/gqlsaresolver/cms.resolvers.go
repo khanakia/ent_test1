@@ -90,6 +90,23 @@ func (r *mutationResolver) UpdatePostCategory(ctx context.Context, id string, in
 	return r.Plugin.EntDB.Client().PostCategory.UpdateOneID(id).SetInput(input).Where(postcategory.AppID(app.ID)).Save(ctx)
 }
 
+// DeletePostCategory is the resolver for the deletePostCategory field.
+func (r *mutationResolver) DeletePostCategory(ctx context.Context, id string) (bool, error) {
+	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
+	if cuser == nil {
+		return false, err
+	}
+
+	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
+
+	err = r.Plugin.EntDB.Client().PostCategory.DeleteOneID(id).Where(postcategory.AppID(app.ID)).Exec(ctx)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
+}
+
 // CreatePost is the resolver for the createPost field.
 func (r *mutationResolver) CreatePost(ctx context.Context, input ent.CreatePostInput) (*ent.Post, error) {
 	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)

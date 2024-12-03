@@ -8,6 +8,7 @@ import (
 	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	"entgo.io/ent/schema/index"
 )
 
 type PostCategory struct {
@@ -16,6 +17,7 @@ type PostCategory struct {
 
 func (PostCategory) Fields() []ent.Field {
 	return []ent.Field{
+		field.String("parent_id").Optional(),
 		field.String("name").Optional(),
 		field.String("slug").Optional(),
 		field.String("status").Optional(),
@@ -31,6 +33,16 @@ func (PostCategory) Fields() []ent.Field {
 func (PostCategory) Edges() []ent.Edge {
 	return []ent.Edge{
 		edge.To("posts", Post.Type),
+		edge.To("children", PostCategory.Type).
+			From("parent").
+			Field("parent_id").
+			Unique(),
+	}
+}
+
+func (PostCategory) Indexes() []ent.Index {
+	return []ent.Index{
+		index.Fields("app_id", "slug").Unique(),
 	}
 }
 
@@ -47,5 +59,11 @@ func (PostCategory) Annotations() []schema.Annotation {
 		entgql.QueryField("postCategories").Directives(entgql.Directive{Name: constants.DirectiveCanApp}),
 		entgql.MultiOrder(),
 		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
+	}
+}
+
+func (PostCategory) Hooks() []ent.Hook {
+	return []ent.Hook{
+		slugMutateHook(),
 	}
 }

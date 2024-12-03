@@ -14,6 +14,8 @@ import (
 	"lace/nlog"
 
 	"lace/cli"
+
+	_ "saas/gen/ent/runtime"
 )
 
 var plugins Plugin

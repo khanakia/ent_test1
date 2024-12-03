@@ -6,6 +6,5 @@ package tools
 
 import (
 	_ "lace/gqlmodel"
-
-	_ "github.com/99designs/gqlgen"
+	// _ "github.com/99designs/gqlgen"
 )

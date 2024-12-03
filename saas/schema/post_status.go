@@ -55,3 +55,9 @@ func (PostStatus) Annotations() []schema.Annotation {
 		entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 	}
 }
+
+func (PostStatus) Hooks() []ent.Hook {
+	return []ent.Hook{
+		slugMutateHook(),
+	}
+}

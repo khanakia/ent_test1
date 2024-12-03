@@ -5,6 +5,7 @@ type Mutation {
   updatePostStatus(id: ID!, input: UpdatePostStatusInput!): PostStatus! @canApp
   createPostCategory(input: CreatePostCategoryInput!): PostCategory! @canApp
   updatePostCategory(id: ID!, input: UpdatePostCategoryInput!): PostCategory! @canApp
+  deletePostCategory(id: ID!): Boolean! @canApp
   createPost(input: CreatePostInput!): Post! @canApp
   updatePost(id: ID!, input: UpdatePostInput!): Post! @canApp
   createPostTag(input: CreatePostTagInput!): PostTag! @canApp
