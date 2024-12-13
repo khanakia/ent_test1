@@ -1,6 +1,6 @@
 # Where are all the schema files located? globs are supported eg  src/**/*.graphqls
 schema:
-  - graph/*.graphqls
+  - graph/*.graphql
 
 # Where should the generated server code go?
 exec:
@@ -66,9 +66,9 @@ resolver:
 # gqlgen will search for any type names in the schema in these go packages
 # if they match it will use them, otherwise it will generate them.
 autobind:
-#  - "gql/graph/model"
+  #  - "gql/graph/model"
   - github.com/99designs/gqlgen/graphql/introspection
-  - saas/gen/ent 
+  - saas/gen/ent
   - saas/gen/ent/user
   - saas/gen/ent/session
   - saas/gen/ent/workspace
@@ -97,16 +97,16 @@ models:
   Int64:
     model:
       - github.com/99designs/gqlgen/graphql.Int64
-  
+
   Uint64:
     model:
       - github.com/99designs/gqlgen/graphql.Uint64
 
   Date:
-    model: lace/gqlmodel.Date 
-  
+    model: lace/gqlmodel.Date
+
   RegisterInput:
     model: saas/pkg/auth/authfn.RegisterInput
-  
+
   LoginInput:
     model: saas/pkg/auth/authfn.LoginParams

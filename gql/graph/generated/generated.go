@@ -799,7 +799,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 }
 
 var sources = []*ast.Source{
-	{Name: "../auth.graphqls", Input: `type User {
+	{Name: "../auth.graphql", Input: `type User {
   id: String!
   email: String!
   firstName: String
@@ -864,14 +864,13 @@ extend type Mutation {
   authResetPassword(input: ResetPasswordInput!): Boolean!
   changePassword(input: ChangePasswordInput!): Boolean!
   updateProfile(input: UpdateProfileInput!): Boolean!
-
-
 }
 
 extend type Query {
   me: User
-}`, BuiltIn: false},
-	{Name: "../oauth.graphqls", Input: `input OauthRequestInput {
+}
+`, BuiltIn: false},
+	{Name: "../oauth.graphql", Input: `input OauthRequestInput {
   oatConnectionId: String!
   redirectUrl: String
   metadata: Map
@@ -888,7 +887,7 @@ extend type Mutation {
   oauthRequest(input: OauthRequestInput): String!
   oauthCallback(callbackUrl: String!): OauthCallbackResponse!
 }`, BuiltIn: false},
-	{Name: "../schema.graphqls", Input: `scalar Time
+	{Name: "../schema.graphql", Input: `scalar Time
 scalar Uint64
 scalar Map
 
@@ -901,7 +900,7 @@ type Mutation {
   ping: String!
 }
 `, BuiltIn: false},
-	{Name: "../workspace.graphqls", Input: `type Workspace {
+	{Name: "../workspace.graphql", Input: `type Workspace {
   id: ID!
   createdAt: Time!
   name: String!
