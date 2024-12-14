@@ -7,6 +7,7 @@ package resolverfn
 import (
 	"context"
 	"fmt"
+	"gql/graph/generated"
 	"gql/graph/model"
 	"lace/util"
 	"saas/gen/ent"
@@ -195,3 +196,8 @@ func (r *queryResolver) Me(ctx context.Context) (*ent.User, error) {
 
 	return cuser, nil
 }
+
+// Query returns generated.QueryResolver implementation.
+func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
+
+type queryResolver struct{ *Resolver }

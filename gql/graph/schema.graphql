@@ -1,9 +1,10 @@
 scalar Time
 scalar Uint64
 scalar Map
+scalar JSON
+scalar JsonSlice
 
-
-type Query {
+extend type Query {
   ping: String!
 }
 

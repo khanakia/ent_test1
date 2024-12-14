@@ -8,8 +8,16 @@ const (
 	UserRoleMember = "member"
 	UserRoleSa     = "sa"
 
+	// check if the current user has permission to perform the admin operations
 	DirectiveCanAdmin = "canAdmin"
-	DirectiveCanApp   = "canApp"
+
+	// check if current user belongs to the app or has permission for the query he requested
+	DirectiveCanApp = "canApp"
+
+	// DirectivePublicSkip = "publicSkip"
+
+	// define if the e.g. type Post {} can be in `gql/gql` go module eng.graphql
+	DirectiveAppGql = "appGql"
 
 	_ = iota
 	LockReadonly
