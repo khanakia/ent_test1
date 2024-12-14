@@ -1,6 +1,6 @@
 module configmgr
 
-go 1.21.6
+go 1.22.6
 
 require github.com/apple/pkl-go v0.6.0
 
