@@ -9060,6 +9060,7 @@ input WorkspaceWhereInput {
 `, BuiltIn: false},
 	{Name: "../schema.graphql", Input: `directive @canAdmin on FIELD_DEFINITION
 directive @canApp on FIELD_DEFINITION
+# directive @appGql on FIELD_DEFINITION
 
 scalar Time
 scalar Uint
