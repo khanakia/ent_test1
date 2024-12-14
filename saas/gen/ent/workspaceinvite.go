@@ -50,12 +50,10 @@ type WorkspaceInviteEdges struct {
 // WorkspaceOrErr returns the Workspace value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e WorkspaceInviteEdges) WorkspaceOrErr() (*Workspace, error) {
-	if e.loadedTypes[0] {
-		if e.Workspace == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: workspace.Label}
-		}
+	if e.Workspace != nil {
 		return e.Workspace, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: workspace.Label}
 	}
 	return nil, &NotLoadedError{edge: "workspace"}
 }

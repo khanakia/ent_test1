@@ -10,6 +10,7 @@ import (
 	"saas/gen/ent/predicate"
 	"saas/gen/ent/todo"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -111,7 +112,7 @@ func (tq *TodoQuery) QueryParent() *TodoQuery {
 // First returns the first Todo entity from the query.
 // Returns a *NotFoundError when no Todo was found.
 func (tq *TodoQuery) First(ctx context.Context) (*Todo, error) {
-	nodes, err := tq.Limit(1).All(setContextOp(ctx, tq.ctx, "First"))
+	nodes, err := tq.Limit(1).All(setContextOp(ctx, tq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +135,7 @@ func (tq *TodoQuery) FirstX(ctx context.Context) *Todo {
 // Returns a *NotFoundError when no Todo ID was found.
 func (tq *TodoQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = tq.Limit(1).IDs(setContextOp(ctx, tq.ctx, "FirstID")); err != nil {
+	if ids, err = tq.Limit(1).IDs(setContextOp(ctx, tq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -157,7 +158,7 @@ func (tq *TodoQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one Todo entity is found.
 // Returns a *NotFoundError when no Todo entities are found.
 func (tq *TodoQuery) Only(ctx context.Context) (*Todo, error) {
-	nodes, err := tq.Limit(2).All(setContextOp(ctx, tq.ctx, "Only"))
+	nodes, err := tq.Limit(2).All(setContextOp(ctx, tq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -185,7 +186,7 @@ func (tq *TodoQuery) OnlyX(ctx context.Context) *Todo {
 // Returns a *NotFoundError when no entities are found.
 func (tq *TodoQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = tq.Limit(2).IDs(setContextOp(ctx, tq.ctx, "OnlyID")); err != nil {
+	if ids, err = tq.Limit(2).IDs(setContextOp(ctx, tq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -210,7 +211,7 @@ func (tq *TodoQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of Todos.
 func (tq *TodoQuery) All(ctx context.Context) ([]*Todo, error) {
-	ctx = setContextOp(ctx, tq.ctx, "All")
+	ctx = setContextOp(ctx, tq.ctx, ent.OpQueryAll)
 	if err := tq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -232,7 +233,7 @@ func (tq *TodoQuery) IDs(ctx context.Context) (ids []string, err error) {
 	if tq.ctx.Unique == nil && tq.path != nil {
 		tq.Unique(true)
 	}
-	ctx = setContextOp(ctx, tq.ctx, "IDs")
+	ctx = setContextOp(ctx, tq.ctx, ent.OpQueryIDs)
 	if err = tq.Select(todo.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -250,7 +251,7 @@ func (tq *TodoQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (tq *TodoQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, tq.ctx, "Count")
+	ctx = setContextOp(ctx, tq.ctx, ent.OpQueryCount)
 	if err := tq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -268,7 +269,7 @@ func (tq *TodoQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (tq *TodoQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, tq.ctx, "Exist")
+	ctx = setContextOp(ctx, tq.ctx, ent.OpQueryExist)
 	switch _, err := tq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -303,8 +304,9 @@ func (tq *TodoQuery) Clone() *TodoQuery {
 		withChildren: tq.withChildren.Clone(),
 		withParent:   tq.withParent.Clone(),
 		// clone intermediate query.
-		sql:  tq.sql.Clone(),
-		path: tq.path,
+		sql:       tq.sql.Clone(),
+		path:      tq.path,
+		modifiers: append([]func(*sql.Selector){}, tq.modifiers...),
 	}
 }
 
@@ -654,7 +656,7 @@ func (tgb *TodoGroupBy) Aggregate(fns ...AggregateFunc) *TodoGroupBy {
 
 // Scan applies the selector query and scans the result into the given value.
 func (tgb *TodoGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, tgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, tgb.build.ctx, ent.OpQueryGroupBy)
 	if err := tgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -702,7 +704,7 @@ func (ts *TodoSelect) Aggregate(fns ...AggregateFunc) *TodoSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (ts *TodoSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ts.ctx, "Select")
+	ctx = setContextOp(ctx, ts.ctx, ent.OpQuerySelect)
 	if err := ts.prepareQuery(ctx); err != nil {
 		return err
 	}

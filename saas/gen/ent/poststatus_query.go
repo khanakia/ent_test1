@@ -12,6 +12,7 @@ import (
 	"saas/gen/ent/posttype"
 	"saas/gen/ent/predicate"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -112,7 +113,7 @@ func (psq *PostStatusQuery) QueryPosts() *PostQuery {
 // First returns the first PostStatus entity from the query.
 // Returns a *NotFoundError when no PostStatus was found.
 func (psq *PostStatusQuery) First(ctx context.Context) (*PostStatus, error) {
-	nodes, err := psq.Limit(1).All(setContextOp(ctx, psq.ctx, "First"))
+	nodes, err := psq.Limit(1).All(setContextOp(ctx, psq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -135,7 +136,7 @@ func (psq *PostStatusQuery) FirstX(ctx context.Context) *PostStatus {
 // Returns a *NotFoundError when no PostStatus ID was found.
 func (psq *PostStatusQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = psq.Limit(1).IDs(setContextOp(ctx, psq.ctx, "FirstID")); err != nil {
+	if ids, err = psq.Limit(1).IDs(setContextOp(ctx, psq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -158,7 +159,7 @@ func (psq *PostStatusQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one PostStatus entity is found.
 // Returns a *NotFoundError when no PostStatus entities are found.
 func (psq *PostStatusQuery) Only(ctx context.Context) (*PostStatus, error) {
-	nodes, err := psq.Limit(2).All(setContextOp(ctx, psq.ctx, "Only"))
+	nodes, err := psq.Limit(2).All(setContextOp(ctx, psq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -186,7 +187,7 @@ func (psq *PostStatusQuery) OnlyX(ctx context.Context) *PostStatus {
 // Returns a *NotFoundError when no entities are found.
 func (psq *PostStatusQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = psq.Limit(2).IDs(setContextOp(ctx, psq.ctx, "OnlyID")); err != nil {
+	if ids, err = psq.Limit(2).IDs(setContextOp(ctx, psq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -211,7 +212,7 @@ func (psq *PostStatusQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of PostStatusSlice.
 func (psq *PostStatusQuery) All(ctx context.Context) ([]*PostStatus, error) {
-	ctx = setContextOp(ctx, psq.ctx, "All")
+	ctx = setContextOp(ctx, psq.ctx, ent.OpQueryAll)
 	if err := psq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -233,7 +234,7 @@ func (psq *PostStatusQuery) IDs(ctx context.Context) (ids []string, err error) {
 	if psq.ctx.Unique == nil && psq.path != nil {
 		psq.Unique(true)
 	}
-	ctx = setContextOp(ctx, psq.ctx, "IDs")
+	ctx = setContextOp(ctx, psq.ctx, ent.OpQueryIDs)
 	if err = psq.Select(poststatus.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -251,7 +252,7 @@ func (psq *PostStatusQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (psq *PostStatusQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, psq.ctx, "Count")
+	ctx = setContextOp(ctx, psq.ctx, ent.OpQueryCount)
 	if err := psq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -269,7 +270,7 @@ func (psq *PostStatusQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (psq *PostStatusQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, psq.ctx, "Exist")
+	ctx = setContextOp(ctx, psq.ctx, ent.OpQueryExist)
 	switch _, err := psq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -304,8 +305,9 @@ func (psq *PostStatusQuery) Clone() *PostStatusQuery {
 		withPostType: psq.withPostType.Clone(),
 		withPosts:    psq.withPosts.Clone(),
 		// clone intermediate query.
-		sql:  psq.sql.Clone(),
-		path: psq.path,
+		sql:       psq.sql.Clone(),
+		path:      psq.path,
+		modifiers: append([]func(*sql.Selector){}, psq.modifiers...),
 	}
 }
 
@@ -647,7 +649,7 @@ func (psgb *PostStatusGroupBy) Aggregate(fns ...AggregateFunc) *PostStatusGroupB
 
 // Scan applies the selector query and scans the result into the given value.
 func (psgb *PostStatusGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, psgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, psgb.build.ctx, ent.OpQueryGroupBy)
 	if err := psgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -695,7 +697,7 @@ func (pss *PostStatusSelect) Aggregate(fns ...AggregateFunc) *PostStatusSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (pss *PostStatusSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, pss.ctx, "Select")
+	ctx = setContextOp(ctx, pss.ctx, ent.OpQuerySelect)
 	if err := pss.prepareQuery(ctx); err != nil {
 		return err
 	}

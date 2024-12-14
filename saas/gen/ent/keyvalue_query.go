@@ -9,6 +9,7 @@ import (
 	"saas/gen/ent/keyvalue"
 	"saas/gen/ent/predicate"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -62,7 +63,7 @@ func (kq *KeyvalueQuery) Order(o ...keyvalue.OrderOption) *KeyvalueQuery {
 // First returns the first Keyvalue entity from the query.
 // Returns a *NotFoundError when no Keyvalue was found.
 func (kq *KeyvalueQuery) First(ctx context.Context) (*Keyvalue, error) {
-	nodes, err := kq.Limit(1).All(setContextOp(ctx, kq.ctx, "First"))
+	nodes, err := kq.Limit(1).All(setContextOp(ctx, kq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +86,7 @@ func (kq *KeyvalueQuery) FirstX(ctx context.Context) *Keyvalue {
 // Returns a *NotFoundError when no Keyvalue ID was found.
 func (kq *KeyvalueQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = kq.Limit(1).IDs(setContextOp(ctx, kq.ctx, "FirstID")); err != nil {
+	if ids, err = kq.Limit(1).IDs(setContextOp(ctx, kq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -108,7 +109,7 @@ func (kq *KeyvalueQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one Keyvalue entity is found.
 // Returns a *NotFoundError when no Keyvalue entities are found.
 func (kq *KeyvalueQuery) Only(ctx context.Context) (*Keyvalue, error) {
-	nodes, err := kq.Limit(2).All(setContextOp(ctx, kq.ctx, "Only"))
+	nodes, err := kq.Limit(2).All(setContextOp(ctx, kq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +137,7 @@ func (kq *KeyvalueQuery) OnlyX(ctx context.Context) *Keyvalue {
 // Returns a *NotFoundError when no entities are found.
 func (kq *KeyvalueQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = kq.Limit(2).IDs(setContextOp(ctx, kq.ctx, "OnlyID")); err != nil {
+	if ids, err = kq.Limit(2).IDs(setContextOp(ctx, kq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -161,7 +162,7 @@ func (kq *KeyvalueQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of Keyvalues.
 func (kq *KeyvalueQuery) All(ctx context.Context) ([]*Keyvalue, error) {
-	ctx = setContextOp(ctx, kq.ctx, "All")
+	ctx = setContextOp(ctx, kq.ctx, ent.OpQueryAll)
 	if err := kq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -183,7 +184,7 @@ func (kq *KeyvalueQuery) IDs(ctx context.Context) (ids []string, err error) {
 	if kq.ctx.Unique == nil && kq.path != nil {
 		kq.Unique(true)
 	}
-	ctx = setContextOp(ctx, kq.ctx, "IDs")
+	ctx = setContextOp(ctx, kq.ctx, ent.OpQueryIDs)
 	if err = kq.Select(keyvalue.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -201,7 +202,7 @@ func (kq *KeyvalueQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (kq *KeyvalueQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, kq.ctx, "Count")
+	ctx = setContextOp(ctx, kq.ctx, ent.OpQueryCount)
 	if err := kq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -219,7 +220,7 @@ func (kq *KeyvalueQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (kq *KeyvalueQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, kq.ctx, "Exist")
+	ctx = setContextOp(ctx, kq.ctx, ent.OpQueryExist)
 	switch _, err := kq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -252,8 +253,9 @@ func (kq *KeyvalueQuery) Clone() *KeyvalueQuery {
 		inters:     append([]Interceptor{}, kq.inters...),
 		predicates: append([]predicate.Keyvalue{}, kq.predicates...),
 		// clone intermediate query.
-		sql:  kq.sql.Clone(),
-		path: kq.path,
+		sql:       kq.sql.Clone(),
+		path:      kq.path,
+		modifiers: append([]func(*sql.Selector){}, kq.modifiers...),
 	}
 }
 
@@ -471,7 +473,7 @@ func (kgb *KeyvalueGroupBy) Aggregate(fns ...AggregateFunc) *KeyvalueGroupBy {
 
 // Scan applies the selector query and scans the result into the given value.
 func (kgb *KeyvalueGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, kgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, kgb.build.ctx, ent.OpQueryGroupBy)
 	if err := kgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -519,7 +521,7 @@ func (ks *KeyvalueSelect) Aggregate(fns ...AggregateFunc) *KeyvalueSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (ks *KeyvalueSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ks.ctx, "Select")
+	ctx = setContextOp(ctx, ks.ctx, ent.OpQuerySelect)
 	if err := ks.prepareQuery(ctx); err != nil {
 		return err
 	}

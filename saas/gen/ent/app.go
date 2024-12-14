@@ -95,12 +95,10 @@ type AppEdges struct {
 // DefaultMailConnOrErr returns the DefaultMailConn value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e AppEdges) DefaultMailConnOrErr() (*MailConn, error) {
-	if e.loadedTypes[0] {
-		if e.DefaultMailConn == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: mailconn.Label}
-		}
+	if e.DefaultMailConn != nil {
 		return e.DefaultMailConn, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: mailconn.Label}
 	}
 	return nil, &NotLoadedError{edge: "default_mail_conn"}
 }
@@ -108,12 +106,10 @@ func (e AppEdges) DefaultMailConnOrErr() (*MailConn, error) {
 // MailLayoutTemplOrErr returns the MailLayoutTempl value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e AppEdges) MailLayoutTemplOrErr() (*Templ, error) {
-	if e.loadedTypes[1] {
-		if e.MailLayoutTempl == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: templ.Label}
-		}
+	if e.MailLayoutTempl != nil {
 		return e.MailLayoutTempl, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: templ.Label}
 	}
 	return nil, &NotLoadedError{edge: "mail_layout_templ"}
 }
@@ -121,12 +117,10 @@ func (e AppEdges) MailLayoutTemplOrErr() (*Templ, error) {
 // WsapceInviteTemplOrErr returns the WsapceInviteTempl value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e AppEdges) WsapceInviteTemplOrErr() (*Templ, error) {
-	if e.loadedTypes[2] {
-		if e.WsapceInviteTempl == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: templ.Label}
-		}
+	if e.WsapceInviteTempl != nil {
 		return e.WsapceInviteTempl, nil
+	} else if e.loadedTypes[2] {
+		return nil, &NotFoundError{label: templ.Label}
 	}
 	return nil, &NotLoadedError{edge: "wsapce_invite_templ"}
 }
@@ -134,12 +128,10 @@ func (e AppEdges) WsapceInviteTemplOrErr() (*Templ, error) {
 // WsapceSuccessTemplOrErr returns the WsapceSuccessTempl value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e AppEdges) WsapceSuccessTemplOrErr() (*Templ, error) {
-	if e.loadedTypes[3] {
-		if e.WsapceSuccessTempl == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: templ.Label}
-		}
+	if e.WsapceSuccessTempl != nil {
 		return e.WsapceSuccessTempl, nil
+	} else if e.loadedTypes[3] {
+		return nil, &NotFoundError{label: templ.Label}
 	}
 	return nil, &NotLoadedError{edge: "wsapce_success_templ"}
 }
@@ -147,12 +139,10 @@ func (e AppEdges) WsapceSuccessTemplOrErr() (*Templ, error) {
 // AuthFpTemplOrErr returns the AuthFpTempl value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e AppEdges) AuthFpTemplOrErr() (*Templ, error) {
-	if e.loadedTypes[4] {
-		if e.AuthFpTempl == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: templ.Label}
-		}
+	if e.AuthFpTempl != nil {
 		return e.AuthFpTempl, nil
+	} else if e.loadedTypes[4] {
+		return nil, &NotFoundError{label: templ.Label}
 	}
 	return nil, &NotLoadedError{edge: "auth_fp_templ"}
 }
@@ -160,12 +150,10 @@ func (e AppEdges) AuthFpTemplOrErr() (*Templ, error) {
 // AuthWelcomeEmailTemplOrErr returns the AuthWelcomeEmailTempl value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e AppEdges) AuthWelcomeEmailTemplOrErr() (*Templ, error) {
-	if e.loadedTypes[5] {
-		if e.AuthWelcomeEmailTempl == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: templ.Label}
-		}
+	if e.AuthWelcomeEmailTempl != nil {
 		return e.AuthWelcomeEmailTempl, nil
+	} else if e.loadedTypes[5] {
+		return nil, &NotFoundError{label: templ.Label}
 	}
 	return nil, &NotLoadedError{edge: "auth_welcome_email_templ"}
 }
@@ -173,12 +161,10 @@ func (e AppEdges) AuthWelcomeEmailTemplOrErr() (*Templ, error) {
 // AuthVerificationTemplOrErr returns the AuthVerificationTempl value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e AppEdges) AuthVerificationTemplOrErr() (*Templ, error) {
-	if e.loadedTypes[6] {
-		if e.AuthVerificationTempl == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: templ.Label}
-		}
+	if e.AuthVerificationTempl != nil {
 		return e.AuthVerificationTempl, nil
+	} else if e.loadedTypes[6] {
+		return nil, &NotFoundError{label: templ.Label}
 	}
 	return nil, &NotLoadedError{edge: "auth_verification_templ"}
 }

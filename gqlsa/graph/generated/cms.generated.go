@@ -50,421 +50,975 @@ type MutationResolver interface {
 func (ec *executionContext) field_Mutation_adminAuthLogin_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 model.LoginInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNLoginInput2gqlsaᚋgraphᚋmodelᚐLoginInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_adminAuthLogin_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_adminAuthLogin_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (model.LoginInput, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["input"]
+	if !ok {
+		var zeroVal model.LoginInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNLoginInput2gqlsaᚋgraphᚋmodelᚐLoginInput(ctx, tmp)
+	}
+
+	var zeroVal model.LoginInput
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_createApp_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 ent.CreateAppInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreateAppInput2saasᚋgenᚋentᚐCreateAppInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_createApp_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_createApp_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (ent.CreateAppInput, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["input"]
+	if !ok {
+		var zeroVal ent.CreateAppInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNCreateAppInput2saasᚋgenᚋentᚐCreateAppInput(ctx, tmp)
+	}
+
+	var zeroVal ent.CreateAppInput
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_createMailConn_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 ent.CreateMailConnInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreateMailConnInput2saasᚋgenᚋentᚐCreateMailConnInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_createMailConn_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_createMailConn_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (ent.CreateMailConnInput, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["input"]
+	if !ok {
+		var zeroVal ent.CreateMailConnInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNCreateMailConnInput2saasᚋgenᚋentᚐCreateMailConnInput(ctx, tmp)
+	}
+
+	var zeroVal ent.CreateMailConnInput
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_createOauthConnection_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 ent.CreateOauthConnectionInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreateOauthConnectionInput2saasᚋgenᚋentᚐCreateOauthConnectionInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_createOauthConnection_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_createOauthConnection_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (ent.CreateOauthConnectionInput, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["input"]
+	if !ok {
+		var zeroVal ent.CreateOauthConnectionInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNCreateOauthConnectionInput2saasᚋgenᚋentᚐCreateOauthConnectionInput(ctx, tmp)
+	}
+
+	var zeroVal ent.CreateOauthConnectionInput
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_createPostCategory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 ent.CreatePostCategoryInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreatePostCategoryInput2saasᚋgenᚋentᚐCreatePostCategoryInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_createPostCategory_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_createPostCategory_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (ent.CreatePostCategoryInput, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["input"]
+	if !ok {
+		var zeroVal ent.CreatePostCategoryInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNCreatePostCategoryInput2saasᚋgenᚋentᚐCreatePostCategoryInput(ctx, tmp)
+	}
+
+	var zeroVal ent.CreatePostCategoryInput
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_createPostStatus_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 ent.CreatePostStatusInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreatePostStatusInput2saasᚋgenᚋentᚐCreatePostStatusInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_createPostStatus_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_createPostStatus_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (ent.CreatePostStatusInput, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["input"]
+	if !ok {
+		var zeroVal ent.CreatePostStatusInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNCreatePostStatusInput2saasᚋgenᚋentᚐCreatePostStatusInput(ctx, tmp)
+	}
+
+	var zeroVal ent.CreatePostStatusInput
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_createPostTag_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 ent.CreatePostTagInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreatePostTagInput2saasᚋgenᚋentᚐCreatePostTagInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_createPostTag_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_createPostTag_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (ent.CreatePostTagInput, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["input"]
+	if !ok {
+		var zeroVal ent.CreatePostTagInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNCreatePostTagInput2saasᚋgenᚋentᚐCreatePostTagInput(ctx, tmp)
+	}
+
+	var zeroVal ent.CreatePostTagInput
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_createPostTypeForm_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 ent.CreatePostTypeFormInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreatePostTypeFormInput2saasᚋgenᚋentᚐCreatePostTypeFormInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_createPostTypeForm_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_createPostTypeForm_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (ent.CreatePostTypeFormInput, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["input"]
+	if !ok {
+		var zeroVal ent.CreatePostTypeFormInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNCreatePostTypeFormInput2saasᚋgenᚋentᚐCreatePostTypeFormInput(ctx, tmp)
+	}
+
+	var zeroVal ent.CreatePostTypeFormInput
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_createPostType_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 ent.CreatePostTypeInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreatePostTypeInput2saasᚋgenᚋentᚐCreatePostTypeInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_createPostType_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_createPostType_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (ent.CreatePostTypeInput, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["input"]
+	if !ok {
+		var zeroVal ent.CreatePostTypeInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNCreatePostTypeInput2saasᚋgenᚋentᚐCreatePostTypeInput(ctx, tmp)
+	}
+
+	var zeroVal ent.CreatePostTypeInput
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_createPost_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 ent.CreatePostInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreatePostInput2saasᚋgenᚋentᚐCreatePostInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_createPost_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_createPost_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (ent.CreatePostInput, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["input"]
+	if !ok {
+		var zeroVal ent.CreatePostInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNCreatePostInput2saasᚋgenᚋentᚐCreatePostInput(ctx, tmp)
+	}
+
+	var zeroVal ent.CreatePostInput
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_createTempl_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 ent.CreateTemplInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg0, err = ec.unmarshalNCreateTemplInput2saasᚋgenᚋentᚐCreateTemplInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_createTempl_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg0
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_createTempl_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (ent.CreateTemplInput, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["input"]
+	if !ok {
+		var zeroVal ent.CreateTemplInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNCreateTemplInput2saasᚋgenᚋentᚐCreateTemplInput(ctx, tmp)
+	}
+
+	var zeroVal ent.CreateTemplInput
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_deletePostCategory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_deletePostCategory_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_deletePostCategory_argsID(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (string, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["id"]
+	if !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNID2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_updateApp_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_updateApp_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
-	var arg1 ent.UpdateAppInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalNUpdateAppInput2saasᚋgenᚋentᚐUpdateAppInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := ec.field_Mutation_updateApp_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg1
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_updateApp_argsID(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (string, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["id"]
+	if !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNID2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updateApp_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (ent.UpdateAppInput, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["input"]
+	if !ok {
+		var zeroVal ent.UpdateAppInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNUpdateAppInput2saasᚋgenᚋentᚐUpdateAppInput(ctx, tmp)
+	}
+
+	var zeroVal ent.UpdateAppInput
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_updateMailConn_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_updateMailConn_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
-	var arg1 ent.UpdateMailConnInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalNUpdateMailConnInput2saasᚋgenᚋentᚐUpdateMailConnInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := ec.field_Mutation_updateMailConn_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg1
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_updateMailConn_argsID(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (string, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["id"]
+	if !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNID2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updateMailConn_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (ent.UpdateMailConnInput, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["input"]
+	if !ok {
+		var zeroVal ent.UpdateMailConnInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNUpdateMailConnInput2saasᚋgenᚋentᚐUpdateMailConnInput(ctx, tmp)
+	}
+
+	var zeroVal ent.UpdateMailConnInput
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_updateOauthConnection_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_updateOauthConnection_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
-	var arg1 ent.UpdateOauthConnectionInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalNUpdateOauthConnectionInput2saasᚋgenᚋentᚐUpdateOauthConnectionInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := ec.field_Mutation_updateOauthConnection_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg1
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_updateOauthConnection_argsID(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (string, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["id"]
+	if !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNID2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updateOauthConnection_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (ent.UpdateOauthConnectionInput, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["input"]
+	if !ok {
+		var zeroVal ent.UpdateOauthConnectionInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNUpdateOauthConnectionInput2saasᚋgenᚋentᚐUpdateOauthConnectionInput(ctx, tmp)
+	}
+
+	var zeroVal ent.UpdateOauthConnectionInput
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_updatePostCategory_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_updatePostCategory_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
-	var arg1 ent.UpdatePostCategoryInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalNUpdatePostCategoryInput2saasᚋgenᚋentᚐUpdatePostCategoryInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := ec.field_Mutation_updatePostCategory_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg1
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_updatePostCategory_argsID(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (string, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["id"]
+	if !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNID2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updatePostCategory_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (ent.UpdatePostCategoryInput, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["input"]
+	if !ok {
+		var zeroVal ent.UpdatePostCategoryInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNUpdatePostCategoryInput2saasᚋgenᚋentᚐUpdatePostCategoryInput(ctx, tmp)
+	}
+
+	var zeroVal ent.UpdatePostCategoryInput
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_updatePostStatus_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_updatePostStatus_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
-	var arg1 ent.UpdatePostStatusInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalNUpdatePostStatusInput2saasᚋgenᚋentᚐUpdatePostStatusInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := ec.field_Mutation_updatePostStatus_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg1
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_updatePostStatus_argsID(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (string, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["id"]
+	if !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNID2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updatePostStatus_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (ent.UpdatePostStatusInput, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["input"]
+	if !ok {
+		var zeroVal ent.UpdatePostStatusInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNUpdatePostStatusInput2saasᚋgenᚋentᚐUpdatePostStatusInput(ctx, tmp)
+	}
+
+	var zeroVal ent.UpdatePostStatusInput
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_updatePostTag_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_updatePostTag_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
-	var arg1 ent.UpdatePostTagInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalNUpdatePostTagInput2saasᚋgenᚋentᚐUpdatePostTagInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := ec.field_Mutation_updatePostTag_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg1
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_updatePostTag_argsID(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (string, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["id"]
+	if !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNID2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updatePostTag_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (ent.UpdatePostTagInput, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["input"]
+	if !ok {
+		var zeroVal ent.UpdatePostTagInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNUpdatePostTagInput2saasᚋgenᚋentᚐUpdatePostTagInput(ctx, tmp)
+	}
+
+	var zeroVal ent.UpdatePostTagInput
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_updatePostTypeForm_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_updatePostTypeForm_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
-	var arg1 ent.UpdatePostTypeFormInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalNUpdatePostTypeFormInput2saasᚋgenᚋentᚐUpdatePostTypeFormInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := ec.field_Mutation_updatePostTypeForm_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg1
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_updatePostTypeForm_argsID(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (string, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["id"]
+	if !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNID2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updatePostTypeForm_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (ent.UpdatePostTypeFormInput, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["input"]
+	if !ok {
+		var zeroVal ent.UpdatePostTypeFormInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNUpdatePostTypeFormInput2saasᚋgenᚋentᚐUpdatePostTypeFormInput(ctx, tmp)
+	}
+
+	var zeroVal ent.UpdatePostTypeFormInput
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_updatePostType_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_updatePostType_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
-	var arg1 ent.UpdatePostTypeInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalNUpdatePostTypeInput2saasᚋgenᚋentᚐUpdatePostTypeInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := ec.field_Mutation_updatePostType_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg1
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_updatePostType_argsID(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (string, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["id"]
+	if !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNID2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updatePostType_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (ent.UpdatePostTypeInput, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["input"]
+	if !ok {
+		var zeroVal ent.UpdatePostTypeInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNUpdatePostTypeInput2saasᚋgenᚋentᚐUpdatePostTypeInput(ctx, tmp)
+	}
+
+	var zeroVal ent.UpdatePostTypeInput
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_updatePost_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_updatePost_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
-	var arg1 ent.UpdatePostInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalNUpdatePostInput2saasᚋgenᚋentᚐUpdatePostInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := ec.field_Mutation_updatePost_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg1
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_updatePost_argsID(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (string, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["id"]
+	if !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNID2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updatePost_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (ent.UpdatePostInput, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["input"]
+	if !ok {
+		var zeroVal ent.UpdatePostInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNUpdatePostInput2saasᚋgenᚋentᚐUpdatePostInput(ctx, tmp)
+	}
+
+	var zeroVal ent.UpdatePostInput
+	return zeroVal, nil
 }
 
 func (ec *executionContext) field_Mutation_updateTempl_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["id"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalNID2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg0, err := ec.field_Mutation_updateTempl_argsID(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["id"] = arg0
-	var arg1 ent.UpdateTemplInput
-	if tmp, ok := rawArgs["input"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
-		arg1, err = ec.unmarshalNUpdateTemplInput2saasᚋgenᚋentᚐUpdateTemplInput(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
+	arg1, err := ec.field_Mutation_updateTempl_argsInput(ctx, rawArgs)
+	if err != nil {
+		return nil, err
 	}
 	args["input"] = arg1
 	return args, nil
+}
+func (ec *executionContext) field_Mutation_updateTempl_argsID(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (string, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["id"]
+	if !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+	if tmp, ok := rawArgs["id"]; ok {
+		return ec.unmarshalNID2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_updateTempl_argsInput(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (ent.UpdateTemplInput, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["input"]
+	if !ok {
+		var zeroVal ent.UpdateTemplInput
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("input"))
+	if tmp, ok := rawArgs["input"]; ok {
+		return ec.unmarshalNUpdateTemplInput2saasᚋgenᚋentᚐUpdateTemplInput(ctx, tmp)
+	}
+
+	var zeroVal ent.UpdateTemplInput
+	return zeroVal, nil
 }
 
 // endregion ***************************** args.gotpl *****************************
@@ -492,9 +1046,11 @@ func (ec *executionContext) _Mutation_createPostType(ctx context.Context, field 
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().CreatePostType(rctx, fc.Args["input"].(ent.CreatePostTypeInput))
 		}
+
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.CanApp == nil {
-				return nil, errors.New("directive canApp is not implemented")
+				var zeroVal *ent.PostType
+				return zeroVal, errors.New("directive canApp is not implemented")
 			}
 			return ec.directives.CanApp(ctx, nil, directive0)
 		}
@@ -601,9 +1157,11 @@ func (ec *executionContext) _Mutation_updatePostType(ctx context.Context, field 
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().UpdatePostType(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdatePostTypeInput))
 		}
+
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.CanApp == nil {
-				return nil, errors.New("directive canApp is not implemented")
+				var zeroVal *ent.PostType
+				return zeroVal, errors.New("directive canApp is not implemented")
 			}
 			return ec.directives.CanApp(ctx, nil, directive0)
 		}
@@ -710,9 +1268,11 @@ func (ec *executionContext) _Mutation_createPostStatus(ctx context.Context, fiel
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().CreatePostStatus(rctx, fc.Args["input"].(ent.CreatePostStatusInput))
 		}
+
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.CanApp == nil {
-				return nil, errors.New("directive canApp is not implemented")
+				var zeroVal *ent.PostStatus
+				return zeroVal, errors.New("directive canApp is not implemented")
 			}
 			return ec.directives.CanApp(ctx, nil, directive0)
 		}
@@ -807,9 +1367,11 @@ func (ec *executionContext) _Mutation_updatePostStatus(ctx context.Context, fiel
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().UpdatePostStatus(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdatePostStatusInput))
 		}
+
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.CanApp == nil {
-				return nil, errors.New("directive canApp is not implemented")
+				var zeroVal *ent.PostStatus
+				return zeroVal, errors.New("directive canApp is not implemented")
 			}
 			return ec.directives.CanApp(ctx, nil, directive0)
 		}
@@ -904,9 +1466,11 @@ func (ec *executionContext) _Mutation_createPostCategory(ctx context.Context, fi
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().CreatePostCategory(rctx, fc.Args["input"].(ent.CreatePostCategoryInput))
 		}
+
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.CanApp == nil {
-				return nil, errors.New("directive canApp is not implemented")
+				var zeroVal *ent.PostCategory
+				return zeroVal, errors.New("directive canApp is not implemented")
 			}
 			return ec.directives.CanApp(ctx, nil, directive0)
 		}
@@ -1015,9 +1579,11 @@ func (ec *executionContext) _Mutation_updatePostCategory(ctx context.Context, fi
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().UpdatePostCategory(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdatePostCategoryInput))
 		}
+
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.CanApp == nil {
-				return nil, errors.New("directive canApp is not implemented")
+				var zeroVal *ent.PostCategory
+				return zeroVal, errors.New("directive canApp is not implemented")
 			}
 			return ec.directives.CanApp(ctx, nil, directive0)
 		}
@@ -1126,9 +1692,11 @@ func (ec *executionContext) _Mutation_deletePostCategory(ctx context.Context, fi
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().DeletePostCategory(rctx, fc.Args["id"].(string))
 		}
+
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.CanApp == nil {
-				return nil, errors.New("directive canApp is not implemented")
+				var zeroVal bool
+				return zeroVal, errors.New("directive canApp is not implemented")
 			}
 			return ec.directives.CanApp(ctx, nil, directive0)
 		}
@@ -1201,9 +1769,11 @@ func (ec *executionContext) _Mutation_createPost(ctx context.Context, field grap
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().CreatePost(rctx, fc.Args["input"].(ent.CreatePostInput))
 		}
+
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.CanApp == nil {
-				return nil, errors.New("directive canApp is not implemented")
+				var zeroVal *ent.Post
+				return zeroVal, errors.New("directive canApp is not implemented")
 			}
 			return ec.directives.CanApp(ctx, nil, directive0)
 		}
@@ -1320,9 +1890,11 @@ func (ec *executionContext) _Mutation_updatePost(ctx context.Context, field grap
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().UpdatePost(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdatePostInput))
 		}
+
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.CanApp == nil {
-				return nil, errors.New("directive canApp is not implemented")
+				var zeroVal *ent.Post
+				return zeroVal, errors.New("directive canApp is not implemented")
 			}
 			return ec.directives.CanApp(ctx, nil, directive0)
 		}
@@ -1439,9 +2011,11 @@ func (ec *executionContext) _Mutation_createPostTag(ctx context.Context, field g
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().CreatePostTag(rctx, fc.Args["input"].(ent.CreatePostTagInput))
 		}
+
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.CanApp == nil {
-				return nil, errors.New("directive canApp is not implemented")
+				var zeroVal *ent.PostTag
+				return zeroVal, errors.New("directive canApp is not implemented")
 			}
 			return ec.directives.CanApp(ctx, nil, directive0)
 		}
@@ -1542,9 +2116,11 @@ func (ec *executionContext) _Mutation_updatePostTag(ctx context.Context, field g
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().UpdatePostTag(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdatePostTagInput))
 		}
+
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.CanApp == nil {
-				return nil, errors.New("directive canApp is not implemented")
+				var zeroVal *ent.PostTag
+				return zeroVal, errors.New("directive canApp is not implemented")
 			}
 			return ec.directives.CanApp(ctx, nil, directive0)
 		}
@@ -1645,9 +2221,11 @@ func (ec *executionContext) _Mutation_createPostTypeForm(ctx context.Context, fi
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().CreatePostTypeForm(rctx, fc.Args["input"].(ent.CreatePostTypeFormInput))
 		}
+
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.CanApp == nil {
-				return nil, errors.New("directive canApp is not implemented")
+				var zeroVal *ent.PostTypeForm
+				return zeroVal, errors.New("directive canApp is not implemented")
 			}
 			return ec.directives.CanApp(ctx, nil, directive0)
 		}
@@ -1740,9 +2318,11 @@ func (ec *executionContext) _Mutation_updatePostTypeForm(ctx context.Context, fi
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().UpdatePostTypeForm(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdatePostTypeFormInput))
 		}
+
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.CanApp == nil {
-				return nil, errors.New("directive canApp is not implemented")
+				var zeroVal *ent.PostTypeForm
+				return zeroVal, errors.New("directive canApp is not implemented")
 			}
 			return ec.directives.CanApp(ctx, nil, directive0)
 		}
@@ -1896,9 +2476,11 @@ func (ec *executionContext) _Mutation_createApp(ctx context.Context, field graph
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().CreateApp(rctx, fc.Args["input"].(ent.CreateAppInput))
 		}
+
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.CanAdmin == nil {
-				return nil, errors.New("directive canAdmin is not implemented")
+				var zeroVal *ent.App
+				return zeroVal, errors.New("directive canAdmin is not implemented")
 			}
 			return ec.directives.CanAdmin(ctx, nil, directive0)
 		}
@@ -2033,9 +2615,11 @@ func (ec *executionContext) _Mutation_updateApp(ctx context.Context, field graph
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().UpdateApp(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdateAppInput))
 		}
+
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.CanAdmin == nil {
-				return nil, errors.New("directive canAdmin is not implemented")
+				var zeroVal *ent.App
+				return zeroVal, errors.New("directive canAdmin is not implemented")
 			}
 			return ec.directives.CanAdmin(ctx, nil, directive0)
 		}
@@ -2170,9 +2754,11 @@ func (ec *executionContext) _Mutation_createOauthConnection(ctx context.Context,
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().CreateOauthConnection(rctx, fc.Args["input"].(ent.CreateOauthConnectionInput))
 		}
+
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.CanApp == nil {
-				return nil, errors.New("directive canApp is not implemented")
+				var zeroVal *ent.OauthConnection
+				return zeroVal, errors.New("directive canApp is not implemented")
 			}
 			return ec.directives.CanApp(ctx, nil, directive0)
 		}
@@ -2273,9 +2859,11 @@ func (ec *executionContext) _Mutation_updateOauthConnection(ctx context.Context,
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().UpdateOauthConnection(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdateOauthConnectionInput))
 		}
+
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.CanApp == nil {
-				return nil, errors.New("directive canApp is not implemented")
+				var zeroVal *ent.OauthConnection
+				return zeroVal, errors.New("directive canApp is not implemented")
 			}
 			return ec.directives.CanApp(ctx, nil, directive0)
 		}
@@ -2376,9 +2964,11 @@ func (ec *executionContext) _Mutation_createMailConn(ctx context.Context, field 
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().CreateMailConn(rctx, fc.Args["input"].(ent.CreateMailConnInput))
 		}
+
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.CanApp == nil {
-				return nil, errors.New("directive canApp is not implemented")
+				var zeroVal *ent.MailConn
+				return zeroVal, errors.New("directive canApp is not implemented")
 			}
 			return ec.directives.CanApp(ctx, nil, directive0)
 		}
@@ -2479,9 +3069,11 @@ func (ec *executionContext) _Mutation_updateMailConn(ctx context.Context, field 
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().UpdateMailConn(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdateMailConnInput))
 		}
+
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.CanApp == nil {
-				return nil, errors.New("directive canApp is not implemented")
+				var zeroVal *ent.MailConn
+				return zeroVal, errors.New("directive canApp is not implemented")
 			}
 			return ec.directives.CanApp(ctx, nil, directive0)
 		}
@@ -2582,9 +3174,11 @@ func (ec *executionContext) _Mutation_createTempl(ctx context.Context, field gra
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().CreateTempl(rctx, fc.Args["input"].(ent.CreateTemplInput))
 		}
+
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.CanApp == nil {
-				return nil, errors.New("directive canApp is not implemented")
+				var zeroVal *ent.Templ
+				return zeroVal, errors.New("directive canApp is not implemented")
 			}
 			return ec.directives.CanApp(ctx, nil, directive0)
 		}
@@ -2675,9 +3269,11 @@ func (ec *executionContext) _Mutation_updateTempl(ctx context.Context, field gra
 			ctx = rctx // use context from middleware stack in children
 			return ec.resolvers.Mutation().UpdateTempl(rctx, fc.Args["id"].(string), fc.Args["input"].(ent.UpdateTemplInput))
 		}
+
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.CanApp == nil {
-				return nil, errors.New("directive canApp is not implemented")
+				var zeroVal *ent.Templ
+				return zeroVal, errors.New("directive canApp is not implemented")
 			}
 			return ec.directives.CanApp(ctx, nil, directive0)
 		}

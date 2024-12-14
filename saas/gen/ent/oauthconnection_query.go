@@ -9,6 +9,7 @@ import (
 	"saas/gen/ent/oauthconnection"
 	"saas/gen/ent/predicate"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -62,7 +63,7 @@ func (ocq *OauthConnectionQuery) Order(o ...oauthconnection.OrderOption) *OauthC
 // First returns the first OauthConnection entity from the query.
 // Returns a *NotFoundError when no OauthConnection was found.
 func (ocq *OauthConnectionQuery) First(ctx context.Context) (*OauthConnection, error) {
-	nodes, err := ocq.Limit(1).All(setContextOp(ctx, ocq.ctx, "First"))
+	nodes, err := ocq.Limit(1).All(setContextOp(ctx, ocq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +86,7 @@ func (ocq *OauthConnectionQuery) FirstX(ctx context.Context) *OauthConnection {
 // Returns a *NotFoundError when no OauthConnection ID was found.
 func (ocq *OauthConnectionQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = ocq.Limit(1).IDs(setContextOp(ctx, ocq.ctx, "FirstID")); err != nil {
+	if ids, err = ocq.Limit(1).IDs(setContextOp(ctx, ocq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -108,7 +109,7 @@ func (ocq *OauthConnectionQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one OauthConnection entity is found.
 // Returns a *NotFoundError when no OauthConnection entities are found.
 func (ocq *OauthConnectionQuery) Only(ctx context.Context) (*OauthConnection, error) {
-	nodes, err := ocq.Limit(2).All(setContextOp(ctx, ocq.ctx, "Only"))
+	nodes, err := ocq.Limit(2).All(setContextOp(ctx, ocq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +137,7 @@ func (ocq *OauthConnectionQuery) OnlyX(ctx context.Context) *OauthConnection {
 // Returns a *NotFoundError when no entities are found.
 func (ocq *OauthConnectionQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = ocq.Limit(2).IDs(setContextOp(ctx, ocq.ctx, "OnlyID")); err != nil {
+	if ids, err = ocq.Limit(2).IDs(setContextOp(ctx, ocq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -161,7 +162,7 @@ func (ocq *OauthConnectionQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of OauthConnections.
 func (ocq *OauthConnectionQuery) All(ctx context.Context) ([]*OauthConnection, error) {
-	ctx = setContextOp(ctx, ocq.ctx, "All")
+	ctx = setContextOp(ctx, ocq.ctx, ent.OpQueryAll)
 	if err := ocq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -183,7 +184,7 @@ func (ocq *OauthConnectionQuery) IDs(ctx context.Context) (ids []string, err err
 	if ocq.ctx.Unique == nil && ocq.path != nil {
 		ocq.Unique(true)
 	}
-	ctx = setContextOp(ctx, ocq.ctx, "IDs")
+	ctx = setContextOp(ctx, ocq.ctx, ent.OpQueryIDs)
 	if err = ocq.Select(oauthconnection.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -201,7 +202,7 @@ func (ocq *OauthConnectionQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (ocq *OauthConnectionQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, ocq.ctx, "Count")
+	ctx = setContextOp(ctx, ocq.ctx, ent.OpQueryCount)
 	if err := ocq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -219,7 +220,7 @@ func (ocq *OauthConnectionQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (ocq *OauthConnectionQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, ocq.ctx, "Exist")
+	ctx = setContextOp(ctx, ocq.ctx, ent.OpQueryExist)
 	switch _, err := ocq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -252,8 +253,9 @@ func (ocq *OauthConnectionQuery) Clone() *OauthConnectionQuery {
 		inters:     append([]Interceptor{}, ocq.inters...),
 		predicates: append([]predicate.OauthConnection{}, ocq.predicates...),
 		// clone intermediate query.
-		sql:  ocq.sql.Clone(),
-		path: ocq.path,
+		sql:       ocq.sql.Clone(),
+		path:      ocq.path,
+		modifiers: append([]func(*sql.Selector){}, ocq.modifiers...),
 	}
 }
 
@@ -471,7 +473,7 @@ func (ocgb *OauthConnectionGroupBy) Aggregate(fns ...AggregateFunc) *OauthConnec
 
 // Scan applies the selector query and scans the result into the given value.
 func (ocgb *OauthConnectionGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ocgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, ocgb.build.ctx, ent.OpQueryGroupBy)
 	if err := ocgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -519,7 +521,7 @@ func (ocs *OauthConnectionSelect) Aggregate(fns ...AggregateFunc) *OauthConnecti
 
 // Scan applies the selector query and scans the result into the given value.
 func (ocs *OauthConnectionSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ocs.ctx, "Select")
+	ctx = setContextOp(ctx, ocs.ctx, ent.OpQuerySelect)
 	if err := ocs.prepareQuery(ctx); err != nil {
 		return err
 	}

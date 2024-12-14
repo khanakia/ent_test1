@@ -11,6 +11,7 @@ import (
 	"saas/gen/ent/posttag"
 	"saas/gen/ent/predicate"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -88,7 +89,7 @@ func (ptq *PostTagQuery) QueryPosts() *PostQuery {
 // First returns the first PostTag entity from the query.
 // Returns a *NotFoundError when no PostTag was found.
 func (ptq *PostTagQuery) First(ctx context.Context) (*PostTag, error) {
-	nodes, err := ptq.Limit(1).All(setContextOp(ctx, ptq.ctx, "First"))
+	nodes, err := ptq.Limit(1).All(setContextOp(ctx, ptq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -111,7 +112,7 @@ func (ptq *PostTagQuery) FirstX(ctx context.Context) *PostTag {
 // Returns a *NotFoundError when no PostTag ID was found.
 func (ptq *PostTagQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = ptq.Limit(1).IDs(setContextOp(ctx, ptq.ctx, "FirstID")); err != nil {
+	if ids, err = ptq.Limit(1).IDs(setContextOp(ctx, ptq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -134,7 +135,7 @@ func (ptq *PostTagQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one PostTag entity is found.
 // Returns a *NotFoundError when no PostTag entities are found.
 func (ptq *PostTagQuery) Only(ctx context.Context) (*PostTag, error) {
-	nodes, err := ptq.Limit(2).All(setContextOp(ctx, ptq.ctx, "Only"))
+	nodes, err := ptq.Limit(2).All(setContextOp(ctx, ptq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -162,7 +163,7 @@ func (ptq *PostTagQuery) OnlyX(ctx context.Context) *PostTag {
 // Returns a *NotFoundError when no entities are found.
 func (ptq *PostTagQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = ptq.Limit(2).IDs(setContextOp(ctx, ptq.ctx, "OnlyID")); err != nil {
+	if ids, err = ptq.Limit(2).IDs(setContextOp(ctx, ptq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -187,7 +188,7 @@ func (ptq *PostTagQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of PostTags.
 func (ptq *PostTagQuery) All(ctx context.Context) ([]*PostTag, error) {
-	ctx = setContextOp(ctx, ptq.ctx, "All")
+	ctx = setContextOp(ctx, ptq.ctx, ent.OpQueryAll)
 	if err := ptq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -209,7 +210,7 @@ func (ptq *PostTagQuery) IDs(ctx context.Context) (ids []string, err error) {
 	if ptq.ctx.Unique == nil && ptq.path != nil {
 		ptq.Unique(true)
 	}
-	ctx = setContextOp(ctx, ptq.ctx, "IDs")
+	ctx = setContextOp(ctx, ptq.ctx, ent.OpQueryIDs)
 	if err = ptq.Select(posttag.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -227,7 +228,7 @@ func (ptq *PostTagQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (ptq *PostTagQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, ptq.ctx, "Count")
+	ctx = setContextOp(ctx, ptq.ctx, ent.OpQueryCount)
 	if err := ptq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -245,7 +246,7 @@ func (ptq *PostTagQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (ptq *PostTagQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, ptq.ctx, "Exist")
+	ctx = setContextOp(ctx, ptq.ctx, ent.OpQueryExist)
 	switch _, err := ptq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -279,8 +280,9 @@ func (ptq *PostTagQuery) Clone() *PostTagQuery {
 		predicates: append([]predicate.PostTag{}, ptq.predicates...),
 		withPosts:  ptq.withPosts.Clone(),
 		// clone intermediate query.
-		sql:  ptq.sql.Clone(),
-		path: ptq.path,
+		sql:       ptq.sql.Clone(),
+		path:      ptq.path,
+		modifiers: append([]func(*sql.Selector){}, ptq.modifiers...),
 	}
 }
 
@@ -603,7 +605,7 @@ func (ptgb *PostTagGroupBy) Aggregate(fns ...AggregateFunc) *PostTagGroupBy {
 
 // Scan applies the selector query and scans the result into the given value.
 func (ptgb *PostTagGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ptgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, ptgb.build.ctx, ent.OpQueryGroupBy)
 	if err := ptgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -651,7 +653,7 @@ func (pts *PostTagSelect) Aggregate(fns ...AggregateFunc) *PostTagSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (pts *PostTagSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, pts.ctx, "Select")
+	ctx = setContextOp(ctx, pts.ctx, ent.OpQuerySelect)
 	if err := pts.prepareQuery(ctx); err != nil {
 		return err
 	}

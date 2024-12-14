@@ -11,6 +11,7 @@ import (
 	"saas/gen/ent/postcategory"
 	"saas/gen/ent/predicate"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -135,7 +136,7 @@ func (pcq *PostCategoryQuery) QueryChildren() *PostCategoryQuery {
 // First returns the first PostCategory entity from the query.
 // Returns a *NotFoundError when no PostCategory was found.
 func (pcq *PostCategoryQuery) First(ctx context.Context) (*PostCategory, error) {
-	nodes, err := pcq.Limit(1).All(setContextOp(ctx, pcq.ctx, "First"))
+	nodes, err := pcq.Limit(1).All(setContextOp(ctx, pcq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -158,7 +159,7 @@ func (pcq *PostCategoryQuery) FirstX(ctx context.Context) *PostCategory {
 // Returns a *NotFoundError when no PostCategory ID was found.
 func (pcq *PostCategoryQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = pcq.Limit(1).IDs(setContextOp(ctx, pcq.ctx, "FirstID")); err != nil {
+	if ids, err = pcq.Limit(1).IDs(setContextOp(ctx, pcq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -181,7 +182,7 @@ func (pcq *PostCategoryQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one PostCategory entity is found.
 // Returns a *NotFoundError when no PostCategory entities are found.
 func (pcq *PostCategoryQuery) Only(ctx context.Context) (*PostCategory, error) {
-	nodes, err := pcq.Limit(2).All(setContextOp(ctx, pcq.ctx, "Only"))
+	nodes, err := pcq.Limit(2).All(setContextOp(ctx, pcq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -209,7 +210,7 @@ func (pcq *PostCategoryQuery) OnlyX(ctx context.Context) *PostCategory {
 // Returns a *NotFoundError when no entities are found.
 func (pcq *PostCategoryQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = pcq.Limit(2).IDs(setContextOp(ctx, pcq.ctx, "OnlyID")); err != nil {
+	if ids, err = pcq.Limit(2).IDs(setContextOp(ctx, pcq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -234,7 +235,7 @@ func (pcq *PostCategoryQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of PostCategories.
 func (pcq *PostCategoryQuery) All(ctx context.Context) ([]*PostCategory, error) {
-	ctx = setContextOp(ctx, pcq.ctx, "All")
+	ctx = setContextOp(ctx, pcq.ctx, ent.OpQueryAll)
 	if err := pcq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -256,7 +257,7 @@ func (pcq *PostCategoryQuery) IDs(ctx context.Context) (ids []string, err error)
 	if pcq.ctx.Unique == nil && pcq.path != nil {
 		pcq.Unique(true)
 	}
-	ctx = setContextOp(ctx, pcq.ctx, "IDs")
+	ctx = setContextOp(ctx, pcq.ctx, ent.OpQueryIDs)
 	if err = pcq.Select(postcategory.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -274,7 +275,7 @@ func (pcq *PostCategoryQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (pcq *PostCategoryQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, pcq.ctx, "Count")
+	ctx = setContextOp(ctx, pcq.ctx, ent.OpQueryCount)
 	if err := pcq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -292,7 +293,7 @@ func (pcq *PostCategoryQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (pcq *PostCategoryQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, pcq.ctx, "Exist")
+	ctx = setContextOp(ctx, pcq.ctx, ent.OpQueryExist)
 	switch _, err := pcq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -328,8 +329,9 @@ func (pcq *PostCategoryQuery) Clone() *PostCategoryQuery {
 		withParent:   pcq.withParent.Clone(),
 		withChildren: pcq.withChildren.Clone(),
 		// clone intermediate query.
-		sql:  pcq.sql.Clone(),
-		path: pcq.path,
+		sql:       pcq.sql.Clone(),
+		path:      pcq.path,
+		modifiers: append([]func(*sql.Selector){}, pcq.modifiers...),
 	}
 }
 
@@ -741,7 +743,7 @@ func (pcgb *PostCategoryGroupBy) Aggregate(fns ...AggregateFunc) *PostCategoryGr
 
 // Scan applies the selector query and scans the result into the given value.
 func (pcgb *PostCategoryGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, pcgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, pcgb.build.ctx, ent.OpQueryGroupBy)
 	if err := pcgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -789,7 +791,7 @@ func (pcs *PostCategorySelect) Aggregate(fns ...AggregateFunc) *PostCategorySele
 
 // Scan applies the selector query and scans the result into the given value.
 func (pcs *PostCategorySelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, pcs.ctx, "Select")
+	ctx = setContextOp(ctx, pcs.ctx, ent.OpQuerySelect)
 	if err := pcs.prepareQuery(ctx); err != nil {
 		return err
 	}

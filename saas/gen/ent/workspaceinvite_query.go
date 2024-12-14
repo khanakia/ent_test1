@@ -10,6 +10,7 @@ import (
 	"saas/gen/ent/workspace"
 	"saas/gen/ent/workspaceinvite"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -86,7 +87,7 @@ func (wiq *WorkspaceInviteQuery) QueryWorkspace() *WorkspaceQuery {
 // First returns the first WorkspaceInvite entity from the query.
 // Returns a *NotFoundError when no WorkspaceInvite was found.
 func (wiq *WorkspaceInviteQuery) First(ctx context.Context) (*WorkspaceInvite, error) {
-	nodes, err := wiq.Limit(1).All(setContextOp(ctx, wiq.ctx, "First"))
+	nodes, err := wiq.Limit(1).All(setContextOp(ctx, wiq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +110,7 @@ func (wiq *WorkspaceInviteQuery) FirstX(ctx context.Context) *WorkspaceInvite {
 // Returns a *NotFoundError when no WorkspaceInvite ID was found.
 func (wiq *WorkspaceInviteQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = wiq.Limit(1).IDs(setContextOp(ctx, wiq.ctx, "FirstID")); err != nil {
+	if ids, err = wiq.Limit(1).IDs(setContextOp(ctx, wiq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -132,7 +133,7 @@ func (wiq *WorkspaceInviteQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one WorkspaceInvite entity is found.
 // Returns a *NotFoundError when no WorkspaceInvite entities are found.
 func (wiq *WorkspaceInviteQuery) Only(ctx context.Context) (*WorkspaceInvite, error) {
-	nodes, err := wiq.Limit(2).All(setContextOp(ctx, wiq.ctx, "Only"))
+	nodes, err := wiq.Limit(2).All(setContextOp(ctx, wiq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -160,7 +161,7 @@ func (wiq *WorkspaceInviteQuery) OnlyX(ctx context.Context) *WorkspaceInvite {
 // Returns a *NotFoundError when no entities are found.
 func (wiq *WorkspaceInviteQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = wiq.Limit(2).IDs(setContextOp(ctx, wiq.ctx, "OnlyID")); err != nil {
+	if ids, err = wiq.Limit(2).IDs(setContextOp(ctx, wiq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -185,7 +186,7 @@ func (wiq *WorkspaceInviteQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of WorkspaceInvites.
 func (wiq *WorkspaceInviteQuery) All(ctx context.Context) ([]*WorkspaceInvite, error) {
-	ctx = setContextOp(ctx, wiq.ctx, "All")
+	ctx = setContextOp(ctx, wiq.ctx, ent.OpQueryAll)
 	if err := wiq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -207,7 +208,7 @@ func (wiq *WorkspaceInviteQuery) IDs(ctx context.Context) (ids []string, err err
 	if wiq.ctx.Unique == nil && wiq.path != nil {
 		wiq.Unique(true)
 	}
-	ctx = setContextOp(ctx, wiq.ctx, "IDs")
+	ctx = setContextOp(ctx, wiq.ctx, ent.OpQueryIDs)
 	if err = wiq.Select(workspaceinvite.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -225,7 +226,7 @@ func (wiq *WorkspaceInviteQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (wiq *WorkspaceInviteQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, wiq.ctx, "Count")
+	ctx = setContextOp(ctx, wiq.ctx, ent.OpQueryCount)
 	if err := wiq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -243,7 +244,7 @@ func (wiq *WorkspaceInviteQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (wiq *WorkspaceInviteQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, wiq.ctx, "Exist")
+	ctx = setContextOp(ctx, wiq.ctx, ent.OpQueryExist)
 	switch _, err := wiq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -277,8 +278,9 @@ func (wiq *WorkspaceInviteQuery) Clone() *WorkspaceInviteQuery {
 		predicates:    append([]predicate.WorkspaceInvite{}, wiq.predicates...),
 		withWorkspace: wiq.withWorkspace.Clone(),
 		// clone intermediate query.
-		sql:  wiq.sql.Clone(),
-		path: wiq.path,
+		sql:       wiq.sql.Clone(),
+		path:      wiq.path,
+		modifiers: append([]func(*sql.Selector){}, wiq.modifiers...),
 	}
 }
 
@@ -550,7 +552,7 @@ func (wigb *WorkspaceInviteGroupBy) Aggregate(fns ...AggregateFunc) *WorkspaceIn
 
 // Scan applies the selector query and scans the result into the given value.
 func (wigb *WorkspaceInviteGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, wigb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, wigb.build.ctx, ent.OpQueryGroupBy)
 	if err := wigb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -598,7 +600,7 @@ func (wis *WorkspaceInviteSelect) Aggregate(fns ...AggregateFunc) *WorkspaceInvi
 
 // Scan applies the selector query and scans the result into the given value.
 func (wis *WorkspaceInviteSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, wis.ctx, "Select")
+	ctx = setContextOp(ctx, wis.ctx, ent.OpQuerySelect)
 	if err := wis.prepareQuery(ctx); err != nil {
 		return err
 	}

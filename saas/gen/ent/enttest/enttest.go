@@ -4,6 +4,7 @@ package enttest
 
 import (
 	"context"
+
 	"saas/gen/ent"
 	// required by schema hooks.
 	_ "saas/gen/ent/runtime"

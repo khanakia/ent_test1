@@ -81,12 +81,10 @@ type PostEdges struct {
 // PostStatusOrErr returns the PostStatus value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e PostEdges) PostStatusOrErr() (*PostStatus, error) {
-	if e.loadedTypes[0] {
-		if e.PostStatus == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: poststatus.Label}
-		}
+	if e.PostStatus != nil {
 		return e.PostStatus, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: poststatus.Label}
 	}
 	return nil, &NotLoadedError{edge: "post_status"}
 }
@@ -94,12 +92,10 @@ func (e PostEdges) PostStatusOrErr() (*PostStatus, error) {
 // PostTypeOrErr returns the PostType value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e PostEdges) PostTypeOrErr() (*PostType, error) {
-	if e.loadedTypes[1] {
-		if e.PostType == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: posttype.Label}
-		}
+	if e.PostType != nil {
 		return e.PostType, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: posttype.Label}
 	}
 	return nil, &NotLoadedError{edge: "post_type"}
 }
@@ -107,12 +103,10 @@ func (e PostEdges) PostTypeOrErr() (*PostType, error) {
 // PrimaryCategoryOrErr returns the PrimaryCategory value or an error if the edge
 // was not loaded in eager-loading, or loaded but was not found.
 func (e PostEdges) PrimaryCategoryOrErr() (*PostCategory, error) {
-	if e.loadedTypes[2] {
-		if e.PrimaryCategory == nil {
-			// Edge was loaded but was not found.
-			return nil, &NotFoundError{label: postcategory.Label}
-		}
+	if e.PrimaryCategory != nil {
 		return e.PrimaryCategory, nil
+	} else if e.loadedTypes[2] {
+		return nil, &NotFoundError{label: postcategory.Label}
 	}
 	return nil, &NotLoadedError{edge: "primary_category"}
 }

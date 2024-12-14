@@ -9,6 +9,7 @@ import (
 	"saas/gen/ent/adminuser"
 	"saas/gen/ent/predicate"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -62,7 +63,7 @@ func (auq *AdminUserQuery) Order(o ...adminuser.OrderOption) *AdminUserQuery {
 // First returns the first AdminUser entity from the query.
 // Returns a *NotFoundError when no AdminUser was found.
 func (auq *AdminUserQuery) First(ctx context.Context) (*AdminUser, error) {
-	nodes, err := auq.Limit(1).All(setContextOp(ctx, auq.ctx, "First"))
+	nodes, err := auq.Limit(1).All(setContextOp(ctx, auq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +86,7 @@ func (auq *AdminUserQuery) FirstX(ctx context.Context) *AdminUser {
 // Returns a *NotFoundError when no AdminUser ID was found.
 func (auq *AdminUserQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = auq.Limit(1).IDs(setContextOp(ctx, auq.ctx, "FirstID")); err != nil {
+	if ids, err = auq.Limit(1).IDs(setContextOp(ctx, auq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -108,7 +109,7 @@ func (auq *AdminUserQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one AdminUser entity is found.
 // Returns a *NotFoundError when no AdminUser entities are found.
 func (auq *AdminUserQuery) Only(ctx context.Context) (*AdminUser, error) {
-	nodes, err := auq.Limit(2).All(setContextOp(ctx, auq.ctx, "Only"))
+	nodes, err := auq.Limit(2).All(setContextOp(ctx, auq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +137,7 @@ func (auq *AdminUserQuery) OnlyX(ctx context.Context) *AdminUser {
 // Returns a *NotFoundError when no entities are found.
 func (auq *AdminUserQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = auq.Limit(2).IDs(setContextOp(ctx, auq.ctx, "OnlyID")); err != nil {
+	if ids, err = auq.Limit(2).IDs(setContextOp(ctx, auq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -161,7 +162,7 @@ func (auq *AdminUserQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of AdminUsers.
 func (auq *AdminUserQuery) All(ctx context.Context) ([]*AdminUser, error) {
-	ctx = setContextOp(ctx, auq.ctx, "All")
+	ctx = setContextOp(ctx, auq.ctx, ent.OpQueryAll)
 	if err := auq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -183,7 +184,7 @@ func (auq *AdminUserQuery) IDs(ctx context.Context) (ids []string, err error) {
 	if auq.ctx.Unique == nil && auq.path != nil {
 		auq.Unique(true)
 	}
-	ctx = setContextOp(ctx, auq.ctx, "IDs")
+	ctx = setContextOp(ctx, auq.ctx, ent.OpQueryIDs)
 	if err = auq.Select(adminuser.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -201,7 +202,7 @@ func (auq *AdminUserQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (auq *AdminUserQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, auq.ctx, "Count")
+	ctx = setContextOp(ctx, auq.ctx, ent.OpQueryCount)
 	if err := auq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -219,7 +220,7 @@ func (auq *AdminUserQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (auq *AdminUserQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, auq.ctx, "Exist")
+	ctx = setContextOp(ctx, auq.ctx, ent.OpQueryExist)
 	switch _, err := auq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -252,8 +253,9 @@ func (auq *AdminUserQuery) Clone() *AdminUserQuery {
 		inters:     append([]Interceptor{}, auq.inters...),
 		predicates: append([]predicate.AdminUser{}, auq.predicates...),
 		// clone intermediate query.
-		sql:  auq.sql.Clone(),
-		path: auq.path,
+		sql:       auq.sql.Clone(),
+		path:      auq.path,
+		modifiers: append([]func(*sql.Selector){}, auq.modifiers...),
 	}
 }
 
@@ -471,7 +473,7 @@ func (augb *AdminUserGroupBy) Aggregate(fns ...AggregateFunc) *AdminUserGroupBy 
 
 // Scan applies the selector query and scans the result into the given value.
 func (augb *AdminUserGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, augb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, augb.build.ctx, ent.OpQueryGroupBy)
 	if err := augb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -519,7 +521,7 @@ func (aus *AdminUserSelect) Aggregate(fns ...AggregateFunc) *AdminUserSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (aus *AdminUserSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, aus.ctx, "Select")
+	ctx = setContextOp(ctx, aus.ctx, ent.OpQuerySelect)
 	if err := aus.prepareQuery(ctx); err != nil {
 		return err
 	}

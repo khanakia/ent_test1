@@ -174,10 +174,10 @@ func (wuc *WorkspaceUserCreate) check() error {
 	if _, ok := wuc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "WorkspaceUser.user_id"`)}
 	}
-	if _, ok := wuc.mutation.UserID(); !ok {
+	if len(wuc.mutation.UserIDs()) == 0 {
 		return &ValidationError{Name: "user", err: errors.New(`ent: missing required edge "WorkspaceUser.user"`)}
 	}
-	if _, ok := wuc.mutation.WorkspaceID(); !ok {
+	if len(wuc.mutation.WorkspaceIDs()) == 0 {
 		return &ValidationError{Name: "workspace", err: errors.New(`ent: missing required edge "WorkspaceUser.workspace"`)}
 	}
 	return nil

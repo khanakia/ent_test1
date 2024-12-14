@@ -9,6 +9,7 @@ import (
 	"saas/gen/ent/mailconn"
 	"saas/gen/ent/predicate"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -62,7 +63,7 @@ func (mcq *MailConnQuery) Order(o ...mailconn.OrderOption) *MailConnQuery {
 // First returns the first MailConn entity from the query.
 // Returns a *NotFoundError when no MailConn was found.
 func (mcq *MailConnQuery) First(ctx context.Context) (*MailConn, error) {
-	nodes, err := mcq.Limit(1).All(setContextOp(ctx, mcq.ctx, "First"))
+	nodes, err := mcq.Limit(1).All(setContextOp(ctx, mcq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +86,7 @@ func (mcq *MailConnQuery) FirstX(ctx context.Context) *MailConn {
 // Returns a *NotFoundError when no MailConn ID was found.
 func (mcq *MailConnQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = mcq.Limit(1).IDs(setContextOp(ctx, mcq.ctx, "FirstID")); err != nil {
+	if ids, err = mcq.Limit(1).IDs(setContextOp(ctx, mcq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -108,7 +109,7 @@ func (mcq *MailConnQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one MailConn entity is found.
 // Returns a *NotFoundError when no MailConn entities are found.
 func (mcq *MailConnQuery) Only(ctx context.Context) (*MailConn, error) {
-	nodes, err := mcq.Limit(2).All(setContextOp(ctx, mcq.ctx, "Only"))
+	nodes, err := mcq.Limit(2).All(setContextOp(ctx, mcq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -136,7 +137,7 @@ func (mcq *MailConnQuery) OnlyX(ctx context.Context) *MailConn {
 // Returns a *NotFoundError when no entities are found.
 func (mcq *MailConnQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = mcq.Limit(2).IDs(setContextOp(ctx, mcq.ctx, "OnlyID")); err != nil {
+	if ids, err = mcq.Limit(2).IDs(setContextOp(ctx, mcq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -161,7 +162,7 @@ func (mcq *MailConnQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of MailConns.
 func (mcq *MailConnQuery) All(ctx context.Context) ([]*MailConn, error) {
-	ctx = setContextOp(ctx, mcq.ctx, "All")
+	ctx = setContextOp(ctx, mcq.ctx, ent.OpQueryAll)
 	if err := mcq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -183,7 +184,7 @@ func (mcq *MailConnQuery) IDs(ctx context.Context) (ids []string, err error) {
 	if mcq.ctx.Unique == nil && mcq.path != nil {
 		mcq.Unique(true)
 	}
-	ctx = setContextOp(ctx, mcq.ctx, "IDs")
+	ctx = setContextOp(ctx, mcq.ctx, ent.OpQueryIDs)
 	if err = mcq.Select(mailconn.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -201,7 +202,7 @@ func (mcq *MailConnQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (mcq *MailConnQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, mcq.ctx, "Count")
+	ctx = setContextOp(ctx, mcq.ctx, ent.OpQueryCount)
 	if err := mcq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -219,7 +220,7 @@ func (mcq *MailConnQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (mcq *MailConnQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, mcq.ctx, "Exist")
+	ctx = setContextOp(ctx, mcq.ctx, ent.OpQueryExist)
 	switch _, err := mcq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -252,8 +253,9 @@ func (mcq *MailConnQuery) Clone() *MailConnQuery {
 		inters:     append([]Interceptor{}, mcq.inters...),
 		predicates: append([]predicate.MailConn{}, mcq.predicates...),
 		// clone intermediate query.
-		sql:  mcq.sql.Clone(),
-		path: mcq.path,
+		sql:       mcq.sql.Clone(),
+		path:      mcq.path,
+		modifiers: append([]func(*sql.Selector){}, mcq.modifiers...),
 	}
 }
 
@@ -471,7 +473,7 @@ func (mcgb *MailConnGroupBy) Aggregate(fns ...AggregateFunc) *MailConnGroupBy {
 
 // Scan applies the selector query and scans the result into the given value.
 func (mcgb *MailConnGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, mcgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, mcgb.build.ctx, ent.OpQueryGroupBy)
 	if err := mcgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -519,7 +521,7 @@ func (mcs *MailConnSelect) Aggregate(fns ...AggregateFunc) *MailConnSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (mcs *MailConnSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, mcs.ctx, "Select")
+	ctx = setContextOp(ctx, mcs.ctx, ent.OpQuerySelect)
 	if err := mcs.prepareQuery(ctx); err != nil {
 		return err
 	}

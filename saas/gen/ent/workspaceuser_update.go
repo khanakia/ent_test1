@@ -176,10 +176,10 @@ func (wuu *WorkspaceUserUpdate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (wuu *WorkspaceUserUpdate) check() error {
-	if _, ok := wuu.mutation.UserID(); wuu.mutation.UserCleared() && !ok {
+	if wuu.mutation.UserCleared() && len(wuu.mutation.UserIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "WorkspaceUser.user"`)
 	}
-	if _, ok := wuu.mutation.WorkspaceID(); wuu.mutation.WorkspaceCleared() && !ok {
+	if wuu.mutation.WorkspaceCleared() && len(wuu.mutation.WorkspaceIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "WorkspaceUser.workspace"`)
 	}
 	return nil
@@ -462,10 +462,10 @@ func (wuuo *WorkspaceUserUpdateOne) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (wuuo *WorkspaceUserUpdateOne) check() error {
-	if _, ok := wuuo.mutation.UserID(); wuuo.mutation.UserCleared() && !ok {
+	if wuuo.mutation.UserCleared() && len(wuuo.mutation.UserIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "WorkspaceUser.user"`)
 	}
-	if _, ok := wuuo.mutation.WorkspaceID(); wuuo.mutation.WorkspaceCleared() && !ok {
+	if wuuo.mutation.WorkspaceCleared() && len(wuuo.mutation.WorkspaceIDs()) > 0 {
 		return errors.New(`ent: clearing a required unique edge "WorkspaceUser.workspace"`)
 	}
 	return nil

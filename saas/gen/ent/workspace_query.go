@@ -13,6 +13,7 @@ import (
 	"saas/gen/ent/workspaceinvite"
 	"saas/gen/ent/workspaceuser"
 
+	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -138,7 +139,7 @@ func (wq *WorkspaceQuery) QueryWorkspaceUsers() *WorkspaceUserQuery {
 // First returns the first Workspace entity from the query.
 // Returns a *NotFoundError when no Workspace was found.
 func (wq *WorkspaceQuery) First(ctx context.Context) (*Workspace, error) {
-	nodes, err := wq.Limit(1).All(setContextOp(ctx, wq.ctx, "First"))
+	nodes, err := wq.Limit(1).All(setContextOp(ctx, wq.ctx, ent.OpQueryFirst))
 	if err != nil {
 		return nil, err
 	}
@@ -161,7 +162,7 @@ func (wq *WorkspaceQuery) FirstX(ctx context.Context) *Workspace {
 // Returns a *NotFoundError when no Workspace ID was found.
 func (wq *WorkspaceQuery) FirstID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = wq.Limit(1).IDs(setContextOp(ctx, wq.ctx, "FirstID")); err != nil {
+	if ids, err = wq.Limit(1).IDs(setContextOp(ctx, wq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
 	if len(ids) == 0 {
@@ -184,7 +185,7 @@ func (wq *WorkspaceQuery) FirstIDX(ctx context.Context) string {
 // Returns a *NotSingularError when more than one Workspace entity is found.
 // Returns a *NotFoundError when no Workspace entities are found.
 func (wq *WorkspaceQuery) Only(ctx context.Context) (*Workspace, error) {
-	nodes, err := wq.Limit(2).All(setContextOp(ctx, wq.ctx, "Only"))
+	nodes, err := wq.Limit(2).All(setContextOp(ctx, wq.ctx, ent.OpQueryOnly))
 	if err != nil {
 		return nil, err
 	}
@@ -212,7 +213,7 @@ func (wq *WorkspaceQuery) OnlyX(ctx context.Context) *Workspace {
 // Returns a *NotFoundError when no entities are found.
 func (wq *WorkspaceQuery) OnlyID(ctx context.Context) (id string, err error) {
 	var ids []string
-	if ids, err = wq.Limit(2).IDs(setContextOp(ctx, wq.ctx, "OnlyID")); err != nil {
+	if ids, err = wq.Limit(2).IDs(setContextOp(ctx, wq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
 	switch len(ids) {
@@ -237,7 +238,7 @@ func (wq *WorkspaceQuery) OnlyIDX(ctx context.Context) string {
 
 // All executes the query and returns a list of Workspaces.
 func (wq *WorkspaceQuery) All(ctx context.Context) ([]*Workspace, error) {
-	ctx = setContextOp(ctx, wq.ctx, "All")
+	ctx = setContextOp(ctx, wq.ctx, ent.OpQueryAll)
 	if err := wq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
@@ -259,7 +260,7 @@ func (wq *WorkspaceQuery) IDs(ctx context.Context) (ids []string, err error) {
 	if wq.ctx.Unique == nil && wq.path != nil {
 		wq.Unique(true)
 	}
-	ctx = setContextOp(ctx, wq.ctx, "IDs")
+	ctx = setContextOp(ctx, wq.ctx, ent.OpQueryIDs)
 	if err = wq.Select(workspace.FieldID).Scan(ctx, &ids); err != nil {
 		return nil, err
 	}
@@ -277,7 +278,7 @@ func (wq *WorkspaceQuery) IDsX(ctx context.Context) []string {
 
 // Count returns the count of the given query.
 func (wq *WorkspaceQuery) Count(ctx context.Context) (int, error) {
-	ctx = setContextOp(ctx, wq.ctx, "Count")
+	ctx = setContextOp(ctx, wq.ctx, ent.OpQueryCount)
 	if err := wq.prepareQuery(ctx); err != nil {
 		return 0, err
 	}
@@ -295,7 +296,7 @@ func (wq *WorkspaceQuery) CountX(ctx context.Context) int {
 
 // Exist returns true if the query has elements in the graph.
 func (wq *WorkspaceQuery) Exist(ctx context.Context) (bool, error) {
-	ctx = setContextOp(ctx, wq.ctx, "Exist")
+	ctx = setContextOp(ctx, wq.ctx, ent.OpQueryExist)
 	switch _, err := wq.FirstID(ctx); {
 	case IsNotFound(err):
 		return false, nil
@@ -331,8 +332,9 @@ func (wq *WorkspaceQuery) Clone() *WorkspaceQuery {
 		withWorkspaceInvites: wq.withWorkspaceInvites.Clone(),
 		withWorkspaceUsers:   wq.withWorkspaceUsers.Clone(),
 		// clone intermediate query.
-		sql:  wq.sql.Clone(),
-		path: wq.path,
+		sql:       wq.sql.Clone(),
+		path:      wq.path,
+		modifiers: append([]func(*sql.Selector){}, wq.modifiers...),
 	}
 }
 
@@ -795,7 +797,7 @@ func (wgb *WorkspaceGroupBy) Aggregate(fns ...AggregateFunc) *WorkspaceGroupBy {
 
 // Scan applies the selector query and scans the result into the given value.
 func (wgb *WorkspaceGroupBy) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, wgb.build.ctx, "GroupBy")
+	ctx = setContextOp(ctx, wgb.build.ctx, ent.OpQueryGroupBy)
 	if err := wgb.build.prepareQuery(ctx); err != nil {
 		return err
 	}
@@ -843,7 +845,7 @@ func (ws *WorkspaceSelect) Aggregate(fns ...AggregateFunc) *WorkspaceSelect {
 
 // Scan applies the selector query and scans the result into the given value.
 func (ws *WorkspaceSelect) Scan(ctx context.Context, v any) error {
-	ctx = setContextOp(ctx, ws.ctx, "Select")
+	ctx = setContextOp(ctx, ws.ctx, ent.OpQuerySelect)
 	if err := ws.prepareQuery(ctx); err != nil {
 		return err
 	}
