@@ -518,6 +518,7 @@ input CreateAppInput {
   authFpTemplID: ID
   authWelcomeEmailTemplID: ID
   authVerificationTemplID: ID
+  adminUserIDs: [ID!]
 }
 """
 CreateMailConnInput is used for create MailConn object.
@@ -4354,6 +4355,9 @@ input UpdateAppInput {
   clearAuthWelcomeEmailTempl: Boolean
   authVerificationTemplID: ID
   clearAuthVerificationTempl: Boolean
+  addAdminUserIDs: [ID!]
+  removeAdminUserIDs: [ID!]
+  clearAdminUser: Boolean
 }
 """
 UpdateMailConnInput is used for update MailConn object.

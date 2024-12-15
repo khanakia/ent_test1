@@ -8,6 +8,8 @@ const (
 	UserRoleMember = "member"
 	UserRoleSa     = "sa"
 
+	DefaultAppID = "a1"
+
 	// check if the current user has permission to perform the admin operations
 	DirectiveCanAdmin = "canAdmin"
 

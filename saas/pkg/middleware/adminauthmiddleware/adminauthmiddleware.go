@@ -7,6 +7,7 @@ import (
 	"lace/gqlgenfn"
 	"net/http"
 	"saas/gen/ent"
+	"saas/gen/ent/adminuser"
 	"saas/pkg/adminauth"
 	"strings"
 
@@ -96,10 +97,56 @@ func setUserHandler(c *gin.Context, client *ent.Client) error {
 func MiddlewareSilent(client *ent.Client) gin.HandlerFunc {
 	return func(c *gin.Context) {
 
+		// if user is set by API KEY then just pass through
+		_, err := GetUserFromGinCtx(c)
+		if err == nil {
+			c.Next()
+			return
+		}
+
 		setUserHandler(c, client)
 
 		c.Next()
 	}
+}
+
+func MiddlewareApiKeySilent(client *ent.Client) gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		setUserFromApiKeyHandler(c, client)
+
+		c.Next()
+	}
+}
+
+func setUserFromApiKeyHandler(c *gin.Context, client *ent.Client) error {
+
+	token := c.Query("x-key")
+
+	xat := c.Request.Header.Get("x-key")
+	if len(xat) > 0 {
+		token = xat
+	}
+
+	token = strings.TrimSpace(token)
+
+	if len(token) == 0 {
+		return fmt.Errorf("no token provided")
+	}
+
+	user, err := client.AdminUser.Query().Where(adminuser.APIKey(token)).First(c)
+
+	if err != nil {
+		// capture the error so we can pass the same to gql handler cuser, err := middleware.GetUserFromGqlCtx(ctx)
+		// and show the actual error not just generic error i.e. `access_denied`
+		c.Set(UserError, err.Error())
+
+		return err
+	}
+
+	c.Set(User, user)
+
+	return nil
 }
 
 // for some routes we need to validate the authorization and fail if auth is not valid

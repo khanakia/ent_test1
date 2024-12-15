@@ -73,6 +73,10 @@ func (App) Edges() []ent.Edge {
 		edge.To("auth_verification_templ", Templ.Type).
 			Field("auth_verification_templ_id").
 			Unique(),
+
+		edge.From("admin_user", AdminUser.Type).
+			Ref("apps").
+			Through("app_users", AppUser.Type),
 	}
 
 }

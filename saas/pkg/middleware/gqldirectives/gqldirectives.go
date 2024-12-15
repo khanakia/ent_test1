@@ -3,6 +3,8 @@ package gqldirectives
 import (
 	"context"
 	"fmt"
+	"saas/gen/ent/appuser"
+	"saas/pkg/apppermfn"
 	"saas/pkg/middleware/adminauthmiddleware"
 	"saas/pkg/middleware/appmiddleware"
 
@@ -37,9 +39,20 @@ func CanAppDirective(ctx context.Context, obj interface{}, next graphql.Resolver
 		return nil, fmt.Errorf("app not found")
 	}
 
-	if app.AdminUserID != cuser.ID {
+	appUser, err := app.QueryAppUsers().Where(appuser.AdminUserID(cuser.ID)).First(ctx)
+
+	if err != nil {
 		return nil, fmt.Errorf("app access denied")
 	}
+
+	perms, err := appUser.QueryAppRole().QueryAppRolePerms().All(ctx)
+
+	if err != nil {
+		return nil, fmt.Errorf("error fetcching permission")
+	}
+
+	// set permissions to ctx
+	apppermfn.SetPermissionToGinCtx(ctx, perms)
 
 	// or let it pass through
 	return next(ctx)

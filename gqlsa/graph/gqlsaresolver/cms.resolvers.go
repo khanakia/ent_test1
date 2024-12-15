@@ -6,6 +6,7 @@ package gqlsaresolver
 
 import (
 	"context"
+	"fmt"
 	"gqlsa/graph/generated"
 	"saas/gen/ent"
 	"saas/gen/ent/post"
@@ -14,6 +15,7 @@ import (
 	"saas/gen/ent/posttag"
 	"saas/gen/ent/posttype"
 	"saas/gen/ent/posttypeform"
+	"saas/pkg/apppermfn"
 	"saas/pkg/middleware/adminauthmiddleware"
 	"saas/pkg/middleware/appmiddleware"
 )
@@ -109,9 +111,8 @@ func (r *mutationResolver) DeletePostCategory(ctx context.Context, id string) (b
 
 // CreatePost is the resolver for the createPost field.
 func (r *mutationResolver) CreatePost(ctx context.Context, input ent.CreatePostInput) (*ent.Post, error) {
-	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
-	if cuser == nil {
-		return nil, err
+	if apppermfn.CanCreate(ctx, apppermfn.CreatePost) != nil {
+		return nil, fmt.Errorf("permission denied")
 	}
 
 	app := appmiddleware.MustGetAppFromGqlCtx(ctx)
@@ -121,9 +122,8 @@ func (r *mutationResolver) CreatePost(ctx context.Context, input ent.CreatePostI
 
 // UpdatePost is the resolver for the updatePost field.
 func (r *mutationResolver) UpdatePost(ctx context.Context, id string, input ent.UpdatePostInput) (*ent.Post, error) {
-	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
-	if cuser == nil {
-		return nil, err
+	if apppermfn.CanUpdate(ctx, apppermfn.UpdatePost) != nil {
+		return nil, fmt.Errorf("permission denied")
 	}
 
 	app := appmiddleware.MustGetAppFromGqlCtx(ctx)

@@ -10,7 +10,6 @@ import (
 	"gqlsa/graph/generated"
 	"reflect"
 	"saas/gen/ent"
-	"saas/gen/ent/app"
 	"saas/gen/ent/mailconn"
 	"saas/gen/ent/media"
 	"saas/gen/ent/oauthconnection"
@@ -26,6 +25,7 @@ import (
 	"saas/gen/ent/workspace"
 	"saas/gen/ent/workspaceinvite"
 	"saas/gen/ent/workspaceuser"
+	"saas/pkg/apppermfn"
 	"saas/pkg/middleware/adminauthmiddleware"
 	"saas/pkg/middleware/appmiddleware"
 	"strings"
@@ -118,12 +118,17 @@ func (r *queryResolver) Apps(ctx context.Context, after *entgql.Cursor[string], 
 		return nil, err
 	}
 
-	return r.Plugin.EntDB.Client().App.Query().
-		Where(app.AdminUserID(cuser.ID)).
-		Paginate(ctx, after, first, before, last,
-			// ent.WithAppOrder(orderBy),
-			ent.WithAppFilter(where.Filter),
-		)
+	return cuser.QueryApps().Paginate(ctx, after, first, before, last,
+		// ent.WithAppOrder(orderBy),
+		ent.WithAppFilter(where.Filter),
+	)
+
+	// return r.Plugin.EntDB.Client().App.Query().
+	// 	Where(app.AdminUserID(cuser.ID)).
+	// 	Paginate(ctx, after, first, before, last,
+	// 		// ent.WithAppOrder(orderBy),
+	// 		ent.WithAppFilter(where.Filter),
+	// 	)
 }
 
 // MailConns is the resolver for the mailConns field.
@@ -177,9 +182,8 @@ func (r *queryResolver) OauthConnections(ctx context.Context, after *entgql.Curs
 
 // Posts is the resolver for the posts field.
 func (r *queryResolver) Posts(ctx context.Context, after *entgql.Cursor[string], first *int, before *entgql.Cursor[string], last *int, orderBy []*ent.PostOrder, where *ent.PostWhereInput) (*ent.PostConnection, error) {
-	cuser, err := adminauthmiddleware.GetUserFromGqlCtx(ctx)
-	if cuser == nil {
-		return nil, err
+	if apppermfn.CanRead(ctx, apppermfn.ReadPost) != nil {
+		return nil, fmt.Errorf("permission denied")
 	}
 
 	app := appmiddleware.MustGetAppFromGqlCtx(ctx)

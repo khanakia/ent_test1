@@ -6,7 +6,9 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+	gonanoid "github.com/matoous/go-nanoid/v2"
 )
 
 // AdminUser holds the schema definition for the AdminUser entity.
@@ -31,7 +33,9 @@ func (AdminUser) Fields() []ent.Field {
 			Sensitive().
 			Optional(),
 		field.String("secret").Sensitive().Optional(),
-		field.String("api_key").Optional(),
+		field.String("api_key").DefaultFunc(func() string {
+			return "aukey_" + gonanoid.MustGenerate("0123456789abcdefghijklmnopqrstuvwxyz", 32)
+		}).Unique(),
 		field.Bool("welcome_email_sent").Annotations().Optional().Annotations(
 			entgql.OrderField("WELCOME_EMAIL_SENT"),
 		),
@@ -40,7 +44,10 @@ func (AdminUser) Fields() []ent.Field {
 
 // Edges of the AdminUser.
 func (AdminUser) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+		edge.To("apps", App.Type).
+			Through("app_users", AppUser.Type),
+	}
 }
 
 func (AdminUser) Annotations() []schema.Annotation {

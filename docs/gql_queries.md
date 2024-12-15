@@ -1,6 +1,13 @@
-```
+```js
+// authentication via token
 {
-  "token":"umt9e0ka6gynwx3rm7r1y0fd8dknp2fu5",
+  "token":"uvseq7cr7s20v86qtby1rfpy9tvvagau3",
+  "x-app": "a1"
+}
+
+// authentication via admin_user.api_key
+{
+  "x-key":"r9CylJ8YoInE55aGbxDoh9QuKTs7iN",
   "x-app": "a1"
 }
 ```

@@ -12,6 +12,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/gin-gonic/gin"
 	"github.com/ubgo/goutil"
 	"github.com/vektah/gqlparser/v2/ast"
@@ -26,7 +27,10 @@ func Boot(ginEngine *gin.Engine, resolver *gqlsaresolver.Resolver) {
 
 	schm := generated.NewExecutableSchema(c)
 	// extendSchema(&schm)
-	gserver := handler.NewDefaultServer(schm)
+	gserver := handler.New(schm)
+	gserver.AddTransport(transport.Options{})
+	gserver.AddTransport(transport.GET{})
+	gserver.AddTransport(transport.POST{})
 
 	gqlgin.New(gqlgin.Config{
 		RouterGroup:      rg,
@@ -34,6 +38,7 @@ func Boot(ginEngine *gin.Engine, resolver *gqlsaresolver.Resolver) {
 		PlaygroundKey:    resolver.AppConfig.Graphql.Key,
 		RouteGroupPrefix: prefix,
 		Middleware: []gin.HandlerFunc{
+			adminauthmiddleware.MiddlewareApiKeySilent(resolver.Plugin.EntDB.Client()),
 			adminauthmiddleware.MiddlewareSilent(resolver.Plugin.EntDB.Client()),
 			appmiddleware.MiddlewareSilent(resolver.Plugin.EntDB.Client()),
 		},
