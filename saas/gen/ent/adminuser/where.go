@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -1012,6 +1013,52 @@ func WelcomeEmailSentIsNil() predicate.AdminUser {
 // WelcomeEmailSentNotNil applies the NotNil predicate on the "welcome_email_sent" field.
 func WelcomeEmailSentNotNil() predicate.AdminUser {
 	return predicate.AdminUser(sql.FieldNotNull(FieldWelcomeEmailSent))
+}
+
+// HasApps applies the HasEdge predicate on the "apps" edge.
+func HasApps() predicate.AdminUser {
+	return predicate.AdminUser(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, AppsTable, AppsPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAppsWith applies the HasEdge predicate on the "apps" edge with a given conditions (other predicates).
+func HasAppsWith(preds ...predicate.App) predicate.AdminUser {
+	return predicate.AdminUser(func(s *sql.Selector) {
+		step := newAppsStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasAppUsers applies the HasEdge predicate on the "app_users" edge.
+func HasAppUsers() predicate.AdminUser {
+	return predicate.AdminUser(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, AppUsersTable, AppUsersColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAppUsersWith applies the HasEdge predicate on the "app_users" edge with a given conditions (other predicates).
+func HasAppUsersWith(preds ...predicate.AppUser) predicate.AdminUser {
+	return predicate.AdminUser(func(s *sql.Selector) {
+		step := newAppUsersStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.

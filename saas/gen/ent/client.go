@@ -13,6 +13,10 @@ import (
 
 	"saas/gen/ent/adminuser"
 	"saas/gen/ent/app"
+	"saas/gen/ent/appperm"
+	"saas/gen/ent/approle"
+	"saas/gen/ent/approleperm"
+	"saas/gen/ent/appuser"
 	"saas/gen/ent/kache"
 	"saas/gen/ent/keyvalue"
 	"saas/gen/ent/mailconn"
@@ -51,6 +55,14 @@ type Client struct {
 	AdminUser *AdminUserClient
 	// App is the client for interacting with the App builders.
 	App *AppClient
+	// AppPerm is the client for interacting with the AppPerm builders.
+	AppPerm *AppPermClient
+	// AppRole is the client for interacting with the AppRole builders.
+	AppRole *AppRoleClient
+	// AppRolePerm is the client for interacting with the AppRolePerm builders.
+	AppRolePerm *AppRolePermClient
+	// AppUser is the client for interacting with the AppUser builders.
+	AppUser *AppUserClient
 	// Kache is the client for interacting with the Kache builders.
 	Kache *KacheClient
 	// Keyvalue is the client for interacting with the Keyvalue builders.
@@ -104,6 +116,10 @@ func (c *Client) init() {
 	c.Schema = migrate.NewSchema(c.driver)
 	c.AdminUser = NewAdminUserClient(c.config)
 	c.App = NewAppClient(c.config)
+	c.AppPerm = NewAppPermClient(c.config)
+	c.AppRole = NewAppRoleClient(c.config)
+	c.AppRolePerm = NewAppRolePermClient(c.config)
+	c.AppUser = NewAppUserClient(c.config)
 	c.Kache = NewKacheClient(c.config)
 	c.Keyvalue = NewKeyvalueClient(c.config)
 	c.MailConn = NewMailConnClient(c.config)
@@ -218,6 +234,10 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		config:          cfg,
 		AdminUser:       NewAdminUserClient(cfg),
 		App:             NewAppClient(cfg),
+		AppPerm:         NewAppPermClient(cfg),
+		AppRole:         NewAppRoleClient(cfg),
+		AppRolePerm:     NewAppRolePermClient(cfg),
+		AppUser:         NewAppUserClient(cfg),
 		Kache:           NewKacheClient(cfg),
 		Keyvalue:        NewKeyvalueClient(cfg),
 		MailConn:        NewMailConnClient(cfg),
@@ -259,6 +279,10 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		config:          cfg,
 		AdminUser:       NewAdminUserClient(cfg),
 		App:             NewAppClient(cfg),
+		AppPerm:         NewAppPermClient(cfg),
+		AppRole:         NewAppRoleClient(cfg),
+		AppRolePerm:     NewAppRolePermClient(cfg),
+		AppUser:         NewAppUserClient(cfg),
 		Kache:           NewKacheClient(cfg),
 		Keyvalue:        NewKeyvalueClient(cfg),
 		MailConn:        NewMailConnClient(cfg),
@@ -308,10 +332,11 @@ func (c *Client) Close() error {
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
 	for _, n := range []interface{ Use(...Hook) }{
-		c.AdminUser, c.App, c.Kache, c.Keyvalue, c.MailConn, c.Media, c.OauthConnection,
-		c.Plan, c.Post, c.PostCategory, c.PostStatus, c.PostTag, c.PostType,
-		c.PostTypeForm, c.Session, c.Temp, c.Templ, c.Todo, c.User, c.Workspace,
-		c.WorkspaceInvite, c.WorkspaceUser,
+		c.AdminUser, c.App, c.AppPerm, c.AppRole, c.AppRolePerm, c.AppUser, c.Kache,
+		c.Keyvalue, c.MailConn, c.Media, c.OauthConnection, c.Plan, c.Post,
+		c.PostCategory, c.PostStatus, c.PostTag, c.PostType, c.PostTypeForm, c.Session,
+		c.Temp, c.Templ, c.Todo, c.User, c.Workspace, c.WorkspaceInvite,
+		c.WorkspaceUser,
 	} {
 		n.Use(hooks...)
 	}
@@ -321,10 +346,11 @@ func (c *Client) Use(hooks ...Hook) {
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
 	for _, n := range []interface{ Intercept(...Interceptor) }{
-		c.AdminUser, c.App, c.Kache, c.Keyvalue, c.MailConn, c.Media, c.OauthConnection,
-		c.Plan, c.Post, c.PostCategory, c.PostStatus, c.PostTag, c.PostType,
-		c.PostTypeForm, c.Session, c.Temp, c.Templ, c.Todo, c.User, c.Workspace,
-		c.WorkspaceInvite, c.WorkspaceUser,
+		c.AdminUser, c.App, c.AppPerm, c.AppRole, c.AppRolePerm, c.AppUser, c.Kache,
+		c.Keyvalue, c.MailConn, c.Media, c.OauthConnection, c.Plan, c.Post,
+		c.PostCategory, c.PostStatus, c.PostTag, c.PostType, c.PostTypeForm, c.Session,
+		c.Temp, c.Templ, c.Todo, c.User, c.Workspace, c.WorkspaceInvite,
+		c.WorkspaceUser,
 	} {
 		n.Intercept(interceptors...)
 	}
@@ -337,6 +363,14 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.AdminUser.mutate(ctx, m)
 	case *AppMutation:
 		return c.App.mutate(ctx, m)
+	case *AppPermMutation:
+		return c.AppPerm.mutate(ctx, m)
+	case *AppRoleMutation:
+		return c.AppRole.mutate(ctx, m)
+	case *AppRolePermMutation:
+		return c.AppRolePerm.mutate(ctx, m)
+	case *AppUserMutation:
+		return c.AppUser.mutate(ctx, m)
 	case *KacheMutation:
 		return c.Kache.mutate(ctx, m)
 	case *KeyvalueMutation:
@@ -488,6 +522,38 @@ func (c *AdminUserClient) GetX(ctx context.Context, id string) *AdminUser {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryApps queries the apps edge of a AdminUser.
+func (c *AdminUserClient) QueryApps(au *AdminUser) *AppQuery {
+	query := (&AppClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := au.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(adminuser.Table, adminuser.FieldID, id),
+			sqlgraph.To(app.Table, app.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, adminuser.AppsTable, adminuser.AppsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(au.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAppUsers queries the app_users edge of a AdminUser.
+func (c *AdminUserClient) QueryAppUsers(au *AdminUser) *AppUserQuery {
+	query := (&AppUserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := au.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(adminuser.Table, adminuser.FieldID, id),
+			sqlgraph.To(appuser.Table, appuser.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, adminuser.AppUsersTable, adminuser.AppUsersColumn),
+		)
+		fromV = sqlgraph.Neighbors(au.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.
@@ -735,6 +801,38 @@ func (c *AppClient) QueryAuthVerificationTempl(a *App) *TemplQuery {
 	return query
 }
 
+// QueryAdminUser queries the admin_user edge of a App.
+func (c *AppClient) QueryAdminUser(a *App) *AdminUserQuery {
+	query := (&AdminUserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(app.Table, app.FieldID, id),
+			sqlgraph.To(adminuser.Table, adminuser.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, app.AdminUserTable, app.AdminUserPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAppUsers queries the app_users edge of a App.
+func (c *AppClient) QueryAppUsers(a *App) *AppUserQuery {
+	query := (&AppUserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := a.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(app.Table, app.FieldID, id),
+			sqlgraph.To(appuser.Table, appuser.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, app.AppUsersTable, app.AppUsersColumn),
+		)
+		fromV = sqlgraph.Neighbors(a.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *AppClient) Hooks() []Hook {
 	return c.hooks.App
@@ -757,6 +855,730 @@ func (c *AppClient) mutate(ctx context.Context, m *AppMutation) (Value, error) {
 		return (&AppDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
 	default:
 		return nil, fmt.Errorf("ent: unknown App mutation op: %q", m.Op())
+	}
+}
+
+// AppPermClient is a client for the AppPerm schema.
+type AppPermClient struct {
+	config
+}
+
+// NewAppPermClient returns a client for the AppPerm from the given config.
+func NewAppPermClient(c config) *AppPermClient {
+	return &AppPermClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `appperm.Hooks(f(g(h())))`.
+func (c *AppPermClient) Use(hooks ...Hook) {
+	c.hooks.AppPerm = append(c.hooks.AppPerm, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `appperm.Intercept(f(g(h())))`.
+func (c *AppPermClient) Intercept(interceptors ...Interceptor) {
+	c.inters.AppPerm = append(c.inters.AppPerm, interceptors...)
+}
+
+// Create returns a builder for creating a AppPerm entity.
+func (c *AppPermClient) Create() *AppPermCreate {
+	mutation := newAppPermMutation(c.config, OpCreate)
+	return &AppPermCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AppPerm entities.
+func (c *AppPermClient) CreateBulk(builders ...*AppPermCreate) *AppPermCreateBulk {
+	return &AppPermCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *AppPermClient) MapCreateBulk(slice any, setFunc func(*AppPermCreate, int)) *AppPermCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &AppPermCreateBulk{err: fmt.Errorf("calling to AppPermClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*AppPermCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &AppPermCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AppPerm.
+func (c *AppPermClient) Update() *AppPermUpdate {
+	mutation := newAppPermMutation(c.config, OpUpdate)
+	return &AppPermUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AppPermClient) UpdateOne(ap *AppPerm) *AppPermUpdateOne {
+	mutation := newAppPermMutation(c.config, OpUpdateOne, withAppPerm(ap))
+	return &AppPermUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AppPermClient) UpdateOneID(id string) *AppPermUpdateOne {
+	mutation := newAppPermMutation(c.config, OpUpdateOne, withAppPermID(id))
+	return &AppPermUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AppPerm.
+func (c *AppPermClient) Delete() *AppPermDelete {
+	mutation := newAppPermMutation(c.config, OpDelete)
+	return &AppPermDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AppPermClient) DeleteOne(ap *AppPerm) *AppPermDeleteOne {
+	return c.DeleteOneID(ap.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *AppPermClient) DeleteOneID(id string) *AppPermDeleteOne {
+	builder := c.Delete().Where(appperm.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AppPermDeleteOne{builder}
+}
+
+// Query returns a query builder for AppPerm.
+func (c *AppPermClient) Query() *AppPermQuery {
+	return &AppPermQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAppPerm},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a AppPerm entity by its id.
+func (c *AppPermClient) Get(ctx context.Context, id string) (*AppPerm, error) {
+	return c.Query().Where(appperm.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AppPermClient) GetX(ctx context.Context, id string) *AppPerm {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryApp queries the app edge of a AppPerm.
+func (c *AppPermClient) QueryApp(ap *AppPerm) *AppQuery {
+	query := (&AppClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ap.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(appperm.Table, appperm.FieldID, id),
+			sqlgraph.To(app.Table, app.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, appperm.AppTable, appperm.AppColumn),
+		)
+		fromV = sqlgraph.Neighbors(ap.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAppRoles queries the app_roles edge of a AppPerm.
+func (c *AppPermClient) QueryAppRoles(ap *AppPerm) *AppRoleQuery {
+	query := (&AppRoleClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ap.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(appperm.Table, appperm.FieldID, id),
+			sqlgraph.To(approle.Table, approle.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, appperm.AppRolesTable, appperm.AppRolesPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(ap.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAppRolePerms queries the app_role_perms edge of a AppPerm.
+func (c *AppPermClient) QueryAppRolePerms(ap *AppPerm) *AppRolePermQuery {
+	query := (&AppRolePermClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ap.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(appperm.Table, appperm.FieldID, id),
+			sqlgraph.To(approleperm.Table, approleperm.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, appperm.AppRolePermsTable, appperm.AppRolePermsColumn),
+		)
+		fromV = sqlgraph.Neighbors(ap.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *AppPermClient) Hooks() []Hook {
+	return c.hooks.AppPerm
+}
+
+// Interceptors returns the client interceptors.
+func (c *AppPermClient) Interceptors() []Interceptor {
+	return c.inters.AppPerm
+}
+
+func (c *AppPermClient) mutate(ctx context.Context, m *AppPermMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AppPermCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AppPermUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AppPermUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AppPermDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown AppPerm mutation op: %q", m.Op())
+	}
+}
+
+// AppRoleClient is a client for the AppRole schema.
+type AppRoleClient struct {
+	config
+}
+
+// NewAppRoleClient returns a client for the AppRole from the given config.
+func NewAppRoleClient(c config) *AppRoleClient {
+	return &AppRoleClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `approle.Hooks(f(g(h())))`.
+func (c *AppRoleClient) Use(hooks ...Hook) {
+	c.hooks.AppRole = append(c.hooks.AppRole, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `approle.Intercept(f(g(h())))`.
+func (c *AppRoleClient) Intercept(interceptors ...Interceptor) {
+	c.inters.AppRole = append(c.inters.AppRole, interceptors...)
+}
+
+// Create returns a builder for creating a AppRole entity.
+func (c *AppRoleClient) Create() *AppRoleCreate {
+	mutation := newAppRoleMutation(c.config, OpCreate)
+	return &AppRoleCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AppRole entities.
+func (c *AppRoleClient) CreateBulk(builders ...*AppRoleCreate) *AppRoleCreateBulk {
+	return &AppRoleCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *AppRoleClient) MapCreateBulk(slice any, setFunc func(*AppRoleCreate, int)) *AppRoleCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &AppRoleCreateBulk{err: fmt.Errorf("calling to AppRoleClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*AppRoleCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &AppRoleCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AppRole.
+func (c *AppRoleClient) Update() *AppRoleUpdate {
+	mutation := newAppRoleMutation(c.config, OpUpdate)
+	return &AppRoleUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AppRoleClient) UpdateOne(ar *AppRole) *AppRoleUpdateOne {
+	mutation := newAppRoleMutation(c.config, OpUpdateOne, withAppRole(ar))
+	return &AppRoleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AppRoleClient) UpdateOneID(id string) *AppRoleUpdateOne {
+	mutation := newAppRoleMutation(c.config, OpUpdateOne, withAppRoleID(id))
+	return &AppRoleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AppRole.
+func (c *AppRoleClient) Delete() *AppRoleDelete {
+	mutation := newAppRoleMutation(c.config, OpDelete)
+	return &AppRoleDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AppRoleClient) DeleteOne(ar *AppRole) *AppRoleDeleteOne {
+	return c.DeleteOneID(ar.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *AppRoleClient) DeleteOneID(id string) *AppRoleDeleteOne {
+	builder := c.Delete().Where(approle.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AppRoleDeleteOne{builder}
+}
+
+// Query returns a query builder for AppRole.
+func (c *AppRoleClient) Query() *AppRoleQuery {
+	return &AppRoleQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAppRole},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a AppRole entity by its id.
+func (c *AppRoleClient) Get(ctx context.Context, id string) (*AppRole, error) {
+	return c.Query().Where(approle.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AppRoleClient) GetX(ctx context.Context, id string) *AppRole {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryApp queries the app edge of a AppRole.
+func (c *AppRoleClient) QueryApp(ar *AppRole) *AppQuery {
+	query := (&AppClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ar.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(approle.Table, approle.FieldID, id),
+			sqlgraph.To(app.Table, app.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, approle.AppTable, approle.AppColumn),
+		)
+		fromV = sqlgraph.Neighbors(ar.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAppPerms queries the app_perms edge of a AppRole.
+func (c *AppRoleClient) QueryAppPerms(ar *AppRole) *AppPermQuery {
+	query := (&AppPermClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ar.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(approle.Table, approle.FieldID, id),
+			sqlgraph.To(appperm.Table, appperm.FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, false, approle.AppPermsTable, approle.AppPermsPrimaryKey...),
+		)
+		fromV = sqlgraph.Neighbors(ar.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAppRolePerms queries the app_role_perms edge of a AppRole.
+func (c *AppRoleClient) QueryAppRolePerms(ar *AppRole) *AppRolePermQuery {
+	query := (&AppRolePermClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := ar.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(approle.Table, approle.FieldID, id),
+			sqlgraph.To(approleperm.Table, approleperm.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, approle.AppRolePermsTable, approle.AppRolePermsColumn),
+		)
+		fromV = sqlgraph.Neighbors(ar.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *AppRoleClient) Hooks() []Hook {
+	return c.hooks.AppRole
+}
+
+// Interceptors returns the client interceptors.
+func (c *AppRoleClient) Interceptors() []Interceptor {
+	return c.inters.AppRole
+}
+
+func (c *AppRoleClient) mutate(ctx context.Context, m *AppRoleMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AppRoleCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AppRoleUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AppRoleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AppRoleDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown AppRole mutation op: %q", m.Op())
+	}
+}
+
+// AppRolePermClient is a client for the AppRolePerm schema.
+type AppRolePermClient struct {
+	config
+}
+
+// NewAppRolePermClient returns a client for the AppRolePerm from the given config.
+func NewAppRolePermClient(c config) *AppRolePermClient {
+	return &AppRolePermClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `approleperm.Hooks(f(g(h())))`.
+func (c *AppRolePermClient) Use(hooks ...Hook) {
+	c.hooks.AppRolePerm = append(c.hooks.AppRolePerm, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `approleperm.Intercept(f(g(h())))`.
+func (c *AppRolePermClient) Intercept(interceptors ...Interceptor) {
+	c.inters.AppRolePerm = append(c.inters.AppRolePerm, interceptors...)
+}
+
+// Create returns a builder for creating a AppRolePerm entity.
+func (c *AppRolePermClient) Create() *AppRolePermCreate {
+	mutation := newAppRolePermMutation(c.config, OpCreate)
+	return &AppRolePermCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AppRolePerm entities.
+func (c *AppRolePermClient) CreateBulk(builders ...*AppRolePermCreate) *AppRolePermCreateBulk {
+	return &AppRolePermCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *AppRolePermClient) MapCreateBulk(slice any, setFunc func(*AppRolePermCreate, int)) *AppRolePermCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &AppRolePermCreateBulk{err: fmt.Errorf("calling to AppRolePermClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*AppRolePermCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &AppRolePermCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AppRolePerm.
+func (c *AppRolePermClient) Update() *AppRolePermUpdate {
+	mutation := newAppRolePermMutation(c.config, OpUpdate)
+	return &AppRolePermUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AppRolePermClient) UpdateOne(arp *AppRolePerm) *AppRolePermUpdateOne {
+	mutation := newAppRolePermMutation(c.config, OpUpdateOne, withAppRolePerm(arp))
+	return &AppRolePermUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AppRolePermClient) UpdateOneID(id string) *AppRolePermUpdateOne {
+	mutation := newAppRolePermMutation(c.config, OpUpdateOne, withAppRolePermID(id))
+	return &AppRolePermUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AppRolePerm.
+func (c *AppRolePermClient) Delete() *AppRolePermDelete {
+	mutation := newAppRolePermMutation(c.config, OpDelete)
+	return &AppRolePermDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AppRolePermClient) DeleteOne(arp *AppRolePerm) *AppRolePermDeleteOne {
+	return c.DeleteOneID(arp.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *AppRolePermClient) DeleteOneID(id string) *AppRolePermDeleteOne {
+	builder := c.Delete().Where(approleperm.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AppRolePermDeleteOne{builder}
+}
+
+// Query returns a query builder for AppRolePerm.
+func (c *AppRolePermClient) Query() *AppRolePermQuery {
+	return &AppRolePermQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAppRolePerm},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a AppRolePerm entity by its id.
+func (c *AppRolePermClient) Get(ctx context.Context, id string) (*AppRolePerm, error) {
+	return c.Query().Where(approleperm.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AppRolePermClient) GetX(ctx context.Context, id string) *AppRolePerm {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryApp queries the app edge of a AppRolePerm.
+func (c *AppRolePermClient) QueryApp(arp *AppRolePerm) *AppQuery {
+	query := (&AppClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := arp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(approleperm.Table, approleperm.FieldID, id),
+			sqlgraph.To(app.Table, app.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, approleperm.AppTable, approleperm.AppColumn),
+		)
+		fromV = sqlgraph.Neighbors(arp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAppPerm queries the app_perm edge of a AppRolePerm.
+func (c *AppRolePermClient) QueryAppPerm(arp *AppRolePerm) *AppPermQuery {
+	query := (&AppPermClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := arp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(approleperm.Table, approleperm.FieldID, id),
+			sqlgraph.To(appperm.Table, appperm.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, approleperm.AppPermTable, approleperm.AppPermColumn),
+		)
+		fromV = sqlgraph.Neighbors(arp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAppRole queries the app_role edge of a AppRolePerm.
+func (c *AppRolePermClient) QueryAppRole(arp *AppRolePerm) *AppRoleQuery {
+	query := (&AppRoleClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := arp.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(approleperm.Table, approleperm.FieldID, id),
+			sqlgraph.To(approle.Table, approle.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, approleperm.AppRoleTable, approleperm.AppRoleColumn),
+		)
+		fromV = sqlgraph.Neighbors(arp.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *AppRolePermClient) Hooks() []Hook {
+	return c.hooks.AppRolePerm
+}
+
+// Interceptors returns the client interceptors.
+func (c *AppRolePermClient) Interceptors() []Interceptor {
+	return c.inters.AppRolePerm
+}
+
+func (c *AppRolePermClient) mutate(ctx context.Context, m *AppRolePermMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AppRolePermCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AppRolePermUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AppRolePermUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AppRolePermDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown AppRolePerm mutation op: %q", m.Op())
+	}
+}
+
+// AppUserClient is a client for the AppUser schema.
+type AppUserClient struct {
+	config
+}
+
+// NewAppUserClient returns a client for the AppUser from the given config.
+func NewAppUserClient(c config) *AppUserClient {
+	return &AppUserClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `appuser.Hooks(f(g(h())))`.
+func (c *AppUserClient) Use(hooks ...Hook) {
+	c.hooks.AppUser = append(c.hooks.AppUser, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `appuser.Intercept(f(g(h())))`.
+func (c *AppUserClient) Intercept(interceptors ...Interceptor) {
+	c.inters.AppUser = append(c.inters.AppUser, interceptors...)
+}
+
+// Create returns a builder for creating a AppUser entity.
+func (c *AppUserClient) Create() *AppUserCreate {
+	mutation := newAppUserMutation(c.config, OpCreate)
+	return &AppUserCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of AppUser entities.
+func (c *AppUserClient) CreateBulk(builders ...*AppUserCreate) *AppUserCreateBulk {
+	return &AppUserCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *AppUserClient) MapCreateBulk(slice any, setFunc func(*AppUserCreate, int)) *AppUserCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &AppUserCreateBulk{err: fmt.Errorf("calling to AppUserClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*AppUserCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &AppUserCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for AppUser.
+func (c *AppUserClient) Update() *AppUserUpdate {
+	mutation := newAppUserMutation(c.config, OpUpdate)
+	return &AppUserUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *AppUserClient) UpdateOne(au *AppUser) *AppUserUpdateOne {
+	mutation := newAppUserMutation(c.config, OpUpdateOne, withAppUser(au))
+	return &AppUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *AppUserClient) UpdateOneID(id string) *AppUserUpdateOne {
+	mutation := newAppUserMutation(c.config, OpUpdateOne, withAppUserID(id))
+	return &AppUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for AppUser.
+func (c *AppUserClient) Delete() *AppUserDelete {
+	mutation := newAppUserMutation(c.config, OpDelete)
+	return &AppUserDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *AppUserClient) DeleteOne(au *AppUser) *AppUserDeleteOne {
+	return c.DeleteOneID(au.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *AppUserClient) DeleteOneID(id string) *AppUserDeleteOne {
+	builder := c.Delete().Where(appuser.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &AppUserDeleteOne{builder}
+}
+
+// Query returns a query builder for AppUser.
+func (c *AppUserClient) Query() *AppUserQuery {
+	return &AppUserQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeAppUser},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a AppUser entity by its id.
+func (c *AppUserClient) Get(ctx context.Context, id string) (*AppUser, error) {
+	return c.Query().Where(appuser.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *AppUserClient) GetX(ctx context.Context, id string) *AppUser {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// QueryApp queries the app edge of a AppUser.
+func (c *AppUserClient) QueryApp(au *AppUser) *AppQuery {
+	query := (&AppClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := au.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(appuser.Table, appuser.FieldID, id),
+			sqlgraph.To(app.Table, app.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, appuser.AppTable, appuser.AppColumn),
+		)
+		fromV = sqlgraph.Neighbors(au.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAdminuser queries the adminuser edge of a AppUser.
+func (c *AppUserClient) QueryAdminuser(au *AppUser) *AdminUserQuery {
+	query := (&AdminUserClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := au.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(appuser.Table, appuser.FieldID, id),
+			sqlgraph.To(adminuser.Table, adminuser.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, appuser.AdminuserTable, appuser.AdminuserColumn),
+		)
+		fromV = sqlgraph.Neighbors(au.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// QueryAppRole queries the app_role edge of a AppUser.
+func (c *AppUserClient) QueryAppRole(au *AppUser) *AppRoleQuery {
+	query := (&AppRoleClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := au.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(appuser.Table, appuser.FieldID, id),
+			sqlgraph.To(approle.Table, approle.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, false, appuser.AppRoleTable, appuser.AppRoleColumn),
+		)
+		fromV = sqlgraph.Neighbors(au.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
+// Hooks returns the client hooks.
+func (c *AppUserClient) Hooks() []Hook {
+	return c.hooks.AppUser
+}
+
+// Interceptors returns the client interceptors.
+func (c *AppUserClient) Interceptors() []Interceptor {
+	return c.inters.AppUser
+}
+
+func (c *AppUserClient) mutate(ctx context.Context, m *AppUserMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&AppUserCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&AppUserUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&AppUserUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&AppUserDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown AppUser mutation op: %q", m.Op())
 	}
 }
 
@@ -3844,14 +4666,16 @@ func (c *WorkspaceUserClient) mutate(ctx context.Context, m *WorkspaceUserMutati
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
-		AdminUser, App, Kache, Keyvalue, MailConn, Media, OauthConnection, Plan, Post,
-		PostCategory, PostStatus, PostTag, PostType, PostTypeForm, Session, Temp,
-		Templ, Todo, User, Workspace, WorkspaceInvite, WorkspaceUser []ent.Hook
+		AdminUser, App, AppPerm, AppRole, AppRolePerm, AppUser, Kache, Keyvalue,
+		MailConn, Media, OauthConnection, Plan, Post, PostCategory, PostStatus,
+		PostTag, PostType, PostTypeForm, Session, Temp, Templ, Todo, User, Workspace,
+		WorkspaceInvite, WorkspaceUser []ent.Hook
 	}
 	inters struct {
-		AdminUser, App, Kache, Keyvalue, MailConn, Media, OauthConnection, Plan, Post,
-		PostCategory, PostStatus, PostTag, PostType, PostTypeForm, Session, Temp,
-		Templ, Todo, User, Workspace, WorkspaceInvite, WorkspaceUser []ent.Interceptor
+		AdminUser, App, AppPerm, AppRole, AppRolePerm, AppUser, Kache, Keyvalue,
+		MailConn, Media, OauthConnection, Plan, Post, PostCategory, PostStatus,
+		PostTag, PostType, PostTypeForm, Session, Temp, Templ, Todo, User, Workspace,
+		WorkspaceInvite, WorkspaceUser []ent.Interceptor
 	}
 )
 

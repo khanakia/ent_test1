@@ -12,6 +12,18 @@ type AdminUser func(*sql.Selector)
 // App is the predicate function for app builders.
 type App func(*sql.Selector)
 
+// AppPerm is the predicate function for appperm builders.
+type AppPerm func(*sql.Selector)
+
+// AppRole is the predicate function for approle builders.
+type AppRole func(*sql.Selector)
+
+// AppRolePerm is the predicate function for approleperm builders.
+type AppRolePerm func(*sql.Selector)
+
+// AppUser is the predicate function for appuser builders.
+type AppUser func(*sql.Selector)
+
 // Kache is the predicate function for kache builders.
 type Kache func(*sql.Selector)
 

@@ -5,6 +5,10 @@ package runtime
 import (
 	"saas/gen/ent/adminuser"
 	"saas/gen/ent/app"
+	"saas/gen/ent/appperm"
+	"saas/gen/ent/approle"
+	"saas/gen/ent/approleperm"
+	"saas/gen/ent/appuser"
 	"saas/gen/ent/kache"
 	"saas/gen/ent/keyvalue"
 	"saas/gen/ent/mailconn"
@@ -91,6 +95,86 @@ func init() {
 	appDescID := appMixinFields0[0].Descriptor()
 	// app.DefaultID holds the default value on creation for the id field.
 	app.DefaultID = appDescID.Default.(func() string)
+	apppermMixin := schema.AppPerm{}.Mixin()
+	apppermMixinFields0 := apppermMixin[0].Fields()
+	_ = apppermMixinFields0
+	apppermFields := schema.AppPerm{}.Fields()
+	_ = apppermFields
+	// apppermDescCreatedAt is the schema descriptor for created_at field.
+	apppermDescCreatedAt := apppermMixinFields0[1].Descriptor()
+	// appperm.DefaultCreatedAt holds the default value on creation for the created_at field.
+	appperm.DefaultCreatedAt = apppermDescCreatedAt.Default.(func() time.Time)
+	// apppermDescUpdatedAt is the schema descriptor for updated_at field.
+	apppermDescUpdatedAt := apppermMixinFields0[2].Descriptor()
+	// appperm.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	appperm.DefaultUpdatedAt = apppermDescUpdatedAt.Default.(func() time.Time)
+	// appperm.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	appperm.UpdateDefaultUpdatedAt = apppermDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// apppermDescID is the schema descriptor for id field.
+	apppermDescID := apppermMixinFields0[0].Descriptor()
+	// appperm.DefaultID holds the default value on creation for the id field.
+	appperm.DefaultID = apppermDescID.Default.(func() string)
+	approleMixin := schema.AppRole{}.Mixin()
+	approleMixinFields0 := approleMixin[0].Fields()
+	_ = approleMixinFields0
+	approleFields := schema.AppRole{}.Fields()
+	_ = approleFields
+	// approleDescCreatedAt is the schema descriptor for created_at field.
+	approleDescCreatedAt := approleMixinFields0[1].Descriptor()
+	// approle.DefaultCreatedAt holds the default value on creation for the created_at field.
+	approle.DefaultCreatedAt = approleDescCreatedAt.Default.(func() time.Time)
+	// approleDescUpdatedAt is the schema descriptor for updated_at field.
+	approleDescUpdatedAt := approleMixinFields0[2].Descriptor()
+	// approle.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	approle.DefaultUpdatedAt = approleDescUpdatedAt.Default.(func() time.Time)
+	// approle.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	approle.UpdateDefaultUpdatedAt = approleDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// approleDescIsGlobal is the schema descriptor for is_global field.
+	approleDescIsGlobal := approleFields[2].Descriptor()
+	// approle.DefaultIsGlobal holds the default value on creation for the is_global field.
+	approle.DefaultIsGlobal = approleDescIsGlobal.Default.(bool)
+	// approleDescID is the schema descriptor for id field.
+	approleDescID := approleMixinFields0[0].Descriptor()
+	// approle.DefaultID holds the default value on creation for the id field.
+	approle.DefaultID = approleDescID.Default.(func() string)
+	approlepermMixin := schema.AppRolePerm{}.Mixin()
+	approlepermMixinFields0 := approlepermMixin[0].Fields()
+	_ = approlepermMixinFields0
+	approlepermFields := schema.AppRolePerm{}.Fields()
+	_ = approlepermFields
+	// approlepermDescCreatedAt is the schema descriptor for created_at field.
+	approlepermDescCreatedAt := approlepermMixinFields0[1].Descriptor()
+	// approleperm.DefaultCreatedAt holds the default value on creation for the created_at field.
+	approleperm.DefaultCreatedAt = approlepermDescCreatedAt.Default.(func() time.Time)
+	// approlepermDescUpdatedAt is the schema descriptor for updated_at field.
+	approlepermDescUpdatedAt := approlepermMixinFields0[2].Descriptor()
+	// approleperm.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	approleperm.DefaultUpdatedAt = approlepermDescUpdatedAt.Default.(func() time.Time)
+	// approleperm.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	approleperm.UpdateDefaultUpdatedAt = approlepermDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// approlepermDescID is the schema descriptor for id field.
+	approlepermDescID := approlepermMixinFields0[0].Descriptor()
+	// approleperm.DefaultID holds the default value on creation for the id field.
+	approleperm.DefaultID = approlepermDescID.Default.(func() string)
+	appuserMixin := schema.AppUser{}.Mixin()
+	appuserMixinFields0 := appuserMixin[0].Fields()
+	_ = appuserMixinFields0
+	appuserFields := schema.AppUser{}.Fields()
+	_ = appuserFields
+	// appuserDescCreatedAt is the schema descriptor for created_at field.
+	appuserDescCreatedAt := appuserMixinFields0[1].Descriptor()
+	// appuser.DefaultCreatedAt holds the default value on creation for the created_at field.
+	appuser.DefaultCreatedAt = appuserDescCreatedAt.Default.(func() time.Time)
+	// appuserDescUpdatedAt is the schema descriptor for updated_at field.
+	appuserDescUpdatedAt := appuserMixinFields0[2].Descriptor()
+	// appuser.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	appuser.DefaultUpdatedAt = appuserDescUpdatedAt.Default.(func() time.Time)
+	// appuser.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	appuser.UpdateDefaultUpdatedAt = appuserDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// appuserDescID is the schema descriptor for id field.
+	appuserDescID := appuserMixinFields0[0].Descriptor()
+	// appuser.DefaultID holds the default value on creation for the id field.
+	appuser.DefaultID = appuserDescID.Default.(func() string)
 	kacheFields := schema.Kache{}.Fields()
 	_ = kacheFields
 	// kacheDescCreatedAt is the schema descriptor for created_at field.

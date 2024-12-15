@@ -6,7 +6,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"saas/gen/ent/adminuser"
 	"saas/gen/ent/app"
+	"saas/gen/ent/appuser"
 	"saas/gen/ent/mailconn"
 	"saas/gen/ent/templ"
 	"time"
@@ -382,6 +384,36 @@ func (ac *AppCreate) SetAuthVerificationTempl(t *Templ) *AppCreate {
 	return ac.SetAuthVerificationTemplID(t.ID)
 }
 
+// AddAdminUserIDs adds the "admin_user" edge to the AdminUser entity by IDs.
+func (ac *AppCreate) AddAdminUserIDs(ids ...string) *AppCreate {
+	ac.mutation.AddAdminUserIDs(ids...)
+	return ac
+}
+
+// AddAdminUser adds the "admin_user" edges to the AdminUser entity.
+func (ac *AppCreate) AddAdminUser(a ...*AdminUser) *AppCreate {
+	ids := make([]string, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return ac.AddAdminUserIDs(ids...)
+}
+
+// AddAppUserIDs adds the "app_users" edge to the AppUser entity by IDs.
+func (ac *AppCreate) AddAppUserIDs(ids ...string) *AppCreate {
+	ac.mutation.AddAppUserIDs(ids...)
+	return ac
+}
+
+// AddAppUsers adds the "app_users" edges to the AppUser entity.
+func (ac *AppCreate) AddAppUsers(a ...*AppUser) *AppCreate {
+	ids := make([]string, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return ac.AddAppUserIDs(ids...)
+}
+
 // Mutation returns the AppMutation object of the builder.
 func (ac *AppCreate) Mutation() *AppMutation {
 	return ac.mutation
@@ -658,6 +690,45 @@ func (ac *AppCreate) createSpec() (*App, *sqlgraph.CreateSpec) {
 			edge.Target.Nodes = append(edge.Target.Nodes, k)
 		}
 		_node.AuthVerificationTemplID = nodes[0]
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ac.mutation.AdminUserIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: true,
+			Table:   app.AdminUserTable,
+			Columns: app.AdminUserPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(adminuser.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &AppUserCreate{config: ac.config, mutation: newAppUserMutation(ac.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := ac.mutation.AppUsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   app.AppUsersTable,
+			Columns: []string{app.AppUsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(appuser.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
 		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec

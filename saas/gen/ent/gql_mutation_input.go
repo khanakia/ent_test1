@@ -32,6 +32,7 @@ type CreateAppInput struct {
 	AuthFpTemplID           *string
 	AuthWelcomeEmailTemplID *string
 	AuthVerificationTemplID *string
+	AdminUserIDs            []string
 }
 
 // Mutate applies the CreateAppInput on the AppMutation builder.
@@ -102,6 +103,9 @@ func (i *CreateAppInput) Mutate(m *AppMutation) {
 	if v := i.AuthVerificationTemplID; v != nil {
 		m.SetAuthVerificationTemplID(*v)
 	}
+	if v := i.AdminUserIDs; len(v) > 0 {
+		m.AddAdminUserIDs(v...)
+	}
 }
 
 // SetInput applies the change-set in the CreateAppInput on the AppCreate builder.
@@ -154,6 +158,9 @@ type UpdateAppInput struct {
 	AuthWelcomeEmailTemplID      *string
 	ClearAuthVerificationTempl   bool
 	AuthVerificationTemplID      *string
+	ClearAdminUser               bool
+	AddAdminUserIDs              []string
+	RemoveAdminUserIDs           []string
 }
 
 // Mutate applies the UpdateAppInput on the AppMutation builder.
@@ -283,6 +290,15 @@ func (i *UpdateAppInput) Mutate(m *AppMutation) {
 	}
 	if v := i.AuthVerificationTemplID; v != nil {
 		m.SetAuthVerificationTemplID(*v)
+	}
+	if i.ClearAdminUser {
+		m.ClearAdminUser()
+	}
+	if v := i.AddAdminUserIDs; len(v) > 0 {
+		m.AddAdminUserIDs(v...)
+	}
+	if v := i.RemoveAdminUserIDs; len(v) > 0 {
+		m.RemoveAdminUserIDs(v...)
 	}
 }
 

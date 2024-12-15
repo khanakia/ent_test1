@@ -9,6 +9,10 @@ import (
 	"reflect"
 	"saas/gen/ent/adminuser"
 	"saas/gen/ent/app"
+	"saas/gen/ent/appperm"
+	"saas/gen/ent/approle"
+	"saas/gen/ent/approleperm"
+	"saas/gen/ent/appuser"
 	"saas/gen/ent/kache"
 	"saas/gen/ent/keyvalue"
 	"saas/gen/ent/mailconn"
@@ -96,6 +100,10 @@ func checkColumn(table, column string) error {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
 			adminuser.Table:       adminuser.ValidColumn,
 			app.Table:             app.ValidColumn,
+			appperm.Table:         appperm.ValidColumn,
+			approle.Table:         approle.ValidColumn,
+			approleperm.Table:     approleperm.ValidColumn,
+			appuser.Table:         appuser.ValidColumn,
 			kache.Table:           kache.ValidColumn,
 			keyvalue.Table:        keyvalue.ValidColumn,
 			mailconn.Table:        mailconn.ValidColumn,

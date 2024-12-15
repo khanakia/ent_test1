@@ -10,6 +10,10 @@ import (
 	"lace/jsontype"
 	"saas/gen/ent/adminuser"
 	"saas/gen/ent/app"
+	"saas/gen/ent/appperm"
+	"saas/gen/ent/approle"
+	"saas/gen/ent/approleperm"
+	"saas/gen/ent/appuser"
 	"saas/gen/ent/kache"
 	"saas/gen/ent/keyvalue"
 	"saas/gen/ent/mailconn"
@@ -49,6 +53,10 @@ const (
 	// Node types.
 	TypeAdminUser       = "AdminUser"
 	TypeApp             = "App"
+	TypeAppPerm         = "AppPerm"
+	TypeAppRole         = "AppRole"
+	TypeAppRolePerm     = "AppRolePerm"
+	TypeAppUser         = "AppUser"
 	TypeKache           = "Kache"
 	TypeKeyvalue        = "Keyvalue"
 	TypeMailConn        = "MailConn"
@@ -92,6 +100,12 @@ type AdminUserMutation struct {
 	api_key            *string
 	welcome_email_sent *bool
 	clearedFields      map[string]struct{}
+	apps               map[string]struct{}
+	removedapps        map[string]struct{}
+	clearedapps        bool
+	app_users          map[string]struct{}
+	removedapp_users   map[string]struct{}
+	clearedapp_users   bool
 	done               bool
 	oldValue           func(context.Context) (*AdminUser, error)
 	predicates         []predicate.AdminUser
@@ -874,6 +888,114 @@ func (m *AdminUserMutation) ResetWelcomeEmailSent() {
 	delete(m.clearedFields, adminuser.FieldWelcomeEmailSent)
 }
 
+// AddAppIDs adds the "apps" edge to the App entity by ids.
+func (m *AdminUserMutation) AddAppIDs(ids ...string) {
+	if m.apps == nil {
+		m.apps = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.apps[ids[i]] = struct{}{}
+	}
+}
+
+// ClearApps clears the "apps" edge to the App entity.
+func (m *AdminUserMutation) ClearApps() {
+	m.clearedapps = true
+}
+
+// AppsCleared reports if the "apps" edge to the App entity was cleared.
+func (m *AdminUserMutation) AppsCleared() bool {
+	return m.clearedapps
+}
+
+// RemoveAppIDs removes the "apps" edge to the App entity by IDs.
+func (m *AdminUserMutation) RemoveAppIDs(ids ...string) {
+	if m.removedapps == nil {
+		m.removedapps = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.apps, ids[i])
+		m.removedapps[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedApps returns the removed IDs of the "apps" edge to the App entity.
+func (m *AdminUserMutation) RemovedAppsIDs() (ids []string) {
+	for id := range m.removedapps {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// AppsIDs returns the "apps" edge IDs in the mutation.
+func (m *AdminUserMutation) AppsIDs() (ids []string) {
+	for id := range m.apps {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetApps resets all changes to the "apps" edge.
+func (m *AdminUserMutation) ResetApps() {
+	m.apps = nil
+	m.clearedapps = false
+	m.removedapps = nil
+}
+
+// AddAppUserIDs adds the "app_users" edge to the AppUser entity by ids.
+func (m *AdminUserMutation) AddAppUserIDs(ids ...string) {
+	if m.app_users == nil {
+		m.app_users = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.app_users[ids[i]] = struct{}{}
+	}
+}
+
+// ClearAppUsers clears the "app_users" edge to the AppUser entity.
+func (m *AdminUserMutation) ClearAppUsers() {
+	m.clearedapp_users = true
+}
+
+// AppUsersCleared reports if the "app_users" edge to the AppUser entity was cleared.
+func (m *AdminUserMutation) AppUsersCleared() bool {
+	return m.clearedapp_users
+}
+
+// RemoveAppUserIDs removes the "app_users" edge to the AppUser entity by IDs.
+func (m *AdminUserMutation) RemoveAppUserIDs(ids ...string) {
+	if m.removedapp_users == nil {
+		m.removedapp_users = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.app_users, ids[i])
+		m.removedapp_users[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedAppUsers returns the removed IDs of the "app_users" edge to the AppUser entity.
+func (m *AdminUserMutation) RemovedAppUsersIDs() (ids []string) {
+	for id := range m.removedapp_users {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// AppUsersIDs returns the "app_users" edge IDs in the mutation.
+func (m *AdminUserMutation) AppUsersIDs() (ids []string) {
+	for id := range m.app_users {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetAppUsers resets all changes to the "app_users" edge.
+func (m *AdminUserMutation) ResetAppUsers() {
+	m.app_users = nil
+	m.clearedapp_users = false
+	m.removedapp_users = nil
+}
+
 // Where appends a list predicates to the AdminUserMutation builder.
 func (m *AdminUserMutation) Where(ps ...predicate.AdminUser) {
 	m.predicates = append(m.predicates, ps...)
@@ -1309,49 +1431,111 @@ func (m *AdminUserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *AdminUserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 2)
+	if m.apps != nil {
+		edges = append(edges, adminuser.EdgeApps)
+	}
+	if m.app_users != nil {
+		edges = append(edges, adminuser.EdgeAppUsers)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *AdminUserMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case adminuser.EdgeApps:
+		ids := make([]ent.Value, 0, len(m.apps))
+		for id := range m.apps {
+			ids = append(ids, id)
+		}
+		return ids
+	case adminuser.EdgeAppUsers:
+		ids := make([]ent.Value, 0, len(m.app_users))
+		for id := range m.app_users {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *AdminUserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 2)
+	if m.removedapps != nil {
+		edges = append(edges, adminuser.EdgeApps)
+	}
+	if m.removedapp_users != nil {
+		edges = append(edges, adminuser.EdgeAppUsers)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *AdminUserMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case adminuser.EdgeApps:
+		ids := make([]ent.Value, 0, len(m.removedapps))
+		for id := range m.removedapps {
+			ids = append(ids, id)
+		}
+		return ids
+	case adminuser.EdgeAppUsers:
+		ids := make([]ent.Value, 0, len(m.removedapp_users))
+		for id := range m.removedapp_users {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *AdminUserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 2)
+	if m.clearedapps {
+		edges = append(edges, adminuser.EdgeApps)
+	}
+	if m.clearedapp_users {
+		edges = append(edges, adminuser.EdgeAppUsers)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *AdminUserMutation) EdgeCleared(name string) bool {
+	switch name {
+	case adminuser.EdgeApps:
+		return m.clearedapps
+	case adminuser.EdgeAppUsers:
+		return m.clearedapp_users
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *AdminUserMutation) ClearEdge(name string) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown AdminUser unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *AdminUserMutation) ResetEdge(name string) error {
+	switch name {
+	case adminuser.EdgeApps:
+		m.ResetApps()
+		return nil
+	case adminuser.EdgeAppUsers:
+		m.ResetAppUsers()
+		return nil
+	}
 	return fmt.Errorf("unknown AdminUser edge %s", name)
 }
 
@@ -1391,6 +1575,12 @@ type AppMutation struct {
 	clearedauth_welcome_email_templ bool
 	auth_verification_templ         *string
 	clearedauth_verification_templ  bool
+	admin_user                      map[string]struct{}
+	removedadmin_user               map[string]struct{}
+	clearedadmin_user               bool
+	app_users                       map[string]struct{}
+	removedapp_users                map[string]struct{}
+	clearedapp_users                bool
 	done                            bool
 	oldValue                        func(context.Context) (*App, error)
 	predicates                      []predicate.App
@@ -2767,6 +2957,114 @@ func (m *AppMutation) ResetAuthVerificationTempl() {
 	m.clearedauth_verification_templ = false
 }
 
+// AddAdminUserIDs adds the "admin_user" edge to the AdminUser entity by ids.
+func (m *AppMutation) AddAdminUserIDs(ids ...string) {
+	if m.admin_user == nil {
+		m.admin_user = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.admin_user[ids[i]] = struct{}{}
+	}
+}
+
+// ClearAdminUser clears the "admin_user" edge to the AdminUser entity.
+func (m *AppMutation) ClearAdminUser() {
+	m.clearedadmin_user = true
+}
+
+// AdminUserCleared reports if the "admin_user" edge to the AdminUser entity was cleared.
+func (m *AppMutation) AdminUserCleared() bool {
+	return m.clearedadmin_user
+}
+
+// RemoveAdminUserIDs removes the "admin_user" edge to the AdminUser entity by IDs.
+func (m *AppMutation) RemoveAdminUserIDs(ids ...string) {
+	if m.removedadmin_user == nil {
+		m.removedadmin_user = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.admin_user, ids[i])
+		m.removedadmin_user[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedAdminUser returns the removed IDs of the "admin_user" edge to the AdminUser entity.
+func (m *AppMutation) RemovedAdminUserIDs() (ids []string) {
+	for id := range m.removedadmin_user {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// AdminUserIDs returns the "admin_user" edge IDs in the mutation.
+func (m *AppMutation) AdminUserIDs() (ids []string) {
+	for id := range m.admin_user {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetAdminUser resets all changes to the "admin_user" edge.
+func (m *AppMutation) ResetAdminUser() {
+	m.admin_user = nil
+	m.clearedadmin_user = false
+	m.removedadmin_user = nil
+}
+
+// AddAppUserIDs adds the "app_users" edge to the AppUser entity by ids.
+func (m *AppMutation) AddAppUserIDs(ids ...string) {
+	if m.app_users == nil {
+		m.app_users = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.app_users[ids[i]] = struct{}{}
+	}
+}
+
+// ClearAppUsers clears the "app_users" edge to the AppUser entity.
+func (m *AppMutation) ClearAppUsers() {
+	m.clearedapp_users = true
+}
+
+// AppUsersCleared reports if the "app_users" edge to the AppUser entity was cleared.
+func (m *AppMutation) AppUsersCleared() bool {
+	return m.clearedapp_users
+}
+
+// RemoveAppUserIDs removes the "app_users" edge to the AppUser entity by IDs.
+func (m *AppMutation) RemoveAppUserIDs(ids ...string) {
+	if m.removedapp_users == nil {
+		m.removedapp_users = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.app_users, ids[i])
+		m.removedapp_users[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedAppUsers returns the removed IDs of the "app_users" edge to the AppUser entity.
+func (m *AppMutation) RemovedAppUsersIDs() (ids []string) {
+	for id := range m.removedapp_users {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// AppUsersIDs returns the "app_users" edge IDs in the mutation.
+func (m *AppMutation) AppUsersIDs() (ids []string) {
+	for id := range m.app_users {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetAppUsers resets all changes to the "app_users" edge.
+func (m *AppMutation) ResetAppUsers() {
+	m.app_users = nil
+	m.clearedapp_users = false
+	m.removedapp_users = nil
+}
+
 // Where appends a list predicates to the AppMutation builder.
 func (m *AppMutation) Where(ps ...predicate.App) {
 	m.predicates = append(m.predicates, ps...)
@@ -3392,7 +3690,7 @@ func (m *AppMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *AppMutation) AddedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 9)
 	if m.default_mail_conn != nil {
 		edges = append(edges, app.EdgeDefaultMailConn)
 	}
@@ -3413,6 +3711,12 @@ func (m *AppMutation) AddedEdges() []string {
 	}
 	if m.auth_verification_templ != nil {
 		edges = append(edges, app.EdgeAuthVerificationTempl)
+	}
+	if m.admin_user != nil {
+		edges = append(edges, app.EdgeAdminUser)
+	}
+	if m.app_users != nil {
+		edges = append(edges, app.EdgeAppUsers)
 	}
 	return edges
 }
@@ -3449,25 +3753,57 @@ func (m *AppMutation) AddedIDs(name string) []ent.Value {
 		if id := m.auth_verification_templ; id != nil {
 			return []ent.Value{*id}
 		}
+	case app.EdgeAdminUser:
+		ids := make([]ent.Value, 0, len(m.admin_user))
+		for id := range m.admin_user {
+			ids = append(ids, id)
+		}
+		return ids
+	case app.EdgeAppUsers:
+		ids := make([]ent.Value, 0, len(m.app_users))
+		for id := range m.app_users {
+			ids = append(ids, id)
+		}
+		return ids
 	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *AppMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 9)
+	if m.removedadmin_user != nil {
+		edges = append(edges, app.EdgeAdminUser)
+	}
+	if m.removedapp_users != nil {
+		edges = append(edges, app.EdgeAppUsers)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *AppMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case app.EdgeAdminUser:
+		ids := make([]ent.Value, 0, len(m.removedadmin_user))
+		for id := range m.removedadmin_user {
+			ids = append(ids, id)
+		}
+		return ids
+	case app.EdgeAppUsers:
+		ids := make([]ent.Value, 0, len(m.removedapp_users))
+		for id := range m.removedapp_users {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *AppMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 7)
+	edges := make([]string, 0, 9)
 	if m.cleareddefault_mail_conn {
 		edges = append(edges, app.EdgeDefaultMailConn)
 	}
@@ -3488,6 +3824,12 @@ func (m *AppMutation) ClearedEdges() []string {
 	}
 	if m.clearedauth_verification_templ {
 		edges = append(edges, app.EdgeAuthVerificationTempl)
+	}
+	if m.clearedadmin_user {
+		edges = append(edges, app.EdgeAdminUser)
+	}
+	if m.clearedapp_users {
+		edges = append(edges, app.EdgeAppUsers)
 	}
 	return edges
 }
@@ -3510,6 +3852,10 @@ func (m *AppMutation) EdgeCleared(name string) bool {
 		return m.clearedauth_welcome_email_templ
 	case app.EdgeAuthVerificationTempl:
 		return m.clearedauth_verification_templ
+	case app.EdgeAdminUser:
+		return m.clearedadmin_user
+	case app.EdgeAppUsers:
+		return m.clearedapp_users
 	}
 	return false
 }
@@ -3568,8 +3914,3141 @@ func (m *AppMutation) ResetEdge(name string) error {
 	case app.EdgeAuthVerificationTempl:
 		m.ResetAuthVerificationTempl()
 		return nil
+	case app.EdgeAdminUser:
+		m.ResetAdminUser()
+		return nil
+	case app.EdgeAppUsers:
+		m.ResetAppUsers()
+		return nil
 	}
 	return fmt.Errorf("unknown App edge %s", name)
+}
+
+// AppPermMutation represents an operation that mutates the AppPerm nodes in the graph.
+type AppPermMutation struct {
+	config
+	op                    Op
+	typ                   string
+	id                    *string
+	created_at            *time.Time
+	updated_at            *time.Time
+	name                  *string
+	clearedFields         map[string]struct{}
+	app                   *string
+	clearedapp            bool
+	app_roles             map[string]struct{}
+	removedapp_roles      map[string]struct{}
+	clearedapp_roles      bool
+	app_role_perms        map[string]struct{}
+	removedapp_role_perms map[string]struct{}
+	clearedapp_role_perms bool
+	done                  bool
+	oldValue              func(context.Context) (*AppPerm, error)
+	predicates            []predicate.AppPerm
+}
+
+var _ ent.Mutation = (*AppPermMutation)(nil)
+
+// apppermOption allows management of the mutation configuration using functional options.
+type apppermOption func(*AppPermMutation)
+
+// newAppPermMutation creates new mutation for the AppPerm entity.
+func newAppPermMutation(c config, op Op, opts ...apppermOption) *AppPermMutation {
+	m := &AppPermMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeAppPerm,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withAppPermID sets the ID field of the mutation.
+func withAppPermID(id string) apppermOption {
+	return func(m *AppPermMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *AppPerm
+		)
+		m.oldValue = func(ctx context.Context) (*AppPerm, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().AppPerm.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withAppPerm sets the old AppPerm of the mutation.
+func withAppPerm(node *AppPerm) apppermOption {
+	return func(m *AppPermMutation) {
+		m.oldValue = func(context.Context) (*AppPerm, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m AppPermMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m AppPermMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of AppPerm entities.
+func (m *AppPermMutation) SetID(id string) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *AppPermMutation) ID() (id string, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *AppPermMutation) IDs(ctx context.Context) ([]string, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []string{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().AppPerm.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *AppPermMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *AppPermMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the AppPerm entity.
+// If the AppPerm object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppPermMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *AppPermMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[appperm.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *AppPermMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[appperm.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *AppPermMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, appperm.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *AppPermMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *AppPermMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the AppPerm entity.
+// If the AppPerm object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppPermMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *AppPermMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[appperm.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *AppPermMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[appperm.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *AppPermMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, appperm.FieldUpdatedAt)
+}
+
+// SetName sets the "name" field.
+func (m *AppPermMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *AppPermMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the AppPerm entity.
+// If the AppPerm object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppPermMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ClearName clears the value of the "name" field.
+func (m *AppPermMutation) ClearName() {
+	m.name = nil
+	m.clearedFields[appperm.FieldName] = struct{}{}
+}
+
+// NameCleared returns if the "name" field was cleared in this mutation.
+func (m *AppPermMutation) NameCleared() bool {
+	_, ok := m.clearedFields[appperm.FieldName]
+	return ok
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *AppPermMutation) ResetName() {
+	m.name = nil
+	delete(m.clearedFields, appperm.FieldName)
+}
+
+// SetAppID sets the "app_id" field.
+func (m *AppPermMutation) SetAppID(s string) {
+	m.app = &s
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *AppPermMutation) AppID() (r string, exists bool) {
+	v := m.app
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the AppPerm entity.
+// If the AppPerm object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppPermMutation) OldAppID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *AppPermMutation) ClearAppID() {
+	m.app = nil
+	m.clearedFields[appperm.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *AppPermMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[appperm.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *AppPermMutation) ResetAppID() {
+	m.app = nil
+	delete(m.clearedFields, appperm.FieldAppID)
+}
+
+// ClearApp clears the "app" edge to the App entity.
+func (m *AppPermMutation) ClearApp() {
+	m.clearedapp = true
+	m.clearedFields[appperm.FieldAppID] = struct{}{}
+}
+
+// AppCleared reports if the "app" edge to the App entity was cleared.
+func (m *AppPermMutation) AppCleared() bool {
+	return m.AppIDCleared() || m.clearedapp
+}
+
+// AppIDs returns the "app" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// AppID instead. It exists only for internal usage by the builders.
+func (m *AppPermMutation) AppIDs() (ids []string) {
+	if id := m.app; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetApp resets all changes to the "app" edge.
+func (m *AppPermMutation) ResetApp() {
+	m.app = nil
+	m.clearedapp = false
+}
+
+// AddAppRoleIDs adds the "app_roles" edge to the AppRole entity by ids.
+func (m *AppPermMutation) AddAppRoleIDs(ids ...string) {
+	if m.app_roles == nil {
+		m.app_roles = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.app_roles[ids[i]] = struct{}{}
+	}
+}
+
+// ClearAppRoles clears the "app_roles" edge to the AppRole entity.
+func (m *AppPermMutation) ClearAppRoles() {
+	m.clearedapp_roles = true
+}
+
+// AppRolesCleared reports if the "app_roles" edge to the AppRole entity was cleared.
+func (m *AppPermMutation) AppRolesCleared() bool {
+	return m.clearedapp_roles
+}
+
+// RemoveAppRoleIDs removes the "app_roles" edge to the AppRole entity by IDs.
+func (m *AppPermMutation) RemoveAppRoleIDs(ids ...string) {
+	if m.removedapp_roles == nil {
+		m.removedapp_roles = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.app_roles, ids[i])
+		m.removedapp_roles[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedAppRoles returns the removed IDs of the "app_roles" edge to the AppRole entity.
+func (m *AppPermMutation) RemovedAppRolesIDs() (ids []string) {
+	for id := range m.removedapp_roles {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// AppRolesIDs returns the "app_roles" edge IDs in the mutation.
+func (m *AppPermMutation) AppRolesIDs() (ids []string) {
+	for id := range m.app_roles {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetAppRoles resets all changes to the "app_roles" edge.
+func (m *AppPermMutation) ResetAppRoles() {
+	m.app_roles = nil
+	m.clearedapp_roles = false
+	m.removedapp_roles = nil
+}
+
+// AddAppRolePermIDs adds the "app_role_perms" edge to the AppRolePerm entity by ids.
+func (m *AppPermMutation) AddAppRolePermIDs(ids ...string) {
+	if m.app_role_perms == nil {
+		m.app_role_perms = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.app_role_perms[ids[i]] = struct{}{}
+	}
+}
+
+// ClearAppRolePerms clears the "app_role_perms" edge to the AppRolePerm entity.
+func (m *AppPermMutation) ClearAppRolePerms() {
+	m.clearedapp_role_perms = true
+}
+
+// AppRolePermsCleared reports if the "app_role_perms" edge to the AppRolePerm entity was cleared.
+func (m *AppPermMutation) AppRolePermsCleared() bool {
+	return m.clearedapp_role_perms
+}
+
+// RemoveAppRolePermIDs removes the "app_role_perms" edge to the AppRolePerm entity by IDs.
+func (m *AppPermMutation) RemoveAppRolePermIDs(ids ...string) {
+	if m.removedapp_role_perms == nil {
+		m.removedapp_role_perms = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.app_role_perms, ids[i])
+		m.removedapp_role_perms[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedAppRolePerms returns the removed IDs of the "app_role_perms" edge to the AppRolePerm entity.
+func (m *AppPermMutation) RemovedAppRolePermsIDs() (ids []string) {
+	for id := range m.removedapp_role_perms {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// AppRolePermsIDs returns the "app_role_perms" edge IDs in the mutation.
+func (m *AppPermMutation) AppRolePermsIDs() (ids []string) {
+	for id := range m.app_role_perms {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetAppRolePerms resets all changes to the "app_role_perms" edge.
+func (m *AppPermMutation) ResetAppRolePerms() {
+	m.app_role_perms = nil
+	m.clearedapp_role_perms = false
+	m.removedapp_role_perms = nil
+}
+
+// Where appends a list predicates to the AppPermMutation builder.
+func (m *AppPermMutation) Where(ps ...predicate.AppPerm) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the AppPermMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *AppPermMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.AppPerm, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *AppPermMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *AppPermMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (AppPerm).
+func (m *AppPermMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *AppPermMutation) Fields() []string {
+	fields := make([]string, 0, 4)
+	if m.created_at != nil {
+		fields = append(fields, appperm.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, appperm.FieldUpdatedAt)
+	}
+	if m.name != nil {
+		fields = append(fields, appperm.FieldName)
+	}
+	if m.app != nil {
+		fields = append(fields, appperm.FieldAppID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *AppPermMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case appperm.FieldCreatedAt:
+		return m.CreatedAt()
+	case appperm.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case appperm.FieldName:
+		return m.Name()
+	case appperm.FieldAppID:
+		return m.AppID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *AppPermMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case appperm.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case appperm.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case appperm.FieldName:
+		return m.OldName(ctx)
+	case appperm.FieldAppID:
+		return m.OldAppID(ctx)
+	}
+	return nil, fmt.Errorf("unknown AppPerm field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *AppPermMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case appperm.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case appperm.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case appperm.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case appperm.FieldAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown AppPerm field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *AppPermMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *AppPermMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *AppPermMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown AppPerm numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *AppPermMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(appperm.FieldCreatedAt) {
+		fields = append(fields, appperm.FieldCreatedAt)
+	}
+	if m.FieldCleared(appperm.FieldUpdatedAt) {
+		fields = append(fields, appperm.FieldUpdatedAt)
+	}
+	if m.FieldCleared(appperm.FieldName) {
+		fields = append(fields, appperm.FieldName)
+	}
+	if m.FieldCleared(appperm.FieldAppID) {
+		fields = append(fields, appperm.FieldAppID)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *AppPermMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *AppPermMutation) ClearField(name string) error {
+	switch name {
+	case appperm.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case appperm.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case appperm.FieldName:
+		m.ClearName()
+		return nil
+	case appperm.FieldAppID:
+		m.ClearAppID()
+		return nil
+	}
+	return fmt.Errorf("unknown AppPerm nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *AppPermMutation) ResetField(name string) error {
+	switch name {
+	case appperm.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case appperm.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case appperm.FieldName:
+		m.ResetName()
+		return nil
+	case appperm.FieldAppID:
+		m.ResetAppID()
+		return nil
+	}
+	return fmt.Errorf("unknown AppPerm field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *AppPermMutation) AddedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.app != nil {
+		edges = append(edges, appperm.EdgeApp)
+	}
+	if m.app_roles != nil {
+		edges = append(edges, appperm.EdgeAppRoles)
+	}
+	if m.app_role_perms != nil {
+		edges = append(edges, appperm.EdgeAppRolePerms)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *AppPermMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case appperm.EdgeApp:
+		if id := m.app; id != nil {
+			return []ent.Value{*id}
+		}
+	case appperm.EdgeAppRoles:
+		ids := make([]ent.Value, 0, len(m.app_roles))
+		for id := range m.app_roles {
+			ids = append(ids, id)
+		}
+		return ids
+	case appperm.EdgeAppRolePerms:
+		ids := make([]ent.Value, 0, len(m.app_role_perms))
+		for id := range m.app_role_perms {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *AppPermMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.removedapp_roles != nil {
+		edges = append(edges, appperm.EdgeAppRoles)
+	}
+	if m.removedapp_role_perms != nil {
+		edges = append(edges, appperm.EdgeAppRolePerms)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *AppPermMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case appperm.EdgeAppRoles:
+		ids := make([]ent.Value, 0, len(m.removedapp_roles))
+		for id := range m.removedapp_roles {
+			ids = append(ids, id)
+		}
+		return ids
+	case appperm.EdgeAppRolePerms:
+		ids := make([]ent.Value, 0, len(m.removedapp_role_perms))
+		for id := range m.removedapp_role_perms {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *AppPermMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.clearedapp {
+		edges = append(edges, appperm.EdgeApp)
+	}
+	if m.clearedapp_roles {
+		edges = append(edges, appperm.EdgeAppRoles)
+	}
+	if m.clearedapp_role_perms {
+		edges = append(edges, appperm.EdgeAppRolePerms)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *AppPermMutation) EdgeCleared(name string) bool {
+	switch name {
+	case appperm.EdgeApp:
+		return m.clearedapp
+	case appperm.EdgeAppRoles:
+		return m.clearedapp_roles
+	case appperm.EdgeAppRolePerms:
+		return m.clearedapp_role_perms
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *AppPermMutation) ClearEdge(name string) error {
+	switch name {
+	case appperm.EdgeApp:
+		m.ClearApp()
+		return nil
+	}
+	return fmt.Errorf("unknown AppPerm unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *AppPermMutation) ResetEdge(name string) error {
+	switch name {
+	case appperm.EdgeApp:
+		m.ResetApp()
+		return nil
+	case appperm.EdgeAppRoles:
+		m.ResetAppRoles()
+		return nil
+	case appperm.EdgeAppRolePerms:
+		m.ResetAppRolePerms()
+		return nil
+	}
+	return fmt.Errorf("unknown AppPerm edge %s", name)
+}
+
+// AppRoleMutation represents an operation that mutates the AppRole nodes in the graph.
+type AppRoleMutation struct {
+	config
+	op                    Op
+	typ                   string
+	id                    *string
+	created_at            *time.Time
+	updated_at            *time.Time
+	name                  *string
+	is_global             *bool
+	clearedFields         map[string]struct{}
+	app                   *string
+	clearedapp            bool
+	app_perms             map[string]struct{}
+	removedapp_perms      map[string]struct{}
+	clearedapp_perms      bool
+	app_role_perms        map[string]struct{}
+	removedapp_role_perms map[string]struct{}
+	clearedapp_role_perms bool
+	done                  bool
+	oldValue              func(context.Context) (*AppRole, error)
+	predicates            []predicate.AppRole
+}
+
+var _ ent.Mutation = (*AppRoleMutation)(nil)
+
+// approleOption allows management of the mutation configuration using functional options.
+type approleOption func(*AppRoleMutation)
+
+// newAppRoleMutation creates new mutation for the AppRole entity.
+func newAppRoleMutation(c config, op Op, opts ...approleOption) *AppRoleMutation {
+	m := &AppRoleMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeAppRole,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withAppRoleID sets the ID field of the mutation.
+func withAppRoleID(id string) approleOption {
+	return func(m *AppRoleMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *AppRole
+		)
+		m.oldValue = func(ctx context.Context) (*AppRole, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().AppRole.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withAppRole sets the old AppRole of the mutation.
+func withAppRole(node *AppRole) approleOption {
+	return func(m *AppRoleMutation) {
+		m.oldValue = func(context.Context) (*AppRole, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m AppRoleMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m AppRoleMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of AppRole entities.
+func (m *AppRoleMutation) SetID(id string) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *AppRoleMutation) ID() (id string, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *AppRoleMutation) IDs(ctx context.Context) ([]string, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []string{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().AppRole.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *AppRoleMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *AppRoleMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the AppRole entity.
+// If the AppRole object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppRoleMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *AppRoleMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[approle.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *AppRoleMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[approle.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *AppRoleMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, approle.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *AppRoleMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *AppRoleMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the AppRole entity.
+// If the AppRole object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppRoleMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *AppRoleMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[approle.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *AppRoleMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[approle.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *AppRoleMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, approle.FieldUpdatedAt)
+}
+
+// SetName sets the "name" field.
+func (m *AppRoleMutation) SetName(s string) {
+	m.name = &s
+}
+
+// Name returns the value of the "name" field in the mutation.
+func (m *AppRoleMutation) Name() (r string, exists bool) {
+	v := m.name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldName returns the old "name" field's value of the AppRole entity.
+// If the AppRole object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppRoleMutation) OldName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldName: %w", err)
+	}
+	return oldValue.Name, nil
+}
+
+// ClearName clears the value of the "name" field.
+func (m *AppRoleMutation) ClearName() {
+	m.name = nil
+	m.clearedFields[approle.FieldName] = struct{}{}
+}
+
+// NameCleared returns if the "name" field was cleared in this mutation.
+func (m *AppRoleMutation) NameCleared() bool {
+	_, ok := m.clearedFields[approle.FieldName]
+	return ok
+}
+
+// ResetName resets all changes to the "name" field.
+func (m *AppRoleMutation) ResetName() {
+	m.name = nil
+	delete(m.clearedFields, approle.FieldName)
+}
+
+// SetAppID sets the "app_id" field.
+func (m *AppRoleMutation) SetAppID(s string) {
+	m.app = &s
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *AppRoleMutation) AppID() (r string, exists bool) {
+	v := m.app
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the AppRole entity.
+// If the AppRole object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppRoleMutation) OldAppID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ClearAppID clears the value of the "app_id" field.
+func (m *AppRoleMutation) ClearAppID() {
+	m.app = nil
+	m.clearedFields[approle.FieldAppID] = struct{}{}
+}
+
+// AppIDCleared returns if the "app_id" field was cleared in this mutation.
+func (m *AppRoleMutation) AppIDCleared() bool {
+	_, ok := m.clearedFields[approle.FieldAppID]
+	return ok
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *AppRoleMutation) ResetAppID() {
+	m.app = nil
+	delete(m.clearedFields, approle.FieldAppID)
+}
+
+// SetIsGlobal sets the "is_global" field.
+func (m *AppRoleMutation) SetIsGlobal(b bool) {
+	m.is_global = &b
+}
+
+// IsGlobal returns the value of the "is_global" field in the mutation.
+func (m *AppRoleMutation) IsGlobal() (r bool, exists bool) {
+	v := m.is_global
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsGlobal returns the old "is_global" field's value of the AppRole entity.
+// If the AppRole object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppRoleMutation) OldIsGlobal(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsGlobal is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsGlobal requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsGlobal: %w", err)
+	}
+	return oldValue.IsGlobal, nil
+}
+
+// ResetIsGlobal resets all changes to the "is_global" field.
+func (m *AppRoleMutation) ResetIsGlobal() {
+	m.is_global = nil
+}
+
+// ClearApp clears the "app" edge to the App entity.
+func (m *AppRoleMutation) ClearApp() {
+	m.clearedapp = true
+	m.clearedFields[approle.FieldAppID] = struct{}{}
+}
+
+// AppCleared reports if the "app" edge to the App entity was cleared.
+func (m *AppRoleMutation) AppCleared() bool {
+	return m.AppIDCleared() || m.clearedapp
+}
+
+// AppIDs returns the "app" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// AppID instead. It exists only for internal usage by the builders.
+func (m *AppRoleMutation) AppIDs() (ids []string) {
+	if id := m.app; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetApp resets all changes to the "app" edge.
+func (m *AppRoleMutation) ResetApp() {
+	m.app = nil
+	m.clearedapp = false
+}
+
+// AddAppPermIDs adds the "app_perms" edge to the AppPerm entity by ids.
+func (m *AppRoleMutation) AddAppPermIDs(ids ...string) {
+	if m.app_perms == nil {
+		m.app_perms = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.app_perms[ids[i]] = struct{}{}
+	}
+}
+
+// ClearAppPerms clears the "app_perms" edge to the AppPerm entity.
+func (m *AppRoleMutation) ClearAppPerms() {
+	m.clearedapp_perms = true
+}
+
+// AppPermsCleared reports if the "app_perms" edge to the AppPerm entity was cleared.
+func (m *AppRoleMutation) AppPermsCleared() bool {
+	return m.clearedapp_perms
+}
+
+// RemoveAppPermIDs removes the "app_perms" edge to the AppPerm entity by IDs.
+func (m *AppRoleMutation) RemoveAppPermIDs(ids ...string) {
+	if m.removedapp_perms == nil {
+		m.removedapp_perms = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.app_perms, ids[i])
+		m.removedapp_perms[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedAppPerms returns the removed IDs of the "app_perms" edge to the AppPerm entity.
+func (m *AppRoleMutation) RemovedAppPermsIDs() (ids []string) {
+	for id := range m.removedapp_perms {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// AppPermsIDs returns the "app_perms" edge IDs in the mutation.
+func (m *AppRoleMutation) AppPermsIDs() (ids []string) {
+	for id := range m.app_perms {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetAppPerms resets all changes to the "app_perms" edge.
+func (m *AppRoleMutation) ResetAppPerms() {
+	m.app_perms = nil
+	m.clearedapp_perms = false
+	m.removedapp_perms = nil
+}
+
+// AddAppRolePermIDs adds the "app_role_perms" edge to the AppRolePerm entity by ids.
+func (m *AppRoleMutation) AddAppRolePermIDs(ids ...string) {
+	if m.app_role_perms == nil {
+		m.app_role_perms = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.app_role_perms[ids[i]] = struct{}{}
+	}
+}
+
+// ClearAppRolePerms clears the "app_role_perms" edge to the AppRolePerm entity.
+func (m *AppRoleMutation) ClearAppRolePerms() {
+	m.clearedapp_role_perms = true
+}
+
+// AppRolePermsCleared reports if the "app_role_perms" edge to the AppRolePerm entity was cleared.
+func (m *AppRoleMutation) AppRolePermsCleared() bool {
+	return m.clearedapp_role_perms
+}
+
+// RemoveAppRolePermIDs removes the "app_role_perms" edge to the AppRolePerm entity by IDs.
+func (m *AppRoleMutation) RemoveAppRolePermIDs(ids ...string) {
+	if m.removedapp_role_perms == nil {
+		m.removedapp_role_perms = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.app_role_perms, ids[i])
+		m.removedapp_role_perms[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedAppRolePerms returns the removed IDs of the "app_role_perms" edge to the AppRolePerm entity.
+func (m *AppRoleMutation) RemovedAppRolePermsIDs() (ids []string) {
+	for id := range m.removedapp_role_perms {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// AppRolePermsIDs returns the "app_role_perms" edge IDs in the mutation.
+func (m *AppRoleMutation) AppRolePermsIDs() (ids []string) {
+	for id := range m.app_role_perms {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetAppRolePerms resets all changes to the "app_role_perms" edge.
+func (m *AppRoleMutation) ResetAppRolePerms() {
+	m.app_role_perms = nil
+	m.clearedapp_role_perms = false
+	m.removedapp_role_perms = nil
+}
+
+// Where appends a list predicates to the AppRoleMutation builder.
+func (m *AppRoleMutation) Where(ps ...predicate.AppRole) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the AppRoleMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *AppRoleMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.AppRole, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *AppRoleMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *AppRoleMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (AppRole).
+func (m *AppRoleMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *AppRoleMutation) Fields() []string {
+	fields := make([]string, 0, 5)
+	if m.created_at != nil {
+		fields = append(fields, approle.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, approle.FieldUpdatedAt)
+	}
+	if m.name != nil {
+		fields = append(fields, approle.FieldName)
+	}
+	if m.app != nil {
+		fields = append(fields, approle.FieldAppID)
+	}
+	if m.is_global != nil {
+		fields = append(fields, approle.FieldIsGlobal)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *AppRoleMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case approle.FieldCreatedAt:
+		return m.CreatedAt()
+	case approle.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case approle.FieldName:
+		return m.Name()
+	case approle.FieldAppID:
+		return m.AppID()
+	case approle.FieldIsGlobal:
+		return m.IsGlobal()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *AppRoleMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case approle.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case approle.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case approle.FieldName:
+		return m.OldName(ctx)
+	case approle.FieldAppID:
+		return m.OldAppID(ctx)
+	case approle.FieldIsGlobal:
+		return m.OldIsGlobal(ctx)
+	}
+	return nil, fmt.Errorf("unknown AppRole field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *AppRoleMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case approle.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case approle.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case approle.FieldName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetName(v)
+		return nil
+	case approle.FieldAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
+		return nil
+	case approle.FieldIsGlobal:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsGlobal(v)
+		return nil
+	}
+	return fmt.Errorf("unknown AppRole field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *AppRoleMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *AppRoleMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *AppRoleMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown AppRole numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *AppRoleMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(approle.FieldCreatedAt) {
+		fields = append(fields, approle.FieldCreatedAt)
+	}
+	if m.FieldCleared(approle.FieldUpdatedAt) {
+		fields = append(fields, approle.FieldUpdatedAt)
+	}
+	if m.FieldCleared(approle.FieldName) {
+		fields = append(fields, approle.FieldName)
+	}
+	if m.FieldCleared(approle.FieldAppID) {
+		fields = append(fields, approle.FieldAppID)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *AppRoleMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *AppRoleMutation) ClearField(name string) error {
+	switch name {
+	case approle.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case approle.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case approle.FieldName:
+		m.ClearName()
+		return nil
+	case approle.FieldAppID:
+		m.ClearAppID()
+		return nil
+	}
+	return fmt.Errorf("unknown AppRole nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *AppRoleMutation) ResetField(name string) error {
+	switch name {
+	case approle.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case approle.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case approle.FieldName:
+		m.ResetName()
+		return nil
+	case approle.FieldAppID:
+		m.ResetAppID()
+		return nil
+	case approle.FieldIsGlobal:
+		m.ResetIsGlobal()
+		return nil
+	}
+	return fmt.Errorf("unknown AppRole field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *AppRoleMutation) AddedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.app != nil {
+		edges = append(edges, approle.EdgeApp)
+	}
+	if m.app_perms != nil {
+		edges = append(edges, approle.EdgeAppPerms)
+	}
+	if m.app_role_perms != nil {
+		edges = append(edges, approle.EdgeAppRolePerms)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *AppRoleMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case approle.EdgeApp:
+		if id := m.app; id != nil {
+			return []ent.Value{*id}
+		}
+	case approle.EdgeAppPerms:
+		ids := make([]ent.Value, 0, len(m.app_perms))
+		for id := range m.app_perms {
+			ids = append(ids, id)
+		}
+		return ids
+	case approle.EdgeAppRolePerms:
+		ids := make([]ent.Value, 0, len(m.app_role_perms))
+		for id := range m.app_role_perms {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *AppRoleMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.removedapp_perms != nil {
+		edges = append(edges, approle.EdgeAppPerms)
+	}
+	if m.removedapp_role_perms != nil {
+		edges = append(edges, approle.EdgeAppRolePerms)
+	}
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *AppRoleMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case approle.EdgeAppPerms:
+		ids := make([]ent.Value, 0, len(m.removedapp_perms))
+		for id := range m.removedapp_perms {
+			ids = append(ids, id)
+		}
+		return ids
+	case approle.EdgeAppRolePerms:
+		ids := make([]ent.Value, 0, len(m.removedapp_role_perms))
+		for id := range m.removedapp_role_perms {
+			ids = append(ids, id)
+		}
+		return ids
+	}
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *AppRoleMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.clearedapp {
+		edges = append(edges, approle.EdgeApp)
+	}
+	if m.clearedapp_perms {
+		edges = append(edges, approle.EdgeAppPerms)
+	}
+	if m.clearedapp_role_perms {
+		edges = append(edges, approle.EdgeAppRolePerms)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *AppRoleMutation) EdgeCleared(name string) bool {
+	switch name {
+	case approle.EdgeApp:
+		return m.clearedapp
+	case approle.EdgeAppPerms:
+		return m.clearedapp_perms
+	case approle.EdgeAppRolePerms:
+		return m.clearedapp_role_perms
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *AppRoleMutation) ClearEdge(name string) error {
+	switch name {
+	case approle.EdgeApp:
+		m.ClearApp()
+		return nil
+	}
+	return fmt.Errorf("unknown AppRole unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *AppRoleMutation) ResetEdge(name string) error {
+	switch name {
+	case approle.EdgeApp:
+		m.ResetApp()
+		return nil
+	case approle.EdgeAppPerms:
+		m.ResetAppPerms()
+		return nil
+	case approle.EdgeAppRolePerms:
+		m.ResetAppRolePerms()
+		return nil
+	}
+	return fmt.Errorf("unknown AppRole edge %s", name)
+}
+
+// AppRolePermMutation represents an operation that mutates the AppRolePerm nodes in the graph.
+type AppRolePermMutation struct {
+	config
+	op              Op
+	typ             string
+	id              *string
+	created_at      *time.Time
+	updated_at      *time.Time
+	clearedFields   map[string]struct{}
+	app             *string
+	clearedapp      bool
+	app_perm        *string
+	clearedapp_perm bool
+	app_role        *string
+	clearedapp_role bool
+	done            bool
+	oldValue        func(context.Context) (*AppRolePerm, error)
+	predicates      []predicate.AppRolePerm
+}
+
+var _ ent.Mutation = (*AppRolePermMutation)(nil)
+
+// approlepermOption allows management of the mutation configuration using functional options.
+type approlepermOption func(*AppRolePermMutation)
+
+// newAppRolePermMutation creates new mutation for the AppRolePerm entity.
+func newAppRolePermMutation(c config, op Op, opts ...approlepermOption) *AppRolePermMutation {
+	m := &AppRolePermMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeAppRolePerm,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withAppRolePermID sets the ID field of the mutation.
+func withAppRolePermID(id string) approlepermOption {
+	return func(m *AppRolePermMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *AppRolePerm
+		)
+		m.oldValue = func(ctx context.Context) (*AppRolePerm, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().AppRolePerm.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withAppRolePerm sets the old AppRolePerm of the mutation.
+func withAppRolePerm(node *AppRolePerm) approlepermOption {
+	return func(m *AppRolePermMutation) {
+		m.oldValue = func(context.Context) (*AppRolePerm, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m AppRolePermMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m AppRolePermMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of AppRolePerm entities.
+func (m *AppRolePermMutation) SetID(id string) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *AppRolePermMutation) ID() (id string, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *AppRolePermMutation) IDs(ctx context.Context) ([]string, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []string{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().AppRolePerm.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *AppRolePermMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *AppRolePermMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the AppRolePerm entity.
+// If the AppRolePerm object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppRolePermMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *AppRolePermMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[approleperm.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *AppRolePermMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[approleperm.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *AppRolePermMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, approleperm.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *AppRolePermMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *AppRolePermMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the AppRolePerm entity.
+// If the AppRolePerm object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppRolePermMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *AppRolePermMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[approleperm.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *AppRolePermMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[approleperm.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *AppRolePermMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, approleperm.FieldUpdatedAt)
+}
+
+// SetAppRoleID sets the "app_role_id" field.
+func (m *AppRolePermMutation) SetAppRoleID(s string) {
+	m.app_role = &s
+}
+
+// AppRoleID returns the value of the "app_role_id" field in the mutation.
+func (m *AppRolePermMutation) AppRoleID() (r string, exists bool) {
+	v := m.app_role
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppRoleID returns the old "app_role_id" field's value of the AppRolePerm entity.
+// If the AppRolePerm object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppRolePermMutation) OldAppRoleID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppRoleID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppRoleID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppRoleID: %w", err)
+	}
+	return oldValue.AppRoleID, nil
+}
+
+// ResetAppRoleID resets all changes to the "app_role_id" field.
+func (m *AppRolePermMutation) ResetAppRoleID() {
+	m.app_role = nil
+}
+
+// SetAppPermID sets the "app_perm_id" field.
+func (m *AppRolePermMutation) SetAppPermID(s string) {
+	m.app_perm = &s
+}
+
+// AppPermID returns the value of the "app_perm_id" field in the mutation.
+func (m *AppRolePermMutation) AppPermID() (r string, exists bool) {
+	v := m.app_perm
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppPermID returns the old "app_perm_id" field's value of the AppRolePerm entity.
+// If the AppRolePerm object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppRolePermMutation) OldAppPermID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppPermID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppPermID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppPermID: %w", err)
+	}
+	return oldValue.AppPermID, nil
+}
+
+// ResetAppPermID resets all changes to the "app_perm_id" field.
+func (m *AppRolePermMutation) ResetAppPermID() {
+	m.app_perm = nil
+}
+
+// SetAppID sets the "app_id" field.
+func (m *AppRolePermMutation) SetAppID(s string) {
+	m.app = &s
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *AppRolePermMutation) AppID() (r string, exists bool) {
+	v := m.app
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the AppRolePerm entity.
+// If the AppRolePerm object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppRolePermMutation) OldAppID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *AppRolePermMutation) ResetAppID() {
+	m.app = nil
+}
+
+// ClearApp clears the "app" edge to the App entity.
+func (m *AppRolePermMutation) ClearApp() {
+	m.clearedapp = true
+	m.clearedFields[approleperm.FieldAppID] = struct{}{}
+}
+
+// AppCleared reports if the "app" edge to the App entity was cleared.
+func (m *AppRolePermMutation) AppCleared() bool {
+	return m.clearedapp
+}
+
+// AppIDs returns the "app" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// AppID instead. It exists only for internal usage by the builders.
+func (m *AppRolePermMutation) AppIDs() (ids []string) {
+	if id := m.app; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetApp resets all changes to the "app" edge.
+func (m *AppRolePermMutation) ResetApp() {
+	m.app = nil
+	m.clearedapp = false
+}
+
+// ClearAppPerm clears the "app_perm" edge to the AppPerm entity.
+func (m *AppRolePermMutation) ClearAppPerm() {
+	m.clearedapp_perm = true
+	m.clearedFields[approleperm.FieldAppPermID] = struct{}{}
+}
+
+// AppPermCleared reports if the "app_perm" edge to the AppPerm entity was cleared.
+func (m *AppRolePermMutation) AppPermCleared() bool {
+	return m.clearedapp_perm
+}
+
+// AppPermIDs returns the "app_perm" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// AppPermID instead. It exists only for internal usage by the builders.
+func (m *AppRolePermMutation) AppPermIDs() (ids []string) {
+	if id := m.app_perm; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetAppPerm resets all changes to the "app_perm" edge.
+func (m *AppRolePermMutation) ResetAppPerm() {
+	m.app_perm = nil
+	m.clearedapp_perm = false
+}
+
+// ClearAppRole clears the "app_role" edge to the AppRole entity.
+func (m *AppRolePermMutation) ClearAppRole() {
+	m.clearedapp_role = true
+	m.clearedFields[approleperm.FieldAppRoleID] = struct{}{}
+}
+
+// AppRoleCleared reports if the "app_role" edge to the AppRole entity was cleared.
+func (m *AppRolePermMutation) AppRoleCleared() bool {
+	return m.clearedapp_role
+}
+
+// AppRoleIDs returns the "app_role" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// AppRoleID instead. It exists only for internal usage by the builders.
+func (m *AppRolePermMutation) AppRoleIDs() (ids []string) {
+	if id := m.app_role; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetAppRole resets all changes to the "app_role" edge.
+func (m *AppRolePermMutation) ResetAppRole() {
+	m.app_role = nil
+	m.clearedapp_role = false
+}
+
+// Where appends a list predicates to the AppRolePermMutation builder.
+func (m *AppRolePermMutation) Where(ps ...predicate.AppRolePerm) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the AppRolePermMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *AppRolePermMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.AppRolePerm, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *AppRolePermMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *AppRolePermMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (AppRolePerm).
+func (m *AppRolePermMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *AppRolePermMutation) Fields() []string {
+	fields := make([]string, 0, 5)
+	if m.created_at != nil {
+		fields = append(fields, approleperm.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, approleperm.FieldUpdatedAt)
+	}
+	if m.app_role != nil {
+		fields = append(fields, approleperm.FieldAppRoleID)
+	}
+	if m.app_perm != nil {
+		fields = append(fields, approleperm.FieldAppPermID)
+	}
+	if m.app != nil {
+		fields = append(fields, approleperm.FieldAppID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *AppRolePermMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case approleperm.FieldCreatedAt:
+		return m.CreatedAt()
+	case approleperm.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case approleperm.FieldAppRoleID:
+		return m.AppRoleID()
+	case approleperm.FieldAppPermID:
+		return m.AppPermID()
+	case approleperm.FieldAppID:
+		return m.AppID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *AppRolePermMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case approleperm.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case approleperm.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case approleperm.FieldAppRoleID:
+		return m.OldAppRoleID(ctx)
+	case approleperm.FieldAppPermID:
+		return m.OldAppPermID(ctx)
+	case approleperm.FieldAppID:
+		return m.OldAppID(ctx)
+	}
+	return nil, fmt.Errorf("unknown AppRolePerm field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *AppRolePermMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case approleperm.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case approleperm.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case approleperm.FieldAppRoleID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppRoleID(v)
+		return nil
+	case approleperm.FieldAppPermID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppPermID(v)
+		return nil
+	case approleperm.FieldAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown AppRolePerm field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *AppRolePermMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *AppRolePermMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *AppRolePermMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown AppRolePerm numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *AppRolePermMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(approleperm.FieldCreatedAt) {
+		fields = append(fields, approleperm.FieldCreatedAt)
+	}
+	if m.FieldCleared(approleperm.FieldUpdatedAt) {
+		fields = append(fields, approleperm.FieldUpdatedAt)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *AppRolePermMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *AppRolePermMutation) ClearField(name string) error {
+	switch name {
+	case approleperm.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case approleperm.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown AppRolePerm nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *AppRolePermMutation) ResetField(name string) error {
+	switch name {
+	case approleperm.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case approleperm.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case approleperm.FieldAppRoleID:
+		m.ResetAppRoleID()
+		return nil
+	case approleperm.FieldAppPermID:
+		m.ResetAppPermID()
+		return nil
+	case approleperm.FieldAppID:
+		m.ResetAppID()
+		return nil
+	}
+	return fmt.Errorf("unknown AppRolePerm field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *AppRolePermMutation) AddedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.app != nil {
+		edges = append(edges, approleperm.EdgeApp)
+	}
+	if m.app_perm != nil {
+		edges = append(edges, approleperm.EdgeAppPerm)
+	}
+	if m.app_role != nil {
+		edges = append(edges, approleperm.EdgeAppRole)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *AppRolePermMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case approleperm.EdgeApp:
+		if id := m.app; id != nil {
+			return []ent.Value{*id}
+		}
+	case approleperm.EdgeAppPerm:
+		if id := m.app_perm; id != nil {
+			return []ent.Value{*id}
+		}
+	case approleperm.EdgeAppRole:
+		if id := m.app_role; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *AppRolePermMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 3)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *AppRolePermMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *AppRolePermMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.clearedapp {
+		edges = append(edges, approleperm.EdgeApp)
+	}
+	if m.clearedapp_perm {
+		edges = append(edges, approleperm.EdgeAppPerm)
+	}
+	if m.clearedapp_role {
+		edges = append(edges, approleperm.EdgeAppRole)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *AppRolePermMutation) EdgeCleared(name string) bool {
+	switch name {
+	case approleperm.EdgeApp:
+		return m.clearedapp
+	case approleperm.EdgeAppPerm:
+		return m.clearedapp_perm
+	case approleperm.EdgeAppRole:
+		return m.clearedapp_role
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *AppRolePermMutation) ClearEdge(name string) error {
+	switch name {
+	case approleperm.EdgeApp:
+		m.ClearApp()
+		return nil
+	case approleperm.EdgeAppPerm:
+		m.ClearAppPerm()
+		return nil
+	case approleperm.EdgeAppRole:
+		m.ClearAppRole()
+		return nil
+	}
+	return fmt.Errorf("unknown AppRolePerm unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *AppRolePermMutation) ResetEdge(name string) error {
+	switch name {
+	case approleperm.EdgeApp:
+		m.ResetApp()
+		return nil
+	case approleperm.EdgeAppPerm:
+		m.ResetAppPerm()
+		return nil
+	case approleperm.EdgeAppRole:
+		m.ResetAppRole()
+		return nil
+	}
+	return fmt.Errorf("unknown AppRolePerm edge %s", name)
+}
+
+// AppUserMutation represents an operation that mutates the AppUser nodes in the graph.
+type AppUserMutation struct {
+	config
+	op               Op
+	typ              string
+	id               *string
+	created_at       *time.Time
+	updated_at       *time.Time
+	clearedFields    map[string]struct{}
+	app              *string
+	clearedapp       bool
+	adminuser        *string
+	clearedadminuser bool
+	app_role         *string
+	clearedapp_role  bool
+	done             bool
+	oldValue         func(context.Context) (*AppUser, error)
+	predicates       []predicate.AppUser
+}
+
+var _ ent.Mutation = (*AppUserMutation)(nil)
+
+// appuserOption allows management of the mutation configuration using functional options.
+type appuserOption func(*AppUserMutation)
+
+// newAppUserMutation creates new mutation for the AppUser entity.
+func newAppUserMutation(c config, op Op, opts ...appuserOption) *AppUserMutation {
+	m := &AppUserMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeAppUser,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withAppUserID sets the ID field of the mutation.
+func withAppUserID(id string) appuserOption {
+	return func(m *AppUserMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *AppUser
+		)
+		m.oldValue = func(ctx context.Context) (*AppUser, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().AppUser.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withAppUser sets the old AppUser of the mutation.
+func withAppUser(node *AppUser) appuserOption {
+	return func(m *AppUserMutation) {
+		m.oldValue = func(context.Context) (*AppUser, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m AppUserMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m AppUserMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of AppUser entities.
+func (m *AppUserMutation) SetID(id string) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *AppUserMutation) ID() (id string, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *AppUserMutation) IDs(ctx context.Context) ([]string, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []string{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().AppUser.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *AppUserMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *AppUserMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the AppUser entity.
+// If the AppUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppUserMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ClearCreatedAt clears the value of the "created_at" field.
+func (m *AppUserMutation) ClearCreatedAt() {
+	m.created_at = nil
+	m.clearedFields[appuser.FieldCreatedAt] = struct{}{}
+}
+
+// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
+func (m *AppUserMutation) CreatedAtCleared() bool {
+	_, ok := m.clearedFields[appuser.FieldCreatedAt]
+	return ok
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *AppUserMutation) ResetCreatedAt() {
+	m.created_at = nil
+	delete(m.clearedFields, appuser.FieldCreatedAt)
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *AppUserMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *AppUserMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the AppUser entity.
+// If the AppUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppUserMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *AppUserMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[appuser.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *AppUserMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[appuser.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *AppUserMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, appuser.FieldUpdatedAt)
+}
+
+// SetAppID sets the "app_id" field.
+func (m *AppUserMutation) SetAppID(s string) {
+	m.app = &s
+}
+
+// AppID returns the value of the "app_id" field in the mutation.
+func (m *AppUserMutation) AppID() (r string, exists bool) {
+	v := m.app
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppID returns the old "app_id" field's value of the AppUser entity.
+// If the AppUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppUserMutation) OldAppID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppID: %w", err)
+	}
+	return oldValue.AppID, nil
+}
+
+// ResetAppID resets all changes to the "app_id" field.
+func (m *AppUserMutation) ResetAppID() {
+	m.app = nil
+}
+
+// SetAdminUserID sets the "admin_user_id" field.
+func (m *AppUserMutation) SetAdminUserID(s string) {
+	m.adminuser = &s
+}
+
+// AdminUserID returns the value of the "admin_user_id" field in the mutation.
+func (m *AppUserMutation) AdminUserID() (r string, exists bool) {
+	v := m.adminuser
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAdminUserID returns the old "admin_user_id" field's value of the AppUser entity.
+// If the AppUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppUserMutation) OldAdminUserID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAdminUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAdminUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAdminUserID: %w", err)
+	}
+	return oldValue.AdminUserID, nil
+}
+
+// ResetAdminUserID resets all changes to the "admin_user_id" field.
+func (m *AppUserMutation) ResetAdminUserID() {
+	m.adminuser = nil
+}
+
+// SetAppRoleID sets the "app_role_id" field.
+func (m *AppUserMutation) SetAppRoleID(s string) {
+	m.app_role = &s
+}
+
+// AppRoleID returns the value of the "app_role_id" field in the mutation.
+func (m *AppUserMutation) AppRoleID() (r string, exists bool) {
+	v := m.app_role
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAppRoleID returns the old "app_role_id" field's value of the AppUser entity.
+// If the AppUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *AppUserMutation) OldAppRoleID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAppRoleID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAppRoleID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAppRoleID: %w", err)
+	}
+	return oldValue.AppRoleID, nil
+}
+
+// ResetAppRoleID resets all changes to the "app_role_id" field.
+func (m *AppUserMutation) ResetAppRoleID() {
+	m.app_role = nil
+}
+
+// ClearApp clears the "app" edge to the App entity.
+func (m *AppUserMutation) ClearApp() {
+	m.clearedapp = true
+	m.clearedFields[appuser.FieldAppID] = struct{}{}
+}
+
+// AppCleared reports if the "app" edge to the App entity was cleared.
+func (m *AppUserMutation) AppCleared() bool {
+	return m.clearedapp
+}
+
+// AppIDs returns the "app" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// AppID instead. It exists only for internal usage by the builders.
+func (m *AppUserMutation) AppIDs() (ids []string) {
+	if id := m.app; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetApp resets all changes to the "app" edge.
+func (m *AppUserMutation) ResetApp() {
+	m.app = nil
+	m.clearedapp = false
+}
+
+// SetAdminuserID sets the "adminuser" edge to the AdminUser entity by id.
+func (m *AppUserMutation) SetAdminuserID(id string) {
+	m.adminuser = &id
+}
+
+// ClearAdminuser clears the "adminuser" edge to the AdminUser entity.
+func (m *AppUserMutation) ClearAdminuser() {
+	m.clearedadminuser = true
+	m.clearedFields[appuser.FieldAdminUserID] = struct{}{}
+}
+
+// AdminuserCleared reports if the "adminuser" edge to the AdminUser entity was cleared.
+func (m *AppUserMutation) AdminuserCleared() bool {
+	return m.clearedadminuser
+}
+
+// AdminuserID returns the "adminuser" edge ID in the mutation.
+func (m *AppUserMutation) AdminuserID() (id string, exists bool) {
+	if m.adminuser != nil {
+		return *m.adminuser, true
+	}
+	return
+}
+
+// AdminuserIDs returns the "adminuser" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// AdminuserID instead. It exists only for internal usage by the builders.
+func (m *AppUserMutation) AdminuserIDs() (ids []string) {
+	if id := m.adminuser; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetAdminuser resets all changes to the "adminuser" edge.
+func (m *AppUserMutation) ResetAdminuser() {
+	m.adminuser = nil
+	m.clearedadminuser = false
+}
+
+// ClearAppRole clears the "app_role" edge to the AppRole entity.
+func (m *AppUserMutation) ClearAppRole() {
+	m.clearedapp_role = true
+	m.clearedFields[appuser.FieldAppRoleID] = struct{}{}
+}
+
+// AppRoleCleared reports if the "app_role" edge to the AppRole entity was cleared.
+func (m *AppUserMutation) AppRoleCleared() bool {
+	return m.clearedapp_role
+}
+
+// AppRoleIDs returns the "app_role" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// AppRoleID instead. It exists only for internal usage by the builders.
+func (m *AppUserMutation) AppRoleIDs() (ids []string) {
+	if id := m.app_role; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetAppRole resets all changes to the "app_role" edge.
+func (m *AppUserMutation) ResetAppRole() {
+	m.app_role = nil
+	m.clearedapp_role = false
+}
+
+// Where appends a list predicates to the AppUserMutation builder.
+func (m *AppUserMutation) Where(ps ...predicate.AppUser) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the AppUserMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *AppUserMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.AppUser, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *AppUserMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *AppUserMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (AppUser).
+func (m *AppUserMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *AppUserMutation) Fields() []string {
+	fields := make([]string, 0, 5)
+	if m.created_at != nil {
+		fields = append(fields, appuser.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, appuser.FieldUpdatedAt)
+	}
+	if m.app != nil {
+		fields = append(fields, appuser.FieldAppID)
+	}
+	if m.adminuser != nil {
+		fields = append(fields, appuser.FieldAdminUserID)
+	}
+	if m.app_role != nil {
+		fields = append(fields, appuser.FieldAppRoleID)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *AppUserMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case appuser.FieldCreatedAt:
+		return m.CreatedAt()
+	case appuser.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case appuser.FieldAppID:
+		return m.AppID()
+	case appuser.FieldAdminUserID:
+		return m.AdminUserID()
+	case appuser.FieldAppRoleID:
+		return m.AppRoleID()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *AppUserMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case appuser.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case appuser.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case appuser.FieldAppID:
+		return m.OldAppID(ctx)
+	case appuser.FieldAdminUserID:
+		return m.OldAdminUserID(ctx)
+	case appuser.FieldAppRoleID:
+		return m.OldAppRoleID(ctx)
+	}
+	return nil, fmt.Errorf("unknown AppUser field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *AppUserMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case appuser.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case appuser.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case appuser.FieldAppID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppID(v)
+		return nil
+	case appuser.FieldAdminUserID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAdminUserID(v)
+		return nil
+	case appuser.FieldAppRoleID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAppRoleID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown AppUser field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *AppUserMutation) AddedFields() []string {
+	return nil
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *AppUserMutation) AddedField(name string) (ent.Value, bool) {
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *AppUserMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	}
+	return fmt.Errorf("unknown AppUser numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *AppUserMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(appuser.FieldCreatedAt) {
+		fields = append(fields, appuser.FieldCreatedAt)
+	}
+	if m.FieldCleared(appuser.FieldUpdatedAt) {
+		fields = append(fields, appuser.FieldUpdatedAt)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *AppUserMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *AppUserMutation) ClearField(name string) error {
+	switch name {
+	case appuser.FieldCreatedAt:
+		m.ClearCreatedAt()
+		return nil
+	case appuser.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	}
+	return fmt.Errorf("unknown AppUser nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *AppUserMutation) ResetField(name string) error {
+	switch name {
+	case appuser.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case appuser.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case appuser.FieldAppID:
+		m.ResetAppID()
+		return nil
+	case appuser.FieldAdminUserID:
+		m.ResetAdminUserID()
+		return nil
+	case appuser.FieldAppRoleID:
+		m.ResetAppRoleID()
+		return nil
+	}
+	return fmt.Errorf("unknown AppUser field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *AppUserMutation) AddedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.app != nil {
+		edges = append(edges, appuser.EdgeApp)
+	}
+	if m.adminuser != nil {
+		edges = append(edges, appuser.EdgeAdminuser)
+	}
+	if m.app_role != nil {
+		edges = append(edges, appuser.EdgeAppRole)
+	}
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *AppUserMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case appuser.EdgeApp:
+		if id := m.app; id != nil {
+			return []ent.Value{*id}
+		}
+	case appuser.EdgeAdminuser:
+		if id := m.adminuser; id != nil {
+			return []ent.Value{*id}
+		}
+	case appuser.EdgeAppRole:
+		if id := m.app_role; id != nil {
+			return []ent.Value{*id}
+		}
+	}
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *AppUserMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 3)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *AppUserMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *AppUserMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 3)
+	if m.clearedapp {
+		edges = append(edges, appuser.EdgeApp)
+	}
+	if m.clearedadminuser {
+		edges = append(edges, appuser.EdgeAdminuser)
+	}
+	if m.clearedapp_role {
+		edges = append(edges, appuser.EdgeAppRole)
+	}
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *AppUserMutation) EdgeCleared(name string) bool {
+	switch name {
+	case appuser.EdgeApp:
+		return m.clearedapp
+	case appuser.EdgeAdminuser:
+		return m.clearedadminuser
+	case appuser.EdgeAppRole:
+		return m.clearedapp_role
+	}
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *AppUserMutation) ClearEdge(name string) error {
+	switch name {
+	case appuser.EdgeApp:
+		m.ClearApp()
+		return nil
+	case appuser.EdgeAdminuser:
+		m.ClearAdminuser()
+		return nil
+	case appuser.EdgeAppRole:
+		m.ClearAppRole()
+		return nil
+	}
+	return fmt.Errorf("unknown AppUser unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *AppUserMutation) ResetEdge(name string) error {
+	switch name {
+	case appuser.EdgeApp:
+		m.ResetApp()
+		return nil
+	case appuser.EdgeAdminuser:
+		m.ResetAdminuser()
+		return nil
+	case appuser.EdgeAppRole:
+		m.ResetAppRole()
+		return nil
+	}
+	return fmt.Errorf("unknown AppUser edge %s", name)
 }
 
 // KacheMutation represents an operation that mutates the Kache nodes in the graph.

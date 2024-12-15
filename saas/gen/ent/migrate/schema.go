@@ -108,6 +108,149 @@ var (
 			},
 		},
 	}
+	// AppPermsColumns holds the columns for the "app_perms" table.
+	AppPermsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "name", Type: field.TypeString, Nullable: true},
+		{Name: "app_id", Type: field.TypeString, Nullable: true},
+	}
+	// AppPermsTable holds the schema information for the "app_perms" table.
+	AppPermsTable = &schema.Table{
+		Name:       "app_perms",
+		Columns:    AppPermsColumns,
+		PrimaryKey: []*schema.Column{AppPermsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "app_perms_apps_app",
+				Columns:    []*schema.Column{AppPermsColumns[4]},
+				RefColumns: []*schema.Column{AppsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "appperm_app_id_name",
+				Unique:  true,
+				Columns: []*schema.Column{AppPermsColumns[4], AppPermsColumns[3]},
+			},
+		},
+	}
+	// AppRolesColumns holds the columns for the "app_roles" table.
+	AppRolesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "name", Type: field.TypeString, Nullable: true},
+		{Name: "is_global", Type: field.TypeBool, Default: false},
+		{Name: "app_id", Type: field.TypeString, Nullable: true},
+	}
+	// AppRolesTable holds the schema information for the "app_roles" table.
+	AppRolesTable = &schema.Table{
+		Name:       "app_roles",
+		Columns:    AppRolesColumns,
+		PrimaryKey: []*schema.Column{AppRolesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "app_roles_apps_app",
+				Columns:    []*schema.Column{AppRolesColumns[5]},
+				RefColumns: []*schema.Column{AppsColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "approle_app_id_name",
+				Unique:  true,
+				Columns: []*schema.Column{AppRolesColumns[5], AppRolesColumns[3]},
+			},
+		},
+	}
+	// AppRolePermsColumns holds the columns for the "app_role_perms" table.
+	AppRolePermsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "app_id", Type: field.TypeString},
+		{Name: "app_perm_id", Type: field.TypeString},
+		{Name: "app_role_id", Type: field.TypeString},
+	}
+	// AppRolePermsTable holds the schema information for the "app_role_perms" table.
+	AppRolePermsTable = &schema.Table{
+		Name:       "app_role_perms",
+		Columns:    AppRolePermsColumns,
+		PrimaryKey: []*schema.Column{AppRolePermsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "app_role_perms_apps_app",
+				Columns:    []*schema.Column{AppRolePermsColumns[3]},
+				RefColumns: []*schema.Column{AppsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "app_role_perms_app_perms_app_perm",
+				Columns:    []*schema.Column{AppRolePermsColumns[4]},
+				RefColumns: []*schema.Column{AppPermsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "app_role_perms_app_roles_app_role",
+				Columns:    []*schema.Column{AppRolePermsColumns[5]},
+				RefColumns: []*schema.Column{AppRolesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "approleperm_app_role_id_app_perm_id",
+				Unique:  true,
+				Columns: []*schema.Column{AppRolePermsColumns[5], AppRolePermsColumns[4]},
+			},
+		},
+	}
+	// AppUsersColumns holds the columns for the "app_users" table.
+	AppUsersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeString, Unique: true},
+		{Name: "created_at", Type: field.TypeTime, Nullable: true},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true},
+		{Name: "app_id", Type: field.TypeString},
+		{Name: "admin_user_id", Type: field.TypeString},
+		{Name: "app_role_id", Type: field.TypeString},
+	}
+	// AppUsersTable holds the schema information for the "app_users" table.
+	AppUsersTable = &schema.Table{
+		Name:       "app_users",
+		Columns:    AppUsersColumns,
+		PrimaryKey: []*schema.Column{AppUsersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "app_users_apps_app",
+				Columns:    []*schema.Column{AppUsersColumns[3]},
+				RefColumns: []*schema.Column{AppsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "app_users_admin_users_adminuser",
+				Columns:    []*schema.Column{AppUsersColumns[4]},
+				RefColumns: []*schema.Column{AdminUsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "app_users_app_roles_app_role",
+				Columns:    []*schema.Column{AppUsersColumns[5]},
+				RefColumns: []*schema.Column{AppRolesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+		Indexes: []*schema.Index{
+			{
+				Name:    "appuser_app_id_admin_user_id",
+				Unique:  true,
+				Columns: []*schema.Column{AppUsersColumns[3], AppUsersColumns[4]},
+			},
+		},
+	}
 	// KachesColumns holds the columns for the "kaches" table.
 	KachesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString, Unique: true, Size: 36},
@@ -659,6 +802,10 @@ var (
 	Tables = []*schema.Table{
 		AdminUsersTable,
 		AppsTable,
+		AppPermsTable,
+		AppRolesTable,
+		AppRolePermsTable,
+		AppUsersTable,
 		KachesTable,
 		KeyvaluesTable,
 		MailConnsTable,
@@ -691,6 +838,14 @@ func init() {
 	AppsTable.ForeignKeys[4].RefTable = TemplsTable
 	AppsTable.ForeignKeys[5].RefTable = TemplsTable
 	AppsTable.ForeignKeys[6].RefTable = TemplsTable
+	AppPermsTable.ForeignKeys[0].RefTable = AppsTable
+	AppRolesTable.ForeignKeys[0].RefTable = AppsTable
+	AppRolePermsTable.ForeignKeys[0].RefTable = AppsTable
+	AppRolePermsTable.ForeignKeys[1].RefTable = AppPermsTable
+	AppRolePermsTable.ForeignKeys[2].RefTable = AppRolesTable
+	AppUsersTable.ForeignKeys[0].RefTable = AppsTable
+	AppUsersTable.ForeignKeys[1].RefTable = AdminUsersTable
+	AppUsersTable.ForeignKeys[2].RefTable = AppRolesTable
 	PostsTable.ForeignKeys[0].RefTable = PostCategoriesTable
 	PostsTable.ForeignKeys[1].RefTable = PostStatusTable
 	PostsTable.ForeignKeys[2].RefTable = PostTypesTable

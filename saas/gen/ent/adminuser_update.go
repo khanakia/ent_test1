@@ -7,6 +7,8 @@ import (
 	"errors"
 	"fmt"
 	"saas/gen/ent/adminuser"
+	"saas/gen/ent/app"
+	"saas/gen/ent/appuser"
 	"saas/gen/ent/predicate"
 	"time"
 
@@ -275,9 +277,81 @@ func (auu *AdminUserUpdate) ClearWelcomeEmailSent() *AdminUserUpdate {
 	return auu
 }
 
+// AddAppIDs adds the "apps" edge to the App entity by IDs.
+func (auu *AdminUserUpdate) AddAppIDs(ids ...string) *AdminUserUpdate {
+	auu.mutation.AddAppIDs(ids...)
+	return auu
+}
+
+// AddApps adds the "apps" edges to the App entity.
+func (auu *AdminUserUpdate) AddApps(a ...*App) *AdminUserUpdate {
+	ids := make([]string, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return auu.AddAppIDs(ids...)
+}
+
+// AddAppUserIDs adds the "app_users" edge to the AppUser entity by IDs.
+func (auu *AdminUserUpdate) AddAppUserIDs(ids ...string) *AdminUserUpdate {
+	auu.mutation.AddAppUserIDs(ids...)
+	return auu
+}
+
+// AddAppUsers adds the "app_users" edges to the AppUser entity.
+func (auu *AdminUserUpdate) AddAppUsers(a ...*AppUser) *AdminUserUpdate {
+	ids := make([]string, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return auu.AddAppUserIDs(ids...)
+}
+
 // Mutation returns the AdminUserMutation object of the builder.
 func (auu *AdminUserUpdate) Mutation() *AdminUserMutation {
 	return auu.mutation
+}
+
+// ClearApps clears all "apps" edges to the App entity.
+func (auu *AdminUserUpdate) ClearApps() *AdminUserUpdate {
+	auu.mutation.ClearApps()
+	return auu
+}
+
+// RemoveAppIDs removes the "apps" edge to App entities by IDs.
+func (auu *AdminUserUpdate) RemoveAppIDs(ids ...string) *AdminUserUpdate {
+	auu.mutation.RemoveAppIDs(ids...)
+	return auu
+}
+
+// RemoveApps removes "apps" edges to App entities.
+func (auu *AdminUserUpdate) RemoveApps(a ...*App) *AdminUserUpdate {
+	ids := make([]string, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return auu.RemoveAppIDs(ids...)
+}
+
+// ClearAppUsers clears all "app_users" edges to the AppUser entity.
+func (auu *AdminUserUpdate) ClearAppUsers() *AdminUserUpdate {
+	auu.mutation.ClearAppUsers()
+	return auu
+}
+
+// RemoveAppUserIDs removes the "app_users" edge to AppUser entities by IDs.
+func (auu *AdminUserUpdate) RemoveAppUserIDs(ids ...string) *AdminUserUpdate {
+	auu.mutation.RemoveAppUserIDs(ids...)
+	return auu
+}
+
+// RemoveAppUsers removes "app_users" edges to AppUser entities.
+func (auu *AdminUserUpdate) RemoveAppUsers(a ...*AppUser) *AdminUserUpdate {
+	ids := make([]string, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return auu.RemoveAppUserIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -408,6 +482,117 @@ func (auu *AdminUserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if auu.mutation.WelcomeEmailSentCleared() {
 		_spec.ClearField(adminuser.FieldWelcomeEmailSent, field.TypeBool)
+	}
+	if auu.mutation.AppsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   adminuser.AppsTable,
+			Columns: adminuser.AppsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(app.FieldID, field.TypeString),
+			},
+		}
+		createE := &AppUserCreate{config: auu.config, mutation: newAppUserMutation(auu.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auu.mutation.RemovedAppsIDs(); len(nodes) > 0 && !auu.mutation.AppsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   adminuser.AppsTable,
+			Columns: adminuser.AppsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(app.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &AppUserCreate{config: auu.config, mutation: newAppUserMutation(auu.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auu.mutation.AppsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   adminuser.AppsTable,
+			Columns: adminuser.AppsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(app.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &AppUserCreate{config: auu.config, mutation: newAppUserMutation(auu.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if auu.mutation.AppUsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   adminuser.AppUsersTable,
+			Columns: []string{adminuser.AppUsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(appuser.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auu.mutation.RemovedAppUsersIDs(); len(nodes) > 0 && !auu.mutation.AppUsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   adminuser.AppUsersTable,
+			Columns: []string{adminuser.AppUsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(appuser.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auu.mutation.AppUsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   adminuser.AppUsersTable,
+			Columns: []string{adminuser.AppUsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(appuser.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.AddModifiers(auu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, auu.driver, _spec); err != nil {
@@ -677,9 +862,81 @@ func (auuo *AdminUserUpdateOne) ClearWelcomeEmailSent() *AdminUserUpdateOne {
 	return auuo
 }
 
+// AddAppIDs adds the "apps" edge to the App entity by IDs.
+func (auuo *AdminUserUpdateOne) AddAppIDs(ids ...string) *AdminUserUpdateOne {
+	auuo.mutation.AddAppIDs(ids...)
+	return auuo
+}
+
+// AddApps adds the "apps" edges to the App entity.
+func (auuo *AdminUserUpdateOne) AddApps(a ...*App) *AdminUserUpdateOne {
+	ids := make([]string, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return auuo.AddAppIDs(ids...)
+}
+
+// AddAppUserIDs adds the "app_users" edge to the AppUser entity by IDs.
+func (auuo *AdminUserUpdateOne) AddAppUserIDs(ids ...string) *AdminUserUpdateOne {
+	auuo.mutation.AddAppUserIDs(ids...)
+	return auuo
+}
+
+// AddAppUsers adds the "app_users" edges to the AppUser entity.
+func (auuo *AdminUserUpdateOne) AddAppUsers(a ...*AppUser) *AdminUserUpdateOne {
+	ids := make([]string, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return auuo.AddAppUserIDs(ids...)
+}
+
 // Mutation returns the AdminUserMutation object of the builder.
 func (auuo *AdminUserUpdateOne) Mutation() *AdminUserMutation {
 	return auuo.mutation
+}
+
+// ClearApps clears all "apps" edges to the App entity.
+func (auuo *AdminUserUpdateOne) ClearApps() *AdminUserUpdateOne {
+	auuo.mutation.ClearApps()
+	return auuo
+}
+
+// RemoveAppIDs removes the "apps" edge to App entities by IDs.
+func (auuo *AdminUserUpdateOne) RemoveAppIDs(ids ...string) *AdminUserUpdateOne {
+	auuo.mutation.RemoveAppIDs(ids...)
+	return auuo
+}
+
+// RemoveApps removes "apps" edges to App entities.
+func (auuo *AdminUserUpdateOne) RemoveApps(a ...*App) *AdminUserUpdateOne {
+	ids := make([]string, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return auuo.RemoveAppIDs(ids...)
+}
+
+// ClearAppUsers clears all "app_users" edges to the AppUser entity.
+func (auuo *AdminUserUpdateOne) ClearAppUsers() *AdminUserUpdateOne {
+	auuo.mutation.ClearAppUsers()
+	return auuo
+}
+
+// RemoveAppUserIDs removes the "app_users" edge to AppUser entities by IDs.
+func (auuo *AdminUserUpdateOne) RemoveAppUserIDs(ids ...string) *AdminUserUpdateOne {
+	auuo.mutation.RemoveAppUserIDs(ids...)
+	return auuo
+}
+
+// RemoveAppUsers removes "app_users" edges to AppUser entities.
+func (auuo *AdminUserUpdateOne) RemoveAppUsers(a ...*AppUser) *AdminUserUpdateOne {
+	ids := make([]string, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return auuo.RemoveAppUserIDs(ids...)
 }
 
 // Where appends a list predicates to the AdminUserUpdate builder.
@@ -840,6 +1097,117 @@ func (auuo *AdminUserUpdateOne) sqlSave(ctx context.Context) (_node *AdminUser, 
 	}
 	if auuo.mutation.WelcomeEmailSentCleared() {
 		_spec.ClearField(adminuser.FieldWelcomeEmailSent, field.TypeBool)
+	}
+	if auuo.mutation.AppsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   adminuser.AppsTable,
+			Columns: adminuser.AppsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(app.FieldID, field.TypeString),
+			},
+		}
+		createE := &AppUserCreate{config: auuo.config, mutation: newAppUserMutation(auuo.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auuo.mutation.RemovedAppsIDs(); len(nodes) > 0 && !auuo.mutation.AppsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   adminuser.AppsTable,
+			Columns: adminuser.AppsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(app.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &AppUserCreate{config: auuo.config, mutation: newAppUserMutation(auuo.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auuo.mutation.AppsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   adminuser.AppsTable,
+			Columns: adminuser.AppsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(app.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &AppUserCreate{config: auuo.config, mutation: newAppUserMutation(auuo.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if auuo.mutation.AppUsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   adminuser.AppUsersTable,
+			Columns: []string{adminuser.AppUsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(appuser.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auuo.mutation.RemovedAppUsersIDs(); len(nodes) > 0 && !auuo.mutation.AppUsersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   adminuser.AppUsersTable,
+			Columns: []string{adminuser.AppUsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(appuser.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := auuo.mutation.AppUsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   adminuser.AppUsersTable,
+			Columns: []string{adminuser.AppUsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(appuser.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.AddModifiers(auuo.modifiers...)
 	_node = &AdminUser{config: auuo.config}

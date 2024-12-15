@@ -18,6 +18,14 @@ type Tx struct {
 	AdminUser *AdminUserClient
 	// App is the client for interacting with the App builders.
 	App *AppClient
+	// AppPerm is the client for interacting with the AppPerm builders.
+	AppPerm *AppPermClient
+	// AppRole is the client for interacting with the AppRole builders.
+	AppRole *AppRoleClient
+	// AppRolePerm is the client for interacting with the AppRolePerm builders.
+	AppRolePerm *AppRolePermClient
+	// AppUser is the client for interacting with the AppUser builders.
+	AppUser *AppUserClient
 	// Kache is the client for interacting with the Kache builders.
 	Kache *KacheClient
 	// Keyvalue is the client for interacting with the Keyvalue builders.
@@ -191,6 +199,10 @@ func (tx *Tx) Client() *Client {
 func (tx *Tx) init() {
 	tx.AdminUser = NewAdminUserClient(tx.config)
 	tx.App = NewAppClient(tx.config)
+	tx.AppPerm = NewAppPermClient(tx.config)
+	tx.AppRole = NewAppRoleClient(tx.config)
+	tx.AppRolePerm = NewAppRolePermClient(tx.config)
+	tx.AppUser = NewAppUserClient(tx.config)
 	tx.Kache = NewKacheClient(tx.config)
 	tx.Keyvalue = NewKeyvalueClient(tx.config)
 	tx.MailConn = NewMailConnClient(tx.config)

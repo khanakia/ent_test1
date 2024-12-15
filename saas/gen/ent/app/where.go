@@ -1771,6 +1771,52 @@ func HasAuthVerificationTemplWith(preds ...predicate.Templ) predicate.App {
 	})
 }
 
+// HasAdminUser applies the HasEdge predicate on the "admin_user" edge.
+func HasAdminUser() predicate.App {
+	return predicate.App(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.M2M, true, AdminUserTable, AdminUserPrimaryKey...),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAdminUserWith applies the HasEdge predicate on the "admin_user" edge with a given conditions (other predicates).
+func HasAdminUserWith(preds ...predicate.AdminUser) predicate.App {
+	return predicate.App(func(s *sql.Selector) {
+		step := newAdminUserStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
+// HasAppUsers applies the HasEdge predicate on the "app_users" edge.
+func HasAppUsers() predicate.App {
+	return predicate.App(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, AppUsersTable, AppUsersColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasAppUsersWith applies the HasEdge predicate on the "app_users" edge with a given conditions (other predicates).
+func HasAppUsersWith(preds ...predicate.AppUser) predicate.App {
+	return predicate.App(func(s *sql.Selector) {
+		step := newAppUsersStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
+}
+
 // And groups predicates with the AND operator between them.
 func And(predicates ...predicate.App) predicate.App {
 	return predicate.App(sql.AndPredicates(predicates...))

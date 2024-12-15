@@ -72,6 +72,10 @@ const (
 	EdgeAuthWelcomeEmailTempl = "auth_welcome_email_templ"
 	// EdgeAuthVerificationTempl holds the string denoting the auth_verification_templ edge name in mutations.
 	EdgeAuthVerificationTempl = "auth_verification_templ"
+	// EdgeAdminUser holds the string denoting the admin_user edge name in mutations.
+	EdgeAdminUser = "admin_user"
+	// EdgeAppUsers holds the string denoting the app_users edge name in mutations.
+	EdgeAppUsers = "app_users"
 	// Table holds the table name of the app in the database.
 	Table = "apps"
 	// DefaultMailConnTable is the table that holds the default_mail_conn relation/edge.
@@ -123,6 +127,18 @@ const (
 	AuthVerificationTemplInverseTable = "templs"
 	// AuthVerificationTemplColumn is the table column denoting the auth_verification_templ relation/edge.
 	AuthVerificationTemplColumn = "auth_verification_templ_id"
+	// AdminUserTable is the table that holds the admin_user relation/edge. The primary key declared below.
+	AdminUserTable = "app_users"
+	// AdminUserInverseTable is the table name for the AdminUser entity.
+	// It exists in this package in order to avoid circular dependency with the "adminuser" package.
+	AdminUserInverseTable = "admin_users"
+	// AppUsersTable is the table that holds the app_users relation/edge.
+	AppUsersTable = "app_users"
+	// AppUsersInverseTable is the table name for the AppUser entity.
+	// It exists in this package in order to avoid circular dependency with the "appuser" package.
+	AppUsersInverseTable = "app_users"
+	// AppUsersColumn is the table column denoting the app_users relation/edge.
+	AppUsersColumn = "app_id"
 )
 
 // Columns holds all SQL columns for app fields.
@@ -151,6 +167,12 @@ var Columns = []string{
 	FieldAuthEnablePasswordLogin,
 	FieldAdminUserID,
 }
+
+var (
+	// AdminUserPrimaryKey and AdminUserColumn2 are the table columns denoting the
+	// primary key for the admin_user relation (M2M).
+	AdminUserPrimaryKey = []string{"admin_user_id", "app_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -345,6 +367,34 @@ func ByAuthVerificationTemplField(field string, opts ...sql.OrderTermOption) Ord
 		sqlgraph.OrderByNeighborTerms(s, newAuthVerificationTemplStep(), sql.OrderByField(field, opts...))
 	}
 }
+
+// ByAdminUserCount orders the results by admin_user count.
+func ByAdminUserCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAdminUserStep(), opts...)
+	}
+}
+
+// ByAdminUser orders the results by admin_user terms.
+func ByAdminUser(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAdminUserStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByAppUsersCount orders the results by app_users count.
+func ByAppUsersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAppUsersStep(), opts...)
+	}
+}
+
+// ByAppUsers orders the results by app_users terms.
+func ByAppUsers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAppUsersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
 func newDefaultMailConnStep() *sqlgraph.Step {
 	return sqlgraph.NewStep(
 		sqlgraph.From(Table, FieldID),
@@ -392,5 +442,19 @@ func newAuthVerificationTemplStep() *sqlgraph.Step {
 		sqlgraph.From(Table, FieldID),
 		sqlgraph.To(AuthVerificationTemplInverseTable, FieldID),
 		sqlgraph.Edge(sqlgraph.M2O, false, AuthVerificationTemplTable, AuthVerificationTemplColumn),
+	)
+}
+func newAdminUserStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AdminUserInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, true, AdminUserTable, AdminUserPrimaryKey...),
+	)
+}
+func newAppUsersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AppUsersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, AppUsersTable, AppUsersColumn),
 	)
 }

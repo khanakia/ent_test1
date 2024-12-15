@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -41,8 +42,24 @@ const (
 	FieldAPIKey = "api_key"
 	// FieldWelcomeEmailSent holds the string denoting the welcome_email_sent field in the database.
 	FieldWelcomeEmailSent = "welcome_email_sent"
+	// EdgeApps holds the string denoting the apps edge name in mutations.
+	EdgeApps = "apps"
+	// EdgeAppUsers holds the string denoting the app_users edge name in mutations.
+	EdgeAppUsers = "app_users"
 	// Table holds the table name of the adminuser in the database.
 	Table = "admin_users"
+	// AppsTable is the table that holds the apps relation/edge. The primary key declared below.
+	AppsTable = "app_users"
+	// AppsInverseTable is the table name for the App entity.
+	// It exists in this package in order to avoid circular dependency with the "app" package.
+	AppsInverseTable = "apps"
+	// AppUsersTable is the table that holds the app_users relation/edge.
+	AppUsersTable = "app_users"
+	// AppUsersInverseTable is the table name for the AppUser entity.
+	// It exists in this package in order to avoid circular dependency with the "appuser" package.
+	AppUsersInverseTable = "app_users"
+	// AppUsersColumn is the table column denoting the app_users relation/edge.
+	AppUsersColumn = "admin_user_id"
 )
 
 // Columns holds all SQL columns for adminuser fields.
@@ -63,6 +80,12 @@ var Columns = []string{
 	FieldAPIKey,
 	FieldWelcomeEmailSent,
 }
+
+var (
+	// AppsPrimaryKey and AppsColumn2 are the table columns denoting the
+	// primary key for the apps relation (M2M).
+	AppsPrimaryKey = []string{"admin_user_id", "app_id"}
+)
 
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
@@ -165,4 +188,46 @@ func ByAPIKey(opts ...sql.OrderTermOption) OrderOption {
 // ByWelcomeEmailSent orders the results by the welcome_email_sent field.
 func ByWelcomeEmailSent(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldWelcomeEmailSent, opts...).ToFunc()
+}
+
+// ByAppsCount orders the results by apps count.
+func ByAppsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAppsStep(), opts...)
+	}
+}
+
+// ByApps orders the results by apps terms.
+func ByApps(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAppsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByAppUsersCount orders the results by app_users count.
+func ByAppUsersCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newAppUsersStep(), opts...)
+	}
+}
+
+// ByAppUsers orders the results by app_users terms.
+func ByAppUsers(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAppUsersStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newAppsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AppsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.M2M, false, AppsTable, AppsPrimaryKey...),
+	)
+}
+func newAppUsersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AppUsersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, AppUsersTable, AppUsersColumn),
+	)
 }

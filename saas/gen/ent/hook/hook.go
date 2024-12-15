@@ -32,6 +32,54 @@ func (f AppFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) 
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AppMutation", m)
 }
 
+// The AppPermFunc type is an adapter to allow the use of ordinary
+// function as AppPerm mutator.
+type AppPermFunc func(context.Context, *ent.AppPermMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AppPermFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AppPermMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AppPermMutation", m)
+}
+
+// The AppRoleFunc type is an adapter to allow the use of ordinary
+// function as AppRole mutator.
+type AppRoleFunc func(context.Context, *ent.AppRoleMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AppRoleFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AppRoleMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AppRoleMutation", m)
+}
+
+// The AppRolePermFunc type is an adapter to allow the use of ordinary
+// function as AppRolePerm mutator.
+type AppRolePermFunc func(context.Context, *ent.AppRolePermMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AppRolePermFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AppRolePermMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AppRolePermMutation", m)
+}
+
+// The AppUserFunc type is an adapter to allow the use of ordinary
+// function as AppUser mutator.
+type AppUserFunc func(context.Context, *ent.AppUserMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f AppUserFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AppUserMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AppUserMutation", m)
+}
+
 // The KacheFunc type is an adapter to allow the use of ordinary
 // function as Kache mutator.
 type KacheFunc func(context.Context, *ent.KacheMutation) (ent.Value, error)

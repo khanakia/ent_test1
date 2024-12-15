@@ -7,6 +7,8 @@ import (
 	"errors"
 	"fmt"
 	"saas/gen/ent/adminuser"
+	"saas/gen/ent/app"
+	"saas/gen/ent/appuser"
 	"time"
 
 	"entgo.io/ent/dialect"
@@ -225,6 +227,36 @@ func (auc *AdminUserCreate) SetNillableID(s *string) *AdminUserCreate {
 	return auc
 }
 
+// AddAppIDs adds the "apps" edge to the App entity by IDs.
+func (auc *AdminUserCreate) AddAppIDs(ids ...string) *AdminUserCreate {
+	auc.mutation.AddAppIDs(ids...)
+	return auc
+}
+
+// AddApps adds the "apps" edges to the App entity.
+func (auc *AdminUserCreate) AddApps(a ...*App) *AdminUserCreate {
+	ids := make([]string, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return auc.AddAppIDs(ids...)
+}
+
+// AddAppUserIDs adds the "app_users" edge to the AppUser entity by IDs.
+func (auc *AdminUserCreate) AddAppUserIDs(ids ...string) *AdminUserCreate {
+	auc.mutation.AddAppUserIDs(ids...)
+	return auc
+}
+
+// AddAppUsers adds the "app_users" edges to the AppUser entity.
+func (auc *AdminUserCreate) AddAppUsers(a ...*AppUser) *AdminUserCreate {
+	ids := make([]string, len(a))
+	for i := range a {
+		ids[i] = a[i].ID
+	}
+	return auc.AddAppUserIDs(ids...)
+}
+
 // Mutation returns the AdminUserMutation object of the builder.
 func (auc *AdminUserCreate) Mutation() *AdminUserMutation {
 	return auc.mutation
@@ -378,6 +410,45 @@ func (auc *AdminUserCreate) createSpec() (*AdminUser, *sqlgraph.CreateSpec) {
 	if value, ok := auc.mutation.WelcomeEmailSent(); ok {
 		_spec.SetField(adminuser.FieldWelcomeEmailSent, field.TypeBool, value)
 		_node.WelcomeEmailSent = value
+	}
+	if nodes := auc.mutation.AppsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.M2M,
+			Inverse: false,
+			Table:   adminuser.AppsTable,
+			Columns: adminuser.AppsPrimaryKey,
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(app.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		createE := &AppUserCreate{config: auc.config, mutation: newAppUserMutation(auc.config, OpCreate)}
+		createE.defaults()
+		_, specE := createE.createSpec()
+		edge.Target.Fields = specE.Fields
+		if specE.ID.Value != nil {
+			edge.Target.Fields = append(edge.Target.Fields, specE.ID)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := auc.mutation.AppUsersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   adminuser.AppUsersTable,
+			Columns: []string{adminuser.AppUsersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(appuser.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

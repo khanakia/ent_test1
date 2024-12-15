@@ -9,6 +9,10 @@ import (
 	"saas/gen/ent"
 	"saas/gen/ent/adminuser"
 	"saas/gen/ent/app"
+	"saas/gen/ent/appperm"
+	"saas/gen/ent/approle"
+	"saas/gen/ent/approleperm"
+	"saas/gen/ent/appuser"
 	"saas/gen/ent/kache"
 	"saas/gen/ent/keyvalue"
 	"saas/gen/ent/mailconn"
@@ -142,6 +146,114 @@ func (f TraverseApp) Traverse(ctx context.Context, q ent.Query) error {
 		return f(ctx, q)
 	}
 	return fmt.Errorf("unexpected query type %T. expect *ent.AppQuery", q)
+}
+
+// The AppPermFunc type is an adapter to allow the use of ordinary function as a Querier.
+type AppPermFunc func(context.Context, *ent.AppPermQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f AppPermFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.AppPermQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.AppPermQuery", q)
+}
+
+// The TraverseAppPerm type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseAppPerm func(context.Context, *ent.AppPermQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseAppPerm) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseAppPerm) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AppPermQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.AppPermQuery", q)
+}
+
+// The AppRoleFunc type is an adapter to allow the use of ordinary function as a Querier.
+type AppRoleFunc func(context.Context, *ent.AppRoleQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f AppRoleFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.AppRoleQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.AppRoleQuery", q)
+}
+
+// The TraverseAppRole type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseAppRole func(context.Context, *ent.AppRoleQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseAppRole) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseAppRole) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AppRoleQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.AppRoleQuery", q)
+}
+
+// The AppRolePermFunc type is an adapter to allow the use of ordinary function as a Querier.
+type AppRolePermFunc func(context.Context, *ent.AppRolePermQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f AppRolePermFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.AppRolePermQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.AppRolePermQuery", q)
+}
+
+// The TraverseAppRolePerm type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseAppRolePerm func(context.Context, *ent.AppRolePermQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseAppRolePerm) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseAppRolePerm) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AppRolePermQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.AppRolePermQuery", q)
+}
+
+// The AppUserFunc type is an adapter to allow the use of ordinary function as a Querier.
+type AppUserFunc func(context.Context, *ent.AppUserQuery) (ent.Value, error)
+
+// Query calls f(ctx, q).
+func (f AppUserFunc) Query(ctx context.Context, q ent.Query) (ent.Value, error) {
+	if q, ok := q.(*ent.AppUserQuery); ok {
+		return f(ctx, q)
+	}
+	return nil, fmt.Errorf("unexpected query type %T. expect *ent.AppUserQuery", q)
+}
+
+// The TraverseAppUser type is an adapter to allow the use of ordinary function as Traverser.
+type TraverseAppUser func(context.Context, *ent.AppUserQuery) error
+
+// Intercept is a dummy implementation of Intercept that returns the next Querier in the pipeline.
+func (f TraverseAppUser) Intercept(next ent.Querier) ent.Querier {
+	return next
+}
+
+// Traverse calls f(ctx, q).
+func (f TraverseAppUser) Traverse(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.AppUserQuery); ok {
+		return f(ctx, q)
+	}
+	return fmt.Errorf("unexpected query type %T. expect *ent.AppUserQuery", q)
 }
 
 // The KacheFunc type is an adapter to allow the use of ordinary function as a Querier.
@@ -691,6 +803,14 @@ func NewQuery(q ent.Query) (Query, error) {
 		return &query[*ent.AdminUserQuery, predicate.AdminUser, adminuser.OrderOption]{typ: ent.TypeAdminUser, tq: q}, nil
 	case *ent.AppQuery:
 		return &query[*ent.AppQuery, predicate.App, app.OrderOption]{typ: ent.TypeApp, tq: q}, nil
+	case *ent.AppPermQuery:
+		return &query[*ent.AppPermQuery, predicate.AppPerm, appperm.OrderOption]{typ: ent.TypeAppPerm, tq: q}, nil
+	case *ent.AppRoleQuery:
+		return &query[*ent.AppRoleQuery, predicate.AppRole, approle.OrderOption]{typ: ent.TypeAppRole, tq: q}, nil
+	case *ent.AppRolePermQuery:
+		return &query[*ent.AppRolePermQuery, predicate.AppRolePerm, approleperm.OrderOption]{typ: ent.TypeAppRolePerm, tq: q}, nil
+	case *ent.AppUserQuery:
+		return &query[*ent.AppUserQuery, predicate.AppUser, appuser.OrderOption]{typ: ent.TypeAppUser, tq: q}, nil
 	case *ent.KacheQuery:
 		return &query[*ent.KacheQuery, predicate.Kache, kache.OrderOption]{typ: ent.TypeKache, tq: q}, nil
 	case *ent.KeyvalueQuery:

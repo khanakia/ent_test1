@@ -85,11 +85,18 @@ type AppEdges struct {
 	AuthWelcomeEmailTempl *Templ `json:"auth_welcome_email_templ,omitempty"`
 	// AuthVerificationTempl holds the value of the auth_verification_templ edge.
 	AuthVerificationTempl *Templ `json:"auth_verification_templ,omitempty"`
+	// AdminUser holds the value of the admin_user edge.
+	AdminUser []*AdminUser `json:"admin_user,omitempty"`
+	// AppUsers holds the value of the app_users edge.
+	AppUsers []*AppUser `json:"app_users,omitempty"`
 	// loadedTypes holds the information for reporting if a
 	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [7]bool
+	loadedTypes [9]bool
 	// totalCount holds the count of the edges above.
 	totalCount [7]map[string]int
+
+	namedAdminUser map[string][]*AdminUser
+	namedAppUsers  map[string][]*AppUser
 }
 
 // DefaultMailConnOrErr returns the DefaultMailConn value or an error if the edge
@@ -167,6 +174,24 @@ func (e AppEdges) AuthVerificationTemplOrErr() (*Templ, error) {
 		return nil, &NotFoundError{label: templ.Label}
 	}
 	return nil, &NotLoadedError{edge: "auth_verification_templ"}
+}
+
+// AdminUserOrErr returns the AdminUser value or an error if the edge
+// was not loaded in eager-loading.
+func (e AppEdges) AdminUserOrErr() ([]*AdminUser, error) {
+	if e.loadedTypes[7] {
+		return e.AdminUser, nil
+	}
+	return nil, &NotLoadedError{edge: "admin_user"}
+}
+
+// AppUsersOrErr returns the AppUsers value or an error if the edge
+// was not loaded in eager-loading.
+func (e AppEdges) AppUsersOrErr() ([]*AppUser, error) {
+	if e.loadedTypes[8] {
+		return e.AppUsers, nil
+	}
+	return nil, &NotLoadedError{edge: "app_users"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -381,6 +406,16 @@ func (a *App) QueryAuthVerificationTempl() *TemplQuery {
 	return NewAppClient(a.config).QueryAuthVerificationTempl(a)
 }
 
+// QueryAdminUser queries the "admin_user" edge of the App entity.
+func (a *App) QueryAdminUser() *AdminUserQuery {
+	return NewAppClient(a.config).QueryAdminUser(a)
+}
+
+// QueryAppUsers queries the "app_users" edge of the App entity.
+func (a *App) QueryAppUsers() *AppUserQuery {
+	return NewAppClient(a.config).QueryAppUsers(a)
+}
+
 // Update returns a builder for updating this App.
 // Note that you need to call App.Unwrap() before calling this method if this App
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -471,6 +506,54 @@ func (a *App) String() string {
 	builder.WriteString(a.AdminUserID)
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedAdminUser returns the AdminUser named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (a *App) NamedAdminUser(name string) ([]*AdminUser, error) {
+	if a.Edges.namedAdminUser == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := a.Edges.namedAdminUser[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (a *App) appendNamedAdminUser(name string, edges ...*AdminUser) {
+	if a.Edges.namedAdminUser == nil {
+		a.Edges.namedAdminUser = make(map[string][]*AdminUser)
+	}
+	if len(edges) == 0 {
+		a.Edges.namedAdminUser[name] = []*AdminUser{}
+	} else {
+		a.Edges.namedAdminUser[name] = append(a.Edges.namedAdminUser[name], edges...)
+	}
+}
+
+// NamedAppUsers returns the AppUsers named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (a *App) NamedAppUsers(name string) ([]*AppUser, error) {
+	if a.Edges.namedAppUsers == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := a.Edges.namedAppUsers[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (a *App) appendNamedAppUsers(name string, edges ...*AppUser) {
+	if a.Edges.namedAppUsers == nil {
+		a.Edges.namedAppUsers = make(map[string][]*AppUser)
+	}
+	if len(edges) == 0 {
+		a.Edges.namedAppUsers[name] = []*AppUser{}
+	} else {
+		a.Edges.namedAppUsers[name] = append(a.Edges.namedAppUsers[name], edges...)
+	}
 }
 
 // Apps is a parsable slice of App.

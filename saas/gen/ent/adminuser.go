@@ -45,7 +45,44 @@ type AdminUser struct {
 	APIKey string `json:"api_key,omitempty"`
 	// WelcomeEmailSent holds the value of the "welcome_email_sent" field.
 	WelcomeEmailSent bool `json:"welcome_email_sent,omitempty"`
-	selectValues     sql.SelectValues
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the AdminUserQuery when eager-loading is set.
+	Edges        AdminUserEdges `json:"edges"`
+	selectValues sql.SelectValues
+}
+
+// AdminUserEdges holds the relations/edges for other nodes in the graph.
+type AdminUserEdges struct {
+	// Apps holds the value of the apps edge.
+	Apps []*App `json:"apps,omitempty"`
+	// AppUsers holds the value of the app_users edge.
+	AppUsers []*AppUser `json:"app_users,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [2]bool
+	// totalCount holds the count of the edges above.
+	totalCount [1]map[string]int
+
+	namedApps     map[string][]*App
+	namedAppUsers map[string][]*AppUser
+}
+
+// AppsOrErr returns the Apps value or an error if the edge
+// was not loaded in eager-loading.
+func (e AdminUserEdges) AppsOrErr() ([]*App, error) {
+	if e.loadedTypes[0] {
+		return e.Apps, nil
+	}
+	return nil, &NotLoadedError{edge: "apps"}
+}
+
+// AppUsersOrErr returns the AppUsers value or an error if the edge
+// was not loaded in eager-loading.
+func (e AdminUserEdges) AppUsersOrErr() ([]*AppUser, error) {
+	if e.loadedTypes[1] {
+		return e.AppUsers, nil
+	}
+	return nil, &NotLoadedError{edge: "app_users"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -177,6 +214,16 @@ func (au *AdminUser) Value(name string) (ent.Value, error) {
 	return au.selectValues.Get(name)
 }
 
+// QueryApps queries the "apps" edge of the AdminUser entity.
+func (au *AdminUser) QueryApps() *AppQuery {
+	return NewAdminUserClient(au.config).QueryApps(au)
+}
+
+// QueryAppUsers queries the "app_users" edge of the AdminUser entity.
+func (au *AdminUser) QueryAppUsers() *AppUserQuery {
+	return NewAdminUserClient(au.config).QueryAppUsers(au)
+}
+
 // Update returns a builder for updating this AdminUser.
 // Note that you need to call AdminUser.Unwrap() before calling this method if this AdminUser
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -241,6 +288,54 @@ func (au *AdminUser) String() string {
 	builder.WriteString(fmt.Sprintf("%v", au.WelcomeEmailSent))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedApps returns the Apps named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (au *AdminUser) NamedApps(name string) ([]*App, error) {
+	if au.Edges.namedApps == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := au.Edges.namedApps[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (au *AdminUser) appendNamedApps(name string, edges ...*App) {
+	if au.Edges.namedApps == nil {
+		au.Edges.namedApps = make(map[string][]*App)
+	}
+	if len(edges) == 0 {
+		au.Edges.namedApps[name] = []*App{}
+	} else {
+		au.Edges.namedApps[name] = append(au.Edges.namedApps[name], edges...)
+	}
+}
+
+// NamedAppUsers returns the AppUsers named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (au *AdminUser) NamedAppUsers(name string) ([]*AppUser, error) {
+	if au.Edges.namedAppUsers == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := au.Edges.namedAppUsers[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (au *AdminUser) appendNamedAppUsers(name string, edges ...*AppUser) {
+	if au.Edges.namedAppUsers == nil {
+		au.Edges.namedAppUsers = make(map[string][]*AppUser)
+	}
+	if len(edges) == 0 {
+		au.Edges.namedAppUsers[name] = []*AppUser{}
+	} else {
+		au.Edges.namedAppUsers[name] = append(au.Edges.namedAppUsers[name], edges...)
+	}
 }
 
 // AdminUsers is a parsable slice of AdminUser.
