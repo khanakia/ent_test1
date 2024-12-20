@@ -1,8 +1,0 @@
-extend type Mutation {
-  createOauthConnection(input: CreateOauthConnectionInput!): OauthConnection! @canApp
-  updateOauthConnection(id: ID!, input: UpdateOauthConnectionInput!): OauthConnection! @canApp
-  createMailConn(input: CreateMailConnInput!): MailConn! @canApp
-  updateMailConn(id: ID!, input: UpdateMailConnInput!): MailConn! @canApp
-  createTempl(input: CreateTemplInput!): Templ! @canApp
-  updateTempl(id: ID!, input: UpdateTemplInput!): Templ! @canApp
-}

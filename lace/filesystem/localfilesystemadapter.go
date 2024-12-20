@@ -15,33 +15,73 @@ func Get() *LocalFileSystemAdapter {
 }
 
 type LocalFileSystemAdapter struct {
-	rootPath        string
+	rootPath string
+
+	prefixer         PathPrefixer
+	visibility       VisibilityConverter
+	lazyRootCreation bool
+
+	// prevent uncessary call to ensureRootDirectoryExists if true then do not call the func
 	rootPathInSetup bool
-	prefixer        PathPrefixer
 }
 
 func NewLocalFileSystemAdapter(rootPath string) *LocalFileSystemAdapter {
 
 	prefixer := NewPathPrefixer(rootPath, "/")
-	lfs := &LocalFileSystemAdapter{rootPath: rootPath, prefixer: *prefixer}
+	lfs := &LocalFileSystemAdapter{rootPath: rootPath, prefixer: *prefixer,
 
-	// lfs.EnsureRootDirectoryExists()
+		// YTD - allow override with option config.WithPortableVisibilityConverter()
+		visibility: NewPortableVisibilityConverterDefault(),
+
+		// YTD - allow override with option config.WithLazyRootCreation()
+		lazyRootCreation: false,
+
+		rootPathInSetup: false,
+	}
+
+	if !lfs.lazyRootCreation {
+		lfs.EnsureRootDirectoryExists()
+	}
 
 	return lfs
 }
 
 func (lfs *LocalFileSystemAdapter) EnsureRootDirectoryExists() {
-	panic("not implemented")
-}
-
-func (lfs *LocalFileSystemAdapter) EnsuretDirectoryExists(dirname string, visibility int) error {
-	panic("not implemented")
 
 	if lfs.rootPathInSetup {
+		return
+	}
+
+	err := lfs.EnsuretDirectoryExists(lfs.rootPath, lfs.visibility.DefaultForDirectories())
+	if err != nil {
+		panic(err)
+	}
+
+	lfs.rootPathInSetup = true
+}
+
+func (lfs *LocalFileSystemAdapter) EnsuretDirectoryExists(dirname string, visibility os.FileMode) error {
+	if ok, _ := lfs.DirectoryExists(dirname); ok {
 		return nil
 	}
 
 	lfs.rootPathInSetup = true
+
+	ok, err := lfs.FileExists(dirname)
+
+	if err != nil {
+		return err
+	}
+
+	if ok {
+		return errors.New("unable to create directory. file exists as dir name")
+	}
+
+	err = os.MkdirAll(dirname, os.ModePerm)
+
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -143,6 +183,7 @@ func (lfs *LocalFileSystemAdapter) Visibility(path string) (string, error) {
 	return mode.String(), nil
 }
 
+// YTD - config
 func (lfs *LocalFileSystemAdapter) Write(path string, contents []byte, config map[string]interface{}) error {
 
 	// YTD - ensure root Directory exists
@@ -150,6 +191,8 @@ func (lfs *LocalFileSystemAdapter) Write(path string, contents []byte, config ma
 	// YTD - ensure direcotry exists
 
 	prefixedPath := lfs.prefixer.PrefixPath(path)
+	lfs.EnsureRootDirectoryExists()
+	// lfs.EnsuretDirectoryExists(prefixedPath, )
 
 	file, err := os.Create(prefixedPath)
 	if err != nil {
@@ -163,7 +206,8 @@ func (lfs *LocalFileSystemAdapter) Write(path string, contents []byte, config ma
 	return err
 }
 
-// YTD
+// YTD - config
+// YTD - test it it should work as Write like prefix path
 func (lfs *LocalFileSystemAdapter) WriteStream(location string, contents interface{}, config map[string]interface{}) error {
 	file, err := os.OpenFile(location, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {

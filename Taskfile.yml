@@ -8,15 +8,9 @@ includes:
   saas:
     taskfile: ./saas/Taskfile.yml
     dir: ./saas
-  gql:
-    taskfile: ./gql/Taskfile.yml
-    dir: ./gql
   gqlsa:
     taskfile: ./gqlsa/Taskfile.yml
     dir: ./gqlsa
-  configmgr:
-    taskfile: ./configmgr/Taskfile.yml
-    dir: ./configmgr
 
 tasks:
   workvendor:

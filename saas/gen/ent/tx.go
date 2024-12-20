@@ -14,58 +14,12 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
-	// AdminUser is the client for interacting with the AdminUser builders.
-	AdminUser *AdminUserClient
-	// App is the client for interacting with the App builders.
-	App *AppClient
-	// AppPerm is the client for interacting with the AppPerm builders.
-	AppPerm *AppPermClient
-	// AppRole is the client for interacting with the AppRole builders.
-	AppRole *AppRoleClient
-	// AppRolePerm is the client for interacting with the AppRolePerm builders.
-	AppRolePerm *AppRolePermClient
-	// AppUser is the client for interacting with the AppUser builders.
-	AppUser *AppUserClient
-	// Kache is the client for interacting with the Kache builders.
-	Kache *KacheClient
-	// Keyvalue is the client for interacting with the Keyvalue builders.
-	Keyvalue *KeyvalueClient
-	// MailConn is the client for interacting with the MailConn builders.
-	MailConn *MailConnClient
 	// Media is the client for interacting with the Media builders.
 	Media *MediaClient
-	// OauthConnection is the client for interacting with the OauthConnection builders.
-	OauthConnection *OauthConnectionClient
-	// Plan is the client for interacting with the Plan builders.
-	Plan *PlanClient
+	// Mediable is the client for interacting with the Mediable builders.
+	Mediable *MediableClient
 	// Post is the client for interacting with the Post builders.
 	Post *PostClient
-	// PostCategory is the client for interacting with the PostCategory builders.
-	PostCategory *PostCategoryClient
-	// PostStatus is the client for interacting with the PostStatus builders.
-	PostStatus *PostStatusClient
-	// PostTag is the client for interacting with the PostTag builders.
-	PostTag *PostTagClient
-	// PostType is the client for interacting with the PostType builders.
-	PostType *PostTypeClient
-	// PostTypeForm is the client for interacting with the PostTypeForm builders.
-	PostTypeForm *PostTypeFormClient
-	// Session is the client for interacting with the Session builders.
-	Session *SessionClient
-	// Temp is the client for interacting with the Temp builders.
-	Temp *TempClient
-	// Templ is the client for interacting with the Templ builders.
-	Templ *TemplClient
-	// Todo is the client for interacting with the Todo builders.
-	Todo *TodoClient
-	// User is the client for interacting with the User builders.
-	User *UserClient
-	// Workspace is the client for interacting with the Workspace builders.
-	Workspace *WorkspaceClient
-	// WorkspaceInvite is the client for interacting with the WorkspaceInvite builders.
-	WorkspaceInvite *WorkspaceInviteClient
-	// WorkspaceUser is the client for interacting with the WorkspaceUser builders.
-	WorkspaceUser *WorkspaceUserClient
 
 	// lazily loaded.
 	client     *Client
@@ -197,32 +151,9 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
-	tx.AdminUser = NewAdminUserClient(tx.config)
-	tx.App = NewAppClient(tx.config)
-	tx.AppPerm = NewAppPermClient(tx.config)
-	tx.AppRole = NewAppRoleClient(tx.config)
-	tx.AppRolePerm = NewAppRolePermClient(tx.config)
-	tx.AppUser = NewAppUserClient(tx.config)
-	tx.Kache = NewKacheClient(tx.config)
-	tx.Keyvalue = NewKeyvalueClient(tx.config)
-	tx.MailConn = NewMailConnClient(tx.config)
 	tx.Media = NewMediaClient(tx.config)
-	tx.OauthConnection = NewOauthConnectionClient(tx.config)
-	tx.Plan = NewPlanClient(tx.config)
+	tx.Mediable = NewMediableClient(tx.config)
 	tx.Post = NewPostClient(tx.config)
-	tx.PostCategory = NewPostCategoryClient(tx.config)
-	tx.PostStatus = NewPostStatusClient(tx.config)
-	tx.PostTag = NewPostTagClient(tx.config)
-	tx.PostType = NewPostTypeClient(tx.config)
-	tx.PostTypeForm = NewPostTypeFormClient(tx.config)
-	tx.Session = NewSessionClient(tx.config)
-	tx.Temp = NewTempClient(tx.config)
-	tx.Templ = NewTemplClient(tx.config)
-	tx.Todo = NewTodoClient(tx.config)
-	tx.User = NewUserClient(tx.config)
-	tx.Workspace = NewWorkspaceClient(tx.config)
-	tx.WorkspaceInvite = NewWorkspaceInviteClient(tx.config)
-	tx.WorkspaceUser = NewWorkspaceUserClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.
@@ -232,7 +163,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: AdminUser.QueryXXX(), the query will be executed
+// applies a query, for example: Media.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

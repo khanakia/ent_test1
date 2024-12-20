@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"saas/gen/ent/media"
 	"saas/gen/ent/predicate"
-	"time"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -26,18 +25,6 @@ type MediaUpdate struct {
 // Where appends a list predicates to the MediaUpdate builder.
 func (mu *MediaUpdate) Where(ps ...predicate.Media) *MediaUpdate {
 	mu.mutation.Where(ps...)
-	return mu
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (mu *MediaUpdate) SetUpdatedAt(t time.Time) *MediaUpdate {
-	mu.mutation.SetUpdatedAt(t)
-	return mu
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (mu *MediaUpdate) ClearUpdatedAt() *MediaUpdate {
-	mu.mutation.ClearUpdatedAt()
 	return mu
 }
 
@@ -409,7 +396,6 @@ func (mu *MediaUpdate) Mutation() *MediaMutation {
 
 // Save executes the query and returns the number of nodes affected by the update operation.
 func (mu *MediaUpdate) Save(ctx context.Context) (int, error) {
-	mu.defaults()
 	return withHooks(ctx, mu.sqlSave, mu.mutation, mu.hooks)
 }
 
@@ -435,14 +421,6 @@ func (mu *MediaUpdate) ExecX(ctx context.Context) {
 	}
 }
 
-// defaults sets the default values of the builder before save.
-func (mu *MediaUpdate) defaults() {
-	if _, ok := mu.mutation.UpdatedAt(); !ok && !mu.mutation.UpdatedAtCleared() {
-		v := media.UpdateDefaultUpdatedAt()
-		mu.mutation.SetUpdatedAt(v)
-	}
-}
-
 // Modify adds a statement modifier for attaching custom logic to the UPDATE statement.
 func (mu *MediaUpdate) Modify(modifiers ...func(u *sql.UpdateBuilder)) *MediaUpdate {
 	mu.modifiers = append(mu.modifiers, modifiers...)
@@ -457,15 +435,6 @@ func (mu *MediaUpdate) sqlSave(ctx context.Context) (n int, err error) {
 				ps[i](selector)
 			}
 		}
-	}
-	if mu.mutation.CreatedAtCleared() {
-		_spec.ClearField(media.FieldCreatedAt, field.TypeTime)
-	}
-	if value, ok := mu.mutation.UpdatedAt(); ok {
-		_spec.SetField(media.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if mu.mutation.UpdatedAtCleared() {
-		_spec.ClearField(media.FieldUpdatedAt, field.TypeTime)
 	}
 	if value, ok := mu.mutation.AppID(); ok {
 		_spec.SetField(media.FieldAppID, field.TypeString, value)
@@ -595,18 +564,6 @@ type MediaUpdateOne struct {
 	hooks     []Hook
 	mutation  *MediaMutation
 	modifiers []func(*sql.UpdateBuilder)
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (muo *MediaUpdateOne) SetUpdatedAt(t time.Time) *MediaUpdateOne {
-	muo.mutation.SetUpdatedAt(t)
-	return muo
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (muo *MediaUpdateOne) ClearUpdatedAt() *MediaUpdateOne {
-	muo.mutation.ClearUpdatedAt()
-	return muo
 }
 
 // SetAppID sets the "app_id" field.
@@ -990,7 +947,6 @@ func (muo *MediaUpdateOne) Select(field string, fields ...string) *MediaUpdateOn
 
 // Save executes the query and returns the updated Media entity.
 func (muo *MediaUpdateOne) Save(ctx context.Context) (*Media, error) {
-	muo.defaults()
 	return withHooks(ctx, muo.sqlSave, muo.mutation, muo.hooks)
 }
 
@@ -1013,14 +969,6 @@ func (muo *MediaUpdateOne) Exec(ctx context.Context) error {
 func (muo *MediaUpdateOne) ExecX(ctx context.Context) {
 	if err := muo.Exec(ctx); err != nil {
 		panic(err)
-	}
-}
-
-// defaults sets the default values of the builder before save.
-func (muo *MediaUpdateOne) defaults() {
-	if _, ok := muo.mutation.UpdatedAt(); !ok && !muo.mutation.UpdatedAtCleared() {
-		v := media.UpdateDefaultUpdatedAt()
-		muo.mutation.SetUpdatedAt(v)
 	}
 }
 
@@ -1055,15 +1003,6 @@ func (muo *MediaUpdateOne) sqlSave(ctx context.Context) (_node *Media, err error
 				ps[i](selector)
 			}
 		}
-	}
-	if muo.mutation.CreatedAtCleared() {
-		_spec.ClearField(media.FieldCreatedAt, field.TypeTime)
-	}
-	if value, ok := muo.mutation.UpdatedAt(); ok {
-		_spec.SetField(media.FieldUpdatedAt, field.TypeTime, value)
-	}
-	if muo.mutation.UpdatedAtCleared() {
-		_spec.ClearField(media.FieldUpdatedAt, field.TypeTime)
 	}
 	if value, ok := muo.mutation.AppID(); ok {
 		_spec.SetField(media.FieldAppID, field.TypeString, value)

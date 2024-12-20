@@ -2,7 +2,6 @@ go 1.23.2
 
 use (
 	./configmgr
-	./gql
 	./gqlsa
 	./lace
 	./saas

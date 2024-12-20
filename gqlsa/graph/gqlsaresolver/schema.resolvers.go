@@ -6,14 +6,15 @@ package gqlsaresolver
 
 import (
 	"context"
+	"fmt"
 )
 
 // Ping is the resolver for the ping field.
 func (r *mutationResolver) Ping(ctx context.Context) (string, error) {
-	return "pong", nil
+	panic(fmt.Errorf("not implemented: Ping - ping"))
 }
 
 // Ping is the resolver for the ping field.
 func (r *queryResolver) Ping(ctx context.Context) (string, error) {
-	return "pong", nil
+	panic(fmt.Errorf("not implemented: Ping - ping"))
 }

@@ -1,0 +1,170 @@
+{{ define "saasmedia" }}
+
+{{- /*gotype: entgo.io/ent/entc/gen.Graph*/ -}}
+
+{{ $pkg := base $.Config.Package }}
+{{- with extend $ "Package" $pkg }}
+        {{ template "header" . }}
+{{- end }}
+
+{{ template "import" $ }}
+
+import (
+
+	{{- with $.Config.Schema }}
+		"{{ . }}"
+	{{- end }}
+	{{- range $n := $.Nodes }}
+		{{ $n.PackageAlias }} "{{ $.Config.Package }}/{{ $n.PackageDir }}"
+		{{- /* Import external packages */}}
+		{{- template "import/types" $n }}
+	{{- end }}
+)
+
+type SaveMediaProp struct {
+	Tag            string
+	Order          int
+	AppID          string
+	MediableType   string
+	MediableID     string
+	AddMediaIDs    []string
+	RemoveMediaIDs []string
+	Cleared       bool
+}
+
+func SaveMedia(client *Client, props *SaveMediaProp) {
+	ctx := context.Background()
+
+	if props.Cleared {
+		client.Mediable.Delete().Where(mediable.AppID(props.AppID), mediable.MediableType(props.MediableType), mediable.MediableID(props.MediableID)).Exec(ctx)
+	}
+
+	if props.RemoveMediaIDs != nil {
+		client.Mediable.Delete().Where(mediable.AppID(props.AppID), mediable.MediableType(props.MediableType), mediable.MediableID(props.MediableID), mediable.MediaIDIn(props.RemoveMediaIDs...)).Exec(ctx)
+	}
+
+	if props.AddMediaIDs != nil {
+		for _, mediaID := range props.AddMediaIDs {
+			client.Mediable.Create().
+				SetAppID(props.AppID).
+				SetTag(props.Tag).
+				SetOrder(0).
+				SetMediableType(props.MediableType).
+				SetMediableID(props.MediableID).
+				SetMediaID(mediaID).
+				Save(ctx)
+		}
+	}
+}
+
+
+	{{ range $n := $.MutableNodes }}
+    {{ $mutation := $n.MutationName }}
+    {{- if $n.Annotations.SaasMedia }}
+    
+      {{ $client := $n.ClientName }}
+      func {{ $client }}MediaHook() func(next ent.Mutator) ent.Mutator {
+        return func(next ent.Mutator) ent.Mutator {
+          return ent.MutateFunc(func(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+            fmt.Printf("Type11: %s, Operation: %s, ConcreteType: %T\n", m.Type(), m.Op(), m)
+            
+            if s, ok := m.(*{{ $mutation }}); ok {
+                
+              	{{- range $e := $n.Annotations.SaasMedia.Fields }}
+                  {
+                    id, _ :=	s.ID()
+
+                  	saveMediaProp :=  SaveMediaProp {
+                      Tag: "{{ $e.Tag }}",
+                      Order         : 0,
+                      AppID         : "a2",
+                      MediableType  : "{{ $n.Table }}",
+                      MediableID    : id,
+                      AddMediaIDs   : s.{{ $e.MutationAdded }}(),
+                      RemoveMediaIDs: s.{{ $e.MutationRemoved }}(), 
+                      Cleared: s.{{ $e.MutationCleared }}(),
+                    }
+                    fmt.Println(saveMediaProp)
+
+                    SaveMedia(s.Client(), &saveMediaProp)
+
+
+                  }
+                {{- end }}
+            }
+            return next.Mutate(ctx, m)
+          })
+        }
+      }
+
+			{{- range $e := $n.Annotations.SaasMedia.Fields }}
+          {{ $op := "add" }}{{ $idsFunc := $e.MutationAdd }}{{ if $e.Unique }}{{ $op = "set" }}{{ $idsFunc = $e.MutationSet }}{{ end }}
+          func (m *{{ $mutation }}) {{ $idsFunc }}({{ if $e.Unique }}id{{ else }}ids ...{{ end }} {{ $e.Type }}) {
+            {{- if $e.Unique }}
+              m.{{ $e.BuilderField }} = &id
+            {{- else }}
+              if m.{{ $e.BuilderField }} == nil {
+                m.{{ $e.BuilderField }} = make(map[{{ $e.Type }}]struct{})
+              }
+              for i := range ids {
+                m.{{ $e.BuilderField }}[ids[i]] = struct{}{}
+              }
+            {{- end }}
+          }
+
+          {{ $func := $e.MutationClear }}
+          func (m *{{ $mutation }}) {{ $func }}() {
+            m.cleared{{ $e.BuilderField }} = true
+          }
+
+          {{ $func = $e.MutationCleared }}
+          func (m *{{ $mutation }}) {{ $func }}() bool {
+            return {{ with $e.Field }}{{ if .Optional }}m.{{ .MutationCleared }}() || {{ end }}{{ end }}m.cleared{{ $e.BuilderField }}
+          }
+
+          func (m *{{ $mutation }}) {{ $e.MutationRemove }}(ids ...{{ $e.Type }}) {
+            if m.removed{{ $e.BuilderField }} == nil {
+              m.removed{{ $e.BuilderField }} = make(map[{{ $e.Type }}]struct{})
+            }
+            for i := range ids {
+              delete(m.{{ $e.BuilderField }}, ids[i])
+              m.removed{{ $e.BuilderField }}[ids[i]] = struct{}{}
+            }
+          }
+
+          
+          func (m *{{ $mutation }}) {{ $e.MutationRemoved }}() (ids []{{ $e.Type }}) {
+            for id := range m.removed{{ $e.BuilderField }} {
+              ids = append(ids, id)
+            }
+            return
+          }
+
+          func (m *{{ $mutation }}) {{ $e.MutationAdded }}() (ids []{{ $e.Type }}) {
+            {{- if $e.Unique }}
+              if id := m.{{ $e.BuilderField }}; id != nil {
+                ids = append(ids, *id)
+              }
+            {{- else }}
+              for id := range m.{{ $e.BuilderField }} {
+                ids = append(ids, id)
+              }
+            {{- end}}
+            return
+          }
+
+          {{ $func = $e.MutationReset }}
+          func (m *{{ $mutation }}) {{ $func }}() {
+            m.{{ $e.BuilderField }} = nil
+            m.cleared{{ $e.BuilderField }} = false
+            {{- if not $e.Unique }}
+              m.removed{{ $e.BuilderField }} = nil
+            {{- end }}
+          }
+
+			{{- end }}
+
+		{{- end }}
+	{{- end }}
+{{ end }}
+

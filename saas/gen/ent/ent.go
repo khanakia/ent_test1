@@ -7,32 +7,9 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
-	"saas/gen/ent/adminuser"
-	"saas/gen/ent/app"
-	"saas/gen/ent/appperm"
-	"saas/gen/ent/approle"
-	"saas/gen/ent/approleperm"
-	"saas/gen/ent/appuser"
-	"saas/gen/ent/kache"
-	"saas/gen/ent/keyvalue"
-	"saas/gen/ent/mailconn"
 	"saas/gen/ent/media"
-	"saas/gen/ent/oauthconnection"
-	"saas/gen/ent/plan"
+	"saas/gen/ent/mediable"
 	"saas/gen/ent/post"
-	"saas/gen/ent/postcategory"
-	"saas/gen/ent/poststatus"
-	"saas/gen/ent/posttag"
-	"saas/gen/ent/posttype"
-	"saas/gen/ent/posttypeform"
-	"saas/gen/ent/session"
-	"saas/gen/ent/temp"
-	"saas/gen/ent/templ"
-	"saas/gen/ent/todo"
-	"saas/gen/ent/user"
-	"saas/gen/ent/workspace"
-	"saas/gen/ent/workspaceinvite"
-	"saas/gen/ent/workspaceuser"
 	"sync"
 
 	"entgo.io/ent"
@@ -98,32 +75,9 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			adminuser.Table:       adminuser.ValidColumn,
-			app.Table:             app.ValidColumn,
-			appperm.Table:         appperm.ValidColumn,
-			approle.Table:         approle.ValidColumn,
-			approleperm.Table:     approleperm.ValidColumn,
-			appuser.Table:         appuser.ValidColumn,
-			kache.Table:           kache.ValidColumn,
-			keyvalue.Table:        keyvalue.ValidColumn,
-			mailconn.Table:        mailconn.ValidColumn,
-			media.Table:           media.ValidColumn,
-			oauthconnection.Table: oauthconnection.ValidColumn,
-			plan.Table:            plan.ValidColumn,
-			post.Table:            post.ValidColumn,
-			postcategory.Table:    postcategory.ValidColumn,
-			poststatus.Table:      poststatus.ValidColumn,
-			posttag.Table:         posttag.ValidColumn,
-			posttype.Table:        posttype.ValidColumn,
-			posttypeform.Table:    posttypeform.ValidColumn,
-			session.Table:         session.ValidColumn,
-			temp.Table:            temp.ValidColumn,
-			templ.Table:           templ.ValidColumn,
-			todo.Table:            todo.ValidColumn,
-			user.Table:            user.ValidColumn,
-			workspace.Table:       workspace.ValidColumn,
-			workspaceinvite.Table: workspaceinvite.ValidColumn,
-			workspaceuser.Table:   workspaceuser.ValidColumn,
+			media.Table:    media.ValidColumn,
+			mediable.Table: mediable.ValidColumn,
+			post.Table:     post.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

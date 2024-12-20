@@ -23,7 +23,7 @@ database {
   port = 5432
   username = "postgres"
   password = "root"
-  dbName = "saasflydb"
+  dbName = "ent_test1_db"
   sslmode= "disable"
 }
 

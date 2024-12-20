@@ -5,22 +5,9 @@ package ent
 import (
 	"context"
 	"fmt"
-	"saas/gen/ent/app"
-	"saas/gen/ent/mailconn"
 	"saas/gen/ent/media"
-	"saas/gen/ent/oauthconnection"
+	"saas/gen/ent/mediable"
 	"saas/gen/ent/post"
-	"saas/gen/ent/postcategory"
-	"saas/gen/ent/poststatus"
-	"saas/gen/ent/posttag"
-	"saas/gen/ent/posttype"
-	"saas/gen/ent/posttypeform"
-	"saas/gen/ent/templ"
-	"saas/gen/ent/todo"
-	"saas/gen/ent/user"
-	"saas/gen/ent/workspace"
-	"saas/gen/ent/workspaceinvite"
-	"saas/gen/ent/workspaceuser"
 
 	"entgo.io/contrib/entgql"
 	"github.com/99designs/gqlgen/graphql"
@@ -32,85 +19,20 @@ type Noder interface {
 	IsNode()
 }
 
-var appImplementors = []string{"App", "Node"}
-
-// IsNode implements the Node interface check for GQLGen.
-func (*App) IsNode() {}
-
-var mailconnImplementors = []string{"MailConn", "Node"}
-
-// IsNode implements the Node interface check for GQLGen.
-func (*MailConn) IsNode() {}
-
 var mediaImplementors = []string{"Media", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
 func (*Media) IsNode() {}
 
-var oauthconnectionImplementors = []string{"OauthConnection", "Node"}
+var mediableImplementors = []string{"Mediable", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
-func (*OauthConnection) IsNode() {}
+func (*Mediable) IsNode() {}
 
 var postImplementors = []string{"Post", "Node"}
 
 // IsNode implements the Node interface check for GQLGen.
 func (*Post) IsNode() {}
-
-var postcategoryImplementors = []string{"PostCategory", "Node"}
-
-// IsNode implements the Node interface check for GQLGen.
-func (*PostCategory) IsNode() {}
-
-var poststatusImplementors = []string{"PostStatus", "Node"}
-
-// IsNode implements the Node interface check for GQLGen.
-func (*PostStatus) IsNode() {}
-
-var posttagImplementors = []string{"PostTag", "Node"}
-
-// IsNode implements the Node interface check for GQLGen.
-func (*PostTag) IsNode() {}
-
-var posttypeImplementors = []string{"PostType", "Node"}
-
-// IsNode implements the Node interface check for GQLGen.
-func (*PostType) IsNode() {}
-
-var posttypeformImplementors = []string{"PostTypeForm", "Node"}
-
-// IsNode implements the Node interface check for GQLGen.
-func (*PostTypeForm) IsNode() {}
-
-var templImplementors = []string{"Templ", "Node"}
-
-// IsNode implements the Node interface check for GQLGen.
-func (*Templ) IsNode() {}
-
-var todoImplementors = []string{"Todo", "Node"}
-
-// IsNode implements the Node interface check for GQLGen.
-func (*Todo) IsNode() {}
-
-var userImplementors = []string{"User", "Node"}
-
-// IsNode implements the Node interface check for GQLGen.
-func (*User) IsNode() {}
-
-var workspaceImplementors = []string{"Workspace", "Node"}
-
-// IsNode implements the Node interface check for GQLGen.
-func (*Workspace) IsNode() {}
-
-var workspaceinviteImplementors = []string{"WorkspaceInvite", "Node"}
-
-// IsNode implements the Node interface check for GQLGen.
-func (*WorkspaceInvite) IsNode() {}
-
-var workspaceuserImplementors = []string{"WorkspaceUser", "Node"}
-
-// IsNode implements the Node interface check for GQLGen.
-func (*WorkspaceUser) IsNode() {}
 
 var errNodeInvalidID = &NotFoundError{"node"}
 
@@ -170,24 +92,6 @@ func (c *Client) Noder(ctx context.Context, id string, opts ...NodeOption) (_ No
 
 func (c *Client) noder(ctx context.Context, table string, id string) (Noder, error) {
 	switch table {
-	case app.Table:
-		query := c.App.Query().
-			Where(app.ID(id))
-		if fc := graphql.GetFieldContext(ctx); fc != nil {
-			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, appImplementors...); err != nil {
-				return nil, err
-			}
-		}
-		return query.Only(ctx)
-	case mailconn.Table:
-		query := c.MailConn.Query().
-			Where(mailconn.ID(id))
-		if fc := graphql.GetFieldContext(ctx); fc != nil {
-			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, mailconnImplementors...); err != nil {
-				return nil, err
-			}
-		}
-		return query.Only(ctx)
 	case media.Table:
 		query := c.Media.Query().
 			Where(media.ID(id))
@@ -197,11 +101,11 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			}
 		}
 		return query.Only(ctx)
-	case oauthconnection.Table:
-		query := c.OauthConnection.Query().
-			Where(oauthconnection.ID(id))
+	case mediable.Table:
+		query := c.Mediable.Query().
+			Where(mediable.ID(id))
 		if fc := graphql.GetFieldContext(ctx); fc != nil {
-			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, oauthconnectionImplementors...); err != nil {
+			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, mediableImplementors...); err != nil {
 				return nil, err
 			}
 		}
@@ -211,105 +115,6 @@ func (c *Client) noder(ctx context.Context, table string, id string) (Noder, err
 			Where(post.ID(id))
 		if fc := graphql.GetFieldContext(ctx); fc != nil {
 			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, postImplementors...); err != nil {
-				return nil, err
-			}
-		}
-		return query.Only(ctx)
-	case postcategory.Table:
-		query := c.PostCategory.Query().
-			Where(postcategory.ID(id))
-		if fc := graphql.GetFieldContext(ctx); fc != nil {
-			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, postcategoryImplementors...); err != nil {
-				return nil, err
-			}
-		}
-		return query.Only(ctx)
-	case poststatus.Table:
-		query := c.PostStatus.Query().
-			Where(poststatus.ID(id))
-		if fc := graphql.GetFieldContext(ctx); fc != nil {
-			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, poststatusImplementors...); err != nil {
-				return nil, err
-			}
-		}
-		return query.Only(ctx)
-	case posttag.Table:
-		query := c.PostTag.Query().
-			Where(posttag.ID(id))
-		if fc := graphql.GetFieldContext(ctx); fc != nil {
-			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, posttagImplementors...); err != nil {
-				return nil, err
-			}
-		}
-		return query.Only(ctx)
-	case posttype.Table:
-		query := c.PostType.Query().
-			Where(posttype.ID(id))
-		if fc := graphql.GetFieldContext(ctx); fc != nil {
-			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, posttypeImplementors...); err != nil {
-				return nil, err
-			}
-		}
-		return query.Only(ctx)
-	case posttypeform.Table:
-		query := c.PostTypeForm.Query().
-			Where(posttypeform.ID(id))
-		if fc := graphql.GetFieldContext(ctx); fc != nil {
-			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, posttypeformImplementors...); err != nil {
-				return nil, err
-			}
-		}
-		return query.Only(ctx)
-	case templ.Table:
-		query := c.Templ.Query().
-			Where(templ.ID(id))
-		if fc := graphql.GetFieldContext(ctx); fc != nil {
-			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, templImplementors...); err != nil {
-				return nil, err
-			}
-		}
-		return query.Only(ctx)
-	case todo.Table:
-		query := c.Todo.Query().
-			Where(todo.ID(id))
-		if fc := graphql.GetFieldContext(ctx); fc != nil {
-			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, todoImplementors...); err != nil {
-				return nil, err
-			}
-		}
-		return query.Only(ctx)
-	case user.Table:
-		query := c.User.Query().
-			Where(user.ID(id))
-		if fc := graphql.GetFieldContext(ctx); fc != nil {
-			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, userImplementors...); err != nil {
-				return nil, err
-			}
-		}
-		return query.Only(ctx)
-	case workspace.Table:
-		query := c.Workspace.Query().
-			Where(workspace.ID(id))
-		if fc := graphql.GetFieldContext(ctx); fc != nil {
-			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, workspaceImplementors...); err != nil {
-				return nil, err
-			}
-		}
-		return query.Only(ctx)
-	case workspaceinvite.Table:
-		query := c.WorkspaceInvite.Query().
-			Where(workspaceinvite.ID(id))
-		if fc := graphql.GetFieldContext(ctx); fc != nil {
-			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, workspaceinviteImplementors...); err != nil {
-				return nil, err
-			}
-		}
-		return query.Only(ctx)
-	case workspaceuser.Table:
-		query := c.WorkspaceUser.Query().
-			Where(workspaceuser.ID(id))
-		if fc := graphql.GetFieldContext(ctx); fc != nil {
-			if err := query.collectField(ctx, true, graphql.GetOperationContext(ctx), fc.Field, nil, workspaceuserImplementors...); err != nil {
 				return nil, err
 			}
 		}
@@ -387,38 +192,6 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		idmap[id] = append(idmap[id], &noders[i])
 	}
 	switch table {
-	case app.Table:
-		query := c.App.Query().
-			Where(app.IDIn(ids...))
-		query, err := query.CollectFields(ctx, appImplementors...)
-		if err != nil {
-			return nil, err
-		}
-		nodes, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, node := range nodes {
-			for _, noder := range idmap[node.ID] {
-				*noder = node
-			}
-		}
-	case mailconn.Table:
-		query := c.MailConn.Query().
-			Where(mailconn.IDIn(ids...))
-		query, err := query.CollectFields(ctx, mailconnImplementors...)
-		if err != nil {
-			return nil, err
-		}
-		nodes, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, node := range nodes {
-			for _, noder := range idmap[node.ID] {
-				*noder = node
-			}
-		}
 	case media.Table:
 		query := c.Media.Query().
 			Where(media.IDIn(ids...))
@@ -435,10 +208,10 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 				*noder = node
 			}
 		}
-	case oauthconnection.Table:
-		query := c.OauthConnection.Query().
-			Where(oauthconnection.IDIn(ids...))
-		query, err := query.CollectFields(ctx, oauthconnectionImplementors...)
+	case mediable.Table:
+		query := c.Mediable.Query().
+			Where(mediable.IDIn(ids...))
+		query, err := query.CollectFields(ctx, mediableImplementors...)
 		if err != nil {
 			return nil, err
 		}
@@ -455,182 +228,6 @@ func (c *Client) noders(ctx context.Context, table string, ids []string) ([]Node
 		query := c.Post.Query().
 			Where(post.IDIn(ids...))
 		query, err := query.CollectFields(ctx, postImplementors...)
-		if err != nil {
-			return nil, err
-		}
-		nodes, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, node := range nodes {
-			for _, noder := range idmap[node.ID] {
-				*noder = node
-			}
-		}
-	case postcategory.Table:
-		query := c.PostCategory.Query().
-			Where(postcategory.IDIn(ids...))
-		query, err := query.CollectFields(ctx, postcategoryImplementors...)
-		if err != nil {
-			return nil, err
-		}
-		nodes, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, node := range nodes {
-			for _, noder := range idmap[node.ID] {
-				*noder = node
-			}
-		}
-	case poststatus.Table:
-		query := c.PostStatus.Query().
-			Where(poststatus.IDIn(ids...))
-		query, err := query.CollectFields(ctx, poststatusImplementors...)
-		if err != nil {
-			return nil, err
-		}
-		nodes, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, node := range nodes {
-			for _, noder := range idmap[node.ID] {
-				*noder = node
-			}
-		}
-	case posttag.Table:
-		query := c.PostTag.Query().
-			Where(posttag.IDIn(ids...))
-		query, err := query.CollectFields(ctx, posttagImplementors...)
-		if err != nil {
-			return nil, err
-		}
-		nodes, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, node := range nodes {
-			for _, noder := range idmap[node.ID] {
-				*noder = node
-			}
-		}
-	case posttype.Table:
-		query := c.PostType.Query().
-			Where(posttype.IDIn(ids...))
-		query, err := query.CollectFields(ctx, posttypeImplementors...)
-		if err != nil {
-			return nil, err
-		}
-		nodes, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, node := range nodes {
-			for _, noder := range idmap[node.ID] {
-				*noder = node
-			}
-		}
-	case posttypeform.Table:
-		query := c.PostTypeForm.Query().
-			Where(posttypeform.IDIn(ids...))
-		query, err := query.CollectFields(ctx, posttypeformImplementors...)
-		if err != nil {
-			return nil, err
-		}
-		nodes, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, node := range nodes {
-			for _, noder := range idmap[node.ID] {
-				*noder = node
-			}
-		}
-	case templ.Table:
-		query := c.Templ.Query().
-			Where(templ.IDIn(ids...))
-		query, err := query.CollectFields(ctx, templImplementors...)
-		if err != nil {
-			return nil, err
-		}
-		nodes, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, node := range nodes {
-			for _, noder := range idmap[node.ID] {
-				*noder = node
-			}
-		}
-	case todo.Table:
-		query := c.Todo.Query().
-			Where(todo.IDIn(ids...))
-		query, err := query.CollectFields(ctx, todoImplementors...)
-		if err != nil {
-			return nil, err
-		}
-		nodes, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, node := range nodes {
-			for _, noder := range idmap[node.ID] {
-				*noder = node
-			}
-		}
-	case user.Table:
-		query := c.User.Query().
-			Where(user.IDIn(ids...))
-		query, err := query.CollectFields(ctx, userImplementors...)
-		if err != nil {
-			return nil, err
-		}
-		nodes, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, node := range nodes {
-			for _, noder := range idmap[node.ID] {
-				*noder = node
-			}
-		}
-	case workspace.Table:
-		query := c.Workspace.Query().
-			Where(workspace.IDIn(ids...))
-		query, err := query.CollectFields(ctx, workspaceImplementors...)
-		if err != nil {
-			return nil, err
-		}
-		nodes, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, node := range nodes {
-			for _, noder := range idmap[node.ID] {
-				*noder = node
-			}
-		}
-	case workspaceinvite.Table:
-		query := c.WorkspaceInvite.Query().
-			Where(workspaceinvite.IDIn(ids...))
-		query, err := query.CollectFields(ctx, workspaceinviteImplementors...)
-		if err != nil {
-			return nil, err
-		}
-		nodes, err := query.All(ctx)
-		if err != nil {
-			return nil, err
-		}
-		for _, node := range nodes {
-			for _, noder := range idmap[node.ID] {
-				*noder = node
-			}
-		}
-	case workspaceuser.Table:
-		query := c.WorkspaceUser.Query().
-			Where(workspaceuser.IDIn(ids...))
-		query, err := query.CollectFields(ctx, workspaceuserImplementors...)
 		if err != nil {
 			return nil, err
 		}

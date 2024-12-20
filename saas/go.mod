@@ -3,14 +3,11 @@ module saas
 go 1.23.2
 
 replace (
-	configmgr => ../configmgr
-	gql => ../gql
 	gqlsa => ../gqlsa
 	lace => ../lace
 )
 
 require (
-	configmgr v0.0.0-00010101000000-000000000000
 	entgo.io/contrib v0.6.0
 	entgo.io/ent v0.14.1
 	github.com/99designs/gqlgen v0.17.60
@@ -35,7 +32,6 @@ require (
 	github.com/xhit/go-simple-mail/v2 v2.16.0
 	golang.org/x/crypto v0.31.0
 	golang.org/x/oauth2 v0.24.0
-	gql v0.0.0-00010101000000-000000000000
 	gqlsa v0.0.0-00010101000000-000000000000
 	lace v0.0.0-00010101000000-000000000000
 )
@@ -102,6 +98,7 @@ require (
 	github.com/toorop/go-dkim v0.0.0-20240103092955-90b7d1423f92 // indirect
 	github.com/twitchyliquid64/golang-asm v0.15.1 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
+	github.com/uptrace/bun/extra/bundebug v1.2.6 // indirect
 	github.com/urfave/cli/v2 v2.27.5 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect

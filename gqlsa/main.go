@@ -4,52 +4,43 @@ import (
 	"fmt"
 	"gqlsa/graph/generated"
 	"gqlsa/graph/gqlsaresolver"
-	"lace/gqlgin"
 	"reflect"
-	"saas/pkg/middleware/adminauthmiddleware"
-	"saas/pkg/middleware/appmiddleware"
-	"saas/pkg/middleware/gqldirectives"
 
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/99designs/gqlgen/graphql/handler"
-	"github.com/99designs/gqlgen/graphql/handler/transport"
 	"github.com/gin-gonic/gin"
 	"github.com/ubgo/goutil"
 	"github.com/vektah/gqlparser/v2/ast"
 )
 
 func Boot(ginEngine *gin.Engine, resolver *gqlsaresolver.Resolver) {
-	prefix := "/sa"
-	rg := ginEngine.Group(prefix)
+	// prefix := "/sa"
+	// rg := ginEngine.Group(prefix)
 
-	c := generated.Config{Resolvers: resolver}
-	setDirectives(&c)
+	// c := generated.Config{Resolvers: resolver}
+	// setDirectives(&c)
 
-	schm := generated.NewExecutableSchema(c)
-	// extendSchema(&schm)
-	gserver := handler.New(schm)
-	gserver.AddTransport(transport.Options{})
-	gserver.AddTransport(transport.GET{})
-	gserver.AddTransport(transport.POST{})
+	// schm := generated.NewExecutableSchema(c)
+	// // extendSchema(&schm)
+	// gserver := handler.New(schm)
+	// gserver.AddTransport(transport.Options{})
+	// gserver.AddTransport(transport.GET{})
+	// gserver.AddTransport(transport.POST{})
 
-	gqlgin.New(gqlgin.Config{
-		RouterGroup:      rg,
-		GqlServer:        gserver,
-		PlaygroundKey:    resolver.AppConfig.Graphql.Key,
-		RouteGroupPrefix: prefix,
-		Middleware: []gin.HandlerFunc{
-			adminauthmiddleware.MiddlewareApiKeySilent(resolver.Plugin.EntDB.Client()),
-			adminauthmiddleware.MiddlewareSilent(resolver.Plugin.EntDB.Client()),
-			appmiddleware.MiddlewareSilent(resolver.Plugin.EntDB.Client()),
-		},
-	})
+	// gqlgin.New(gqlgin.Config{
+	// 	RouterGroup:      rg,
+	// 	GqlServer:        gserver,
+	// 	PlaygroundKey:    resolver.AppConfig.Graphql.Key,
+	// 	RouteGroupPrefix: prefix,
+	// 	Middleware: []gin.HandlerFunc{
+	// 		adminauthmiddleware.MiddlewareApiKeySilent(resolver.Plugin.EntDB.Client()),
+	// 		adminauthmiddleware.MiddlewareSilent(resolver.Plugin.EntDB.Client()),
+	// 		appmiddleware.MiddlewareSilent(resolver.Plugin.EntDB.Client()),
+	// 	},
+	// })
 	fmt.Println("boot gqlsa")
 }
 
 func setDirectives(c *generated.Config) {
-	c.Directives.CanAdmin = gqldirectives.CanAdminDirective
-
-	c.Directives.CanApp = gqldirectives.CanAppDirective
 }
 
 // Custom schema extension

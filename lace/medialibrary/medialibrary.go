@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"lace/filesystem"
 	"lace/publicid"
+	"lace/storage"
 	"log"
 	"mime"
 	"mime/multipart"
@@ -16,8 +17,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ubgo/goutil"
 	"github.com/uptrace/bun"
 	"github.com/uptrace/bun/dialect/pgdialect"
+	"github.com/uptrace/bun/extra/bundebug"
 )
 
 var db *bun.DB
@@ -27,7 +30,7 @@ const (
 )
 
 type Media struct {
-	ID            string
+	ID            string    `bun:",pk"`
 	CreatedAt     time.Time `json:"createdAt"`
 	UpdatedAt     time.Time `json:"updatedAt"`
 	Disk          string    `json:"disk"`
@@ -43,6 +46,7 @@ type Media struct {
 	WorkspaceID   string    `json:"workspaceId"`
 	Size          uint      `json:"size"`
 	URL           string    `json:"url" bun:"-"`
+	AppID         string    `json:"appId"`
 }
 
 func (m *Media) FilePath() string {
@@ -52,12 +56,29 @@ func (m *Media) FilePath() string {
 	return m.Directory + m.Name
 }
 
+// ytd add unique index media_id, mediable_type, mediable_id
+type Mediable struct {
+	ID           string    `bun:",pk"`
+	CreatedAt    time.Time `json:"createdAt"`
+	UpdatedAt    time.Time `json:"updatedAt"`
+	MediaID      string    `json:"mediaId"`
+	MediableType string    `json:"medailedType"`
+	MediableID   string    `json:"mediableId"`
+	Tag          string    `json:"tag"`
+	Order        int       `json:"order"`
+	AppID        string    `json:"appId"`
+	Media        Media     `bun:"rel:belongs-to,join:media_id=id"`
+}
+
+// call this once in app.go inside func New() Plugin { ... }
 func Construct(sqldb *sql.DB) {
 	InitDb(sqldb)
 }
 
 func InitDb(sqldb *sql.DB) {
 	db = bun.NewDB(sqldb, pgdialect.New())
+	db.AddQueryHook(bundebug.NewQueryHook(bundebug.WithVerbose(true)))
+
 }
 
 // Responsible only for single Media
@@ -68,17 +89,23 @@ type FileAdder struct {
 	filesystem  *filesystem.FileSystem
 }
 
-func NewFileAdder(rootPath string) *FileAdder {
+func NewFileAdder(diskName string) *FileAdder {
 	if db == nil {
 		panic("medialibrary not constructed yet")
 	}
 
-	adpater := filesystem.NewLocalFileSystemAdapter(rootPath)
-	fs := filesystem.NewFileSystem(adpater, filesystem.WithPublicURL([]string{"http://localhost/uploads"}))
+	// adpater := filesystem.NewLocalFileSystemAdapter(rootPath)
+	// fs := filesystem.NewFileSystem(adpater, filesystem.WithPublicURL(publicURLs))
+	strg := storage.GetStorage()
+	disk, ok := strg.GetDisk(diskName)
+
+	if !ok {
+		panic("storage not found: " + diskName)
+	}
 
 	return &FileAdder{
-		filesystem: fs,
-		rootPath:   rootPath,
+		filesystem: disk,
+		rootPath:   storage.UploadsDir,
 	}
 }
 
@@ -124,13 +151,15 @@ func (cls *FileAdder) CreateFromMultiPart(filePart *multipart.Part) (*Media, err
 		OriginalName: cls.filename, // is the name of file uploaded by user but we can save it filename-xxx.jpeg (name)
 		MimeType:     cls.contentType,
 		Disk:         "local",
-		// Directory:    cls.rootPath,
+		// relative path (test) = rootPath - path (./uploads - ./uploads/test/image.jpg )
+		// for not it can be empty as we do not not allow users to upload in subdirectory
 		Directory:   "",
 		IsVariant:   false,
 		Uid:         publicid.Must14(),
 		Extension:   ext[1:],
 		Size:        uint(len(b)), // in bytes
 		WorkspaceID: "default",
+		AppID:       "a1", // YTD - make dynamic
 	}
 
 	// goutil.PrintToJSON(media)
@@ -146,4 +175,83 @@ func (cls *FileAdder) CreateFromMultiPart(filePart *multipart.Part) (*Media, err
 
 	// fmt.Println("res", res)
 	return &media, nil
+}
+
+func SyncMedia(appID, tag, mediableType, mediableID string, mediaIds []string) error {
+	ctx := context.Background()
+	_, err := db.NewDelete().Model(&Mediable{}).
+		Where("app_id = ?", appID).
+		Where("tag = ?", tag).
+		Where("mediable_type = ?", mediableType).
+		Where("mediable_id = ?", mediableID).
+		Exec(ctx)
+
+	if err != nil {
+		return err
+	}
+
+	// YTD - validate mediaIds exists in appId
+
+	mediables := []Mediable{}
+
+	for i, mediaID := range mediaIds {
+		mediables = append(mediables, Mediable{
+			ID:           publicid.Must(),
+			CreatedAt:    time.Now(),
+			UpdatedAt:    time.Now(),
+			MediableType: mediableType,
+			MediableID:   mediableID,
+			MediaID:      mediaID,
+			Tag:          tag,
+			Order:        i,
+			AppID:        appID,
+		})
+	}
+
+	res, err := db.NewInsert().Model(&mediables).Exec(ctx)
+	if err != nil {
+		panic(err)
+	}
+
+	goutil.PrintToJSON(res)
+
+	return nil
+}
+
+func FetchMedias(appID, tag, mediableType, mediableID string) ([]*Media, error) {
+
+	mediables := []Mediable{}
+
+	ctx := context.Background()
+	err := db.NewSelect().Model(&Mediable{}).
+		Relation("Media").
+		Where("mediable.app_id = ?", appID).
+		Where("mediable.tag = ?", tag).
+		Where("mediable.mediable_type = ?", mediableType).
+		Where("mediable.mediable_id = ?", mediableID).
+		Limit(100).
+		Order("mediable.order ASC").
+		Scan(ctx, &mediables)
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	bunMedias := []*Media{}
+
+	for _, mediable := range mediables {
+		media := &mediable.Media
+		media.URL, err = storage.GetStorage().GetDefault().PublicURL(media.Name)
+
+		fmt.Println(err)
+		// if err != nil {
+		// 	return nil, err
+		// }
+		bunMedias = append(bunMedias, media)
+	}
+
+	goutil.PrintToJSON(bunMedias)
+
+	return bunMedias, nil
 }

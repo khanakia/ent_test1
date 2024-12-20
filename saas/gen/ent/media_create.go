@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"saas/gen/ent/media"
-	"time"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -21,34 +20,6 @@ type MediaCreate struct {
 	mutation *MediaMutation
 	hooks    []Hook
 	conflict []sql.ConflictOption
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (mc *MediaCreate) SetCreatedAt(t time.Time) *MediaCreate {
-	mc.mutation.SetCreatedAt(t)
-	return mc
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (mc *MediaCreate) SetNillableCreatedAt(t *time.Time) *MediaCreate {
-	if t != nil {
-		mc.SetCreatedAt(*t)
-	}
-	return mc
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (mc *MediaCreate) SetUpdatedAt(t time.Time) *MediaCreate {
-	mc.mutation.SetUpdatedAt(t)
-	return mc
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (mc *MediaCreate) SetNillableUpdatedAt(t *time.Time) *MediaCreate {
-	if t != nil {
-		mc.SetUpdatedAt(*t)
-	}
-	return mc
 }
 
 // SetAppID sets the "app_id" field.
@@ -344,14 +315,6 @@ func (mc *MediaCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (mc *MediaCreate) defaults() {
-	if _, ok := mc.mutation.CreatedAt(); !ok {
-		v := media.DefaultCreatedAt()
-		mc.mutation.SetCreatedAt(v)
-	}
-	if _, ok := mc.mutation.UpdatedAt(); !ok {
-		v := media.DefaultUpdatedAt()
-		mc.mutation.SetUpdatedAt(v)
-	}
 	if _, ok := mc.mutation.Status(); !ok {
 		v := media.DefaultStatus
 		mc.mutation.SetStatus(v)
@@ -402,14 +365,6 @@ func (mc *MediaCreate) createSpec() (*Media, *sqlgraph.CreateSpec) {
 	if id, ok := mc.mutation.ID(); ok {
 		_node.ID = id
 		_spec.ID.Value = id
-	}
-	if value, ok := mc.mutation.CreatedAt(); ok {
-		_spec.SetField(media.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
-	}
-	if value, ok := mc.mutation.UpdatedAt(); ok {
-		_spec.SetField(media.FieldUpdatedAt, field.TypeTime, value)
-		_node.UpdatedAt = value
 	}
 	if value, ok := mc.mutation.AppID(); ok {
 		_spec.SetField(media.FieldAppID, field.TypeString, value)
@@ -490,7 +445,7 @@ func (mc *MediaCreate) createSpec() (*Media, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Media.Create().
-//		SetCreatedAt(v).
+//		SetAppID(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -499,7 +454,7 @@ func (mc *MediaCreate) createSpec() (*Media, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.MediaUpsert) {
-//			SetCreatedAt(v+v).
+//			SetAppID(v+v).
 //		}).
 //		Exec(ctx)
 func (mc *MediaCreate) OnConflict(opts ...sql.ConflictOption) *MediaUpsertOne {
@@ -534,24 +489,6 @@ type (
 		*sql.UpdateSet
 	}
 )
-
-// SetUpdatedAt sets the "updated_at" field.
-func (u *MediaUpsert) SetUpdatedAt(v time.Time) *MediaUpsert {
-	u.Set(media.FieldUpdatedAt, v)
-	return u
-}
-
-// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
-func (u *MediaUpsert) UpdateUpdatedAt() *MediaUpsert {
-	u.SetExcluded(media.FieldUpdatedAt)
-	return u
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (u *MediaUpsert) ClearUpdatedAt() *MediaUpsert {
-	u.SetNull(media.FieldUpdatedAt)
-	return u
-}
 
 // SetAppID sets the "app_id" field.
 func (u *MediaUpsert) SetAppID(v string) *MediaUpsert {
@@ -894,9 +831,6 @@ func (u *MediaUpsertOne) UpdateNewValues() *MediaUpsertOne {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(media.FieldID)
 		}
-		if _, exists := u.create.mutation.CreatedAt(); exists {
-			s.SetIgnore(media.FieldCreatedAt)
-		}
 	}))
 	return u
 }
@@ -926,27 +860,6 @@ func (u *MediaUpsertOne) Update(set func(*MediaUpsert)) *MediaUpsertOne {
 		set(&MediaUpsert{UpdateSet: update})
 	}))
 	return u
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (u *MediaUpsertOne) SetUpdatedAt(v time.Time) *MediaUpsertOne {
-	return u.Update(func(s *MediaUpsert) {
-		s.SetUpdatedAt(v)
-	})
-}
-
-// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
-func (u *MediaUpsertOne) UpdateUpdatedAt() *MediaUpsertOne {
-	return u.Update(func(s *MediaUpsert) {
-		s.UpdateUpdatedAt()
-	})
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (u *MediaUpsertOne) ClearUpdatedAt() *MediaUpsertOne {
-	return u.Update(func(s *MediaUpsert) {
-		s.ClearUpdatedAt()
-	})
 }
 
 // SetAppID sets the "app_id" field.
@@ -1463,7 +1376,7 @@ func (mcb *MediaCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.MediaUpsert) {
-//			SetCreatedAt(v+v).
+//			SetAppID(v+v).
 //		}).
 //		Exec(ctx)
 func (mcb *MediaCreateBulk) OnConflict(opts ...sql.ConflictOption) *MediaUpsertBulk {
@@ -1510,9 +1423,6 @@ func (u *MediaUpsertBulk) UpdateNewValues() *MediaUpsertBulk {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(media.FieldID)
 			}
-			if _, exists := b.mutation.CreatedAt(); exists {
-				s.SetIgnore(media.FieldCreatedAt)
-			}
 		}
 	}))
 	return u
@@ -1543,27 +1453,6 @@ func (u *MediaUpsertBulk) Update(set func(*MediaUpsert)) *MediaUpsertBulk {
 		set(&MediaUpsert{UpdateSet: update})
 	}))
 	return u
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (u *MediaUpsertBulk) SetUpdatedAt(v time.Time) *MediaUpsertBulk {
-	return u.Update(func(s *MediaUpsert) {
-		s.SetUpdatedAt(v)
-	})
-}
-
-// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
-func (u *MediaUpsertBulk) UpdateUpdatedAt() *MediaUpsertBulk {
-	return u.Update(func(s *MediaUpsert) {
-		s.UpdateUpdatedAt()
-	})
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (u *MediaUpsertBulk) ClearUpdatedAt() *MediaUpsertBulk {
-	return u.Update(func(s *MediaUpsert) {
-		s.ClearUpdatedAt()
-	})
 }
 
 // SetAppID sets the "app_id" field.

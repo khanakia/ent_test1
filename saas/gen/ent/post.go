@@ -3,14 +3,9 @@
 package ent
 
 import (
-	"encoding/json"
 	"fmt"
 	"saas/gen/ent/post"
-	"saas/gen/ent/postcategory"
-	"saas/gen/ent/poststatus"
-	"saas/gen/ent/posttype"
 	"strings"
-	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -21,103 +16,11 @@ type Post struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID string `json:"id,omitempty"`
-	// CreatedAt holds the value of the "created_at" field.
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	// UpdatedAt holds the value of the "updated_at" field.
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
-	// AppID holds the value of the "app_id" field.
-	AppID string `json:"app_id,omitempty"`
 	// Name holds the value of the "name" field.
 	Name string `json:"name,omitempty"`
 	// Slug holds the value of the "slug" field.
-	Slug string `json:"slug,omitempty"`
-	// PostStatusID holds the value of the "post_status_id" field.
-	PostStatusID string `json:"post_status_id,omitempty"`
-	// PostTypeID holds the value of the "post_type_id" field.
-	PostTypeID string `json:"post_type_id,omitempty"`
-	// PrimaryCategoryID holds the value of the "primary_category_id" field.
-	PrimaryCategoryID string `json:"primary_category_id,omitempty"`
-	// Headline holds the value of the "headline" field.
-	Headline string `json:"headline,omitempty"`
-	// Excerpt holds the value of the "excerpt" field.
-	Excerpt string `json:"excerpt,omitempty"`
-	// Content holds the value of the "content" field.
-	Content string `json:"content,omitempty"`
-	// MetaTitle holds the value of the "meta_title" field.
-	MetaTitle string `json:"meta_title,omitempty"`
-	// MetaDescr holds the value of the "meta_descr" field.
-	MetaDescr string `json:"meta_descr,omitempty"`
-	// MetaCanonicalURL holds the value of the "meta_canonical_url" field.
-	MetaCanonicalURL string `json:"meta_canonical_url,omitempty"`
-	// MetaRobots holds the value of the "meta_robots" field.
-	MetaRobots string `json:"meta_robots,omitempty"`
-	// Custom holds the value of the "custom" field.
-	Custom map[string]interface{} `json:"custom,omitempty"`
-	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the PostQuery when eager-loading is set.
-	Edges        PostEdges `json:"edges"`
+	Slug         string `json:"slug,omitempty"`
 	selectValues sql.SelectValues
-}
-
-// PostEdges holds the relations/edges for other nodes in the graph.
-type PostEdges struct {
-	// PostStatus holds the value of the post_status edge.
-	PostStatus *PostStatus `json:"post_status,omitempty"`
-	// PostType holds the value of the post_type edge.
-	PostType *PostType `json:"post_type,omitempty"`
-	// PrimaryCategory holds the value of the primary_category edge.
-	PrimaryCategory *PostCategory `json:"primary_category,omitempty"`
-	// PostTags holds the value of the post_tags edge.
-	PostTags []*PostTag `json:"post_tags,omitempty"`
-	// loadedTypes holds the information for reporting if a
-	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [4]bool
-	// totalCount holds the count of the edges above.
-	totalCount [4]map[string]int
-
-	namedPostTags map[string][]*PostTag
-}
-
-// PostStatusOrErr returns the PostStatus value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e PostEdges) PostStatusOrErr() (*PostStatus, error) {
-	if e.PostStatus != nil {
-		return e.PostStatus, nil
-	} else if e.loadedTypes[0] {
-		return nil, &NotFoundError{label: poststatus.Label}
-	}
-	return nil, &NotLoadedError{edge: "post_status"}
-}
-
-// PostTypeOrErr returns the PostType value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e PostEdges) PostTypeOrErr() (*PostType, error) {
-	if e.PostType != nil {
-		return e.PostType, nil
-	} else if e.loadedTypes[1] {
-		return nil, &NotFoundError{label: posttype.Label}
-	}
-	return nil, &NotLoadedError{edge: "post_type"}
-}
-
-// PrimaryCategoryOrErr returns the PrimaryCategory value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e PostEdges) PrimaryCategoryOrErr() (*PostCategory, error) {
-	if e.PrimaryCategory != nil {
-		return e.PrimaryCategory, nil
-	} else if e.loadedTypes[2] {
-		return nil, &NotFoundError{label: postcategory.Label}
-	}
-	return nil, &NotLoadedError{edge: "primary_category"}
-}
-
-// PostTagsOrErr returns the PostTags value or an error if the edge
-// was not loaded in eager-loading.
-func (e PostEdges) PostTagsOrErr() ([]*PostTag, error) {
-	if e.loadedTypes[3] {
-		return e.PostTags, nil
-	}
-	return nil, &NotLoadedError{edge: "post_tags"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -125,12 +28,8 @@ func (*Post) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case post.FieldCustom:
-			values[i] = new([]byte)
-		case post.FieldID, post.FieldAppID, post.FieldName, post.FieldSlug, post.FieldPostStatusID, post.FieldPostTypeID, post.FieldPrimaryCategoryID, post.FieldHeadline, post.FieldExcerpt, post.FieldContent, post.FieldMetaTitle, post.FieldMetaDescr, post.FieldMetaCanonicalURL, post.FieldMetaRobots:
+		case post.FieldID, post.FieldName, post.FieldSlug:
 			values[i] = new(sql.NullString)
-		case post.FieldCreatedAt, post.FieldUpdatedAt:
-			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -152,24 +51,6 @@ func (po *Post) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				po.ID = value.String
 			}
-		case post.FieldCreatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field created_at", values[i])
-			} else if value.Valid {
-				po.CreatedAt = value.Time
-			}
-		case post.FieldUpdatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
-			} else if value.Valid {
-				po.UpdatedAt = value.Time
-			}
-		case post.FieldAppID:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field app_id", values[i])
-			} else if value.Valid {
-				po.AppID = value.String
-			}
 		case post.FieldName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field name", values[i])
@@ -182,74 +63,6 @@ func (po *Post) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				po.Slug = value.String
 			}
-		case post.FieldPostStatusID:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field post_status_id", values[i])
-			} else if value.Valid {
-				po.PostStatusID = value.String
-			}
-		case post.FieldPostTypeID:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field post_type_id", values[i])
-			} else if value.Valid {
-				po.PostTypeID = value.String
-			}
-		case post.FieldPrimaryCategoryID:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field primary_category_id", values[i])
-			} else if value.Valid {
-				po.PrimaryCategoryID = value.String
-			}
-		case post.FieldHeadline:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field headline", values[i])
-			} else if value.Valid {
-				po.Headline = value.String
-			}
-		case post.FieldExcerpt:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field excerpt", values[i])
-			} else if value.Valid {
-				po.Excerpt = value.String
-			}
-		case post.FieldContent:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field content", values[i])
-			} else if value.Valid {
-				po.Content = value.String
-			}
-		case post.FieldMetaTitle:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field meta_title", values[i])
-			} else if value.Valid {
-				po.MetaTitle = value.String
-			}
-		case post.FieldMetaDescr:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field meta_descr", values[i])
-			} else if value.Valid {
-				po.MetaDescr = value.String
-			}
-		case post.FieldMetaCanonicalURL:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field meta_canonical_url", values[i])
-			} else if value.Valid {
-				po.MetaCanonicalURL = value.String
-			}
-		case post.FieldMetaRobots:
-			if value, ok := values[i].(*sql.NullString); !ok {
-				return fmt.Errorf("unexpected type %T for field meta_robots", values[i])
-			} else if value.Valid {
-				po.MetaRobots = value.String
-			}
-		case post.FieldCustom:
-			if value, ok := values[i].(*[]byte); !ok {
-				return fmt.Errorf("unexpected type %T for field custom", values[i])
-			} else if value != nil && len(*value) > 0 {
-				if err := json.Unmarshal(*value, &po.Custom); err != nil {
-					return fmt.Errorf("unmarshal field custom: %w", err)
-				}
-			}
 		default:
 			po.selectValues.Set(columns[i], values[i])
 		}
@@ -261,26 +74,6 @@ func (po *Post) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (po *Post) Value(name string) (ent.Value, error) {
 	return po.selectValues.Get(name)
-}
-
-// QueryPostStatus queries the "post_status" edge of the Post entity.
-func (po *Post) QueryPostStatus() *PostStatusQuery {
-	return NewPostClient(po.config).QueryPostStatus(po)
-}
-
-// QueryPostType queries the "post_type" edge of the Post entity.
-func (po *Post) QueryPostType() *PostTypeQuery {
-	return NewPostClient(po.config).QueryPostType(po)
-}
-
-// QueryPrimaryCategory queries the "primary_category" edge of the Post entity.
-func (po *Post) QueryPrimaryCategory() *PostCategoryQuery {
-	return NewPostClient(po.config).QueryPrimaryCategory(po)
-}
-
-// QueryPostTags queries the "post_tags" edge of the Post entity.
-func (po *Post) QueryPostTags() *PostTagQuery {
-	return NewPostClient(po.config).QueryPostTags(po)
 }
 
 // Update returns a builder for updating this Post.
@@ -306,79 +99,13 @@ func (po *Post) String() string {
 	var builder strings.Builder
 	builder.WriteString("Post(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", po.ID))
-	builder.WriteString("created_at=")
-	builder.WriteString(po.CreatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("updated_at=")
-	builder.WriteString(po.UpdatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("app_id=")
-	builder.WriteString(po.AppID)
-	builder.WriteString(", ")
 	builder.WriteString("name=")
 	builder.WriteString(po.Name)
 	builder.WriteString(", ")
 	builder.WriteString("slug=")
 	builder.WriteString(po.Slug)
-	builder.WriteString(", ")
-	builder.WriteString("post_status_id=")
-	builder.WriteString(po.PostStatusID)
-	builder.WriteString(", ")
-	builder.WriteString("post_type_id=")
-	builder.WriteString(po.PostTypeID)
-	builder.WriteString(", ")
-	builder.WriteString("primary_category_id=")
-	builder.WriteString(po.PrimaryCategoryID)
-	builder.WriteString(", ")
-	builder.WriteString("headline=")
-	builder.WriteString(po.Headline)
-	builder.WriteString(", ")
-	builder.WriteString("excerpt=")
-	builder.WriteString(po.Excerpt)
-	builder.WriteString(", ")
-	builder.WriteString("content=")
-	builder.WriteString(po.Content)
-	builder.WriteString(", ")
-	builder.WriteString("meta_title=")
-	builder.WriteString(po.MetaTitle)
-	builder.WriteString(", ")
-	builder.WriteString("meta_descr=")
-	builder.WriteString(po.MetaDescr)
-	builder.WriteString(", ")
-	builder.WriteString("meta_canonical_url=")
-	builder.WriteString(po.MetaCanonicalURL)
-	builder.WriteString(", ")
-	builder.WriteString("meta_robots=")
-	builder.WriteString(po.MetaRobots)
-	builder.WriteString(", ")
-	builder.WriteString("custom=")
-	builder.WriteString(fmt.Sprintf("%v", po.Custom))
 	builder.WriteByte(')')
 	return builder.String()
-}
-
-// NamedPostTags returns the PostTags named value or an error if the edge was not
-// loaded in eager-loading with this name.
-func (po *Post) NamedPostTags(name string) ([]*PostTag, error) {
-	if po.Edges.namedPostTags == nil {
-		return nil, &NotLoadedError{edge: name}
-	}
-	nodes, ok := po.Edges.namedPostTags[name]
-	if !ok {
-		return nil, &NotLoadedError{edge: name}
-	}
-	return nodes, nil
-}
-
-func (po *Post) appendNamedPostTags(name string, edges ...*PostTag) {
-	if po.Edges.namedPostTags == nil {
-		po.Edges.namedPostTags = make(map[string][]*PostTag)
-	}
-	if len(edges) == 0 {
-		po.Edges.namedPostTags[name] = []*PostTag{}
-	} else {
-		po.Edges.namedPostTags[name] = append(po.Edges.namedPostTags[name], edges...)
-	}
 }
 
 // Posts is a parsable slice of Post.

@@ -1,8 +1,6 @@
 package schema
 
 import (
-	"saas/pkg/constants"
-
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
@@ -44,10 +42,11 @@ func (Media) Edges() []ent.Edge {
 func (Media) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		// entgql.Annotation{},
-		entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput),
-		entgql.RelayConnection(),
-		entgql.QueryField("medias").Directives(entgql.Directive{Name: constants.DirectiveCanApp}),
-		entgql.MultiOrder(),
+		entgql.Skip(entgql.SkipWhereInput),
+		// entgql.Skip(entgql.SkipMutationCreateInput, entgql.SkipMutationUpdateInput),
+		// entgql.RelayConnection(),
+		// entgql.QueryField("medias").Directives(entgql.Directive{Name: constants.DirectiveCanApp}),
+		// entgql.MultiOrder(),
 		// entgql.Mutations(entgql.MutationCreate(), entgql.MutationUpdate()),
 	}
 }

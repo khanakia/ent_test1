@@ -1,0 +1,55 @@
+{{ define "helper/gql_mutation_input/struct" }}
+	{{- $n := $ }}
+		{{- if $n.Annotations.SaasMedia }}
+			{{- range $e := $n.Annotations.SaasMedia.Fields }}
+				{{- if $n.IsCreate }}
+
+					{{ print ($e.StructField | singular) }}IDs []{{ $e.Type }}
+					
+					{{- else }}
+					 	{{ $e.MutationAdd }} []{{ $e.Type }}
+            {{ $e.MutationRemove }} []{{ $e.Type }}
+						{{ $e.MutationClear }} bool
+
+						{{/* {{- $structField := print (singular $e.Name | pascal) "IDs" }}
+						{{- $MutationAdd := print "Add" $structField }}
+						{{- $MutationRemove := print "Remove" $structField }}
+						{{- $structFieldPlural := print (plural $e.Name | pascal) }}
+						{{- $MutationClear := print "Clear" $structFieldPlural }}
+
+						{{ $MutationAdd }} []string
+						{{ $MutationRemove }} []string
+						{{ $MutationClear }} bool */}}
+				{{- end }}
+				
+			{{- end }}
+		{{- end }}
+{{ end }}
+
+
+{{ define "helper/gql_mutation_input/mutate" }}
+	{{- $n := $ }}
+		{{- if $n.Annotations.SaasMedia }}
+			{{- range $e := $n.Annotations.SaasMedia.Fields }}
+				{{- if $n.IsCreate }}
+								{{- $structField := print (singular $e.Name | pascal) "IDs" }}
+								if v := i.{{ $structField }}; len(v) > 0 {
+										m.{{ $e.MutationAdd }}(v...)
+								}
+						{{- else }}
+						
+						 		if i.{{ $e.MutationClear }} {
+                    m.{{ $e.MutationClear }}()
+                }
+								
+								if v := i.{{ $e.MutationAdd }}; len(v) > 0 {
+										m.{{ $e.MutationAdd }}(v...)
+								}
+								if v := i.{{ $e.MutationRemove }}; len(v) > 0 {
+										m.{{ $e.MutationRemove }}(v...)
+								}
+                
+				{{- end }}
+			{{- end }}
+		{{- end }}
+{{ end }}

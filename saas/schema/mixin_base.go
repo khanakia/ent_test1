@@ -1,11 +1,8 @@
 package schema
 
 import (
-	"time"
-
 	gonanoid "github.com/matoous/go-nanoid/v2"
 
-	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/mixin"
@@ -36,17 +33,17 @@ func (cls BaseMixin) Fields() []ent.Field {
 				return prefix + gonanoid.MustGenerate("0123456789abcdefghijklmnopqrstuvwxyz", length)
 			}).Unique(),
 
-		field.Time("created_at").
-			Optional().
-			Default(time.Now).
-			Immutable().
-			Annotations(
-				entgql.OrderField("CREATED_AT"),
-			),
+		// field.Time("created_at").
+		// 	Optional().
+		// 	Default(time.Now).
+		// 	Immutable().
+		// 	Annotations(
+		// 		entgql.OrderField("CREATED_AT"),
+		// 	),
 
-		field.Time("updated_at").
-			Optional().
-			Default(time.Now).
-			UpdateDefault(time.Now),
+		// field.Time("updated_at").
+		// 	Optional().
+		// 	Default(time.Now).
+		// 	UpdateDefault(time.Now),
 	}
 }

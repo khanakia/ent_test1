@@ -1,15 +1,8 @@
 type Mutation {
-  createPostType(input: CreatePostTypeInput!): PostType! @canApp
-  updatePostType(id: ID!, input: UpdatePostTypeInput!): PostType! @canApp
-  createPostStatus(input: CreatePostStatusInput!): PostStatus! @canApp
-  updatePostStatus(id: ID!, input: UpdatePostStatusInput!): PostStatus! @canApp
-  createPostCategory(input: CreatePostCategoryInput!): PostCategory! @canApp
-  updatePostCategory(id: ID!, input: UpdatePostCategoryInput!): PostCategory! @canApp
-  deletePostCategory(id: ID!): Boolean! @canApp
-  createPost(input: CreatePostInput!): Post! @canApp
-  updatePost(id: ID!, input: UpdatePostInput!): Post! @canApp
-  createPostTag(input: CreatePostTagInput!): PostTag! @canApp
-  updatePostTag(id: ID!, input: UpdatePostTagInput!): PostTag! @canApp
-  createPostTypeForm(input: CreatePostTypeFormInput!): PostTypeForm! @canApp
-  updatePostTypeForm(id: ID!, input: UpdatePostTypeFormInput!): PostTypeForm! @canApp
+  createPost(input: CreatePostInput!): Post!
+  updatePost(id: ID!, input: UpdatePostInput!): Post!
 }
+
+# extend input CreatePostInput {
+#   featuredIDs: [String]
+# }

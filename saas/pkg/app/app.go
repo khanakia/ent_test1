@@ -5,7 +5,6 @@ import (
 	"configmgr/gen/appconfig"
 	"database/sql"
 	"fmt"
-	"saas/pkg/cacherdbms"
 	"saas/pkg/entdb"
 
 	"lace/cache"
@@ -35,7 +34,7 @@ func New() Plugin {
 		DB:        db,
 		EntDB:     entClient,
 		AppConfig: appcfg,
-		Cache:     cacherdbms.New(entClient.Client()),
+		// Cache:     cacherdbms.New(entClient.Client()),
 	}
 
 	medialibrary.Construct(db)

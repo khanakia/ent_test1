@@ -7,11 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"saas/gen/ent/post"
-	"saas/gen/ent/postcategory"
-	"saas/gen/ent/poststatus"
-	"saas/gen/ent/posttag"
-	"saas/gen/ent/posttype"
-	"time"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -25,48 +20,6 @@ type PostCreate struct {
 	mutation *PostMutation
 	hooks    []Hook
 	conflict []sql.ConflictOption
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (pc *PostCreate) SetCreatedAt(t time.Time) *PostCreate {
-	pc.mutation.SetCreatedAt(t)
-	return pc
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (pc *PostCreate) SetNillableCreatedAt(t *time.Time) *PostCreate {
-	if t != nil {
-		pc.SetCreatedAt(*t)
-	}
-	return pc
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (pc *PostCreate) SetUpdatedAt(t time.Time) *PostCreate {
-	pc.mutation.SetUpdatedAt(t)
-	return pc
-}
-
-// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
-func (pc *PostCreate) SetNillableUpdatedAt(t *time.Time) *PostCreate {
-	if t != nil {
-		pc.SetUpdatedAt(*t)
-	}
-	return pc
-}
-
-// SetAppID sets the "app_id" field.
-func (pc *PostCreate) SetAppID(s string) *PostCreate {
-	pc.mutation.SetAppID(s)
-	return pc
-}
-
-// SetNillableAppID sets the "app_id" field if the given value is not nil.
-func (pc *PostCreate) SetNillableAppID(s *string) *PostCreate {
-	if s != nil {
-		pc.SetAppID(*s)
-	}
-	return pc
 }
 
 // SetName sets the "name" field.
@@ -97,152 +50,6 @@ func (pc *PostCreate) SetNillableSlug(s *string) *PostCreate {
 	return pc
 }
 
-// SetPostStatusID sets the "post_status_id" field.
-func (pc *PostCreate) SetPostStatusID(s string) *PostCreate {
-	pc.mutation.SetPostStatusID(s)
-	return pc
-}
-
-// SetNillablePostStatusID sets the "post_status_id" field if the given value is not nil.
-func (pc *PostCreate) SetNillablePostStatusID(s *string) *PostCreate {
-	if s != nil {
-		pc.SetPostStatusID(*s)
-	}
-	return pc
-}
-
-// SetPostTypeID sets the "post_type_id" field.
-func (pc *PostCreate) SetPostTypeID(s string) *PostCreate {
-	pc.mutation.SetPostTypeID(s)
-	return pc
-}
-
-// SetNillablePostTypeID sets the "post_type_id" field if the given value is not nil.
-func (pc *PostCreate) SetNillablePostTypeID(s *string) *PostCreate {
-	if s != nil {
-		pc.SetPostTypeID(*s)
-	}
-	return pc
-}
-
-// SetPrimaryCategoryID sets the "primary_category_id" field.
-func (pc *PostCreate) SetPrimaryCategoryID(s string) *PostCreate {
-	pc.mutation.SetPrimaryCategoryID(s)
-	return pc
-}
-
-// SetNillablePrimaryCategoryID sets the "primary_category_id" field if the given value is not nil.
-func (pc *PostCreate) SetNillablePrimaryCategoryID(s *string) *PostCreate {
-	if s != nil {
-		pc.SetPrimaryCategoryID(*s)
-	}
-	return pc
-}
-
-// SetHeadline sets the "headline" field.
-func (pc *PostCreate) SetHeadline(s string) *PostCreate {
-	pc.mutation.SetHeadline(s)
-	return pc
-}
-
-// SetNillableHeadline sets the "headline" field if the given value is not nil.
-func (pc *PostCreate) SetNillableHeadline(s *string) *PostCreate {
-	if s != nil {
-		pc.SetHeadline(*s)
-	}
-	return pc
-}
-
-// SetExcerpt sets the "excerpt" field.
-func (pc *PostCreate) SetExcerpt(s string) *PostCreate {
-	pc.mutation.SetExcerpt(s)
-	return pc
-}
-
-// SetNillableExcerpt sets the "excerpt" field if the given value is not nil.
-func (pc *PostCreate) SetNillableExcerpt(s *string) *PostCreate {
-	if s != nil {
-		pc.SetExcerpt(*s)
-	}
-	return pc
-}
-
-// SetContent sets the "content" field.
-func (pc *PostCreate) SetContent(s string) *PostCreate {
-	pc.mutation.SetContent(s)
-	return pc
-}
-
-// SetNillableContent sets the "content" field if the given value is not nil.
-func (pc *PostCreate) SetNillableContent(s *string) *PostCreate {
-	if s != nil {
-		pc.SetContent(*s)
-	}
-	return pc
-}
-
-// SetMetaTitle sets the "meta_title" field.
-func (pc *PostCreate) SetMetaTitle(s string) *PostCreate {
-	pc.mutation.SetMetaTitle(s)
-	return pc
-}
-
-// SetNillableMetaTitle sets the "meta_title" field if the given value is not nil.
-func (pc *PostCreate) SetNillableMetaTitle(s *string) *PostCreate {
-	if s != nil {
-		pc.SetMetaTitle(*s)
-	}
-	return pc
-}
-
-// SetMetaDescr sets the "meta_descr" field.
-func (pc *PostCreate) SetMetaDescr(s string) *PostCreate {
-	pc.mutation.SetMetaDescr(s)
-	return pc
-}
-
-// SetNillableMetaDescr sets the "meta_descr" field if the given value is not nil.
-func (pc *PostCreate) SetNillableMetaDescr(s *string) *PostCreate {
-	if s != nil {
-		pc.SetMetaDescr(*s)
-	}
-	return pc
-}
-
-// SetMetaCanonicalURL sets the "meta_canonical_url" field.
-func (pc *PostCreate) SetMetaCanonicalURL(s string) *PostCreate {
-	pc.mutation.SetMetaCanonicalURL(s)
-	return pc
-}
-
-// SetNillableMetaCanonicalURL sets the "meta_canonical_url" field if the given value is not nil.
-func (pc *PostCreate) SetNillableMetaCanonicalURL(s *string) *PostCreate {
-	if s != nil {
-		pc.SetMetaCanonicalURL(*s)
-	}
-	return pc
-}
-
-// SetMetaRobots sets the "meta_robots" field.
-func (pc *PostCreate) SetMetaRobots(s string) *PostCreate {
-	pc.mutation.SetMetaRobots(s)
-	return pc
-}
-
-// SetNillableMetaRobots sets the "meta_robots" field if the given value is not nil.
-func (pc *PostCreate) SetNillableMetaRobots(s *string) *PostCreate {
-	if s != nil {
-		pc.SetMetaRobots(*s)
-	}
-	return pc
-}
-
-// SetCustom sets the "custom" field.
-func (pc *PostCreate) SetCustom(m map[string]interface{}) *PostCreate {
-	pc.mutation.SetCustom(m)
-	return pc
-}
-
 // SetID sets the "id" field.
 func (pc *PostCreate) SetID(s string) *PostCreate {
 	pc.mutation.SetID(s)
@@ -257,36 +64,6 @@ func (pc *PostCreate) SetNillableID(s *string) *PostCreate {
 	return pc
 }
 
-// SetPostStatus sets the "post_status" edge to the PostStatus entity.
-func (pc *PostCreate) SetPostStatus(p *PostStatus) *PostCreate {
-	return pc.SetPostStatusID(p.ID)
-}
-
-// SetPostType sets the "post_type" edge to the PostType entity.
-func (pc *PostCreate) SetPostType(p *PostType) *PostCreate {
-	return pc.SetPostTypeID(p.ID)
-}
-
-// SetPrimaryCategory sets the "primary_category" edge to the PostCategory entity.
-func (pc *PostCreate) SetPrimaryCategory(p *PostCategory) *PostCreate {
-	return pc.SetPrimaryCategoryID(p.ID)
-}
-
-// AddPostTagIDs adds the "post_tags" edge to the PostTag entity by IDs.
-func (pc *PostCreate) AddPostTagIDs(ids ...string) *PostCreate {
-	pc.mutation.AddPostTagIDs(ids...)
-	return pc
-}
-
-// AddPostTags adds the "post_tags" edges to the PostTag entity.
-func (pc *PostCreate) AddPostTags(p ...*PostTag) *PostCreate {
-	ids := make([]string, len(p))
-	for i := range p {
-		ids[i] = p[i].ID
-	}
-	return pc.AddPostTagIDs(ids...)
-}
-
 // Mutation returns the PostMutation object of the builder.
 func (pc *PostCreate) Mutation() *PostMutation {
 	return pc.mutation
@@ -294,9 +71,7 @@ func (pc *PostCreate) Mutation() *PostMutation {
 
 // Save creates the Post in the database.
 func (pc *PostCreate) Save(ctx context.Context) (*Post, error) {
-	if err := pc.defaults(); err != nil {
-		return nil, err
-	}
+	pc.defaults()
 	return withHooks(ctx, pc.sqlSave, pc.mutation, pc.hooks)
 }
 
@@ -323,29 +98,11 @@ func (pc *PostCreate) ExecX(ctx context.Context) {
 }
 
 // defaults sets the default values of the builder before save.
-func (pc *PostCreate) defaults() error {
-	if _, ok := pc.mutation.CreatedAt(); !ok {
-		if post.DefaultCreatedAt == nil {
-			return fmt.Errorf("ent: uninitialized post.DefaultCreatedAt (forgotten import ent/runtime?)")
-		}
-		v := post.DefaultCreatedAt()
-		pc.mutation.SetCreatedAt(v)
-	}
-	if _, ok := pc.mutation.UpdatedAt(); !ok {
-		if post.DefaultUpdatedAt == nil {
-			return fmt.Errorf("ent: uninitialized post.DefaultUpdatedAt (forgotten import ent/runtime?)")
-		}
-		v := post.DefaultUpdatedAt()
-		pc.mutation.SetUpdatedAt(v)
-	}
+func (pc *PostCreate) defaults() {
 	if _, ok := pc.mutation.ID(); !ok {
-		if post.DefaultID == nil {
-			return fmt.Errorf("ent: uninitialized post.DefaultID (forgotten import ent/runtime?)")
-		}
 		v := post.DefaultID()
 		pc.mutation.SetID(v)
 	}
-	return nil
 }
 
 // check runs all checks and user-defined validators on the builder.
@@ -386,18 +143,6 @@ func (pc *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 		_node.ID = id
 		_spec.ID.Value = id
 	}
-	if value, ok := pc.mutation.CreatedAt(); ok {
-		_spec.SetField(post.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
-	}
-	if value, ok := pc.mutation.UpdatedAt(); ok {
-		_spec.SetField(post.FieldUpdatedAt, field.TypeTime, value)
-		_node.UpdatedAt = value
-	}
-	if value, ok := pc.mutation.AppID(); ok {
-		_spec.SetField(post.FieldAppID, field.TypeString, value)
-		_node.AppID = value
-	}
 	if value, ok := pc.mutation.Name(); ok {
 		_spec.SetField(post.FieldName, field.TypeString, value)
 		_node.Name = value
@@ -406,105 +151,6 @@ func (pc *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 		_spec.SetField(post.FieldSlug, field.TypeString, value)
 		_node.Slug = value
 	}
-	if value, ok := pc.mutation.Headline(); ok {
-		_spec.SetField(post.FieldHeadline, field.TypeString, value)
-		_node.Headline = value
-	}
-	if value, ok := pc.mutation.Excerpt(); ok {
-		_spec.SetField(post.FieldExcerpt, field.TypeString, value)
-		_node.Excerpt = value
-	}
-	if value, ok := pc.mutation.Content(); ok {
-		_spec.SetField(post.FieldContent, field.TypeString, value)
-		_node.Content = value
-	}
-	if value, ok := pc.mutation.MetaTitle(); ok {
-		_spec.SetField(post.FieldMetaTitle, field.TypeString, value)
-		_node.MetaTitle = value
-	}
-	if value, ok := pc.mutation.MetaDescr(); ok {
-		_spec.SetField(post.FieldMetaDescr, field.TypeString, value)
-		_node.MetaDescr = value
-	}
-	if value, ok := pc.mutation.MetaCanonicalURL(); ok {
-		_spec.SetField(post.FieldMetaCanonicalURL, field.TypeString, value)
-		_node.MetaCanonicalURL = value
-	}
-	if value, ok := pc.mutation.MetaRobots(); ok {
-		_spec.SetField(post.FieldMetaRobots, field.TypeString, value)
-		_node.MetaRobots = value
-	}
-	if value, ok := pc.mutation.Custom(); ok {
-		_spec.SetField(post.FieldCustom, field.TypeJSON, value)
-		_node.Custom = value
-	}
-	if nodes := pc.mutation.PostStatusIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   post.PostStatusTable,
-			Columns: []string{post.PostStatusColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(poststatus.FieldID, field.TypeString),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.PostStatusID = nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := pc.mutation.PostTypeIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   post.PostTypeTable,
-			Columns: []string{post.PostTypeColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(posttype.FieldID, field.TypeString),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.PostTypeID = nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := pc.mutation.PrimaryCategoryIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   post.PrimaryCategoryTable,
-			Columns: []string{post.PrimaryCategoryColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(postcategory.FieldID, field.TypeString),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.PrimaryCategoryID = nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := pc.mutation.PostTagsIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2M,
-			Inverse: true,
-			Table:   post.PostTagsTable,
-			Columns: post.PostTagsPrimaryKey,
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(posttag.FieldID, field.TypeString),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
 	return _node, _spec
 }
 
@@ -512,7 +158,7 @@ func (pc *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 // of the `INSERT` statement. For example:
 //
 //	client.Post.Create().
-//		SetCreatedAt(v).
+//		SetName(v).
 //		OnConflict(
 //			// Update the row with the new values
 //			// the was proposed for insertion.
@@ -521,7 +167,7 @@ func (pc *PostCreate) createSpec() (*Post, *sqlgraph.CreateSpec) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.PostUpsert) {
-//			SetCreatedAt(v+v).
+//			SetName(v+v).
 //		}).
 //		Exec(ctx)
 func (pc *PostCreate) OnConflict(opts ...sql.ConflictOption) *PostUpsertOne {
@@ -556,42 +202,6 @@ type (
 		*sql.UpdateSet
 	}
 )
-
-// SetUpdatedAt sets the "updated_at" field.
-func (u *PostUpsert) SetUpdatedAt(v time.Time) *PostUpsert {
-	u.Set(post.FieldUpdatedAt, v)
-	return u
-}
-
-// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
-func (u *PostUpsert) UpdateUpdatedAt() *PostUpsert {
-	u.SetExcluded(post.FieldUpdatedAt)
-	return u
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (u *PostUpsert) ClearUpdatedAt() *PostUpsert {
-	u.SetNull(post.FieldUpdatedAt)
-	return u
-}
-
-// SetAppID sets the "app_id" field.
-func (u *PostUpsert) SetAppID(v string) *PostUpsert {
-	u.Set(post.FieldAppID, v)
-	return u
-}
-
-// UpdateAppID sets the "app_id" field to the value that was provided on create.
-func (u *PostUpsert) UpdateAppID() *PostUpsert {
-	u.SetExcluded(post.FieldAppID)
-	return u
-}
-
-// ClearAppID clears the value of the "app_id" field.
-func (u *PostUpsert) ClearAppID() *PostUpsert {
-	u.SetNull(post.FieldAppID)
-	return u
-}
 
 // SetName sets the "name" field.
 func (u *PostUpsert) SetName(v string) *PostUpsert {
@@ -629,204 +239,6 @@ func (u *PostUpsert) ClearSlug() *PostUpsert {
 	return u
 }
 
-// SetPostStatusID sets the "post_status_id" field.
-func (u *PostUpsert) SetPostStatusID(v string) *PostUpsert {
-	u.Set(post.FieldPostStatusID, v)
-	return u
-}
-
-// UpdatePostStatusID sets the "post_status_id" field to the value that was provided on create.
-func (u *PostUpsert) UpdatePostStatusID() *PostUpsert {
-	u.SetExcluded(post.FieldPostStatusID)
-	return u
-}
-
-// ClearPostStatusID clears the value of the "post_status_id" field.
-func (u *PostUpsert) ClearPostStatusID() *PostUpsert {
-	u.SetNull(post.FieldPostStatusID)
-	return u
-}
-
-// SetPostTypeID sets the "post_type_id" field.
-func (u *PostUpsert) SetPostTypeID(v string) *PostUpsert {
-	u.Set(post.FieldPostTypeID, v)
-	return u
-}
-
-// UpdatePostTypeID sets the "post_type_id" field to the value that was provided on create.
-func (u *PostUpsert) UpdatePostTypeID() *PostUpsert {
-	u.SetExcluded(post.FieldPostTypeID)
-	return u
-}
-
-// ClearPostTypeID clears the value of the "post_type_id" field.
-func (u *PostUpsert) ClearPostTypeID() *PostUpsert {
-	u.SetNull(post.FieldPostTypeID)
-	return u
-}
-
-// SetPrimaryCategoryID sets the "primary_category_id" field.
-func (u *PostUpsert) SetPrimaryCategoryID(v string) *PostUpsert {
-	u.Set(post.FieldPrimaryCategoryID, v)
-	return u
-}
-
-// UpdatePrimaryCategoryID sets the "primary_category_id" field to the value that was provided on create.
-func (u *PostUpsert) UpdatePrimaryCategoryID() *PostUpsert {
-	u.SetExcluded(post.FieldPrimaryCategoryID)
-	return u
-}
-
-// ClearPrimaryCategoryID clears the value of the "primary_category_id" field.
-func (u *PostUpsert) ClearPrimaryCategoryID() *PostUpsert {
-	u.SetNull(post.FieldPrimaryCategoryID)
-	return u
-}
-
-// SetHeadline sets the "headline" field.
-func (u *PostUpsert) SetHeadline(v string) *PostUpsert {
-	u.Set(post.FieldHeadline, v)
-	return u
-}
-
-// UpdateHeadline sets the "headline" field to the value that was provided on create.
-func (u *PostUpsert) UpdateHeadline() *PostUpsert {
-	u.SetExcluded(post.FieldHeadline)
-	return u
-}
-
-// ClearHeadline clears the value of the "headline" field.
-func (u *PostUpsert) ClearHeadline() *PostUpsert {
-	u.SetNull(post.FieldHeadline)
-	return u
-}
-
-// SetExcerpt sets the "excerpt" field.
-func (u *PostUpsert) SetExcerpt(v string) *PostUpsert {
-	u.Set(post.FieldExcerpt, v)
-	return u
-}
-
-// UpdateExcerpt sets the "excerpt" field to the value that was provided on create.
-func (u *PostUpsert) UpdateExcerpt() *PostUpsert {
-	u.SetExcluded(post.FieldExcerpt)
-	return u
-}
-
-// ClearExcerpt clears the value of the "excerpt" field.
-func (u *PostUpsert) ClearExcerpt() *PostUpsert {
-	u.SetNull(post.FieldExcerpt)
-	return u
-}
-
-// SetContent sets the "content" field.
-func (u *PostUpsert) SetContent(v string) *PostUpsert {
-	u.Set(post.FieldContent, v)
-	return u
-}
-
-// UpdateContent sets the "content" field to the value that was provided on create.
-func (u *PostUpsert) UpdateContent() *PostUpsert {
-	u.SetExcluded(post.FieldContent)
-	return u
-}
-
-// ClearContent clears the value of the "content" field.
-func (u *PostUpsert) ClearContent() *PostUpsert {
-	u.SetNull(post.FieldContent)
-	return u
-}
-
-// SetMetaTitle sets the "meta_title" field.
-func (u *PostUpsert) SetMetaTitle(v string) *PostUpsert {
-	u.Set(post.FieldMetaTitle, v)
-	return u
-}
-
-// UpdateMetaTitle sets the "meta_title" field to the value that was provided on create.
-func (u *PostUpsert) UpdateMetaTitle() *PostUpsert {
-	u.SetExcluded(post.FieldMetaTitle)
-	return u
-}
-
-// ClearMetaTitle clears the value of the "meta_title" field.
-func (u *PostUpsert) ClearMetaTitle() *PostUpsert {
-	u.SetNull(post.FieldMetaTitle)
-	return u
-}
-
-// SetMetaDescr sets the "meta_descr" field.
-func (u *PostUpsert) SetMetaDescr(v string) *PostUpsert {
-	u.Set(post.FieldMetaDescr, v)
-	return u
-}
-
-// UpdateMetaDescr sets the "meta_descr" field to the value that was provided on create.
-func (u *PostUpsert) UpdateMetaDescr() *PostUpsert {
-	u.SetExcluded(post.FieldMetaDescr)
-	return u
-}
-
-// ClearMetaDescr clears the value of the "meta_descr" field.
-func (u *PostUpsert) ClearMetaDescr() *PostUpsert {
-	u.SetNull(post.FieldMetaDescr)
-	return u
-}
-
-// SetMetaCanonicalURL sets the "meta_canonical_url" field.
-func (u *PostUpsert) SetMetaCanonicalURL(v string) *PostUpsert {
-	u.Set(post.FieldMetaCanonicalURL, v)
-	return u
-}
-
-// UpdateMetaCanonicalURL sets the "meta_canonical_url" field to the value that was provided on create.
-func (u *PostUpsert) UpdateMetaCanonicalURL() *PostUpsert {
-	u.SetExcluded(post.FieldMetaCanonicalURL)
-	return u
-}
-
-// ClearMetaCanonicalURL clears the value of the "meta_canonical_url" field.
-func (u *PostUpsert) ClearMetaCanonicalURL() *PostUpsert {
-	u.SetNull(post.FieldMetaCanonicalURL)
-	return u
-}
-
-// SetMetaRobots sets the "meta_robots" field.
-func (u *PostUpsert) SetMetaRobots(v string) *PostUpsert {
-	u.Set(post.FieldMetaRobots, v)
-	return u
-}
-
-// UpdateMetaRobots sets the "meta_robots" field to the value that was provided on create.
-func (u *PostUpsert) UpdateMetaRobots() *PostUpsert {
-	u.SetExcluded(post.FieldMetaRobots)
-	return u
-}
-
-// ClearMetaRobots clears the value of the "meta_robots" field.
-func (u *PostUpsert) ClearMetaRobots() *PostUpsert {
-	u.SetNull(post.FieldMetaRobots)
-	return u
-}
-
-// SetCustom sets the "custom" field.
-func (u *PostUpsert) SetCustom(v map[string]interface{}) *PostUpsert {
-	u.Set(post.FieldCustom, v)
-	return u
-}
-
-// UpdateCustom sets the "custom" field to the value that was provided on create.
-func (u *PostUpsert) UpdateCustom() *PostUpsert {
-	u.SetExcluded(post.FieldCustom)
-	return u
-}
-
-// ClearCustom clears the value of the "custom" field.
-func (u *PostUpsert) ClearCustom() *PostUpsert {
-	u.SetNull(post.FieldCustom)
-	return u
-}
-
 // UpdateNewValues updates the mutable fields using the new values that were set on create except the ID field.
 // Using this option is equivalent to using:
 //
@@ -843,9 +255,6 @@ func (u *PostUpsertOne) UpdateNewValues() *PostUpsertOne {
 	u.create.conflict = append(u.create.conflict, sql.ResolveWith(func(s *sql.UpdateSet) {
 		if _, exists := u.create.mutation.ID(); exists {
 			s.SetIgnore(post.FieldID)
-		}
-		if _, exists := u.create.mutation.CreatedAt(); exists {
-			s.SetIgnore(post.FieldCreatedAt)
 		}
 	}))
 	return u
@@ -876,48 +285,6 @@ func (u *PostUpsertOne) Update(set func(*PostUpsert)) *PostUpsertOne {
 		set(&PostUpsert{UpdateSet: update})
 	}))
 	return u
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (u *PostUpsertOne) SetUpdatedAt(v time.Time) *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.SetUpdatedAt(v)
-	})
-}
-
-// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
-func (u *PostUpsertOne) UpdateUpdatedAt() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateUpdatedAt()
-	})
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (u *PostUpsertOne) ClearUpdatedAt() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearUpdatedAt()
-	})
-}
-
-// SetAppID sets the "app_id" field.
-func (u *PostUpsertOne) SetAppID(v string) *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.SetAppID(v)
-	})
-}
-
-// UpdateAppID sets the "app_id" field to the value that was provided on create.
-func (u *PostUpsertOne) UpdateAppID() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateAppID()
-	})
-}
-
-// ClearAppID clears the value of the "app_id" field.
-func (u *PostUpsertOne) ClearAppID() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearAppID()
-	})
 }
 
 // SetName sets the "name" field.
@@ -959,237 +326,6 @@ func (u *PostUpsertOne) UpdateSlug() *PostUpsertOne {
 func (u *PostUpsertOne) ClearSlug() *PostUpsertOne {
 	return u.Update(func(s *PostUpsert) {
 		s.ClearSlug()
-	})
-}
-
-// SetPostStatusID sets the "post_status_id" field.
-func (u *PostUpsertOne) SetPostStatusID(v string) *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.SetPostStatusID(v)
-	})
-}
-
-// UpdatePostStatusID sets the "post_status_id" field to the value that was provided on create.
-func (u *PostUpsertOne) UpdatePostStatusID() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdatePostStatusID()
-	})
-}
-
-// ClearPostStatusID clears the value of the "post_status_id" field.
-func (u *PostUpsertOne) ClearPostStatusID() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearPostStatusID()
-	})
-}
-
-// SetPostTypeID sets the "post_type_id" field.
-func (u *PostUpsertOne) SetPostTypeID(v string) *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.SetPostTypeID(v)
-	})
-}
-
-// UpdatePostTypeID sets the "post_type_id" field to the value that was provided on create.
-func (u *PostUpsertOne) UpdatePostTypeID() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdatePostTypeID()
-	})
-}
-
-// ClearPostTypeID clears the value of the "post_type_id" field.
-func (u *PostUpsertOne) ClearPostTypeID() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearPostTypeID()
-	})
-}
-
-// SetPrimaryCategoryID sets the "primary_category_id" field.
-func (u *PostUpsertOne) SetPrimaryCategoryID(v string) *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.SetPrimaryCategoryID(v)
-	})
-}
-
-// UpdatePrimaryCategoryID sets the "primary_category_id" field to the value that was provided on create.
-func (u *PostUpsertOne) UpdatePrimaryCategoryID() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdatePrimaryCategoryID()
-	})
-}
-
-// ClearPrimaryCategoryID clears the value of the "primary_category_id" field.
-func (u *PostUpsertOne) ClearPrimaryCategoryID() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearPrimaryCategoryID()
-	})
-}
-
-// SetHeadline sets the "headline" field.
-func (u *PostUpsertOne) SetHeadline(v string) *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.SetHeadline(v)
-	})
-}
-
-// UpdateHeadline sets the "headline" field to the value that was provided on create.
-func (u *PostUpsertOne) UpdateHeadline() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateHeadline()
-	})
-}
-
-// ClearHeadline clears the value of the "headline" field.
-func (u *PostUpsertOne) ClearHeadline() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearHeadline()
-	})
-}
-
-// SetExcerpt sets the "excerpt" field.
-func (u *PostUpsertOne) SetExcerpt(v string) *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.SetExcerpt(v)
-	})
-}
-
-// UpdateExcerpt sets the "excerpt" field to the value that was provided on create.
-func (u *PostUpsertOne) UpdateExcerpt() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateExcerpt()
-	})
-}
-
-// ClearExcerpt clears the value of the "excerpt" field.
-func (u *PostUpsertOne) ClearExcerpt() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearExcerpt()
-	})
-}
-
-// SetContent sets the "content" field.
-func (u *PostUpsertOne) SetContent(v string) *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.SetContent(v)
-	})
-}
-
-// UpdateContent sets the "content" field to the value that was provided on create.
-func (u *PostUpsertOne) UpdateContent() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateContent()
-	})
-}
-
-// ClearContent clears the value of the "content" field.
-func (u *PostUpsertOne) ClearContent() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearContent()
-	})
-}
-
-// SetMetaTitle sets the "meta_title" field.
-func (u *PostUpsertOne) SetMetaTitle(v string) *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.SetMetaTitle(v)
-	})
-}
-
-// UpdateMetaTitle sets the "meta_title" field to the value that was provided on create.
-func (u *PostUpsertOne) UpdateMetaTitle() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateMetaTitle()
-	})
-}
-
-// ClearMetaTitle clears the value of the "meta_title" field.
-func (u *PostUpsertOne) ClearMetaTitle() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearMetaTitle()
-	})
-}
-
-// SetMetaDescr sets the "meta_descr" field.
-func (u *PostUpsertOne) SetMetaDescr(v string) *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.SetMetaDescr(v)
-	})
-}
-
-// UpdateMetaDescr sets the "meta_descr" field to the value that was provided on create.
-func (u *PostUpsertOne) UpdateMetaDescr() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateMetaDescr()
-	})
-}
-
-// ClearMetaDescr clears the value of the "meta_descr" field.
-func (u *PostUpsertOne) ClearMetaDescr() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearMetaDescr()
-	})
-}
-
-// SetMetaCanonicalURL sets the "meta_canonical_url" field.
-func (u *PostUpsertOne) SetMetaCanonicalURL(v string) *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.SetMetaCanonicalURL(v)
-	})
-}
-
-// UpdateMetaCanonicalURL sets the "meta_canonical_url" field to the value that was provided on create.
-func (u *PostUpsertOne) UpdateMetaCanonicalURL() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateMetaCanonicalURL()
-	})
-}
-
-// ClearMetaCanonicalURL clears the value of the "meta_canonical_url" field.
-func (u *PostUpsertOne) ClearMetaCanonicalURL() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearMetaCanonicalURL()
-	})
-}
-
-// SetMetaRobots sets the "meta_robots" field.
-func (u *PostUpsertOne) SetMetaRobots(v string) *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.SetMetaRobots(v)
-	})
-}
-
-// UpdateMetaRobots sets the "meta_robots" field to the value that was provided on create.
-func (u *PostUpsertOne) UpdateMetaRobots() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateMetaRobots()
-	})
-}
-
-// ClearMetaRobots clears the value of the "meta_robots" field.
-func (u *PostUpsertOne) ClearMetaRobots() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearMetaRobots()
-	})
-}
-
-// SetCustom sets the "custom" field.
-func (u *PostUpsertOne) SetCustom(v map[string]interface{}) *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.SetCustom(v)
-	})
-}
-
-// UpdateCustom sets the "custom" field to the value that was provided on create.
-func (u *PostUpsertOne) UpdateCustom() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateCustom()
-	})
-}
-
-// ClearCustom clears the value of the "custom" field.
-func (u *PostUpsertOne) ClearCustom() *PostUpsertOne {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearCustom()
 	})
 }
 
@@ -1329,7 +465,7 @@ func (pcb *PostCreateBulk) ExecX(ctx context.Context) {
 //		// Override some of the fields with custom
 //		// update values.
 //		Update(func(u *ent.PostUpsert) {
-//			SetCreatedAt(v+v).
+//			SetName(v+v).
 //		}).
 //		Exec(ctx)
 func (pcb *PostCreateBulk) OnConflict(opts ...sql.ConflictOption) *PostUpsertBulk {
@@ -1376,9 +512,6 @@ func (u *PostUpsertBulk) UpdateNewValues() *PostUpsertBulk {
 			if _, exists := b.mutation.ID(); exists {
 				s.SetIgnore(post.FieldID)
 			}
-			if _, exists := b.mutation.CreatedAt(); exists {
-				s.SetIgnore(post.FieldCreatedAt)
-			}
 		}
 	}))
 	return u
@@ -1409,48 +542,6 @@ func (u *PostUpsertBulk) Update(set func(*PostUpsert)) *PostUpsertBulk {
 		set(&PostUpsert{UpdateSet: update})
 	}))
 	return u
-}
-
-// SetUpdatedAt sets the "updated_at" field.
-func (u *PostUpsertBulk) SetUpdatedAt(v time.Time) *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.SetUpdatedAt(v)
-	})
-}
-
-// UpdateUpdatedAt sets the "updated_at" field to the value that was provided on create.
-func (u *PostUpsertBulk) UpdateUpdatedAt() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateUpdatedAt()
-	})
-}
-
-// ClearUpdatedAt clears the value of the "updated_at" field.
-func (u *PostUpsertBulk) ClearUpdatedAt() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearUpdatedAt()
-	})
-}
-
-// SetAppID sets the "app_id" field.
-func (u *PostUpsertBulk) SetAppID(v string) *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.SetAppID(v)
-	})
-}
-
-// UpdateAppID sets the "app_id" field to the value that was provided on create.
-func (u *PostUpsertBulk) UpdateAppID() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateAppID()
-	})
-}
-
-// ClearAppID clears the value of the "app_id" field.
-func (u *PostUpsertBulk) ClearAppID() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearAppID()
-	})
 }
 
 // SetName sets the "name" field.
@@ -1492,237 +583,6 @@ func (u *PostUpsertBulk) UpdateSlug() *PostUpsertBulk {
 func (u *PostUpsertBulk) ClearSlug() *PostUpsertBulk {
 	return u.Update(func(s *PostUpsert) {
 		s.ClearSlug()
-	})
-}
-
-// SetPostStatusID sets the "post_status_id" field.
-func (u *PostUpsertBulk) SetPostStatusID(v string) *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.SetPostStatusID(v)
-	})
-}
-
-// UpdatePostStatusID sets the "post_status_id" field to the value that was provided on create.
-func (u *PostUpsertBulk) UpdatePostStatusID() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdatePostStatusID()
-	})
-}
-
-// ClearPostStatusID clears the value of the "post_status_id" field.
-func (u *PostUpsertBulk) ClearPostStatusID() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearPostStatusID()
-	})
-}
-
-// SetPostTypeID sets the "post_type_id" field.
-func (u *PostUpsertBulk) SetPostTypeID(v string) *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.SetPostTypeID(v)
-	})
-}
-
-// UpdatePostTypeID sets the "post_type_id" field to the value that was provided on create.
-func (u *PostUpsertBulk) UpdatePostTypeID() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdatePostTypeID()
-	})
-}
-
-// ClearPostTypeID clears the value of the "post_type_id" field.
-func (u *PostUpsertBulk) ClearPostTypeID() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearPostTypeID()
-	})
-}
-
-// SetPrimaryCategoryID sets the "primary_category_id" field.
-func (u *PostUpsertBulk) SetPrimaryCategoryID(v string) *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.SetPrimaryCategoryID(v)
-	})
-}
-
-// UpdatePrimaryCategoryID sets the "primary_category_id" field to the value that was provided on create.
-func (u *PostUpsertBulk) UpdatePrimaryCategoryID() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdatePrimaryCategoryID()
-	})
-}
-
-// ClearPrimaryCategoryID clears the value of the "primary_category_id" field.
-func (u *PostUpsertBulk) ClearPrimaryCategoryID() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearPrimaryCategoryID()
-	})
-}
-
-// SetHeadline sets the "headline" field.
-func (u *PostUpsertBulk) SetHeadline(v string) *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.SetHeadline(v)
-	})
-}
-
-// UpdateHeadline sets the "headline" field to the value that was provided on create.
-func (u *PostUpsertBulk) UpdateHeadline() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateHeadline()
-	})
-}
-
-// ClearHeadline clears the value of the "headline" field.
-func (u *PostUpsertBulk) ClearHeadline() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearHeadline()
-	})
-}
-
-// SetExcerpt sets the "excerpt" field.
-func (u *PostUpsertBulk) SetExcerpt(v string) *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.SetExcerpt(v)
-	})
-}
-
-// UpdateExcerpt sets the "excerpt" field to the value that was provided on create.
-func (u *PostUpsertBulk) UpdateExcerpt() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateExcerpt()
-	})
-}
-
-// ClearExcerpt clears the value of the "excerpt" field.
-func (u *PostUpsertBulk) ClearExcerpt() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearExcerpt()
-	})
-}
-
-// SetContent sets the "content" field.
-func (u *PostUpsertBulk) SetContent(v string) *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.SetContent(v)
-	})
-}
-
-// UpdateContent sets the "content" field to the value that was provided on create.
-func (u *PostUpsertBulk) UpdateContent() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateContent()
-	})
-}
-
-// ClearContent clears the value of the "content" field.
-func (u *PostUpsertBulk) ClearContent() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearContent()
-	})
-}
-
-// SetMetaTitle sets the "meta_title" field.
-func (u *PostUpsertBulk) SetMetaTitle(v string) *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.SetMetaTitle(v)
-	})
-}
-
-// UpdateMetaTitle sets the "meta_title" field to the value that was provided on create.
-func (u *PostUpsertBulk) UpdateMetaTitle() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateMetaTitle()
-	})
-}
-
-// ClearMetaTitle clears the value of the "meta_title" field.
-func (u *PostUpsertBulk) ClearMetaTitle() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearMetaTitle()
-	})
-}
-
-// SetMetaDescr sets the "meta_descr" field.
-func (u *PostUpsertBulk) SetMetaDescr(v string) *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.SetMetaDescr(v)
-	})
-}
-
-// UpdateMetaDescr sets the "meta_descr" field to the value that was provided on create.
-func (u *PostUpsertBulk) UpdateMetaDescr() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateMetaDescr()
-	})
-}
-
-// ClearMetaDescr clears the value of the "meta_descr" field.
-func (u *PostUpsertBulk) ClearMetaDescr() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearMetaDescr()
-	})
-}
-
-// SetMetaCanonicalURL sets the "meta_canonical_url" field.
-func (u *PostUpsertBulk) SetMetaCanonicalURL(v string) *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.SetMetaCanonicalURL(v)
-	})
-}
-
-// UpdateMetaCanonicalURL sets the "meta_canonical_url" field to the value that was provided on create.
-func (u *PostUpsertBulk) UpdateMetaCanonicalURL() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateMetaCanonicalURL()
-	})
-}
-
-// ClearMetaCanonicalURL clears the value of the "meta_canonical_url" field.
-func (u *PostUpsertBulk) ClearMetaCanonicalURL() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearMetaCanonicalURL()
-	})
-}
-
-// SetMetaRobots sets the "meta_robots" field.
-func (u *PostUpsertBulk) SetMetaRobots(v string) *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.SetMetaRobots(v)
-	})
-}
-
-// UpdateMetaRobots sets the "meta_robots" field to the value that was provided on create.
-func (u *PostUpsertBulk) UpdateMetaRobots() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateMetaRobots()
-	})
-}
-
-// ClearMetaRobots clears the value of the "meta_robots" field.
-func (u *PostUpsertBulk) ClearMetaRobots() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearMetaRobots()
-	})
-}
-
-// SetCustom sets the "custom" field.
-func (u *PostUpsertBulk) SetCustom(v map[string]interface{}) *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.SetCustom(v)
-	})
-}
-
-// UpdateCustom sets the "custom" field to the value that was provided on create.
-func (u *PostUpsertBulk) UpdateCustom() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.UpdateCustom()
-	})
-}
-
-// ClearCustom clears the value of the "custom" field.
-func (u *PostUpsertBulk) ClearCustom() *PostUpsertBulk {
-	return u.Update(func(s *PostUpsert) {
-		s.ClearCustom()
 	})
 }
 

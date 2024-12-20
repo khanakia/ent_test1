@@ -1,5 +1,7 @@
 package filesystem
 
+import "os"
+
 // Visibility constants to mimic the Visibility class in the original PHP code.
 const (
 	VisibilityPublic  = "public"
@@ -8,18 +10,18 @@ const (
 
 // PortableVisibilityConverter provides an implementation of VisibilityConverter.
 type PortableVisibilityConverter struct {
-	filePublic            int
-	filePrivate           int
-	directoryPublic       int
-	directoryPrivate      int
+	filePublic            os.FileMode
+	filePrivate           os.FileMode
+	directoryPublic       os.FileMode
+	directoryPrivate      os.FileMode
 	defaultForDirectories string
 }
 
-func NewDefault() *PortableVisibilityConverter {
-	filePublic := 0644
-	filePrivate := 0600
-	dirPublic := 0755
-	dirPrivate := 0700
+func NewPortableVisibilityConverterDefault() *PortableVisibilityConverter {
+	var filePublic os.FileMode = 0644
+	var filePrivate os.FileMode = 0600
+	var dirPublic os.FileMode = 0755
+	var dirPrivate os.FileMode = 0700
 
 	return NewPortableVisibilityConverter(
 		filePublic,
@@ -32,10 +34,10 @@ func NewDefault() *PortableVisibilityConverter {
 
 // NewPortableVisibilityConverter creates a new PortableVisibilityConverter with the given settings.
 func NewPortableVisibilityConverter(
-	filePublic int,
-	filePrivate int,
-	directoryPublic int,
-	directoryPrivate int,
+	filePublic os.FileMode,
+	filePrivate os.FileMode,
+	directoryPublic os.FileMode,
+	directoryPrivate os.FileMode,
 	defaultForDirectories string,
 ) *PortableVisibilityConverter {
 	return &PortableVisibilityConverter{
@@ -48,7 +50,7 @@ func NewPortableVisibilityConverter(
 }
 
 // ForFile converts the visibility string to an integer representation for files.
-func (p *PortableVisibilityConverter) ForFile(visibility string) int {
+func (p *PortableVisibilityConverter) ForFile(visibility string) os.FileMode {
 	if !p.isValidVisibility(visibility) {
 		panic("invalid visibility value")
 	}
@@ -59,7 +61,7 @@ func (p *PortableVisibilityConverter) ForFile(visibility string) int {
 }
 
 // ForDirectory converts the visibility string to an integer representation for directories.
-func (p *PortableVisibilityConverter) ForDirectory(visibility string) int {
+func (p *PortableVisibilityConverter) ForDirectory(visibility string) os.FileMode {
 	if !p.isValidVisibility(visibility) {
 		panic("invalid visibility value")
 	}
@@ -70,7 +72,7 @@ func (p *PortableVisibilityConverter) ForDirectory(visibility string) int {
 }
 
 // InverseForFile converts the integer visibility back to string representation for files.
-func (p *PortableVisibilityConverter) InverseForFile(visibility int) string {
+func (p *PortableVisibilityConverter) InverseForFile(visibility os.FileMode) string {
 	if visibility == p.filePublic {
 		return VisibilityPublic
 	} else if visibility == p.filePrivate {
@@ -80,7 +82,7 @@ func (p *PortableVisibilityConverter) InverseForFile(visibility int) string {
 }
 
 // InverseForDirectory converts the integer visibility back to string representation for directories.
-func (p *PortableVisibilityConverter) InverseForDirectory(visibility int) string {
+func (p *PortableVisibilityConverter) InverseForDirectory(visibility os.FileMode) string {
 	if visibility == p.directoryPublic {
 		return VisibilityPublic
 	} else if visibility == p.directoryPrivate {
@@ -90,7 +92,7 @@ func (p *PortableVisibilityConverter) InverseForDirectory(visibility int) string
 }
 
 // DefaultForDirectories returns the default visibility setting for directories as an integer.
-func (p *PortableVisibilityConverter) DefaultForDirectories() int {
+func (p *PortableVisibilityConverter) DefaultForDirectories() os.FileMode {
 	if p.defaultForDirectories == VisibilityPublic {
 		return p.directoryPublic
 	}
@@ -103,7 +105,7 @@ func (p *PortableVisibilityConverter) isValidVisibility(visibility string) bool 
 }
 
 // FromArray creates a PortableVisibilityConverter from a permission map.
-func FromArray(permissionMap map[string]map[string]int, defaultForDirectories string) *PortableVisibilityConverter {
+func FromArray(permissionMap map[string]map[string]os.FileMode, defaultForDirectories string) *PortableVisibilityConverter {
 	filePublic := permissionMap["file"]["public"]
 	filePrivate := permissionMap["file"]["private"]
 	dirPublic := permissionMap["dir"]["public"]

@@ -265,12 +265,12 @@ func (mq *MediaQuery) Clone() *MediaQuery {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		AppID string `json:"app_id,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.Media.Query().
-//		GroupBy(media.FieldCreatedAt).
+//		GroupBy(media.FieldAppID).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (mq *MediaQuery) GroupBy(field string, fields ...string) *MediaGroupBy {
@@ -288,11 +288,11 @@ func (mq *MediaQuery) GroupBy(field string, fields ...string) *MediaGroupBy {
 // Example:
 //
 //	var v []struct {
-//		CreatedAt time.Time `json:"created_at,omitempty"`
+//		AppID string `json:"app_id,omitempty"`
 //	}
 //
 //	client.Media.Query().
-//		Select(media.FieldCreatedAt).
+//		Select(media.FieldAppID).
 //		Scan(ctx, &v)
 func (mq *MediaQuery) Select(fields ...string) *MediaSelect {
 	mq.ctx.Fields = append(mq.ctx.Fields, fields...)

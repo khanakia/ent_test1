@@ -6,80 +6,11 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// AdminUser is the predicate function for adminuser builders.
-type AdminUser func(*sql.Selector)
-
-// App is the predicate function for app builders.
-type App func(*sql.Selector)
-
-// AppPerm is the predicate function for appperm builders.
-type AppPerm func(*sql.Selector)
-
-// AppRole is the predicate function for approle builders.
-type AppRole func(*sql.Selector)
-
-// AppRolePerm is the predicate function for approleperm builders.
-type AppRolePerm func(*sql.Selector)
-
-// AppUser is the predicate function for appuser builders.
-type AppUser func(*sql.Selector)
-
-// Kache is the predicate function for kache builders.
-type Kache func(*sql.Selector)
-
-// Keyvalue is the predicate function for keyvalue builders.
-type Keyvalue func(*sql.Selector)
-
-// MailConn is the predicate function for mailconn builders.
-type MailConn func(*sql.Selector)
-
 // Media is the predicate function for media builders.
 type Media func(*sql.Selector)
 
-// OauthConnection is the predicate function for oauthconnection builders.
-type OauthConnection func(*sql.Selector)
-
-// Plan is the predicate function for plan builders.
-type Plan func(*sql.Selector)
+// Mediable is the predicate function for mediable builders.
+type Mediable func(*sql.Selector)
 
 // Post is the predicate function for post builders.
 type Post func(*sql.Selector)
-
-// PostCategory is the predicate function for postcategory builders.
-type PostCategory func(*sql.Selector)
-
-// PostStatus is the predicate function for poststatus builders.
-type PostStatus func(*sql.Selector)
-
-// PostTag is the predicate function for posttag builders.
-type PostTag func(*sql.Selector)
-
-// PostType is the predicate function for posttype builders.
-type PostType func(*sql.Selector)
-
-// PostTypeForm is the predicate function for posttypeform builders.
-type PostTypeForm func(*sql.Selector)
-
-// Session is the predicate function for session builders.
-type Session func(*sql.Selector)
-
-// Temp is the predicate function for temp builders.
-type Temp func(*sql.Selector)
-
-// Templ is the predicate function for templ builders.
-type Templ func(*sql.Selector)
-
-// Todo is the predicate function for todo builders.
-type Todo func(*sql.Selector)
-
-// User is the predicate function for user builders.
-type User func(*sql.Selector)
-
-// Workspace is the predicate function for workspace builders.
-type Workspace func(*sql.Selector)
-
-// WorkspaceInvite is the predicate function for workspaceinvite builders.
-type WorkspaceInvite func(*sql.Selector)
-
-// WorkspaceUser is the predicate function for workspaceuser builders.
-type WorkspaceUser func(*sql.Selector)
