@@ -4,9 +4,11 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"math"
 	"saas/gen/ent/media"
+	"saas/gen/ent/mediable"
 	"saas/gen/ent/predicate"
 
 	"entgo.io/ent"
@@ -18,12 +20,15 @@ import (
 // MediaQuery is the builder for querying Media entities.
 type MediaQuery struct {
 	config
-	ctx        *QueryContext
-	order      []media.OrderOption
-	inters     []Interceptor
-	predicates []predicate.Media
-	loadTotal  []func(context.Context, []*Media) error
-	modifiers  []func(*sql.Selector)
+	ctx                *QueryContext
+	order              []media.OrderOption
+	inters             []Interceptor
+	predicates         []predicate.Media
+	withMediables      *MediableQuery
+	loadTotal          []func(context.Context, []*Media) error
+	modifiers          []func(*sql.Selector)
+	withNamedMediables map[string]*MediableQuery
+
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -58,6 +63,28 @@ func (mq *MediaQuery) Unique(unique bool) *MediaQuery {
 func (mq *MediaQuery) Order(o ...media.OrderOption) *MediaQuery {
 	mq.order = append(mq.order, o...)
 	return mq
+}
+
+// QueryMediables chains the current query on the "mediables" edge.
+func (mq *MediaQuery) QueryMediables() *MediableQuery {
+	query := (&MediableClient{config: mq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := mq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := mq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(media.Table, media.FieldID, selector),
+			sqlgraph.To(mediable.Table, mediable.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, media.MediablesTable, media.MediablesColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(mq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first Media entity from the query.
@@ -247,16 +274,28 @@ func (mq *MediaQuery) Clone() *MediaQuery {
 		return nil
 	}
 	return &MediaQuery{
-		config:     mq.config,
-		ctx:        mq.ctx.Clone(),
-		order:      append([]media.OrderOption{}, mq.order...),
-		inters:     append([]Interceptor{}, mq.inters...),
-		predicates: append([]predicate.Media{}, mq.predicates...),
+		config:        mq.config,
+		ctx:           mq.ctx.Clone(),
+		order:         append([]media.OrderOption{}, mq.order...),
+		inters:        append([]Interceptor{}, mq.inters...),
+		predicates:    append([]predicate.Media{}, mq.predicates...),
+		withMediables: mq.withMediables.Clone(),
 		// clone intermediate query.
 		sql:       mq.sql.Clone(),
 		path:      mq.path,
 		modifiers: append([]func(*sql.Selector){}, mq.modifiers...),
 	}
+}
+
+// WithMediables tells the query-builder to eager-load the nodes that are connected to
+// the "mediables" edge. The optional arguments are used to configure the query builder of the edge.
+func (mq *MediaQuery) WithMediables(opts ...func(*MediableQuery)) *MediaQuery {
+	query := (&MediableClient{config: mq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	mq.withMediables = query
+	return mq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -335,8 +374,11 @@ func (mq *MediaQuery) prepareQuery(ctx context.Context) error {
 
 func (mq *MediaQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Media, error) {
 	var (
-		nodes = []*Media{}
-		_spec = mq.querySpec()
+		nodes       = []*Media{}
+		_spec       = mq.querySpec()
+		loadedTypes = [1]bool{
+			mq.withMediables != nil,
+		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*Media).scanValues(nil, columns)
@@ -344,6 +386,7 @@ func (mq *MediaQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Media,
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &Media{config: mq.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	if len(mq.modifiers) > 0 {
@@ -358,12 +401,63 @@ func (mq *MediaQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Media,
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := mq.withMediables; query != nil {
+		if err := mq.loadMediables(ctx, query, nodes,
+			func(n *Media) { n.Edges.Mediables = []*Mediable{} },
+			func(n *Media, e *Mediable) { n.Edges.Mediables = append(n.Edges.Mediables, e) }); err != nil {
+			return nil, err
+		}
+	}
+
+	if err := mq.loadUrls(ctx, nodes); err != nil {
+		return nil, err
+	}
+
+	for name, query := range mq.withNamedMediables {
+		if err := mq.loadMediables(ctx, query, nodes,
+			func(n *Media) { n.appendNamedMediables(name) },
+			func(n *Media, e *Mediable) { n.appendNamedMediables(name, e) }); err != nil {
+			return nil, err
+		}
+	}
 	for i := range mq.loadTotal {
 		if err := mq.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
 		}
 	}
+
 	return nodes, nil
+}
+
+func (mq *MediaQuery) loadMediables(ctx context.Context, query *MediableQuery, nodes []*Media, init func(*Media), assign func(*Media, *Mediable)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Media)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(mediable.FieldMediaID)
+	}
+	query.Where(predicate.Mediable(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(media.MediablesColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.MediaID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "media_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
 }
 
 func (mq *MediaQuery) sqlCount(ctx context.Context) (int, error) {
@@ -457,6 +551,20 @@ func (mq *MediaQuery) sqlQuery(ctx context.Context) *sql.Selector {
 func (mq *MediaQuery) Modify(modifiers ...func(s *sql.Selector)) *MediaSelect {
 	mq.modifiers = append(mq.modifiers, modifiers...)
 	return mq.Select()
+}
+
+// WithNamedMediables tells the query-builder to eager-load the nodes that are connected to the "mediables"
+// edge with the given name. The optional arguments are used to configure the query builder of the edge.
+func (mq *MediaQuery) WithNamedMediables(name string, opts ...func(*MediableQuery)) *MediaQuery {
+	query := (&MediableClient{config: mq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	if mq.withNamedMediables == nil {
+		mq.withNamedMediables = make(map[string]*MediableQuery)
+	}
+	mq.withNamedMediables[name] = query
+	return mq
 }
 
 // MediaGroupBy is the group-by builder for Media entities.

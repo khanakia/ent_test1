@@ -57,6 +57,9 @@ type MediaMutation struct {
 	uid               *string
 	status            *bool
 	clearedFields     map[string]struct{}
+	mediables         map[string]struct{}
+	removedmediables  map[string]struct{}
+	clearedmediables  bool
 	done              bool
 	oldValue          func(context.Context) (*Media, error)
 	predicates        []predicate.Media
@@ -1056,6 +1059,60 @@ func (m *MediaMutation) ResetStatus() {
 	delete(m.clearedFields, media.FieldStatus)
 }
 
+// AddMediableIDs adds the "mediables" edge to the Mediable entity by ids.
+func (m *MediaMutation) AddMediableIDs(ids ...string) {
+	if m.mediables == nil {
+		m.mediables = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.mediables[ids[i]] = struct{}{}
+	}
+}
+
+// ClearMediables clears the "mediables" edge to the Mediable entity.
+func (m *MediaMutation) ClearMediables() {
+	m.clearedmediables = true
+}
+
+// MediablesCleared reports if the "mediables" edge to the Mediable entity was cleared.
+func (m *MediaMutation) MediablesCleared() bool {
+	return m.clearedmediables
+}
+
+// RemoveMediableIDs removes the "mediables" edge to the Mediable entity by IDs.
+func (m *MediaMutation) RemoveMediableIDs(ids ...string) {
+	if m.removedmediables == nil {
+		m.removedmediables = make(map[string]struct{})
+	}
+	for i := range ids {
+		delete(m.mediables, ids[i])
+		m.removedmediables[ids[i]] = struct{}{}
+	}
+}
+
+// RemovedMediables returns the removed IDs of the "mediables" edge to the Mediable entity.
+func (m *MediaMutation) RemovedMediablesIDs() (ids []string) {
+	for id := range m.removedmediables {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// MediablesIDs returns the "mediables" edge IDs in the mutation.
+func (m *MediaMutation) MediablesIDs() (ids []string) {
+	for id := range m.mediables {
+		ids = append(ids, id)
+	}
+	return
+}
+
+// ResetMediables resets all changes to the "mediables" edge.
+func (m *MediaMutation) ResetMediables() {
+	m.mediables = nil
+	m.clearedmediables = false
+	m.removedmediables = nil
+}
+
 // Where appends a list predicates to the MediaMutation builder.
 func (m *MediaMutation) Where(ps ...predicate.Media) {
 	m.predicates = append(m.predicates, ps...)
@@ -1598,49 +1655,85 @@ func (m *MediaMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *MediaMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.mediables != nil {
+		edges = append(edges, media.EdgeMediables)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *MediaMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case media.EdgeMediables:
+		ids := make([]ent.Value, 0, len(m.mediables))
+		for id := range m.mediables {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *MediaMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.removedmediables != nil {
+		edges = append(edges, media.EdgeMediables)
+	}
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *MediaMutation) RemovedIDs(name string) []ent.Value {
+	switch name {
+	case media.EdgeMediables:
+		ids := make([]ent.Value, 0, len(m.removedmediables))
+		for id := range m.removedmediables {
+			ids = append(ids, id)
+		}
+		return ids
+	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *MediaMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedmediables {
+		edges = append(edges, media.EdgeMediables)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *MediaMutation) EdgeCleared(name string) bool {
+	switch name {
+	case media.EdgeMediables:
+		return m.clearedmediables
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *MediaMutation) ClearEdge(name string) error {
+	switch name {
+	}
 	return fmt.Errorf("unknown Media unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *MediaMutation) ResetEdge(name string) error {
+	switch name {
+	case media.EdgeMediables:
+		m.ResetMediables()
+		return nil
+	}
 	return fmt.Errorf("unknown Media edge %s", name)
 }
 
@@ -1652,13 +1745,14 @@ type MediableMutation struct {
 	typ           string
 	id            *string
 	app_id        *string
-	media_id      *string
 	mediable_id   *string
 	mediable_type *string
 	tag           *string
 	_order        *int
 	add_order     *int
 	clearedFields map[string]struct{}
+	media         *string
+	clearedmedia  bool
 	done          bool
 	oldValue      func(context.Context) (*Mediable, error)
 	predicates    []predicate.Mediable
@@ -1819,12 +1913,12 @@ func (m *MediableMutation) ResetAppID() {
 
 // SetMediaID sets the "media_id" field.
 func (m *MediableMutation) SetMediaID(s string) {
-	m.media_id = &s
+	m.media = &s
 }
 
 // MediaID returns the value of the "media_id" field in the mutation.
 func (m *MediableMutation) MediaID() (r string, exists bool) {
-	v := m.media_id
+	v := m.media
 	if v == nil {
 		return
 	}
@@ -1850,7 +1944,7 @@ func (m *MediableMutation) OldMediaID(ctx context.Context) (v string, err error)
 
 // ClearMediaID clears the value of the "media_id" field.
 func (m *MediableMutation) ClearMediaID() {
-	m.media_id = nil
+	m.media = nil
 	m.clearedFields[mediable.FieldMediaID] = struct{}{}
 }
 
@@ -1862,7 +1956,7 @@ func (m *MediableMutation) MediaIDCleared() bool {
 
 // ResetMediaID resets all changes to the "media_id" field.
 func (m *MediableMutation) ResetMediaID() {
-	m.media_id = nil
+	m.media = nil
 	delete(m.clearedFields, mediable.FieldMediaID)
 }
 
@@ -2083,6 +2177,33 @@ func (m *MediableMutation) ResetOrder() {
 	delete(m.clearedFields, mediable.FieldOrder)
 }
 
+// ClearMedia clears the "media" edge to the Media entity.
+func (m *MediableMutation) ClearMedia() {
+	m.clearedmedia = true
+	m.clearedFields[mediable.FieldMediaID] = struct{}{}
+}
+
+// MediaCleared reports if the "media" edge to the Media entity was cleared.
+func (m *MediableMutation) MediaCleared() bool {
+	return m.MediaIDCleared() || m.clearedmedia
+}
+
+// MediaIDs returns the "media" edge IDs in the mutation.
+// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
+// MediaID instead. It exists only for internal usage by the builders.
+func (m *MediableMutation) MediaIDs() (ids []string) {
+	if id := m.media; id != nil {
+		ids = append(ids, *id)
+	}
+	return
+}
+
+// ResetMedia resets all changes to the "media" edge.
+func (m *MediableMutation) ResetMedia() {
+	m.media = nil
+	m.clearedmedia = false
+}
+
 // Where appends a list predicates to the MediableMutation builder.
 func (m *MediableMutation) Where(ps ...predicate.Mediable) {
 	m.predicates = append(m.predicates, ps...)
@@ -2121,7 +2242,7 @@ func (m *MediableMutation) Fields() []string {
 	if m.app_id != nil {
 		fields = append(fields, mediable.FieldAppID)
 	}
-	if m.media_id != nil {
+	if m.media != nil {
 		fields = append(fields, mediable.FieldMediaID)
 	}
 	if m.mediable_id != nil {
@@ -2355,19 +2476,28 @@ func (m *MediableMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *MediableMutation) AddedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.media != nil {
+		edges = append(edges, mediable.EdgeMedia)
+	}
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *MediableMutation) AddedIDs(name string) []ent.Value {
+	switch name {
+	case mediable.EdgeMedia:
+		if id := m.media; id != nil {
+			return []ent.Value{*id}
+		}
+	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *MediableMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
 	return edges
 }
 
@@ -2379,37 +2509,56 @@ func (m *MediableMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *MediableMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 0)
+	edges := make([]string, 0, 1)
+	if m.clearedmedia {
+		edges = append(edges, mediable.EdgeMedia)
+	}
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *MediableMutation) EdgeCleared(name string) bool {
+	switch name {
+	case mediable.EdgeMedia:
+		return m.clearedmedia
+	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *MediableMutation) ClearEdge(name string) error {
+	switch name {
+	case mediable.EdgeMedia:
+		m.ClearMedia()
+		return nil
+	}
 	return fmt.Errorf("unknown Mediable unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *MediableMutation) ResetEdge(name string) error {
+	switch name {
+	case mediable.EdgeMedia:
+		m.ResetMedia()
+		return nil
+	}
 	return fmt.Errorf("unknown Mediable edge %s", name)
 }
 
 // PostMutation represents an operation that mutates the Post nodes in the graph.
 type PostMutation struct {
 	// khanakia 34343
-	featured_medias        map[string]struct{}
-	removedfeatured_medias map[string]struct{}
-	clearedfeatured_medias bool
-	icon_medias            map[string]struct{}
-	removedicon_medias     map[string]struct{}
-	clearedicon_medias     bool
+	featured_medias         map[string]struct{}
+	selectedfeatured_medias map[string]struct{}
+	removedfeatured_medias  map[string]struct{}
+	clearedfeatured_medias  bool
+	icon_medias             map[string]struct{}
+	selectedicon_medias     map[string]struct{}
+	removedicon_medias      map[string]struct{}
+	clearedicon_medias      bool
 	config
 	op            Op
 	typ           string

@@ -21,6 +21,8 @@ type Post struct {
 	// Slug holds the value of the "slug" field.
 	Slug         string `json:"slug,omitempty"`
 	selectValues sql.SelectValues
+
+	Mediables []*Mediable `json:"mediables,omitempty"`
 }
 
 // scanValues returns the types for scanning values from sql.Rows.

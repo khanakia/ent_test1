@@ -40,22 +40,30 @@ var (
 	MediablesColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeString, Unique: true},
 		{Name: "app_id", Type: field.TypeString, Nullable: true},
-		{Name: "media_id", Type: field.TypeString, Nullable: true},
 		{Name: "mediable_id", Type: field.TypeString, Nullable: true},
 		{Name: "mediable_type", Type: field.TypeString, Nullable: true},
 		{Name: "tag", Type: field.TypeString, Nullable: true},
 		{Name: "order", Type: field.TypeInt, Nullable: true},
+		{Name: "media_id", Type: field.TypeString, Nullable: true},
 	}
 	// MediablesTable holds the schema information for the "mediables" table.
 	MediablesTable = &schema.Table{
 		Name:       "mediables",
 		Columns:    MediablesColumns,
 		PrimaryKey: []*schema.Column{MediablesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "mediables_media_mediables",
+				Columns:    []*schema.Column{MediablesColumns[6]},
+				RefColumns: []*schema.Column{MediaColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
 		Indexes: []*schema.Index{
 			{
 				Name:    "mediable_media_id_mediable_id_mediable_type_tag",
 				Unique:  true,
-				Columns: []*schema.Column{MediablesColumns[2], MediablesColumns[3], MediablesColumns[4], MediablesColumns[5]},
+				Columns: []*schema.Column{MediablesColumns[6], MediablesColumns[2], MediablesColumns[3], MediablesColumns[4]},
 			},
 		},
 	}
@@ -80,4 +88,5 @@ var (
 )
 
 func init() {
+	MediablesTable.ForeignKeys[0].RefTable = MediaTable
 }

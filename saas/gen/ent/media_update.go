@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"saas/gen/ent/media"
+	"saas/gen/ent/mediable"
 	"saas/gen/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
@@ -389,9 +390,45 @@ func (mu *MediaUpdate) ClearStatus() *MediaUpdate {
 	return mu
 }
 
+// AddMediableIDs adds the "mediables" edge to the Mediable entity by IDs.
+func (mu *MediaUpdate) AddMediableIDs(ids ...string) *MediaUpdate {
+	mu.mutation.AddMediableIDs(ids...)
+	return mu
+}
+
+// AddMediables adds the "mediables" edges to the Mediable entity.
+func (mu *MediaUpdate) AddMediables(m ...*Mediable) *MediaUpdate {
+	ids := make([]string, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mu.AddMediableIDs(ids...)
+}
+
 // Mutation returns the MediaMutation object of the builder.
 func (mu *MediaUpdate) Mutation() *MediaMutation {
 	return mu.mutation
+}
+
+// ClearMediables clears all "mediables" edges to the Mediable entity.
+func (mu *MediaUpdate) ClearMediables() *MediaUpdate {
+	mu.mutation.ClearMediables()
+	return mu
+}
+
+// RemoveMediableIDs removes the "mediables" edge to Mediable entities by IDs.
+func (mu *MediaUpdate) RemoveMediableIDs(ids ...string) *MediaUpdate {
+	mu.mutation.RemoveMediableIDs(ids...)
+	return mu
+}
+
+// RemoveMediables removes "mediables" edges to Mediable entities.
+func (mu *MediaUpdate) RemoveMediables(m ...*Mediable) *MediaUpdate {
+	ids := make([]string, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mu.RemoveMediableIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -543,6 +580,51 @@ func (mu *MediaUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if mu.mutation.StatusCleared() {
 		_spec.ClearField(media.FieldStatus, field.TypeBool)
+	}
+	if mu.mutation.MediablesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   media.MediablesTable,
+			Columns: []string{media.MediablesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mediable.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.RemovedMediablesIDs(); len(nodes) > 0 && !mu.mutation.MediablesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   media.MediablesTable,
+			Columns: []string{media.MediablesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mediable.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := mu.mutation.MediablesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   media.MediablesTable,
+			Columns: []string{media.MediablesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mediable.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.AddModifiers(mu.modifiers...)
 	if n, err = sqlgraph.UpdateNodes(ctx, mu.driver, _spec); err != nil {
@@ -927,9 +1009,45 @@ func (muo *MediaUpdateOne) ClearStatus() *MediaUpdateOne {
 	return muo
 }
 
+// AddMediableIDs adds the "mediables" edge to the Mediable entity by IDs.
+func (muo *MediaUpdateOne) AddMediableIDs(ids ...string) *MediaUpdateOne {
+	muo.mutation.AddMediableIDs(ids...)
+	return muo
+}
+
+// AddMediables adds the "mediables" edges to the Mediable entity.
+func (muo *MediaUpdateOne) AddMediables(m ...*Mediable) *MediaUpdateOne {
+	ids := make([]string, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return muo.AddMediableIDs(ids...)
+}
+
 // Mutation returns the MediaMutation object of the builder.
 func (muo *MediaUpdateOne) Mutation() *MediaMutation {
 	return muo.mutation
+}
+
+// ClearMediables clears all "mediables" edges to the Mediable entity.
+func (muo *MediaUpdateOne) ClearMediables() *MediaUpdateOne {
+	muo.mutation.ClearMediables()
+	return muo
+}
+
+// RemoveMediableIDs removes the "mediables" edge to Mediable entities by IDs.
+func (muo *MediaUpdateOne) RemoveMediableIDs(ids ...string) *MediaUpdateOne {
+	muo.mutation.RemoveMediableIDs(ids...)
+	return muo
+}
+
+// RemoveMediables removes "mediables" edges to Mediable entities.
+func (muo *MediaUpdateOne) RemoveMediables(m ...*Mediable) *MediaUpdateOne {
+	ids := make([]string, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return muo.RemoveMediableIDs(ids...)
 }
 
 // Where appends a list predicates to the MediaUpdate builder.
@@ -1111,6 +1229,51 @@ func (muo *MediaUpdateOne) sqlSave(ctx context.Context) (_node *Media, err error
 	}
 	if muo.mutation.StatusCleared() {
 		_spec.ClearField(media.FieldStatus, field.TypeBool)
+	}
+	if muo.mutation.MediablesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   media.MediablesTable,
+			Columns: []string{media.MediablesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mediable.FieldID, field.TypeString),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.RemovedMediablesIDs(); len(nodes) > 0 && !muo.mutation.MediablesCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   media.MediablesTable,
+			Columns: []string{media.MediablesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mediable.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := muo.mutation.MediablesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   media.MediablesTable,
+			Columns: []string{media.MediablesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mediable.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_spec.AddModifiers(muo.modifiers...)
 	_node = &Media{config: muo.config}

@@ -18,6 +18,7 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 
 	stdsql "database/sql"
 )
@@ -327,6 +328,22 @@ func (c *MediaClient) GetX(ctx context.Context, id string) *Media {
 	return obj
 }
 
+// QueryMediables queries the mediables edge of a Media.
+func (c *MediaClient) QueryMediables(m *Media) *MediableQuery {
+	query := (&MediableClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(media.Table, media.FieldID, id),
+			sqlgraph.To(mediable.Table, mediable.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, media.MediablesTable, media.MediablesColumn),
+		)
+		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
+}
+
 // Hooks returns the client hooks.
 func (c *MediaClient) Hooks() []Hook {
 	return c.hooks.Media
@@ -458,6 +475,22 @@ func (c *MediableClient) GetX(ctx context.Context, id string) *Mediable {
 		panic(err)
 	}
 	return obj
+}
+
+// QueryMedia queries the media edge of a Mediable.
+func (c *MediableClient) QueryMedia(m *Mediable) *MediaQuery {
+	query := (&MediaClient{config: c.config}).Query()
+	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
+		id := m.ID
+		step := sqlgraph.NewStep(
+			sqlgraph.From(mediable.Table, mediable.FieldID, id),
+			sqlgraph.To(media.Table, media.FieldID),
+			sqlgraph.Edge(sqlgraph.M2O, true, mediable.MediaTable, mediable.MediaColumn),
+		)
+		fromV = sqlgraph.Neighbors(m.driver.Dialect(), step)
+		return fromV, nil
+	}
+	return query
 }
 
 // Hooks returns the client hooks.

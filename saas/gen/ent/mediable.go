@@ -4,6 +4,7 @@ package ent
 
 import (
 	"fmt"
+	"saas/gen/ent/media"
 	"saas/gen/ent/mediable"
 	"strings"
 
@@ -27,8 +28,33 @@ type Mediable struct {
 	// Tag holds the value of the "tag" field.
 	Tag string `json:"tag,omitempty"`
 	// Order holds the value of the "order" field.
-	Order        int `json:"order,omitempty"`
+	Order int `json:"order,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the MediableQuery when eager-loading is set.
+	Edges        MediableEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// MediableEdges holds the relations/edges for other nodes in the graph.
+type MediableEdges struct {
+	// Media holds the value of the media edge.
+	Media *Media `json:"media,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+	// totalCount holds the count of the edges above.
+	totalCount [1]map[string]int
+}
+
+// MediaOrErr returns the Media value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e MediableEdges) MediaOrErr() (*Media, error) {
+	if e.Media != nil {
+		return e.Media, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: media.Label}
+	}
+	return nil, &NotLoadedError{edge: "media"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -108,6 +134,11 @@ func (m *Mediable) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (m *Mediable) Value(name string) (ent.Value, error) {
 	return m.selectValues.Get(name)
+}
+
+// QueryMedia queries the "media" edge of the Mediable entity.
+func (m *Mediable) QueryMedia() *MediaQuery {
+	return NewMediableClient(m.config).QueryMedia(m)
 }
 
 // Update returns a builder for updating this Mediable.

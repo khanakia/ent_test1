@@ -39,10 +39,12 @@ type UpdatePostInput struct {
 	AddFeaturedMediaIDs    []string
 	RemoveFeaturedMediaIDs []string
 	ClearFeaturedMedias    bool
+	SelectFeaturedMediaIDs []string
 
 	AddIconMediaIDs    []string
 	RemoveIconMediaIDs []string
 	ClearIconMedias    bool
+	SelectIconMediaIDs []string
 
 	ClearName bool
 	Name      *string
@@ -65,6 +67,10 @@ func (i *UpdatePostInput) Mutate(m *PostMutation) {
 		m.SetSlug(*v)
 	}
 
+	if i.ClearFeaturedMedias {
+		m.ClearFeaturedMedias()
+	}
+
 	if v := i.AddFeaturedMediaIDs; len(v) > 0 {
 		m.AddFeaturedMediaIDs(v...)
 	}
@@ -72,11 +78,23 @@ func (i *UpdatePostInput) Mutate(m *PostMutation) {
 		m.RemoveFeaturedMediaIDs(v...)
 	}
 
+	if v := i.SelectFeaturedMediaIDs; len(v) > 0 {
+		m.SelectFeaturedMediaIDs(v...)
+	}
+
+	if i.ClearIconMedias {
+		m.ClearIconMedias()
+	}
+
 	if v := i.AddIconMediaIDs; len(v) > 0 {
 		m.AddIconMediaIDs(v...)
 	}
 	if v := i.RemoveIconMediaIDs; len(v) > 0 {
 		m.RemoveIconMediaIDs(v...)
+	}
+
+	if v := i.SelectIconMediaIDs; len(v) > 0 {
+		m.SelectIconMediaIDs(v...)
 	}
 }
 

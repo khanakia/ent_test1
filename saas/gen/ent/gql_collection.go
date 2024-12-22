@@ -32,6 +32,19 @@ func (m *MediaQuery) collectField(ctx context.Context, oneNode bool, opCtx *grap
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+
+		case "mediables":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&MediableClient{config: m.config}).Query()
+			)
+			if err := query.collectField(ctx, false, opCtx, field, path, mayAddCondition(satisfies, mediableImplementors)...); err != nil {
+				return err
+			}
+			m.WithNamedMediables(alias, func(wq *MediableQuery) {
+				*wq = *query
+			})
 		case "appID":
 			if _, ok := fieldSeen[media.FieldAppID]; !ok {
 				selectedFields = append(selectedFields, media.FieldAppID)
@@ -181,6 +194,21 @@ func (m *MediableQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 	)
 	for _, field := range graphql.CollectFields(opCtx, collected.Selections, satisfies) {
 		switch field.Name {
+
+		case "media":
+			var (
+				alias = field.Alias
+				path  = append(path, alias)
+				query = (&MediaClient{config: m.config}).Query()
+			)
+			if err := query.collectField(ctx, oneNode, opCtx, field, path, mayAddCondition(satisfies, mediaImplementors)...); err != nil {
+				return err
+			}
+			m.withMedia = query
+			if _, ok := fieldSeen[mediable.FieldMediaID]; !ok {
+				selectedFields = append(selectedFields, mediable.FieldMediaID)
+				fieldSeen[mediable.FieldMediaID] = struct{}{}
+			}
 		case "appID":
 			if _, ok := fieldSeen[mediable.FieldAppID]; !ok {
 				selectedFields = append(selectedFields, mediable.FieldAppID)
@@ -314,6 +342,9 @@ func newPostPaginateArgs(rv map[string]any) *postPaginateArgs {
 	}
 	if v := rv[beforeField]; v != nil {
 		args.before = v.(*Cursor)
+	}
+	if v, ok := rv[whereField].(*PostWhereInput); ok {
+		args.opts = append(args.opts, WithPostFilter(v.Filter))
 	}
 	return args
 }

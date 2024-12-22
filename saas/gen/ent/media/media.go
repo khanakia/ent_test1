@@ -4,6 +4,7 @@ package media
 
 import (
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -47,8 +48,17 @@ const (
 	FieldUID = "uid"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
+	// EdgeMediables holds the string denoting the mediables edge name in mutations.
+	EdgeMediables = "mediables"
 	// Table holds the table name of the media in the database.
 	Table = "media"
+	// MediablesTable is the table that holds the mediables relation/edge.
+	MediablesTable = "mediables"
+	// MediablesInverseTable is the table name for the Mediable entity.
+	// It exists in this package in order to avoid circular dependency with the "mediable" package.
+	MediablesInverseTable = "mediables"
+	// MediablesColumn is the table column denoting the mediables relation/edge.
+	MediablesColumn = "media_id"
 )
 
 // Columns holds all SQL columns for media fields.
@@ -187,4 +197,25 @@ func ByUID(opts ...sql.OrderTermOption) OrderOption {
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
+}
+
+// ByMediablesCount orders the results by mediables count.
+func ByMediablesCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newMediablesStep(), opts...)
+	}
+}
+
+// ByMediables orders the results by mediables terms.
+func ByMediables(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newMediablesStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newMediablesStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(MediablesInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, MediablesTable, MediablesColumn),
+	)
 }

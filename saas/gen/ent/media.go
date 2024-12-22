@@ -51,8 +51,37 @@ type Media struct {
 	// UID holds the value of the "uid" field.
 	UID string `json:"uid,omitempty"`
 	// Status holds the value of the "status" field.
-	Status       bool `json:"status,omitempty"`
+	Status bool `json:"status,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the MediaQuery when eager-loading is set.
+	Edges        MediaEdges `json:"edges"`
 	selectValues sql.SelectValues
+	URL          string `json:"url,omitempty"`
+	MediableID   string `json:"mediableID,omitempty"`
+	Tag          string `json:"tag,omitempty"`
+	Order        int    `json:"order,omitempty"`
+}
+
+// MediaEdges holds the relations/edges for other nodes in the graph.
+type MediaEdges struct {
+	// Mediables holds the value of the mediables edge.
+	Mediables []*Mediable `json:"mediables,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [1]bool
+	// totalCount holds the count of the edges above.
+	totalCount [1]map[string]int
+
+	namedMediables map[string][]*Mediable
+}
+
+// MediablesOrErr returns the Mediables value or an error if the edge
+// was not loaded in eager-loading.
+func (e MediaEdges) MediablesOrErr() ([]*Mediable, error) {
+	if e.loadedTypes[0] {
+		return e.Mediables, nil
+	}
+	return nil, &NotLoadedError{edge: "mediables"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -208,6 +237,11 @@ func (m *Media) Value(name string) (ent.Value, error) {
 	return m.selectValues.Get(name)
 }
 
+// QueryMediables queries the "mediables" edge of the Media entity.
+func (m *Media) QueryMediables() *MediableQuery {
+	return NewMediaClient(m.config).QueryMediables(m)
+}
+
 // Update returns a builder for updating this Media.
 // Note that you need to call Media.Unwrap() before calling this method if this Media
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -286,6 +320,30 @@ func (m *Media) String() string {
 	builder.WriteString(fmt.Sprintf("%v", m.Status))
 	builder.WriteByte(')')
 	return builder.String()
+}
+
+// NamedMediables returns the Mediables named value or an error if the edge was not
+// loaded in eager-loading with this name.
+func (m *Media) NamedMediables(name string) ([]*Mediable, error) {
+	if m.Edges.namedMediables == nil {
+		return nil, &NotLoadedError{edge: name}
+	}
+	nodes, ok := m.Edges.namedMediables[name]
+	if !ok {
+		return nil, &NotLoadedError{edge: name}
+	}
+	return nodes, nil
+}
+
+func (m *Media) appendNamedMediables(name string, edges ...*Mediable) {
+	if m.Edges.namedMediables == nil {
+		m.Edges.namedMediables = make(map[string][]*Mediable)
+	}
+	if len(edges) == 0 {
+		m.Edges.namedMediables[name] = []*Mediable{}
+	} else {
+		m.Edges.namedMediables[name] = append(m.Edges.namedMediables[name], edges...)
+	}
 }
 
 // MediaSlice is a parsable slice of Media.

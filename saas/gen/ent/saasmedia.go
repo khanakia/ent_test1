@@ -4,11 +4,20 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"saas/gen/ent/mediable"
+	"saas/gen/ent/predicate"
 
 	"entgo.io/ent"
+	"entgo.io/ent/dialect/sql"
 )
+
+var mediaUrlResolver func(ctx context.Context, media *Media) (string, error)
+
+func SetMediaURLResolver(fn func(ctx context.Context, media *Media) (string, error)) {
+	mediaUrlResolver = fn
+}
 
 type SaveMediaProp struct {
 	Tag            string
@@ -19,6 +28,7 @@ type SaveMediaProp struct {
 	AddMediaIDs    []string
 	RemoveMediaIDs []string
 	Cleared        bool
+	SelectMediaIDs []string
 }
 
 func SaveMedia(client *Client, props *SaveMediaProp) {
@@ -33,14 +43,23 @@ func SaveMedia(client *Client, props *SaveMediaProp) {
 	}
 
 	if props.AddMediaIDs != nil {
-		for _, mediaID := range props.AddMediaIDs {
+		for i, mediaID := range props.AddMediaIDs {
 			client.Mediable.Create().
 				SetAppID(props.AppID).
 				SetTag(props.Tag).
-				SetOrder(0).
+				SetOrder(i).
 				SetMediableType(props.MediableType).
 				SetMediableID(props.MediableID).
 				SetMediaID(mediaID).
+				Save(ctx)
+		}
+	}
+
+	if props.SelectMediaIDs != nil {
+		for i, id := range props.SelectMediaIDs {
+			client.Mediable.Update().
+				Where(mediable.AppID(props.AppID), mediable.MediableType(props.MediableType), mediable.MediableID(props.MediableID), mediable.MediaID(id)).
+				SetOrder(i).
 				Save(ctx)
 		}
 	}
@@ -64,6 +83,7 @@ func PostClientMediaHook() func(next ent.Mutator) ent.Mutator {
 						AddMediaIDs:    s.FeaturedMediaIDs(),
 						RemoveMediaIDs: s.RemovedFeaturedMediaIDs(),
 						Cleared:        s.FeaturedMediasCleared(),
+						SelectMediaIDs: s.SelectedFeaturedMediaIDs(),
 					}
 					fmt.Println(saveMediaProp)
 
@@ -82,6 +102,7 @@ func PostClientMediaHook() func(next ent.Mutator) ent.Mutator {
 						AddMediaIDs:    s.IconMediaIDs(),
 						RemoveMediaIDs: s.RemovedIconMediaIDs(),
 						Cleared:        s.IconMediasCleared(),
+						SelectMediaIDs: s.SelectedFeaturedMediaIDs(),
 					}
 					fmt.Println(saveMediaProp)
 
@@ -121,6 +142,22 @@ func (m *PostMutation) RemoveFeaturedMediaIDs(ids ...string) {
 	}
 }
 
+func (m *PostMutation) SelectFeaturedMediaIDs(ids ...string) {
+	if m.selectedfeatured_medias == nil {
+		m.selectedfeatured_medias = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.selectedfeatured_medias[ids[i]] = struct{}{}
+	}
+}
+
+func (m *PostMutation) SelectedFeaturedMediaIDs() (ids []string) {
+	for id := range m.selectedfeatured_medias {
+		ids = append(ids, id)
+	}
+	return
+}
+
 func (m *PostMutation) RemovedFeaturedMediaIDs() (ids []string) {
 	for id := range m.removedfeatured_medias {
 		ids = append(ids, id)
@@ -139,6 +176,7 @@ func (m *PostMutation) ResetFeaturedMedias() {
 	m.featured_medias = nil
 	m.clearedfeatured_medias = false
 	m.removedfeatured_medias = nil
+	m.selectedfeatured_medias = nil
 }
 
 func (m *PostMutation) AddIconMediaIDs(ids ...string) {
@@ -168,6 +206,22 @@ func (m *PostMutation) RemoveIconMediaIDs(ids ...string) {
 	}
 }
 
+func (m *PostMutation) SelectIconMediaIDs(ids ...string) {
+	if m.selectedicon_medias == nil {
+		m.selectedicon_medias = make(map[string]struct{})
+	}
+	for i := range ids {
+		m.selectedicon_medias[ids[i]] = struct{}{}
+	}
+}
+
+func (m *PostMutation) SelectedIconMediaIDs() (ids []string) {
+	for id := range m.selectedicon_medias {
+		ids = append(ids, id)
+	}
+	return
+}
+
 func (m *PostMutation) RemovedIconMediaIDs() (ids []string) {
 	for id := range m.removedicon_medias {
 		ids = append(ids, id)
@@ -186,4 +240,58 @@ func (m *PostMutation) ResetIconMedias() {
 	m.icon_medias = nil
 	m.clearedicon_medias = false
 	m.removedicon_medias = nil
+	m.selectedicon_medias = nil
+}
+func (uq *MediaQuery) loadUrls(ctx context.Context, nodes []*Media) error {
+	for _, n := range nodes {
+		/* n.URL = "http://localhost/" + n.Name */
+		if mediaUrlResolver != nil {
+			url, _ := mediaUrlResolver(ctx, n)
+			n.URL = url
+		}
+	}
+	return nil
+}
+func (uq *PostQuery) WithMediables(opts ...func(*MediableQuery)) *PostQuery {
+	query := (&MediableClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withMediables = query
+	return uq
+}
+
+func (uq *PostQuery) loadMediables(ctx context.Context, query *MediableQuery, nodes []*Post, init func(*Post), assign func(*Post, *Mediable)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[string]*Post)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	if len(query.ctx.Fields) > 0 {
+		query.ctx.AppendFieldOnce(mediable.FieldMediableID)
+	}
+
+	query.Where(mediable.MediableType("posts"))
+	query.Order(Asc(mediable.FieldOrder))
+
+	query.WithMedia().Where(predicate.Mediable(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(mediable.FieldMediableID), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.MediableID
+		node, ok := nodeids[fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "mediable_id" returned %v for node %v`, fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
 }

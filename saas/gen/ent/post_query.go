@@ -24,6 +24,9 @@ type PostQuery struct {
 	predicates []predicate.Post
 	loadTotal  []func(context.Context, []*Post) error
 	modifiers  []func(*sql.Selector)
+
+	withMediables *MediableQuery
+
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -358,11 +361,21 @@ func (pq *PostQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*Post, e
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+
 	for i := range pq.loadTotal {
 		if err := pq.loadTotal[i](ctx, nodes); err != nil {
 			return nil, err
 		}
 	}
+
+	if query := pq.withMediables; query != nil {
+		if err := pq.loadMediables(ctx, query, nodes,
+			func(n *Post) { n.Mediables = []*Mediable{} },
+			func(n *Post, e *Mediable) { n.Mediables = append(n.Mediables, e) }); err != nil {
+			return nil, err
+		}
+	}
+
 	return nodes, nil
 }
 

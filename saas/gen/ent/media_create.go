@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"saas/gen/ent/media"
+	"saas/gen/ent/mediable"
 
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
@@ -280,6 +281,21 @@ func (mc *MediaCreate) SetNillableID(s *string) *MediaCreate {
 	return mc
 }
 
+// AddMediableIDs adds the "mediables" edge to the Mediable entity by IDs.
+func (mc *MediaCreate) AddMediableIDs(ids ...string) *MediaCreate {
+	mc.mutation.AddMediableIDs(ids...)
+	return mc
+}
+
+// AddMediables adds the "mediables" edges to the Mediable entity.
+func (mc *MediaCreate) AddMediables(m ...*Mediable) *MediaCreate {
+	ids := make([]string, len(m))
+	for i := range m {
+		ids[i] = m[i].ID
+	}
+	return mc.AddMediableIDs(ids...)
+}
+
 // Mutation returns the MediaMutation object of the builder.
 func (mc *MediaCreate) Mutation() *MediaMutation {
 	return mc.mutation
@@ -437,6 +453,22 @@ func (mc *MediaCreate) createSpec() (*Media, *sqlgraph.CreateSpec) {
 	if value, ok := mc.mutation.Status(); ok {
 		_spec.SetField(media.FieldStatus, field.TypeBool, value)
 		_node.Status = value
+	}
+	if nodes := mc.mutation.MediablesIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   media.MediablesTable,
+			Columns: []string{media.MediablesColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(mediable.FieldID, field.TypeString),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

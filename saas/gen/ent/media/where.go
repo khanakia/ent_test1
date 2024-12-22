@@ -6,6 +6,7 @@ import (
 	"saas/gen/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -1356,6 +1357,29 @@ func StatusIsNil() predicate.Media {
 // StatusNotNil applies the NotNil predicate on the "status" field.
 func StatusNotNil() predicate.Media {
 	return predicate.Media(sql.FieldNotNull(FieldStatus))
+}
+
+// HasMediables applies the HasEdge predicate on the "mediables" edge.
+func HasMediables() predicate.Media {
+	return predicate.Media(func(s *sql.Selector) {
+		step := sqlgraph.NewStep(
+			sqlgraph.From(Table, FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, MediablesTable, MediablesColumn),
+		)
+		sqlgraph.HasNeighbors(s, step)
+	})
+}
+
+// HasMediablesWith applies the HasEdge predicate on the "mediables" edge with a given conditions (other predicates).
+func HasMediablesWith(preds ...predicate.Mediable) predicate.Media {
+	return predicate.Media(func(s *sql.Selector) {
+		step := newMediablesStep()
+		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
+			for _, p := range preds {
+				p(s)
+			}
+		})
+	})
 }
 
 // And groups predicates with the AND operator between them.
