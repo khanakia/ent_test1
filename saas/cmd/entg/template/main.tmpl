@@ -1,5 +1,0 @@
-{{ define "model/fields/additional" }}
-    {{- if eq $.Name "PostType" }}
-        FeaturedMedias []*medialibrary.Media `json:"featuredMedias,omitempty"`
-    {{- end }}
-{{ end }}

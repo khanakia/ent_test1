@@ -6,3 +6,7 @@ type Mutation {
 # extend input CreatePostInput {
 #   featuredIDs: [String]
 # }
+
+extend type Media {
+  URL: String
+}

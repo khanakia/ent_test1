@@ -12,22 +12,24 @@ import (
 	"entgo.io/ent/entc/gen"
 )
 
-var (
-	MutationInputTemplate       = parseT("template/mutation_input.tmpl")
-	CustomMutationInputTemplate = parseT("template/custom_mutation_input.tmpl")
-)
+// var (
+// 	MutationInputTemplate       = parseT("template/mutation_input.tmpl")
+// 	CustomMutationInputTemplate = parseT("template/custom_mutation_input.tmpl")
+// )
 
 func main() {
 	var err error
 
 	ex, err := entgql.NewExtension(
 		entgql.WithSchemaGenerator(),
-		entgql.WithWhereInputs(true),
 		entgql.WithSchemaPath("../gqlsa/graph/ent.graphql"),
 		entgql.WithConfigPath("../gqlsa/gqlgen.yml"),
 		entgql.WithTemplates(
-			append([]*gen.Template{CustomMutationInputTemplate}, append(entgql.AllTemplates, MutationInputTemplate)...)...,
+			// entgql.AllTemplates...,
+			CustomEntgqlTemplates("template/mutation_input.tmpl", "template/custom_mutation_input.tmpl")...,
+		// append([]*gen.Template{CustomMutationInputTemplate}, append(entgql.AllTemplates, MutationInputTemplate)...)...,
 		),
+		entgql.WithWhereInputs(true),
 		// add @canAdmin directive to the node and nodes query in ent.graphql
 		// https://github.com/ent/ent/issues/3173
 		entgql.WithSchemaHook(func(g *gen.Graph, s *ast.Schema) error {

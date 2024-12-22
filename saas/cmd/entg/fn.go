@@ -4,6 +4,7 @@ import (
 	"embed"
 	"os"
 	"saas/pkg/entsaasmedia"
+	"slices"
 	"strings"
 
 	"entgo.io/contrib/entgql"
@@ -14,11 +15,40 @@ import (
 
 //go:embed template/*
 var _templates embed.FS
+var (
+	camel    = gen.Funcs["camel"].(func(string) string)
+	pascal   = gen.Funcs["pascal"].(func(string) string)
+	plural   = gen.Funcs["plural"].(func(string) string)
+	singular = gen.Funcs["singular"].(func(string) string)
+	snake    = gen.Funcs["snake"].(func(string) string)
+)
 
 func parseT(path string) *gen.Template {
 	return gen.MustParse(gen.NewTemplate(path).
 		Funcs(entgql.TemplateFuncs).
 		ParseFS(_templates, path))
+}
+
+func CustomEntgqlTemplates(names ...string) []*gen.Template {
+	templates := []*gen.Template{}
+
+	for _, name := range names {
+		templates = append(templates, gen.
+			MustParse(gen.NewTemplate(name).
+				Funcs(entgql.TemplateFuncs).
+				// Funcs(TemplateFuncs).
+				ParseFS(_templates, name)))
+		// ParseFiles(name)))
+	}
+
+	for _, template := range entgql.AllTemplates {
+		if slices.Contains(names, template.Name()) {
+			continue
+		}
+		templates = append(templates, template)
+	}
+
+	return templates
 }
 
 func outputWriter(schema *ast.Schema) error {
@@ -86,10 +116,13 @@ func buildTypes(g *gen.Graph, s *ast.Schema) error {
 
 		// goutil.PrintToJSON(saasMedia)
 
-		_, ant, err := gqlTypeFromNode(node)
+		gqlType, ant, err := gqlTypeFromNode(node)
 		if err != nil {
 			return err
 		}
+
+		// name := fieldName(ant.QueryField, gqlType)
+		// fmt.Println("name", name, gqlType)
 
 		inputs, err := extractMutationInputs(node, ant)
 		if err != nil {
@@ -97,9 +130,16 @@ func buildTypes(g *gen.Graph, s *ast.Schema) error {
 		}
 
 		// now we compare the input in schema and add the missing inputs
-		addNewFieldsToSchema(saasMedia, inputs, s)
+		addNewFieldsToSchema(saasMedia, inputs, gqlType, s)
 	}
 	return nil
+}
+
+func fieldName(c *entgql.FieldConfig, gqlType string) string {
+	if c.Name != "" {
+		return c.Name
+	}
+	return camel(snake(plural(gqlType)))
 }
 
 type MutationInputs struct {
@@ -137,8 +177,24 @@ func namedType(name string, nullable bool) *ast.Type {
 	return ast.NonNullNamedType(name, nil)
 }
 
-func addNewFieldsToSchema(saasMedia *entsaasmedia.Annotation, inputs map[string]MutationInputs, s *ast.Schema) {
+func addNewFieldsToSchema(saasMedia *entsaasmedia.Annotation, inputs map[string]MutationInputs, gqlType string, s *ast.Schema) {
 	for _, def := range s.Types {
+
+		// gqltype = type Post {} add fields to the query field also
+		if def.Name == gqlType {
+			// goutil.PrintToJSON(saasMedia)
+			// for _, mediaField := range saasMedia.Fields {
+			// 	def.Fields = append(def.Fields, &ast.FieldDefinition{
+			// 		Name: mediaField.QueryField,
+			// 		Type: namedType("[Media!]", true),
+			// 	})
+			// }
+
+			def.Fields = append(def.Fields, &ast.FieldDefinition{
+				Name: "mediables",
+				Type: namedType("[Mediable!]", true),
+			})
+		}
 
 		i, ok := inputs[def.Name]
 
@@ -151,6 +207,14 @@ func addNewFieldsToSchema(saasMedia *entsaasmedia.Annotation, inputs map[string]
 						Type: namedType("[ID!]", true),
 					})
 				default:
+
+					// need the featuredMediaIDs input here too so we can set mediables.order column value
+					// this is the selectedItems on the frontend
+					def.Fields = append(def.Fields, &ast.FieldDefinition{
+						Name: mediaField.GqlSelect,
+						Type: namedType("[ID!]", true),
+					})
+
 					def.Fields = append(def.Fields, &ast.FieldDefinition{
 						Name: mediaField.GqlAdd,
 						Type: namedType("[ID!]", true),
@@ -159,6 +223,7 @@ func addNewFieldsToSchema(saasMedia *entsaasmedia.Annotation, inputs map[string]
 						Type: namedType("[ID!]", true),
 					})
 				}
+
 				if !i.IsCreate {
 					def.Fields = append(def.Fields, &ast.FieldDefinition{
 						Name: mediaField.GqlClear,

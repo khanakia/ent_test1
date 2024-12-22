@@ -170,6 +170,8 @@ func (ec *executionContext) fieldContext_Mutation_createPost(ctx context.Context
 				return ec.fieldContext_Post_name(ctx, field)
 			case "slug":
 				return ec.fieldContext_Post_slug(ctx, field)
+			case "mediables":
+				return ec.fieldContext_Post_mediables(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Post", field.Name)
 		},
@@ -233,6 +235,8 @@ func (ec *executionContext) fieldContext_Mutation_updatePost(ctx context.Context
 				return ec.fieldContext_Post_name(ctx, field)
 			case "slug":
 				return ec.fieldContext_Post_slug(ctx, field)
+			case "mediables":
+				return ec.fieldContext_Post_mediables(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Post", field.Name)
 		},

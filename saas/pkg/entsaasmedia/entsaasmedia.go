@@ -36,25 +36,29 @@ type FieldType struct {
 }
 
 type Field struct {
-	Name            string
-	Type            string
-	Unique          bool
-	BuilderField    string
-	MutationAdd     string
-	MutationAdded   string
-	MutationSet     string
-	MutationRemove  string
-	MutationRemoved string
-	MutationClear   string
-	MutationCleared string
-	MutationReset   string
-	StructField     string
-	Tag             string
+	Name             string
+	Type             string
+	Unique           bool
+	BuilderField     string
+	MutationAdd      string
+	MutationAdded    string
+	MutationSet      string
+	MutationRemove   string
+	MutationRemoved  string
+	MutationClear    string
+	MutationCleared  string
+	MutationReset    string
+	MutationSelect   string
+	MutationSelected string
+	StructField      string
+	QueryField       string
+	Tag              string
 
 	GqlCreate string
 	GqlAdd    string
 	GqlRemove string
 	GqlClear  string
+	GqlSelect string
 }
 
 var (
@@ -77,12 +81,18 @@ func (a *Field) make() {
 	a.MutationClear = a.GetMutationClear()
 	a.MutationCleared = a.GetMutationCleared()
 	a.MutationReset = a.GetMutationReset()
+	a.MutationSelect = "Select" + pascal(rules.Singularize(a.Name)) + "IDs"
+	a.MutationSelected = "Selected" + pascal(rules.Singularize(a.Name)) + "IDs"
 	a.StructField = pascal(a.Name)
 
 	a.GqlCreate = camel(singular(a.Name)) + "IDs"
 	a.GqlAdd = "add" + pascal(singular(a.Name)) + "IDs"
 	a.GqlRemove = "remove" + pascal(singular(a.Name)) + "IDs"
 	a.GqlClear = camel(snake(a.MutationClear))
+
+	a.GqlSelect = "select" + pascal(singular(a.Name)) + "IDs"
+
+	a.QueryField = camel(a.Name)
 }
 
 // MutationAdd returns the method name for adding edge ids.

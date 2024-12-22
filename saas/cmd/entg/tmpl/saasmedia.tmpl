@@ -21,6 +21,13 @@ import (
 	{{- end }}
 )
 
+var mediaUrlResolver func(ctx context.Context, media *Media) (string, error)
+
+func SetMediaURLResolver(fn func(ctx context.Context, media *Media) (string, error)) {
+	mediaUrlResolver = fn
+}
+
+
 type SaveMediaProp struct {
 	Tag            string
 	Order          int
@@ -30,6 +37,7 @@ type SaveMediaProp struct {
 	AddMediaIDs    []string
 	RemoveMediaIDs []string
 	Cleared       bool
+  SelectMediaIDs []string
 }
 
 func SaveMedia(client *Client, props *SaveMediaProp) {
@@ -44,14 +52,24 @@ func SaveMedia(client *Client, props *SaveMediaProp) {
 	}
 
 	if props.AddMediaIDs != nil {
-		for _, mediaID := range props.AddMediaIDs {
+		for i, mediaID := range props.AddMediaIDs {
 			client.Mediable.Create().
 				SetAppID(props.AppID).
 				SetTag(props.Tag).
-				SetOrder(0).
+				SetOrder(i).
 				SetMediableType(props.MediableType).
 				SetMediableID(props.MediableID).
 				SetMediaID(mediaID).
+				Save(ctx)
+		}
+	}
+
+
+	if props.SelectMediaIDs != nil {
+		for i, id := range props.SelectMediaIDs {
+			client.Mediable.Update().
+        Where(mediable.AppID(props.AppID), mediable.MediableType(props.MediableType), mediable.MediableID(props.MediableID), mediable.MediaID(id)).
+				SetOrder(i).
 				Save(ctx)
 		}
 	}
@@ -61,7 +79,6 @@ func SaveMedia(client *Client, props *SaveMediaProp) {
 	{{ range $n := $.MutableNodes }}
     {{ $mutation := $n.MutationName }}
     {{- if $n.Annotations.SaasMedia }}
-    
       {{ $client := $n.ClientName }}
       func {{ $client }}MediaHook() func(next ent.Mutator) ent.Mutator {
         return func(next ent.Mutator) ent.Mutator {
@@ -83,6 +100,7 @@ func SaveMedia(client *Client, props *SaveMediaProp) {
                       AddMediaIDs   : s.{{ $e.MutationAdded }}(),
                       RemoveMediaIDs: s.{{ $e.MutationRemoved }}(), 
                       Cleared: s.{{ $e.MutationCleared }}(),
+                      SelectMediaIDs: s.SelectedFeaturedMediaIDs(),
                     }
                     fmt.Println(saveMediaProp)
 
@@ -132,6 +150,21 @@ func SaveMedia(client *Client, props *SaveMediaProp) {
             }
           }
 
+          func (m *{{ $mutation }}) {{ $e.MutationSelect }}(ids ...{{ $e.Type }}) {
+            if m.selected{{ $e.BuilderField }} == nil {
+              m.selected{{ $e.BuilderField }} = make(map[{{ $e.Type }}]struct{})
+            }
+            for i := range ids {
+              m.selected{{ $e.BuilderField }}[ids[i]] = struct{}{}
+            }
+          }
+
+          func (m *{{ $mutation }}) {{ $e.MutationSelected }}() (ids []{{ $e.Type }}) {
+            for id := range m.selected{{ $e.BuilderField }} {
+              ids = append(ids, id)
+            }
+            return
+          }
           
           func (m *{{ $mutation }}) {{ $e.MutationRemoved }}() (ids []{{ $e.Type }}) {
             for id := range m.removed{{ $e.BuilderField }} {
@@ -160,11 +193,116 @@ func SaveMedia(client *Client, props *SaveMediaProp) {
             {{- if not $e.Unique }}
               m.removed{{ $e.BuilderField }} = nil
             {{- end }}
+            m.selected{{ $e.BuilderField }} = nil
           }
 
 			{{- end }}
 
 		{{- end }}
 	{{- end }}
+
+    
+  {{- range $n := $.Nodes }}
+    {{- if eq $n.QueryName "MediaQuery" }} 
+      func (uq *{{ $n.QueryName }}) loadUrls(ctx context.Context, nodes []*{{ $n.Name }}) error {
+        for _, n := range nodes {
+            /* n.URL = "http://localhost/" + n.Name */
+          	if  mediaUrlResolver != nil {
+              url, _ :=	mediaUrlResolver(ctx, n)
+              n.URL = url
+            }
+        }
+        return nil
+      }
+    {{- end }}
+
+    {{- if $n.Annotations.SaasMedia }}
+      func (uq *{{ $n.QueryName }}) WithMediables(opts ...func(*MediableQuery)) *{{ $n.QueryName }} {
+        query := (&MediableClient{config: uq.config}).Query()
+        for _, opt := range opts {
+          opt(query)
+        }
+        uq.withMediables = query
+        return uq
+      }
+
+      func (uq *{{ $n.QueryName }}) loadMediables(ctx context.Context, query *MediableQuery, nodes []*{{ $n.Name }}, init func(*{{ $n.Name }}), assign func(*{{ $n.Name }}, *Mediable)) error {
+        fks := make([]driver.Value, 0, len(nodes))
+        nodeids := make(map[string]*{{ $n.Name }})
+        for i := range nodes {
+          fks = append(fks, nodes[i].ID)
+          nodeids[nodes[i].ID] = nodes[i]
+          if init != nil {
+            init(nodes[i])
+          }
+        }
+        if len(query.ctx.Fields) > 0 {
+          query.ctx.AppendFieldOnce(mediable.FieldMediableID)
+        }
+
+        query.Where(mediable.MediableType("{{ $n.Table }}"))
+        query.Order(Asc(mediable.FieldOrder))
+
+        query.WithMedia().Where(predicate.Mediable(func(s *sql.Selector) {
+          s.Where(sql.InValues(s.C(mediable.FieldMediableID), fks...))
+        }))
+        neighbors, err := query.All(ctx)
+        if err != nil {
+          return err
+        }
+        for _, n := range neighbors {
+          fk := n.MediableID
+          node, ok := nodeids[fk]
+          if !ok {
+            return fmt.Errorf(`unexpected referenced foreign-key "mediable_id" returned %v for node %v`, fk, n.ID)
+          }
+          assign(node, n)
+        }
+        return nil
+      }
+  {{ end }}
+
+{{- end}}
 {{ end }}
 
+
+{{ define "dialect/sql/model/fields/mediables" }}
+  {{ $n := $ }}
+  {{- if $n.Annotations.SaasMedia }}
+      Mediables []*Mediable `json:"mediables,omitempty"`
+  {{- end }}
+{{ end }}
+
+
+{{ define "dialect/sql/query/fields/additional/url" }}
+  {{ $n := $ }}
+  {{- if $n.Annotations.SaasMedia }}
+      withMediables      *MediableQuery
+  {{- end }}
+{{ end }}
+
+{{ define "dialect/sql/query/all/nodes/withmediables" }}
+    {{- $n := $ }}
+    {{- if $n.Annotations.SaasMedia }}
+     {{ $builder := pascal $n.Scope.Builder }}
+      {{ $receiver := receiver $builder }}
+      if query := {{ $receiver }}.withMediables; query != nil {
+          if err := {{ $receiver }}.loadMediables(ctx, query, nodes,
+              func(n *{{$n.Name}}) { n.Mediables = []*Mediable{} },
+              func(n *{{$n.Name}}, e *Mediable) { n.Mediables = append(n.Mediables, e) }); err != nil {
+              return nil, err
+          }
+      }
+    {{ end }}
+{{ end }}
+
+{{ define "dialect/sql/query/all/nodes/mediawithurls" }}
+    {{- $n := $ }}
+    {{ $builder := pascal $n.Scope.Builder }}
+    {{ $receiver := receiver $builder }}
+    {{- if eq $n.QueryName "MediaQuery" }} 
+        if err := {{ $receiver }}.loadUrls(ctx, nodes); err != nil {
+          return nil, err
+        }
+    {{- end }}
+{{ end }}

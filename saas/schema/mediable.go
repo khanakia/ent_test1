@@ -4,6 +4,7 @@ import (
 	"entgo.io/contrib/entgql"
 	"entgo.io/ent"
 	"entgo.io/ent/schema"
+	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 )
@@ -23,7 +24,17 @@ func (Mediable) Fields() []ent.Field {
 }
 
 func (Mediable) Edges() []ent.Edge {
-	return []ent.Edge{}
+	return []ent.Edge{
+		edge.From("media", Media.Type).
+			Ref("mediables").
+			Field("media_id").
+			Unique(),
+
+		// edge.To("media", Media.Type).
+		// 	Required().
+		// 	Unique().
+		// 	Field("media_id"),
+	}
 }
 
 func (Mediable) Annotations() []schema.Annotation {

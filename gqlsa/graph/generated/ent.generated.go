@@ -919,6 +919,106 @@ func (ec *executionContext) fieldContext_Media_status(_ context.Context, field g
 	return fc, nil
 }
 
+func (ec *executionContext) _Media_mediables(ctx context.Context, field graphql.CollectedField, obj *ent.Media) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Media_mediables(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Mediables(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.Mediable)
+	fc.Result = res
+	return ec.marshalOMediable2ᚕᚖsaasᚋgenᚋentᚐMediableᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Media_mediables(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Media",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Mediable_id(ctx, field)
+			case "appID":
+				return ec.fieldContext_Mediable_appID(ctx, field)
+			case "mediaID":
+				return ec.fieldContext_Mediable_mediaID(ctx, field)
+			case "mediableID":
+				return ec.fieldContext_Mediable_mediableID(ctx, field)
+			case "mediableType":
+				return ec.fieldContext_Mediable_mediableType(ctx, field)
+			case "tag":
+				return ec.fieldContext_Mediable_tag(ctx, field)
+			case "order":
+				return ec.fieldContext_Mediable_order(ctx, field)
+			case "media":
+				return ec.fieldContext_Mediable_media(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Mediable", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Media_URL(ctx context.Context, field graphql.CollectedField, obj *ent.Media) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Media_URL(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.URL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Media_URL(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Media",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mediable_id(ctx context.Context, field graphql.CollectedField, obj *ent.Mediable) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mediable_id(ctx, field)
 	if err != nil {
@@ -1029,7 +1129,7 @@ func (ec *executionContext) _Mediable_mediaID(ctx context.Context, field graphql
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
+	return ec.marshalOID2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mediable_mediaID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1039,7 +1139,7 @@ func (ec *executionContext) fieldContext_Mediable_mediaID(_ context.Context, fie
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -1204,6 +1304,91 @@ func (ec *executionContext) fieldContext_Mediable_order(_ context.Context, field
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mediable_media(ctx context.Context, field graphql.CollectedField, obj *ent.Mediable) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mediable_media(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Media(ctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*ent.Media)
+	fc.Result = res
+	return ec.marshalOMedia2ᚖsaasᚋgenᚋentᚐMedia(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mediable_media(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mediable",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Media_id(ctx, field)
+			case "appID":
+				return ec.fieldContext_Media_appID(ctx, field)
+			case "disk":
+				return ec.fieldContext_Media_disk(ctx, field)
+			case "directory":
+				return ec.fieldContext_Media_directory(ctx, field)
+			case "name":
+				return ec.fieldContext_Media_name(ctx, field)
+			case "originalName":
+				return ec.fieldContext_Media_originalName(ctx, field)
+			case "extension":
+				return ec.fieldContext_Media_extension(ctx, field)
+			case "mimeType":
+				return ec.fieldContext_Media_mimeType(ctx, field)
+			case "aggregateType":
+				return ec.fieldContext_Media_aggregateType(ctx, field)
+			case "size":
+				return ec.fieldContext_Media_size(ctx, field)
+			case "description":
+				return ec.fieldContext_Media_description(ctx, field)
+			case "isVariant":
+				return ec.fieldContext_Media_isVariant(ctx, field)
+			case "variantName":
+				return ec.fieldContext_Media_variantName(ctx, field)
+			case "originalMediaID":
+				return ec.fieldContext_Media_originalMediaID(ctx, field)
+			case "checksum":
+				return ec.fieldContext_Media_checksum(ctx, field)
+			case "workspaceID":
+				return ec.fieldContext_Media_workspaceID(ctx, field)
+			case "alt":
+				return ec.fieldContext_Media_alt(ctx, field)
+			case "uid":
+				return ec.fieldContext_Media_uid(ctx, field)
+			case "status":
+				return ec.fieldContext_Media_status(ctx, field)
+			case "mediables":
+				return ec.fieldContext_Media_mediables(ctx, field)
+			case "URL":
+				return ec.fieldContext_Media_URL(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Media", field.Name)
 		},
 	}
 	return fc, nil
@@ -1505,6 +1690,65 @@ func (ec *executionContext) fieldContext_Post_slug(_ context.Context, field grap
 	return fc, nil
 }
 
+func (ec *executionContext) _Post_mediables(ctx context.Context, field graphql.CollectedField, obj *ent.Post) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Post_mediables(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Mediables, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*ent.Mediable)
+	fc.Result = res
+	return ec.marshalOMediable2ᚕᚖsaasᚋgenᚋentᚐMediableᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Post_mediables(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Post",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Mediable_id(ctx, field)
+			case "appID":
+				return ec.fieldContext_Mediable_appID(ctx, field)
+			case "mediaID":
+				return ec.fieldContext_Mediable_mediaID(ctx, field)
+			case "mediableID":
+				return ec.fieldContext_Mediable_mediableID(ctx, field)
+			case "mediableType":
+				return ec.fieldContext_Mediable_mediableType(ctx, field)
+			case "tag":
+				return ec.fieldContext_Mediable_tag(ctx, field)
+			case "order":
+				return ec.fieldContext_Mediable_order(ctx, field)
+			case "media":
+				return ec.fieldContext_Mediable_media(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Mediable", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_node(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_node(ctx, field)
 	if err != nil {
@@ -1657,6 +1901,8 @@ func (ec *executionContext) fieldContext_Query_posts(_ context.Context, field gr
 				return ec.fieldContext_Post_name(ctx, field)
 			case "slug":
 				return ec.fieldContext_Post_slug(ctx, field)
+			case "mediables":
+				return ec.fieldContext_Post_mediables(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Post", field.Name)
 		},
@@ -1848,7 +2094,7 @@ func (ec *executionContext) unmarshalInputCreatePostInput(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"name", "slug", "FeaturedMediaIDs", "IconMediaIDs"}
+	fieldsInOrder := [...]string{"name", "slug", "featuredMediaIDs", "iconMediaIDs"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -1869,15 +2115,15 @@ func (ec *executionContext) unmarshalInputCreatePostInput(ctx context.Context, o
 				return it, err
 			}
 			it.Slug = data
-		case "FeaturedMediaIDs":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("FeaturedMediaIDs"))
+		case "featuredMediaIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("featuredMediaIDs"))
 			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
 			it.FeaturedMediaIDs = data
-		case "IconMediaIDs":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("IconMediaIDs"))
+		case "iconMediaIDs":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("iconMediaIDs"))
 			data, err := ec.unmarshalOID2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
@@ -2025,7 +2271,7 @@ func (ec *executionContext) _Media(ctx context.Context, sel ast.SelectionSet, ob
 		case "id":
 			out.Values[i] = ec._Media_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "appID":
 			out.Values[i] = ec._Media_appID(ctx, field, obj)
@@ -2058,7 +2304,7 @@ func (ec *executionContext) _Media(ctx context.Context, sel ast.SelectionSet, ob
 		case "workspaceID":
 			out.Values[i] = ec._Media_workspaceID(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "alt":
 			out.Values[i] = ec._Media_alt(ctx, field, obj)
@@ -2066,6 +2312,41 @@ func (ec *executionContext) _Media(ctx context.Context, sel ast.SelectionSet, ob
 			out.Values[i] = ec._Media_uid(ctx, field, obj)
 		case "status":
 			out.Values[i] = ec._Media_status(ctx, field, obj)
+		case "mediables":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Media_mediables(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "URL":
+			out.Values[i] = ec._Media_URL(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2103,7 +2384,7 @@ func (ec *executionContext) _Mediable(ctx context.Context, sel ast.SelectionSet,
 		case "id":
 			out.Values[i] = ec._Mediable_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
-				out.Invalids++
+				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "appID":
 			out.Values[i] = ec._Mediable_appID(ctx, field, obj)
@@ -2117,6 +2398,39 @@ func (ec *executionContext) _Mediable(ctx context.Context, sel ast.SelectionSet,
 			out.Values[i] = ec._Mediable_tag(ctx, field, obj)
 		case "order":
 			out.Values[i] = ec._Mediable_order(ctx, field, obj)
+		case "media":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Mediable_media(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2208,6 +2522,8 @@ func (ec *executionContext) _Post(ctx context.Context, sel ast.SelectionSet, obj
 			out.Values[i] = ec._Post_name(ctx, field, obj)
 		case "slug":
 			out.Values[i] = ec._Post_slug(ctx, field, obj)
+		case "mediables":
+			out.Values[i] = ec._Post_mediables(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -2375,6 +2691,16 @@ func (ec *executionContext) unmarshalNCreatePostInput2saasᚋgenᚋentᚐCreateP
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalNMediable2ᚖsaasᚋgenᚋentᚐMediable(ctx context.Context, sel ast.SelectionSet, v *ent.Mediable) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Mediable(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNNode2ᚕsaasᚋgenᚋentᚐNoder(ctx context.Context, sel ast.SelectionSet, v []ent.Noder) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
@@ -2490,6 +2816,60 @@ func (ec *executionContext) marshalOCursor2ᚖentgoᚗioᚋcontribᚋentgqlᚐCu
 		return graphql.Null
 	}
 	return v
+}
+
+func (ec *executionContext) marshalOMedia2ᚖsaasᚋgenᚋentᚐMedia(ctx context.Context, sel ast.SelectionSet, v *ent.Media) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Media(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOMediable2ᚕᚖsaasᚋgenᚋentᚐMediableᚄ(ctx context.Context, sel ast.SelectionSet, v []*ent.Mediable) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNMediable2ᚖsaasᚋgenᚋentᚐMediable(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalONode2saasᚋgenᚋentᚐNoder(ctx context.Context, sel ast.SelectionSet, v ent.Noder) graphql.Marshaler {

@@ -1,9 +1,9 @@
 {{ define "helper/custom_model_fields" }}
-	// khanakia 34343
   {{- $n := $ }}
   {{- if $n.Annotations.SaasMedia }}
     {{- range $e := $n.Annotations.SaasMedia.Fields }}
         {{ $e.BuilderField }} map[{{ $e.Type }}]struct{}
+        selected{{ $e.BuilderField }} map[{{ $e.Type }}]struct{}
         removed{{ $e.BuilderField }} map[{{ $e.Type }}]struct{}
         cleared{{ $e.BuilderField }} bool
     {{- end }}

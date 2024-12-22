@@ -10,6 +10,7 @@
 					 	{{ $e.MutationAdd }} []{{ $e.Type }}
             {{ $e.MutationRemove }} []{{ $e.Type }}
 						{{ $e.MutationClear }} bool
+            {{ $e.MutationSelect }} []{{ $e.Type }}
 
 						{{/* {{- $structField := print (singular $e.Name | pascal) "IDs" }}
 						{{- $MutationAdd := print "Add" $structField }}
@@ -47,6 +48,10 @@
 								}
 								if v := i.{{ $e.MutationRemove }}; len(v) > 0 {
 										m.{{ $e.MutationRemove }}(v...)
+								}
+
+								if v := i.{{ $e.MutationSelect }}; len(v) > 0 {
+										m.{{ $e.MutationSelect }}(v...)
 								}
                 
 				{{- end }}

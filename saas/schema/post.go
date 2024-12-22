@@ -43,7 +43,7 @@ func (Post) Annotations() []schema.Annotation {
 	return []schema.Annotation{
 		// MediaMutations(MediaInputOption{Name: "featured", BuilderField: "featuredmedias"}),
 		entsaasmedia.MediaFields(entsaasmedia.FieldOption{Name: "featured"}, entsaasmedia.FieldOption{Name: "icon"}),
-		entgql.Skip(entgql.SkipWhereInput),
+		// entgql.Skip(entgql.SkipWhereInput),
 		// entgql.RelayConnection(),
 		entgql.QueryField("posts").Directives(),
 		// entgql.MultiOrder(),

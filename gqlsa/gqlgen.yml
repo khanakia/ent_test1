@@ -75,7 +75,7 @@ autobind:
   # - saas/pkg/enttypes
   - lace/jsonslice
   - saas/gen/ent
-  # - saas/gen/ent/user
+  - saas/gen/ent/post
   # - saas/gen/ent/session
   # - saas/gen/ent/workspace
   # - saas/gen/ent/workspaceinvite

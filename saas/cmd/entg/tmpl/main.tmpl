@@ -1,0 +1,9 @@
+{{ define "dialect/sql/model/fields/media" }}
+    {{- if eq $.Name "Media" }}
+        URL string `json:"url,omitempty"`
+        MediableID string `json:"mediableID,omitempty"`
+        Tag string `json:"tag,omitempty"`
+        Order int `json:"order,omitempty"`
+    {{- end }}
+{{ end }}
+
