@@ -32,7 +32,6 @@ const (
 
 // MediaMutation represents an operation that mutates the Media nodes in the graph.
 type MediaMutation struct {
-	// khanakia 34343
 	config
 	op                Op
 	typ               string
@@ -1739,7 +1738,6 @@ func (m *MediaMutation) ResetEdge(name string) error {
 
 // MediableMutation represents an operation that mutates the Mediable nodes in the graph.
 type MediableMutation struct {
-	// khanakia 34343
 	config
 	op            Op
 	typ           string
@@ -2550,7 +2548,6 @@ func (m *MediableMutation) ResetEdge(name string) error {
 
 // PostMutation represents an operation that mutates the Post nodes in the graph.
 type PostMutation struct {
-	// khanakia 34343
 	featured_medias         map[string]struct{}
 	selectedfeatured_medias map[string]struct{}
 	removedfeatured_medias  map[string]struct{}

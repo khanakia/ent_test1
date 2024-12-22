@@ -29,7 +29,6 @@ import (
     // {{ $input }} represents a mutation input for updating {{ plural $names.Node | lower }}.
     {{- end }}
     type {{ $input }} struct {
-        {{- template "helper/gql_mutation_input/struct" . -}}
         {{- range $f := $fields }}
             {{- if $f.ClearOp }}
                 {{ print "Clear" $f.StructField }} bool
@@ -54,6 +53,12 @@ import (
                     {{ $e.MutationAdd }} []{{ $e.Type.ID.Type }}
                     {{ $e.MutationRemove }} []{{ $e.Type.ID.Type }}
                 {{- end }}
+            {{- end }}
+        {{- end }}
+
+        {{- with $tmpls := matchTemplate "helper/gql_mutation_input/model/fields/*"  }}
+            {{- range $tmpl := $tmpls }}
+                {{- xtemplate $tmpl $n }}
             {{- end }}
         {{- end }}
     }
@@ -112,7 +117,11 @@ import (
             {{- end }}
         {{- end }}
 
-        {{- template "helper/gql_mutation_input/mutate" . -}}
+        {{- with $tmpls := matchTemplate "helper/gql_mutation_input/mutate/*"  }}
+            {{- range $tmpl := $tmpls }}
+                {{- xtemplate $tmpl $n }}
+            {{- end }}
+        {{- end }}
     }
 
     {{- range $b := $n.Builders }}

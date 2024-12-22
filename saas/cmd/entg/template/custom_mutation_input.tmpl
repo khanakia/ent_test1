@@ -1,4 +1,4 @@
-{{ define "helper/gql_mutation_input/struct" }}
+{{ define "helper/gql_mutation_input/model/fields/saasmedia_mutation" }}
 	{{- $n := $ }}
 		{{- if $n.Annotations.SaasMedia }}
 			{{- range $e := $n.Annotations.SaasMedia.Fields }}
@@ -28,7 +28,7 @@
 {{ end }}
 
 
-{{ define "helper/gql_mutation_input/mutate" }}
+{{ define "helper/gql_mutation_input/mutate/saasmedia" }}
 	{{- $n := $ }}
 		{{- if $n.Annotations.SaasMedia }}
 			{{- range $e := $n.Annotations.SaasMedia.Fields }}

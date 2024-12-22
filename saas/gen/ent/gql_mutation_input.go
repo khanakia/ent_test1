@@ -4,12 +4,12 @@ package ent
 
 // CreatePostInput represents a mutation input for creating posts.
 type CreatePostInput struct {
+	Name *string
+	Slug *string
+
 	FeaturedMediaIDs []string
 
 	IconMediaIDs []string
-
-	Name *string
-	Slug *string
 }
 
 // Mutate applies the CreatePostInput on the PostMutation builder.
@@ -26,6 +26,7 @@ func (i *CreatePostInput) Mutate(m *PostMutation) {
 	if v := i.IconMediaIDs; len(v) > 0 {
 		m.AddIconMediaIDs(v...)
 	}
+
 }
 
 // SetInput applies the change-set in the CreatePostInput on the PostCreate builder.
@@ -36,6 +37,10 @@ func (c *PostCreate) SetInput(i CreatePostInput) *PostCreate {
 
 // UpdatePostInput represents a mutation input for updating posts.
 type UpdatePostInput struct {
+	ClearName              bool
+	Name                   *string
+	ClearSlug              bool
+	Slug                   *string
 	AddFeaturedMediaIDs    []string
 	RemoveFeaturedMediaIDs []string
 	ClearFeaturedMedias    bool
@@ -45,11 +50,6 @@ type UpdatePostInput struct {
 	RemoveIconMediaIDs []string
 	ClearIconMedias    bool
 	SelectIconMediaIDs []string
-
-	ClearName bool
-	Name      *string
-	ClearSlug bool
-	Slug      *string
 }
 
 // Mutate applies the UpdatePostInput on the PostMutation builder.
@@ -96,6 +96,7 @@ func (i *UpdatePostInput) Mutate(m *PostMutation) {
 	if v := i.SelectIconMediaIDs; len(v) > 0 {
 		m.SelectIconMediaIDs(v...)
 	}
+
 }
 
 // SetInput applies the change-set in the UpdatePostInput on the PostUpdate builder.
