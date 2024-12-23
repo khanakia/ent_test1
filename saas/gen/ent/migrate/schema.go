@@ -43,7 +43,7 @@ var (
 		{Name: "mediable_id", Type: field.TypeString, Nullable: true},
 		{Name: "mediable_type", Type: field.TypeString, Nullable: true},
 		{Name: "tag", Type: field.TypeString, Nullable: true},
-		{Name: "order", Type: field.TypeInt, Nullable: true},
+		{Name: "sort_order", Type: field.TypeInt, Nullable: true},
 		{Name: "media_id", Type: field.TypeString, Nullable: true},
 	}
 	// MediablesTable holds the schema information for the "mediables" table.

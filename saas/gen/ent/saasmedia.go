@@ -47,7 +47,7 @@ func SaveMedia(client *Client, props *SaveMediaProp) {
 			client.Mediable.Create().
 				SetAppID(props.AppID).
 				SetTag(props.Tag).
-				SetOrder(i).
+				SetSortOrder(i).
 				SetMediableType(props.MediableType).
 				SetMediableID(props.MediableID).
 				SetMediaID(mediaID).
@@ -59,7 +59,7 @@ func SaveMedia(client *Client, props *SaveMediaProp) {
 		for i, id := range props.SelectMediaIDs {
 			client.Mediable.Update().
 				Where(mediable.AppID(props.AppID), mediable.MediableType(props.MediableType), mediable.MediableID(props.MediableID), mediable.MediaID(id)).
-				SetOrder(i).
+				SetSortOrder(i).
 				Save(ctx)
 		}
 	}
@@ -85,7 +85,6 @@ func PostClientMediaHook() func(next ent.Mutator) ent.Mutator {
 						Cleared:        s.FeaturedMediasCleared(),
 						SelectMediaIDs: s.SelectedFeaturedMediaIDs(),
 					}
-					fmt.Println(saveMediaProp)
 
 					SaveMedia(s.Client(), &saveMediaProp)
 
@@ -102,9 +101,8 @@ func PostClientMediaHook() func(next ent.Mutator) ent.Mutator {
 						AddMediaIDs:    s.IconMediaIDs(),
 						RemoveMediaIDs: s.RemovedIconMediaIDs(),
 						Cleared:        s.IconMediasCleared(),
-						SelectMediaIDs: s.SelectedFeaturedMediaIDs(),
+						SelectMediaIDs: s.SelectedIconMediaIDs(),
 					}
-					fmt.Println(saveMediaProp)
 
 					SaveMedia(s.Client(), &saveMediaProp)
 
@@ -144,18 +142,15 @@ func (m *PostMutation) RemoveFeaturedMediaIDs(ids ...string) {
 
 func (m *PostMutation) SelectFeaturedMediaIDs(ids ...string) {
 	if m.selectedfeatured_medias == nil {
-		m.selectedfeatured_medias = make(map[string]struct{})
+		m.selectedfeatured_medias = []string{}
 	}
 	for i := range ids {
-		m.selectedfeatured_medias[ids[i]] = struct{}{}
+		m.selectedfeatured_medias = append(m.selectedfeatured_medias, ids[i])
 	}
 }
 
 func (m *PostMutation) SelectedFeaturedMediaIDs() (ids []string) {
-	for id := range m.selectedfeatured_medias {
-		ids = append(ids, id)
-	}
-	return
+	return m.selectedfeatured_medias
 }
 
 func (m *PostMutation) RemovedFeaturedMediaIDs() (ids []string) {
@@ -208,18 +203,15 @@ func (m *PostMutation) RemoveIconMediaIDs(ids ...string) {
 
 func (m *PostMutation) SelectIconMediaIDs(ids ...string) {
 	if m.selectedicon_medias == nil {
-		m.selectedicon_medias = make(map[string]struct{})
+		m.selectedicon_medias = []string{}
 	}
 	for i := range ids {
-		m.selectedicon_medias[ids[i]] = struct{}{}
+		m.selectedicon_medias = append(m.selectedicon_medias, ids[i])
 	}
 }
 
 func (m *PostMutation) SelectedIconMediaIDs() (ids []string) {
-	for id := range m.selectedicon_medias {
-		ids = append(ids, id)
-	}
-	return
+	return m.selectedicon_medias
 }
 
 func (m *PostMutation) RemovedIconMediaIDs() (ids []string) {
@@ -276,7 +268,7 @@ func (uq *PostQuery) loadMediables(ctx context.Context, query *MediableQuery, no
 	}
 
 	query.Where(mediable.MediableType("posts"))
-	query.Order(Asc(mediable.FieldOrder))
+	query.Order(Asc(mediable.FieldSortOrder))
 
 	query.WithMedia().Where(predicate.Mediable(func(s *sql.Selector) {
 		s.Where(sql.InValues(s.C(mediable.FieldMediableID), fks...))

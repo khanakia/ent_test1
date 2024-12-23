@@ -22,8 +22,8 @@ const (
 	FieldMediableType = "mediable_type"
 	// FieldTag holds the string denoting the tag field in the database.
 	FieldTag = "tag"
-	// FieldOrder holds the string denoting the order field in the database.
-	FieldOrder = "order"
+	// FieldSortOrder holds the string denoting the sort_order field in the database.
+	FieldSortOrder = "sort_order"
 	// EdgeMedia holds the string denoting the media edge name in mutations.
 	EdgeMedia = "media"
 	// Table holds the table name of the mediable in the database.
@@ -45,7 +45,7 @@ var Columns = []string{
 	FieldMediableID,
 	FieldMediableType,
 	FieldTag,
-	FieldOrder,
+	FieldSortOrder,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -96,9 +96,9 @@ func ByTag(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldTag, opts...).ToFunc()
 }
 
-// ByOrder orders the results by the order field.
-func ByOrder(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldOrder, opts...).ToFunc()
+// BySortOrder orders the results by the sort_order field.
+func BySortOrder(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldSortOrder, opts...).ToFunc()
 }
 
 // ByMediaField orders the results by media field.

@@ -3,7 +3,7 @@
   {{- if $n.Annotations.SaasMedia }}
     {{- range $e := $n.Annotations.SaasMedia.Fields }}
         {{ $e.BuilderField }} map[{{ $e.Type }}]struct{}
-        selected{{ $e.BuilderField }} map[{{ $e.Type }}]struct{}
+        selected{{ $e.BuilderField }} []{{ $e.Type }}
         removed{{ $e.BuilderField }} map[{{ $e.Type }}]struct{}
         cleared{{ $e.BuilderField }} bool
     {{- end }}

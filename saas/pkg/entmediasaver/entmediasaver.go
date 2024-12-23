@@ -38,7 +38,7 @@ func SaveMedia(client *ent.Client, props *SaveMediaProp) {
 			client.Mediable.Create().
 				SetAppID(props.AppID).
 				SetTag(props.Tag).
-				SetOrder(0).
+				SetSortOrder(0).
 				SetMediableType(props.MediableType).
 				SetMediableID(props.MediableID).
 				SetMediaID(mediaID).

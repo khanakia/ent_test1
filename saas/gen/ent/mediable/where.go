@@ -89,9 +89,9 @@ func Tag(v string) predicate.Mediable {
 	return predicate.Mediable(sql.FieldEQ(FieldTag, v))
 }
 
-// Order applies equality check predicate on the "order" field. It's identical to OrderEQ.
-func Order(v int) predicate.Mediable {
-	return predicate.Mediable(sql.FieldEQ(FieldOrder, v))
+// SortOrder applies equality check predicate on the "sort_order" field. It's identical to SortOrderEQ.
+func SortOrder(v int) predicate.Mediable {
+	return predicate.Mediable(sql.FieldEQ(FieldSortOrder, v))
 }
 
 // AppIDEQ applies the EQ predicate on the "app_id" field.
@@ -469,54 +469,54 @@ func TagContainsFold(v string) predicate.Mediable {
 	return predicate.Mediable(sql.FieldContainsFold(FieldTag, v))
 }
 
-// OrderEQ applies the EQ predicate on the "order" field.
-func OrderEQ(v int) predicate.Mediable {
-	return predicate.Mediable(sql.FieldEQ(FieldOrder, v))
+// SortOrderEQ applies the EQ predicate on the "sort_order" field.
+func SortOrderEQ(v int) predicate.Mediable {
+	return predicate.Mediable(sql.FieldEQ(FieldSortOrder, v))
 }
 
-// OrderNEQ applies the NEQ predicate on the "order" field.
-func OrderNEQ(v int) predicate.Mediable {
-	return predicate.Mediable(sql.FieldNEQ(FieldOrder, v))
+// SortOrderNEQ applies the NEQ predicate on the "sort_order" field.
+func SortOrderNEQ(v int) predicate.Mediable {
+	return predicate.Mediable(sql.FieldNEQ(FieldSortOrder, v))
 }
 
-// OrderIn applies the In predicate on the "order" field.
-func OrderIn(vs ...int) predicate.Mediable {
-	return predicate.Mediable(sql.FieldIn(FieldOrder, vs...))
+// SortOrderIn applies the In predicate on the "sort_order" field.
+func SortOrderIn(vs ...int) predicate.Mediable {
+	return predicate.Mediable(sql.FieldIn(FieldSortOrder, vs...))
 }
 
-// OrderNotIn applies the NotIn predicate on the "order" field.
-func OrderNotIn(vs ...int) predicate.Mediable {
-	return predicate.Mediable(sql.FieldNotIn(FieldOrder, vs...))
+// SortOrderNotIn applies the NotIn predicate on the "sort_order" field.
+func SortOrderNotIn(vs ...int) predicate.Mediable {
+	return predicate.Mediable(sql.FieldNotIn(FieldSortOrder, vs...))
 }
 
-// OrderGT applies the GT predicate on the "order" field.
-func OrderGT(v int) predicate.Mediable {
-	return predicate.Mediable(sql.FieldGT(FieldOrder, v))
+// SortOrderGT applies the GT predicate on the "sort_order" field.
+func SortOrderGT(v int) predicate.Mediable {
+	return predicate.Mediable(sql.FieldGT(FieldSortOrder, v))
 }
 
-// OrderGTE applies the GTE predicate on the "order" field.
-func OrderGTE(v int) predicate.Mediable {
-	return predicate.Mediable(sql.FieldGTE(FieldOrder, v))
+// SortOrderGTE applies the GTE predicate on the "sort_order" field.
+func SortOrderGTE(v int) predicate.Mediable {
+	return predicate.Mediable(sql.FieldGTE(FieldSortOrder, v))
 }
 
-// OrderLT applies the LT predicate on the "order" field.
-func OrderLT(v int) predicate.Mediable {
-	return predicate.Mediable(sql.FieldLT(FieldOrder, v))
+// SortOrderLT applies the LT predicate on the "sort_order" field.
+func SortOrderLT(v int) predicate.Mediable {
+	return predicate.Mediable(sql.FieldLT(FieldSortOrder, v))
 }
 
-// OrderLTE applies the LTE predicate on the "order" field.
-func OrderLTE(v int) predicate.Mediable {
-	return predicate.Mediable(sql.FieldLTE(FieldOrder, v))
+// SortOrderLTE applies the LTE predicate on the "sort_order" field.
+func SortOrderLTE(v int) predicate.Mediable {
+	return predicate.Mediable(sql.FieldLTE(FieldSortOrder, v))
 }
 
-// OrderIsNil applies the IsNil predicate on the "order" field.
-func OrderIsNil() predicate.Mediable {
-	return predicate.Mediable(sql.FieldIsNull(FieldOrder))
+// SortOrderIsNil applies the IsNil predicate on the "sort_order" field.
+func SortOrderIsNil() predicate.Mediable {
+	return predicate.Mediable(sql.FieldIsNull(FieldSortOrder))
 }
 
-// OrderNotNil applies the NotNil predicate on the "order" field.
-func OrderNotNil() predicate.Mediable {
-	return predicate.Mediable(sql.FieldNotNull(FieldOrder))
+// SortOrderNotNil applies the NotNil predicate on the "sort_order" field.
+func SortOrderNotNil() predicate.Mediable {
+	return predicate.Mediable(sql.FieldNotNull(FieldSortOrder))
 }
 
 // HasMedia applies the HasEdge predicate on the "media" edge.

@@ -129,30 +129,30 @@ func (mu *MediableUpdate) ClearTag() *MediableUpdate {
 	return mu
 }
 
-// SetOrder sets the "order" field.
-func (mu *MediableUpdate) SetOrder(i int) *MediableUpdate {
-	mu.mutation.ResetOrder()
-	mu.mutation.SetOrder(i)
+// SetSortOrder sets the "sort_order" field.
+func (mu *MediableUpdate) SetSortOrder(i int) *MediableUpdate {
+	mu.mutation.ResetSortOrder()
+	mu.mutation.SetSortOrder(i)
 	return mu
 }
 
-// SetNillableOrder sets the "order" field if the given value is not nil.
-func (mu *MediableUpdate) SetNillableOrder(i *int) *MediableUpdate {
+// SetNillableSortOrder sets the "sort_order" field if the given value is not nil.
+func (mu *MediableUpdate) SetNillableSortOrder(i *int) *MediableUpdate {
 	if i != nil {
-		mu.SetOrder(*i)
+		mu.SetSortOrder(*i)
 	}
 	return mu
 }
 
-// AddOrder adds i to the "order" field.
-func (mu *MediableUpdate) AddOrder(i int) *MediableUpdate {
-	mu.mutation.AddOrder(i)
+// AddSortOrder adds i to the "sort_order" field.
+func (mu *MediableUpdate) AddSortOrder(i int) *MediableUpdate {
+	mu.mutation.AddSortOrder(i)
 	return mu
 }
 
-// ClearOrder clears the value of the "order" field.
-func (mu *MediableUpdate) ClearOrder() *MediableUpdate {
-	mu.mutation.ClearOrder()
+// ClearSortOrder clears the value of the "sort_order" field.
+func (mu *MediableUpdate) ClearSortOrder() *MediableUpdate {
+	mu.mutation.ClearSortOrder()
 	return mu
 }
 
@@ -238,14 +238,14 @@ func (mu *MediableUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if mu.mutation.TagCleared() {
 		_spec.ClearField(mediable.FieldTag, field.TypeString)
 	}
-	if value, ok := mu.mutation.Order(); ok {
-		_spec.SetField(mediable.FieldOrder, field.TypeInt, value)
+	if value, ok := mu.mutation.SortOrder(); ok {
+		_spec.SetField(mediable.FieldSortOrder, field.TypeInt, value)
 	}
-	if value, ok := mu.mutation.AddedOrder(); ok {
-		_spec.AddField(mediable.FieldOrder, field.TypeInt, value)
+	if value, ok := mu.mutation.AddedSortOrder(); ok {
+		_spec.AddField(mediable.FieldSortOrder, field.TypeInt, value)
 	}
-	if mu.mutation.OrderCleared() {
-		_spec.ClearField(mediable.FieldOrder, field.TypeInt)
+	if mu.mutation.SortOrderCleared() {
+		_spec.ClearField(mediable.FieldSortOrder, field.TypeInt)
 	}
 	if mu.mutation.MediaCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -398,30 +398,30 @@ func (muo *MediableUpdateOne) ClearTag() *MediableUpdateOne {
 	return muo
 }
 
-// SetOrder sets the "order" field.
-func (muo *MediableUpdateOne) SetOrder(i int) *MediableUpdateOne {
-	muo.mutation.ResetOrder()
-	muo.mutation.SetOrder(i)
+// SetSortOrder sets the "sort_order" field.
+func (muo *MediableUpdateOne) SetSortOrder(i int) *MediableUpdateOne {
+	muo.mutation.ResetSortOrder()
+	muo.mutation.SetSortOrder(i)
 	return muo
 }
 
-// SetNillableOrder sets the "order" field if the given value is not nil.
-func (muo *MediableUpdateOne) SetNillableOrder(i *int) *MediableUpdateOne {
+// SetNillableSortOrder sets the "sort_order" field if the given value is not nil.
+func (muo *MediableUpdateOne) SetNillableSortOrder(i *int) *MediableUpdateOne {
 	if i != nil {
-		muo.SetOrder(*i)
+		muo.SetSortOrder(*i)
 	}
 	return muo
 }
 
-// AddOrder adds i to the "order" field.
-func (muo *MediableUpdateOne) AddOrder(i int) *MediableUpdateOne {
-	muo.mutation.AddOrder(i)
+// AddSortOrder adds i to the "sort_order" field.
+func (muo *MediableUpdateOne) AddSortOrder(i int) *MediableUpdateOne {
+	muo.mutation.AddSortOrder(i)
 	return muo
 }
 
-// ClearOrder clears the value of the "order" field.
-func (muo *MediableUpdateOne) ClearOrder() *MediableUpdateOne {
-	muo.mutation.ClearOrder()
+// ClearSortOrder clears the value of the "sort_order" field.
+func (muo *MediableUpdateOne) ClearSortOrder() *MediableUpdateOne {
+	muo.mutation.ClearSortOrder()
 	return muo
 }
 
@@ -537,14 +537,14 @@ func (muo *MediableUpdateOne) sqlSave(ctx context.Context) (_node *Mediable, err
 	if muo.mutation.TagCleared() {
 		_spec.ClearField(mediable.FieldTag, field.TypeString)
 	}
-	if value, ok := muo.mutation.Order(); ok {
-		_spec.SetField(mediable.FieldOrder, field.TypeInt, value)
+	if value, ok := muo.mutation.SortOrder(); ok {
+		_spec.SetField(mediable.FieldSortOrder, field.TypeInt, value)
 	}
-	if value, ok := muo.mutation.AddedOrder(); ok {
-		_spec.AddField(mediable.FieldOrder, field.TypeInt, value)
+	if value, ok := muo.mutation.AddedSortOrder(); ok {
+		_spec.AddField(mediable.FieldSortOrder, field.TypeInt, value)
 	}
-	if muo.mutation.OrderCleared() {
-		_spec.ClearField(mediable.FieldOrder, field.TypeInt)
+	if muo.mutation.SortOrderCleared() {
+		_spec.ClearField(mediable.FieldSortOrder, field.TypeInt)
 	}
 	if muo.mutation.MediaCleared() {
 		edge := &sqlgraph.EdgeSpec{

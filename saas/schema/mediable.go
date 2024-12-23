@@ -19,7 +19,7 @@ func (Mediable) Fields() []ent.Field {
 		field.String("mediable_id").Optional(),
 		field.String("mediable_type").Optional(),
 		field.String("tag").Optional(), // default | icon | featured
-		field.Int("order").Optional(),
+		field.Int("sort_order").Optional(),
 	}
 }
 

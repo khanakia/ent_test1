@@ -27,8 +27,8 @@ type Mediable struct {
 	MediableType string `json:"mediable_type,omitempty"`
 	// Tag holds the value of the "tag" field.
 	Tag string `json:"tag,omitempty"`
-	// Order holds the value of the "order" field.
-	Order int `json:"order,omitempty"`
+	// SortOrder holds the value of the "sort_order" field.
+	SortOrder int `json:"sort_order,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the MediableQuery when eager-loading is set.
 	Edges        MediableEdges `json:"edges"`
@@ -62,7 +62,7 @@ func (*Mediable) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case mediable.FieldOrder:
+		case mediable.FieldSortOrder:
 			values[i] = new(sql.NullInt64)
 		case mediable.FieldID, mediable.FieldAppID, mediable.FieldMediaID, mediable.FieldMediableID, mediable.FieldMediableType, mediable.FieldTag:
 			values[i] = new(sql.NullString)
@@ -117,11 +117,11 @@ func (m *Mediable) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				m.Tag = value.String
 			}
-		case mediable.FieldOrder:
+		case mediable.FieldSortOrder:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field order", values[i])
+				return fmt.Errorf("unexpected type %T for field sort_order", values[i])
 			} else if value.Valid {
-				m.Order = int(value.Int64)
+				m.SortOrder = int(value.Int64)
 			}
 		default:
 			m.selectValues.Set(columns[i], values[i])
@@ -179,8 +179,8 @@ func (m *Mediable) String() string {
 	builder.WriteString("tag=")
 	builder.WriteString(m.Tag)
 	builder.WriteString(", ")
-	builder.WriteString("order=")
-	builder.WriteString(fmt.Sprintf("%v", m.Order))
+	builder.WriteString("sort_order=")
+	builder.WriteString(fmt.Sprintf("%v", m.SortOrder))
 	builder.WriteByte(')')
 	return builder.String()
 }

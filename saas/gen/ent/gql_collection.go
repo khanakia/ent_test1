@@ -234,10 +234,10 @@ func (m *MediableQuery) collectField(ctx context.Context, oneNode bool, opCtx *g
 				selectedFields = append(selectedFields, mediable.FieldTag)
 				fieldSeen[mediable.FieldTag] = struct{}{}
 			}
-		case "order":
-			if _, ok := fieldSeen[mediable.FieldOrder]; !ok {
-				selectedFields = append(selectedFields, mediable.FieldOrder)
-				fieldSeen[mediable.FieldOrder] = struct{}{}
+		case "sortOrder":
+			if _, ok := fieldSeen[mediable.FieldSortOrder]; !ok {
+				selectedFields = append(selectedFields, mediable.FieldSortOrder)
+				fieldSeen[mediable.FieldSortOrder] = struct{}{}
 			}
 		case "id":
 		case "__typename":

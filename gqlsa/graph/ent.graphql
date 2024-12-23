@@ -44,7 +44,7 @@ type Mediable implements Node {
   mediableID: String
   mediableType: String
   tag: String
-  order: Int
+  sortOrder: Int
   media: Media
 }
 """

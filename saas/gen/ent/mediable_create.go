@@ -93,16 +93,16 @@ func (mc *MediableCreate) SetNillableTag(s *string) *MediableCreate {
 	return mc
 }
 
-// SetOrder sets the "order" field.
-func (mc *MediableCreate) SetOrder(i int) *MediableCreate {
-	mc.mutation.SetOrder(i)
+// SetSortOrder sets the "sort_order" field.
+func (mc *MediableCreate) SetSortOrder(i int) *MediableCreate {
+	mc.mutation.SetSortOrder(i)
 	return mc
 }
 
-// SetNillableOrder sets the "order" field if the given value is not nil.
-func (mc *MediableCreate) SetNillableOrder(i *int) *MediableCreate {
+// SetNillableSortOrder sets the "sort_order" field if the given value is not nil.
+func (mc *MediableCreate) SetNillableSortOrder(i *int) *MediableCreate {
 	if i != nil {
-		mc.SetOrder(*i)
+		mc.SetSortOrder(*i)
 	}
 	return mc
 }
@@ -221,9 +221,9 @@ func (mc *MediableCreate) createSpec() (*Mediable, *sqlgraph.CreateSpec) {
 		_spec.SetField(mediable.FieldTag, field.TypeString, value)
 		_node.Tag = value
 	}
-	if value, ok := mc.mutation.Order(); ok {
-		_spec.SetField(mediable.FieldOrder, field.TypeInt, value)
-		_node.Order = value
+	if value, ok := mc.mutation.SortOrder(); ok {
+		_spec.SetField(mediable.FieldSortOrder, field.TypeInt, value)
+		_node.SortOrder = value
 	}
 	if nodes := mc.mutation.MediaIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{
@@ -384,27 +384,27 @@ func (u *MediableUpsert) ClearTag() *MediableUpsert {
 	return u
 }
 
-// SetOrder sets the "order" field.
-func (u *MediableUpsert) SetOrder(v int) *MediableUpsert {
-	u.Set(mediable.FieldOrder, v)
+// SetSortOrder sets the "sort_order" field.
+func (u *MediableUpsert) SetSortOrder(v int) *MediableUpsert {
+	u.Set(mediable.FieldSortOrder, v)
 	return u
 }
 
-// UpdateOrder sets the "order" field to the value that was provided on create.
-func (u *MediableUpsert) UpdateOrder() *MediableUpsert {
-	u.SetExcluded(mediable.FieldOrder)
+// UpdateSortOrder sets the "sort_order" field to the value that was provided on create.
+func (u *MediableUpsert) UpdateSortOrder() *MediableUpsert {
+	u.SetExcluded(mediable.FieldSortOrder)
 	return u
 }
 
-// AddOrder adds v to the "order" field.
-func (u *MediableUpsert) AddOrder(v int) *MediableUpsert {
-	u.Add(mediable.FieldOrder, v)
+// AddSortOrder adds v to the "sort_order" field.
+func (u *MediableUpsert) AddSortOrder(v int) *MediableUpsert {
+	u.Add(mediable.FieldSortOrder, v)
 	return u
 }
 
-// ClearOrder clears the value of the "order" field.
-func (u *MediableUpsert) ClearOrder() *MediableUpsert {
-	u.SetNull(mediable.FieldOrder)
+// ClearSortOrder clears the value of the "sort_order" field.
+func (u *MediableUpsert) ClearSortOrder() *MediableUpsert {
+	u.SetNull(mediable.FieldSortOrder)
 	return u
 }
 
@@ -561,31 +561,31 @@ func (u *MediableUpsertOne) ClearTag() *MediableUpsertOne {
 	})
 }
 
-// SetOrder sets the "order" field.
-func (u *MediableUpsertOne) SetOrder(v int) *MediableUpsertOne {
+// SetSortOrder sets the "sort_order" field.
+func (u *MediableUpsertOne) SetSortOrder(v int) *MediableUpsertOne {
 	return u.Update(func(s *MediableUpsert) {
-		s.SetOrder(v)
+		s.SetSortOrder(v)
 	})
 }
 
-// AddOrder adds v to the "order" field.
-func (u *MediableUpsertOne) AddOrder(v int) *MediableUpsertOne {
+// AddSortOrder adds v to the "sort_order" field.
+func (u *MediableUpsertOne) AddSortOrder(v int) *MediableUpsertOne {
 	return u.Update(func(s *MediableUpsert) {
-		s.AddOrder(v)
+		s.AddSortOrder(v)
 	})
 }
 
-// UpdateOrder sets the "order" field to the value that was provided on create.
-func (u *MediableUpsertOne) UpdateOrder() *MediableUpsertOne {
+// UpdateSortOrder sets the "sort_order" field to the value that was provided on create.
+func (u *MediableUpsertOne) UpdateSortOrder() *MediableUpsertOne {
 	return u.Update(func(s *MediableUpsert) {
-		s.UpdateOrder()
+		s.UpdateSortOrder()
 	})
 }
 
-// ClearOrder clears the value of the "order" field.
-func (u *MediableUpsertOne) ClearOrder() *MediableUpsertOne {
+// ClearSortOrder clears the value of the "sort_order" field.
+func (u *MediableUpsertOne) ClearSortOrder() *MediableUpsertOne {
 	return u.Update(func(s *MediableUpsert) {
-		s.ClearOrder()
+		s.ClearSortOrder()
 	})
 }
 
@@ -909,31 +909,31 @@ func (u *MediableUpsertBulk) ClearTag() *MediableUpsertBulk {
 	})
 }
 
-// SetOrder sets the "order" field.
-func (u *MediableUpsertBulk) SetOrder(v int) *MediableUpsertBulk {
+// SetSortOrder sets the "sort_order" field.
+func (u *MediableUpsertBulk) SetSortOrder(v int) *MediableUpsertBulk {
 	return u.Update(func(s *MediableUpsert) {
-		s.SetOrder(v)
+		s.SetSortOrder(v)
 	})
 }
 
-// AddOrder adds v to the "order" field.
-func (u *MediableUpsertBulk) AddOrder(v int) *MediableUpsertBulk {
+// AddSortOrder adds v to the "sort_order" field.
+func (u *MediableUpsertBulk) AddSortOrder(v int) *MediableUpsertBulk {
 	return u.Update(func(s *MediableUpsert) {
-		s.AddOrder(v)
+		s.AddSortOrder(v)
 	})
 }
 
-// UpdateOrder sets the "order" field to the value that was provided on create.
-func (u *MediableUpsertBulk) UpdateOrder() *MediableUpsertBulk {
+// UpdateSortOrder sets the "sort_order" field to the value that was provided on create.
+func (u *MediableUpsertBulk) UpdateSortOrder() *MediableUpsertBulk {
 	return u.Update(func(s *MediableUpsert) {
-		s.UpdateOrder()
+		s.UpdateSortOrder()
 	})
 }
 
-// ClearOrder clears the value of the "order" field.
-func (u *MediableUpsertBulk) ClearOrder() *MediableUpsertBulk {
+// ClearSortOrder clears the value of the "sort_order" field.
+func (u *MediableUpsertBulk) ClearSortOrder() *MediableUpsertBulk {
 	return u.Update(func(s *MediableUpsert) {
-		s.ClearOrder()
+		s.ClearSortOrder()
 	})
 }
 

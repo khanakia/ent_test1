@@ -1746,8 +1746,8 @@ type MediableMutation struct {
 	mediable_id   *string
 	mediable_type *string
 	tag           *string
-	_order        *int
-	add_order     *int
+	sort_order    *int
+	addsort_order *int
 	clearedFields map[string]struct{}
 	media         *string
 	clearedmedia  bool
@@ -2105,74 +2105,74 @@ func (m *MediableMutation) ResetTag() {
 	delete(m.clearedFields, mediable.FieldTag)
 }
 
-// SetOrder sets the "order" field.
-func (m *MediableMutation) SetOrder(i int) {
-	m._order = &i
-	m.add_order = nil
+// SetSortOrder sets the "sort_order" field.
+func (m *MediableMutation) SetSortOrder(i int) {
+	m.sort_order = &i
+	m.addsort_order = nil
 }
 
-// Order returns the value of the "order" field in the mutation.
-func (m *MediableMutation) Order() (r int, exists bool) {
-	v := m._order
+// SortOrder returns the value of the "sort_order" field in the mutation.
+func (m *MediableMutation) SortOrder() (r int, exists bool) {
+	v := m.sort_order
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// OldOrder returns the old "order" field's value of the Mediable entity.
+// OldSortOrder returns the old "sort_order" field's value of the Mediable entity.
 // If the Mediable object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *MediableMutation) OldOrder(ctx context.Context) (v int, err error) {
+func (m *MediableMutation) OldSortOrder(ctx context.Context) (v int, err error) {
 	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldOrder is only allowed on UpdateOne operations")
+		return v, errors.New("OldSortOrder is only allowed on UpdateOne operations")
 	}
 	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldOrder requires an ID field in the mutation")
+		return v, errors.New("OldSortOrder requires an ID field in the mutation")
 	}
 	oldValue, err := m.oldValue(ctx)
 	if err != nil {
-		return v, fmt.Errorf("querying old value for OldOrder: %w", err)
+		return v, fmt.Errorf("querying old value for OldSortOrder: %w", err)
 	}
-	return oldValue.Order, nil
+	return oldValue.SortOrder, nil
 }
 
-// AddOrder adds i to the "order" field.
-func (m *MediableMutation) AddOrder(i int) {
-	if m.add_order != nil {
-		*m.add_order += i
+// AddSortOrder adds i to the "sort_order" field.
+func (m *MediableMutation) AddSortOrder(i int) {
+	if m.addsort_order != nil {
+		*m.addsort_order += i
 	} else {
-		m.add_order = &i
+		m.addsort_order = &i
 	}
 }
 
-// AddedOrder returns the value that was added to the "order" field in this mutation.
-func (m *MediableMutation) AddedOrder() (r int, exists bool) {
-	v := m.add_order
+// AddedSortOrder returns the value that was added to the "sort_order" field in this mutation.
+func (m *MediableMutation) AddedSortOrder() (r int, exists bool) {
+	v := m.addsort_order
 	if v == nil {
 		return
 	}
 	return *v, true
 }
 
-// ClearOrder clears the value of the "order" field.
-func (m *MediableMutation) ClearOrder() {
-	m._order = nil
-	m.add_order = nil
-	m.clearedFields[mediable.FieldOrder] = struct{}{}
+// ClearSortOrder clears the value of the "sort_order" field.
+func (m *MediableMutation) ClearSortOrder() {
+	m.sort_order = nil
+	m.addsort_order = nil
+	m.clearedFields[mediable.FieldSortOrder] = struct{}{}
 }
 
-// OrderCleared returns if the "order" field was cleared in this mutation.
-func (m *MediableMutation) OrderCleared() bool {
-	_, ok := m.clearedFields[mediable.FieldOrder]
+// SortOrderCleared returns if the "sort_order" field was cleared in this mutation.
+func (m *MediableMutation) SortOrderCleared() bool {
+	_, ok := m.clearedFields[mediable.FieldSortOrder]
 	return ok
 }
 
-// ResetOrder resets all changes to the "order" field.
-func (m *MediableMutation) ResetOrder() {
-	m._order = nil
-	m.add_order = nil
-	delete(m.clearedFields, mediable.FieldOrder)
+// ResetSortOrder resets all changes to the "sort_order" field.
+func (m *MediableMutation) ResetSortOrder() {
+	m.sort_order = nil
+	m.addsort_order = nil
+	delete(m.clearedFields, mediable.FieldSortOrder)
 }
 
 // ClearMedia clears the "media" edge to the Media entity.
@@ -2252,8 +2252,8 @@ func (m *MediableMutation) Fields() []string {
 	if m.tag != nil {
 		fields = append(fields, mediable.FieldTag)
 	}
-	if m._order != nil {
-		fields = append(fields, mediable.FieldOrder)
+	if m.sort_order != nil {
+		fields = append(fields, mediable.FieldSortOrder)
 	}
 	return fields
 }
@@ -2273,8 +2273,8 @@ func (m *MediableMutation) Field(name string) (ent.Value, bool) {
 		return m.MediableType()
 	case mediable.FieldTag:
 		return m.Tag()
-	case mediable.FieldOrder:
-		return m.Order()
+	case mediable.FieldSortOrder:
+		return m.SortOrder()
 	}
 	return nil, false
 }
@@ -2294,8 +2294,8 @@ func (m *MediableMutation) OldField(ctx context.Context, name string) (ent.Value
 		return m.OldMediableType(ctx)
 	case mediable.FieldTag:
 		return m.OldTag(ctx)
-	case mediable.FieldOrder:
-		return m.OldOrder(ctx)
+	case mediable.FieldSortOrder:
+		return m.OldSortOrder(ctx)
 	}
 	return nil, fmt.Errorf("unknown Mediable field %s", name)
 }
@@ -2340,12 +2340,12 @@ func (m *MediableMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetTag(v)
 		return nil
-	case mediable.FieldOrder:
+	case mediable.FieldSortOrder:
 		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.SetOrder(v)
+		m.SetSortOrder(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Mediable field %s", name)
@@ -2355,8 +2355,8 @@ func (m *MediableMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *MediableMutation) AddedFields() []string {
 	var fields []string
-	if m.add_order != nil {
-		fields = append(fields, mediable.FieldOrder)
+	if m.addsort_order != nil {
+		fields = append(fields, mediable.FieldSortOrder)
 	}
 	return fields
 }
@@ -2366,8 +2366,8 @@ func (m *MediableMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *MediableMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case mediable.FieldOrder:
-		return m.AddedOrder()
+	case mediable.FieldSortOrder:
+		return m.AddedSortOrder()
 	}
 	return nil, false
 }
@@ -2377,12 +2377,12 @@ func (m *MediableMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *MediableMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case mediable.FieldOrder:
+	case mediable.FieldSortOrder:
 		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
-		m.AddOrder(v)
+		m.AddSortOrder(v)
 		return nil
 	}
 	return fmt.Errorf("unknown Mediable numeric field %s", name)
@@ -2407,8 +2407,8 @@ func (m *MediableMutation) ClearedFields() []string {
 	if m.FieldCleared(mediable.FieldTag) {
 		fields = append(fields, mediable.FieldTag)
 	}
-	if m.FieldCleared(mediable.FieldOrder) {
-		fields = append(fields, mediable.FieldOrder)
+	if m.FieldCleared(mediable.FieldSortOrder) {
+		fields = append(fields, mediable.FieldSortOrder)
 	}
 	return fields
 }
@@ -2439,8 +2439,8 @@ func (m *MediableMutation) ClearField(name string) error {
 	case mediable.FieldTag:
 		m.ClearTag()
 		return nil
-	case mediable.FieldOrder:
-		m.ClearOrder()
+	case mediable.FieldSortOrder:
+		m.ClearSortOrder()
 		return nil
 	}
 	return fmt.Errorf("unknown Mediable nullable field %s", name)
@@ -2465,8 +2465,8 @@ func (m *MediableMutation) ResetField(name string) error {
 	case mediable.FieldTag:
 		m.ResetTag()
 		return nil
-	case mediable.FieldOrder:
-		m.ResetOrder()
+	case mediable.FieldSortOrder:
+		m.ResetSortOrder()
 		return nil
 	}
 	return fmt.Errorf("unknown Mediable field %s", name)
@@ -2549,11 +2549,11 @@ func (m *MediableMutation) ResetEdge(name string) error {
 // PostMutation represents an operation that mutates the Post nodes in the graph.
 type PostMutation struct {
 	featured_medias         map[string]struct{}
-	selectedfeatured_medias map[string]struct{}
+	selectedfeatured_medias []string
 	removedfeatured_medias  map[string]struct{}
 	clearedfeatured_medias  bool
 	icon_medias             map[string]struct{}
-	selectedicon_medias     map[string]struct{}
+	selectedicon_medias     []string
 	removedicon_medias      map[string]struct{}
 	clearedicon_medias      bool
 	config
